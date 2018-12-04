@@ -69,6 +69,24 @@ Definition div' (n m : nat) :=
 (* Primitive recursive log, same basic function diagram trick *)
 Require Import List.
 
+(*
+FIRST IMPLEMENTATION OF LOG
+
+Idea:
+- Store a counter that starts from 0, incrementing to n.
+- Keep track of string, in the form of a list, for the m-ary representation of counter.
+- Each step perform add 1 to this string.
+- Each element in the list is a pair (d, m-1-d), where d is a digit in n's m-ary representation.
+  We need the complement (m-1-d) to check when d reaches m.
+
+Rules explanation:
+| nil => (1, b-1) :: nil := If counter is 0, increment to 1.
+| (d, S x) :: r' => (S d, x) :: r' := Add one to counter's last digit, adjust its complement.
+| (d, 0) :: r' => (0, b) :: inc_b b r' := If counter's last digit is m (hence its complement is 0), reset it to 0
+and recursively add 1 to the next digit till no more reset.
+*)
+
+(* function to increment m-ary representation *)
 (* O(1) amortised *)
 Fixpoint inc_b (b : nat) (r : list (nat * nat)) : list (nat * nat) :=
   match r with
@@ -77,9 +95,15 @@ Fixpoint inc_b (b : nat) (r : list (nat * nat)) : list (nat * nat) :=
    | (d, 0) :: r' => (0,b) :: inc_b b r'
   end.
 
+(* function to repeat an action n times *)
 Definition repeat_n {X} n (f : X -> X) : X -> X :=
   nat_cnat n _ f.
 
+(* function to compute log
+Idea: start from 0, increase counter till n.
+Result is n's m-ary representation.
+log n m is its length minus 1
+*)
 (* O(n) *)
 Definition log (n m : nat) : nat :=
   match m with
@@ -87,6 +111,11 @@ Definition log (n m : nat) : nat :=
   | S m' => length (repeat_n n (inc_b m') nil) - 1
   end.
 
+
+(* SECOND IMPLEMENTATION OF LOG
+Idea: Use a helper function called "logger" to build the automata.
+Will elaborate further when I understand everything
+*)
 Fixpoint logger b n lc c : nat :=
   match n with
    | 0 => 0
