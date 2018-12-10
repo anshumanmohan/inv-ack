@@ -39,5 +39,106 @@ Definition inv_ack_countdown_states_helper
 Definition inv_ack_countdown_states (f : nat -> nat -> nat) b n
 := inv_ack_countdown_states_helper f (next_inv_ack_level f) b n (f b n).
 
-Compute inv_ack_countdown_states div_c 2 25.
 Compute div_c 2 4.
+
+
+Definition euclid_S_cost (et : nat * nat * nat) : nat * nat * nat :=
+  match et with
+    | (n, m, 0) => (S n, 0, m)
+    | (n, m, S c) => (n, S m, c)
+  end.
+
+
+
+Fixpoint div_helper_cost (n : nat) (et : nat * nat * nat)   : nat * nat * nat
+:=
+  match n with
+   | 0 => et
+   | S n' => div_helper_cost n' (euclid_S_cost et)
+  end.
+
+Definition div_cost (n m cost : nat) : nat * nat * nat :=
+  match m with
+   | 0 => (0,0, cost)
+   | S m' => match div_helper_cost n (0,0,m') with (* *)
+             (d,r,_) => (d,r, n + cost)
+             end
+  end.
+  
+Definition div_c_cost (m n cost : nat) : nat * nat :=
+  match div_cost n m cost with
+   | (d,0,c) => (d, c)
+   | (d,r,c) => (1 + d, c)
+  end.
+
+
+Fixpoint next_inv_ack_level_worker_cost
+        (f : nat -> nat -> nat -> nat * nat)
+        (b n fn cd ffn : nat)
+        (cost : nat)
+: nat * nat :=
+match n with
+| 0 => (0, cost)
+| 1 => (0, cost)
+| S n' => match cd with
+          | 0 => match (f b ffn 0) with
+                 | (t, c0) => match (next_inv_ack_level_worker_cost
+                               f b n' ffn (fn - ffn - 1) t cost) with
+                              | (v, c) => (S v, (1 + ffn + c0 + c))
+                              end
+                 end
+          | S cd' => match (next_inv_ack_level_worker_cost f b n' fn cd' ffn cost) with
+                     | (v, c) => (v, S c)
+                     end
+          end
+end.
+
+Definition next_inv_ack_level_cost (f : nat -> nat -> nat -> nat * nat) b n cost
+:= match (f b n 0) with
+   | (fn, c0)
+      => match (f b fn 0) with
+         | (ffn, c1)
+            => match (next_inv_ack_level_worker_cost
+                      f b n fn (n - fn - 1) ffn cost) with
+               | (v, c) => (v, c0 + c1 + fn + c)
+               end
+         end
+  end.
+
+
+Definition log_cost' b n cost := next_inv_ack_level_cost div_c_cost b n cost.
+
+Compute log_cost' 2 2 0.
+Compute log_cost' 2 4 0.
+Compute log_cost' 2 8 0.
+Compute log_cost' 2 16 0.
+Compute log_cost' 2 3 0.
+Compute log_cost' 2 5 0.
+Compute log_cost' 2 9 0.
+Compute log_cost' 2 17 0.
+
+Compute log_cost' 3 3 0.
+Compute log_cost' 3 9 0.
+Compute log_cost' 3 27 0.
+Compute log_cost' 3 4 0.
+Compute log_cost' 3 10 0.
+Compute log_cost' 3 28 0.
+
+Definition log_star_cost' b n cost := next_inv_ack_level_cost log_cost' b n cost.
+
+Compute log_star_cost' 2 2 0.
+Compute log_star_cost' 2 4 0.
+Compute log_star_cost' 2 16 0.
+Compute log_star_cost' 2 17 0.
+Compute log_star_cost' 2 18 0.
+Compute log_star_cost' 2 19 0.
+Compute log_star_cost' 2 20 0.
+Compute log_star_cost' 2 25 0.
+
+
+Fixpoint inv_ack_hier (i b n : nat) : nat :=
+match i with
+| 0 => n
+| 1 => div_c b n
+| S i' => next_inv_ack_level (inv_ack_hier i') b n
+end.
