@@ -53,19 +53,20 @@ match n with
           end
 end.
 
-Definition next_inv_ack_level_helper (f : nat -> nat -> nat) b n fn
-:= next_inv_ack_level_worker f b n fn (n - fn - 1) (f b n).
-
 Definition next_inv_ack_level (f : nat -> nat -> nat) b n
-:= next_inv_ack_level_helper f b n (f b n).
+:= match (f b n) with
+   | fn => match (f b fn) with
+           | ffn => next_inv_ack_level_worker f b n fn (n - fn - 1) ffn
+           end
+   end.
 
 Definition log' b n := next_inv_ack_level div_c b n.
 Definition log_star' b n := next_inv_ack_level log' b n.
 
-Compute log_star 2 15.
-Compute log_star 2 16.
-Compute log_star 2 17.
-Compute log_star 2 25.
+Compute log_star' 2 15.
+Compute log_star' 2 16.
+Compute log_star' 2 17.
+Compute log_star' 2 25.
 
 
 Fixpoint inv_ack_hier (i b n : nat) : nat :=
