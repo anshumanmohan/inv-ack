@@ -1,6 +1,3 @@
-Require Import Omega.
-Require Import Setoid.
-
 Definition euclid_S (et : nat * nat * nat) : nat * nat * nat :=
   match et with
     | (n, m, 0) => (S n, 0, m)
@@ -16,11 +13,11 @@ Fixpoint div_helper (n : nat) (et : nat * nat * nat) : nat * nat * nat :=
 Definition div (n m : nat) : nat * nat :=
   match m with
    | 0 => (0,0)
-   | S m' => match div_helper n (0,0,m') with (* *)
+   | S m' => match div_helper n (0,0,m') with
              (d,r,_) => (d,r)
              end
   end.
-  
+
 Definition div_c (n m : nat) : nat * nat :=
   match div n m with
    | (d,0) => (d,0)
@@ -30,7 +27,7 @@ Definition div_c (n m : nat) : nat * nat :=
 Compute (div 14 5).
 Compute (div_c 14 5).
 
-(* Church's version *) (* can see, eg, SF for further info *)
+(* Church's version *)
 Definition cnat : Type :=
   forall X : Type, (X -> X) -> X -> X.
 
@@ -66,27 +63,9 @@ Definition div' (n m : nat) :=
              end
   end.
 
-(* Primitive recursive log, same basic function diagram trick *)
+(* Primative recursive log, same basic function diagram trick *)
 Require Import List.
 
-(*
-FIRST IMPLEMENTATION OF LOG
-
-Idea:
-- Store a counter that starts from 0, incrementing to n.
-- Keep track of string, in the form of a list, for the m-ary representation of counter.
-- Each step perform add 1 to this string.
-- Each element in the list is a pair (d, m-1-d), where d is a digit in n's m-ary representation.
-  We need the complement (m-1-d) to check when d reaches m.
-
-Rules explanation:
-| nil => (1, b-1) :: nil := If counter is 0, increment to 1.
-| (d, S x) :: r' => (S d, x) :: r' := Add one to counter's last digit, adjust its complement.
-| (d, 0) :: r' => (0, b) :: inc_b b r' := If counter's last digit is m (hence its complement is 0), reset it to 0
-and recursively add 1 to the next digit till no more reset.
-*)
-
-(* function to increment m-ary representation *)
 (* O(1) amortised *)
 Fixpoint inc_b (b : nat) (r : list (nat * nat)) : list (nat * nat) :=
   match r with
@@ -95,63 +74,188 @@ Fixpoint inc_b (b : nat) (r : list (nat * nat)) : list (nat * nat) :=
    | (d, 0) :: r' => (0,b) :: inc_b b r'
   end.
 
-(* function to repeat an action n times *)
 Definition repeat_n {X} n (f : X -> X) : X -> X :=
   nat_cnat n _ f.
 
-(* function to compute log
-Idea: start from 0, increase counter till n.
-Result is n's m-ary representation.
-log n m is its length minus 1
+(* b = base - 1,
+   c = num digits before repeat - 1 
+   amortised O(1) *)
+Fixpoint inc_l1 (b : nat) (c : nat) (r : list (nat * nat * nat)) : list (nat * nat * nat) :=
+  match r with
+   | nil => (c, 1, b - 1) :: nil
+   | (l, d, S x) :: r' => (l, S d, x) :: r'
+   | (_, d, 0) :: r' => match inc_l1 b c r' with
+      | nil => nil (* should never happen? *)
+      | ((0, _, _) :: _) => nil
+      | ((S l', _, _) :: _) as t => (l', 0, b) :: t
+     end
+  end.
+
+Fixpoint hrm (n m : nat) :=
+  match n with
+   | 0 => 0
+   | _ => match m with
+           | 0 => 0
+           | S m' => hrm n m'
+          end
+  end.
+
+Lemma hrm_hrm: forall m, hrm 0 m = 0.
+Proof.
+  intro m. Fail reflexivity.
+Abort.
+
+(*
+Lemma inc_l1_inv_nil: forall b c, exists r,
+  inc_l1 b c r = nil.
+Proof.
+  induction c.
+  + exists ((0,b-1,0) :: nil). trivial.
+  + exists ((0,0,0) :: nil). simpl. trivial.
+
+ destruct IHc.
+  induction r; auto. intros.
+  exfalso. destruct r; simpl in H;
+  destruct a,p,n, c; try discriminate.
+   simpl in H.
+  
+admit.
 *)
+
+Compute (repeat_n 1 (inc_l1 1 0) nil).
+Compute (repeat_n 8 (inc_l1 1 2) nil).
+
+Fixpoint exp b c :=
+  match c with
+   | 0 => 1
+   | S c' => b * exp b c'
+  end.
+
+Fixpoint inc_l2 (b : nat) (r : list (nat * list (nat * nat * nat))) 
+  : list (nat * list (nat * nat * nat)) :=
+  match r with
+  | nil => (0,inc_l1 b 0 nil) :: nil
+  | (c,d) :: r' => match inc_l1 b c d with
+    | nil => let n := exp (S b) c in
+             (n, inc_l1 b n nil) :: inc_l2 b r'
+    | d' => (c, d') :: r'
+    end
+  end.
+
+Compute (repeat_n 1 (inc_l2 1) nil).
+Compute (repeat_n 2 (inc_l2 1) nil).
+Compute (repeat_n 3 (inc_l2 1) nil).
+Compute (repeat_n 4 (inc_l2 1) nil).
+Compute (repeat_n 5 (inc_l2 1) nil).
+Compute (repeat_n 6 (inc_l2 1) nil).
+Compute (repeat_n 7 (inc_l2 1) nil).
+Compute (repeat_n 8 (inc_l2 1) nil).
+Compute (repeat_n 15 (inc_l2 1) nil).
+Compute (repeat_n 19 (inc_l2 1) nil).
+
+Compute (repeat_n 66000 (inc_l2 1) nil).
+
+
+
+Compute (repeat_n 8 (inc_b' 1 2) nil).
+
+
+(S l, 0, b) :: 
+
 (* O(n) *)
 Definition log (n m : nat) : nat :=
   match m with
   | 0 => 0
   | S m' => length (repeat_n n (inc_b m') nil) - 1
   end.
+Print Nat.add.
+
+Fixpoint logger b n lc c : nat :=
+match b with
+| 0 => 0
+| S _ => match n with
+       | 0 => 0
+       | S n' => match c with
+                 | 0 => S (logger b n' (lc * b) (lc - 1))
+                 | S c' => logger b n' lc c'
+                 end
+       end
+end.
+
+Lemma logger_simpl : forall b n lc c, logger b n lc c = logger b (n - c) lc 0.
+Proof.
+induction n.
+- simpl. intros. reflexivity.
+- destruct c.
+  + reflexivity.
+  + destruct b. simpl.
+destruct (n-c); trivial.
+
+Definition logger b n lc c : nat :=
+match b with
+| 0 => 0
+| S _ => let fix logger' n lc c {struct n} :=
+       match n with
+       | 0 => 0
+       | S n' => match c with
+                 | 0 => S (logger' n' (lc * b) (lc - 1))
+                 | S c' => logger' n' lc c'
+                 end
+       end in logger' n lc c
+end.
+
+Lemma logger_b_0 : forall n lc c, logger 0 n lc c = 0.
+Proof.
+intros.
+simpl.
+trivial.
+Qed.
+
+destruct n. simpl.
+trivial.
+simpl.
+trivial.
+Qed.
 
 
-(* SECOND IMPLEMENTATION OF LOG
-Idea: Use a helper function called "logger" to build the automata.
-Will elaborate further when I understand everything
-*)
+Fixpoint logger b n lc c : nat :=
+match b with
+| 0 => 0
+| S _ => match n with
+       | 0 => 0
+       | S n' => match c with
+                 | 0 => S (logger b n' (lc * b) (lc - 1))
+                 | S c' => logger b n' lc c'
+                 end
+       end
+end.
+
+Print logger.
+
+Lemma logger_b_0 : forall n lc c, logger 0 n lc c = 0.
+Proof.
+intros.
+destruct n. simpl.
+trivial.
+simpl.
+trivial.
+Qed.
+
+ unfold logger. simpl.
+
+ reflexivity. simpl.
+
 Fixpoint logger b n lc c : nat :=
   match n with
    | 0 => 0
    | S n' => match c with
-              | 0 => S (logger b n' (lc * b) (lc - 1)) (* *)
+              | 0 => S (logger b n' (lc * b) (lc - 1))
               | S c' => logger b n' lc c'
              end
   end.
-(* O(n) *)
+
 Definition log' b n : nat :=
   logger b n (b * (b - 1)) (b - 1).
-
-Fixpoint logger1 (b:nat) n lc c acc add : nat :=
-  match n with
-   | 0 => 0
-   | S n' => match c with
-              | 0 => S (logger1 b n' acc (lc - 1) (acc+add) add) (* key change *)
-              | S c' => logger1 b n' lc c' (acc+add) add
-             end
-  end.
-
-(* We want to argue that this is O(n) *)
-Definition log1 b n : nat :=
-  logger1 b n (b * (b - 1)) (b - 1) (b * (b-1)) (b * (b-1)).
-(* the last arg is just a pre-calculated magic number
- * which we will add to acc at every step.
- * acc also starts with that number.
- *) 
-
-Lemma checklog'log1: forall n b,
-    log' b n = log1 b n.
-Proof.
-Abort.
-
-Compute log1 5 700.
-Compute log' 5 700.    
 
 Fixpoint exp b e : nat :=
   match e with
@@ -192,16 +296,16 @@ Compute (log'' 3 82).
 
 
 
-(* Fixpoint logger' b n lbase value logcount nextcount countercount thiscount : nat := *)
-(*   match value with *)
-(*    | 0 => logcount *)
-(*    | S n' => match thiscount with *)
-(*               | S c' => logger' base n' logcount nextcount countercount c' *)
-(*               | 0 => match counter *)
+Fixpoint logger' b n lbase value logcount nextcount countercount thiscount : nat :=
+  match value with
+   | 0 => logcount
+   | S n' => match thiscount with
+              | S c' => logger' base n' logcount nextcount countercount c'
+              | 0 => match counter
 
 
 
-(* Fixpoint logger' base l *)
+Fixpoint logger' base l
 
 Compute (log' 10 1025).
 
@@ -214,22 +318,22 @@ Compute (logger 25 3 18 6).
 Compute (logger 19 3 18 0).
 
 
-(* logger 28 3 6 2 |-> *)
-(* logger 27 3 6 1 |-> *)
-(* logger 26 3 6 0 |-> *)
-(* S (logger 25 3 18 6) |-> *)
+logger 28 3 6 2 |->
+logger 27 3 6 1 |->
+logger 26 3 6 0 |->
+S (logger 25 3 18 6) |->
 
 
-(* S (logger 19 3 18 0) *)
+S (logger 19 3 18 0)
 
 
-(* Definition log' n b : nat := *)
-(*   match b with *)
-(*    | 0 => 0 *)
-(*    | S b' => S (logger (n - 1) b (b * (b-1)) (b-1)) *)
-(*   end. *)
+Definition log' n b : nat :=
+  match b with
+   | 0 => 0
+   | S b' => S (logger (n - 1) b (b * (b-1)) (b-1))
+  end.
 
-(* Compute (log'' 5 2). *)
+Compute (log' 5 2).
 
 Compute (logger 20 3 6 2).
 
