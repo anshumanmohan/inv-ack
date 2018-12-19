@@ -1,0 +1,20 @@
+The time complexity of the union-find data structure has traditionally
+been hard to estimate, especially when it is implemented with the 
+heuristic rules of \emph{path compression} and \emph{weighted union}. 
+Tarjan showed that for a sequence of~$m$~FINDs intermixed with~$n-1$~UNIONs 
+such that~$m \geq n$,~the time required~$t(m,n)$~is bounded
+as:~$k_{1}m\alpha(m,n) \leq t(m,n) \leq k_{2}m\alpha(m,n)$.~
+Here $k_{1}$ and $k_{2}$ are positive constants and $\alpha(m,n)$ is 
+the inverse of the Ackermann function.
+
+The Ackermann function, commonly denoted $A(m,n)$, has a few variants,
+but a well-known version is:
+blah
+
+The inverse of this function, commonly denoted $\alpha(m,n)$, 
+also has a few variants. Happily, however, the various definitions 
+of $\alpha$ have very similar asymptotic behaviour, in that they 
+differ by small constants only. In this paper, we mechanize a 
+particularly elegant version of $\alpha$ in Gallina, and argue 
+for blah time bound. We then manoeuvre towards (this other definition)
+of $\alpha$. 
