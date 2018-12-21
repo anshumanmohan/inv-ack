@@ -1,0 +1,113 @@
+(* ================================================
+========= DEFINITIONS ============================ *)
+
+
+Fixpoint div_worker (b n cd b1 : nat) : nat
+:=
+match n with
+| 0    => 1
+| 1    => 1
+| S n' => match cd with
+          | 0     => div_worker b n' b1 b1
+          | S cd' => div_worker b n' cd' b1
+          end
+end.
+
+Definition div (b n : nat)
+:= match (b-1) with | b1 => div_worker b n b1 b1 end.
+
+
+Fixpoint next_level_worker (f : nat -> nat) (n n1 cd n2 : nat) : nat
+:=
+match n with
+| 0    => 0
+| 1    => 0
+| S n' => match cd with
+          | 0     => next_level_worker f n' n2 (n1 - n2 - 1) (f n2)
+          | S cd' => next_level_worker f n' n1 cd' n2
+          end
+end.
+
+Definition next_level f n
+:= match (f n) with
+   | n1 => match (f n1) with
+           | n2 => next_level_worker f n n1 (n - n1 - 1) n2
+           end
+end.
+
+Fixpoint inv_ack_hier i b n
+:= match i with
+   | 0 => n
+   | 1 => div b n
+   | S i' => next_level (inv_ack_hier i' b) n
+end.
+
+
+Definition next_level_fast f n
+:= match n with
+   | 1 => 0
+   | _ => match (f n) with
+          | n1 => S(next_level f n1) end
+end.
+
+Fixpoint inv_ack_hier_fast i b n
+:= match i with
+   | 0 => n
+   | 1 => div b n
+   | S i' => next_level_fast (inv_ack_hier i' b) n
+end.
+
+
+(* ================================================
+============= THEOREMS ============================ *)
+
+Fixpoint repeat (f: nat -> nat) (rep n : nat) : nat
+:= match rep with
+   | 0      => n
+   | S rep' => f (repeat f rep' n)
+end.
+
+
+(* USEFUL LEMMA ABOUT NAT *)
+Lemma nat_sub_lt : forall m n p, (m + p <= n) -> (p <= n - m).
+Proof.
+induction m.
+- simpl. intros. destruct n. simpl. trivial. simpl. trivial.
+- simpl. intros. destruct n. inversion H. simpl. 
+
+
+Lemma next_level_interstate_1 : forall f n n1 cd n2,
+next_level_worker f n n1 cd n2 = next_level_worker f (n - cd) n1 0 n2.
+Proof.
+intros f n n1 cd n2.
+destruct n.
+simpl. trivial.
+generalize dependent n. induction cd.
+- simpl. trivial.
+- intro.
+  replace (next_level_worker f (S n) n1 (S cd) n2) with (next_level_worker f n n1 cd n2).
+  replace (S n - S cd) with (n - cd).
+  destruct n.
+  + simpl. trivial.
+  + rewrite IHcd. trivial.
+  + trivial.
+  + symmetry. simpl. destruct n. trivial. trivial.
+Qed.
+
+
+Lemma next_level_interst_2 : forall f n n1 cd n2, (1 + cd < n) ->
+next_level_worker f n n1 cd n2 = 1 + next_level_worker f (n - cd) n2 (n1 - n2 - 1) (f n2).
+Proof.
+intros. rewrite next_level_interstate_1.
+remember (n - cd) as m.
+destruct m. 
+
+
+Theorem next_level_repeat : forall (f : nat -> nat) (n k : nat),
+        (forall m, m <> 0 -> f m < m)
+        -> (next_level f n = k)
+        -> (repeat f k n <= 1 /\ (forall p, repeat f p n <= 1 -> k <= p)).
+Proof.
+intros f n k Hf Hk.
+unfold next_level in Hk.
+Abort.

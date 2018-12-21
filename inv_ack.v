@@ -87,10 +87,12 @@ match n with
 | S n' => (inv_ack_hier i 2 n') :: (inv_ack_hier_test i n')
 end.
 
-(* Compute inv_ack_hier_test 1 25.
+Compute inv_ack_hier_test 1 25.
 Compute inv_ack_hier_test 2 25.
 Compute inv_ack_hier_test 3 25.
-Compute inv_ack_hier_test 4 25. *)
+Compute inv_ack_hier_test 4 25.
+
+Print Nat.sub.
 
 Fixpoint inv_ack_countdown_worker
          (f f1 f2 : nat -> nat -> nat)

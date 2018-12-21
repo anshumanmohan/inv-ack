@@ -108,37 +108,16 @@ Definition next_inv_ack_level_cost (f : nat -> nat -> nat -> nat * nat) b n cost
 
 Definition log_cost' b n cost := next_inv_ack_level_cost div_c_cost b n cost.
 
-Compute log_cost' 2 2 0.
-Compute log_cost' 2 4 0.
-Compute log_cost' 2 8 0.
-Compute log_cost' 2 16 0.
-Compute log_cost' 2 3 0.
-Compute log_cost' 2 5 0.
-Compute log_cost' 2 9 0.
-Compute log_cost' 2 17 0.
-
-Compute log_cost' 3 3 0.
-Compute log_cost' 3 9 0.
-Compute log_cost' 3 27 0.
-Compute log_cost' 3 4 0.
-Compute log_cost' 3 10 0.
-Compute log_cost' 3 28 0.
-
 Definition log_star_cost' b n cost := next_inv_ack_level_cost log_cost' b n cost.
 
-Compute log_star_cost' 2 2 0.
-Compute log_star_cost' 2 4 0.
-Compute log_star_cost' 2 16 0.
-Compute log_star_cost' 2 17 0.
-Compute log_star_cost' 2 18 0.
-Compute log_star_cost' 2 19 0.
-Compute log_star_cost' 2 20 0.
-Compute log_star_cost' 2 25 0.
+Definition log_star_cost'' b n cost :=
+match (next_inv_ack_level_cost log_cost' b (log b n) cost) with
+| (v, c) => (S v, S c) end.
 
 
-Fixpoint inv_ack_hier (i b n : nat) : nat :=
+Fixpoint inv_ack_hier_cost (i b n cost : nat) : nat * nat :=
 match i with
-| 0 => n
-| 1 => div_c b n
-| S i' => next_inv_ack_level (inv_ack_hier i') b n
+| 0 => (n, 0)
+| 1 => div_c_cost b n cost
+| S i' => next_inv_ack_level_cost (inv_ack_hier_cost i') b n cost
 end.
