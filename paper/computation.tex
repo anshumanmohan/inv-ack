@@ -1,0 +1,78 @@
+The main idea to compute the inverse Ackermann function using what we have established so far is to use \Cref{thm: inv_ack_ack} to iteratively compute each level in the hierarchy starting from input $n+2$, then stop when the condition $\alpha_m(n+2) \le m + 3$ is met.
+
+In order for this computation to run in linear time, we need to first make sure \textit{each} level $\alpha_m(n+2)$ is computed in linear time. We will then use a trick to achieve the linear time bound in the total computation using the relation
+\begin{equation}
+\alpha_m(n+2) = 1 + \alpha_m(\alpha_{m-1}(n+2)) \ \ \ \forall m\in \mathbb{N}_{>0}
+\end{equation}
+
+\subsection{Inverse Ackermann hierarchy in linear time}
+
+First note that, in the Gallina specification, all natural numbers are represented with a string of $\S$, the successor notation. All recursive functions in Gallina are required to decrease on one of its inputs, one or a few successors per recursive step. Thus all recursive functions, or Fixpoints in Gallina, must run in at least linear time over one of their inputs.
+
+To compute the inverse Ackermann hierarchy for some input $n$ with a Gallina-complied function, we look at its generalization: Given a contraction $f$ over $\mathbb{N}$ and a Gallina function $\widetilde{f}$ computing $f$, we find a Gallina function $\widetilde{f^*}$ to compute its countdown, $f^*$.
+
+\begin{defn} \label{defn: countdown rec helper}
+Let $\mathcal{F}_k$ be the set of all Gallina functions $g: \mathbb{N}^k \to \mathbb{N}$. The \textit{countdown recursor helper} is an operator $\CRH : \mathcal{F}_1 \to \mathcal{F}_3$ such that for all $g\in \mathcal{F}_1$ and $n_0, n_1, c\in \mathbb{N}$:
+\begin{equation}
+\begin{aligned}
+& \CRH\left(g\right)\left(n_0, n_1, c\right) = \\
+& \begin{cases}
+0 & \text{if } n_0 \le 1. \\
+1 & \text{if } n_0 \ge 2, n_1 \le 1. \\
+1 + \CRH \left(g\right)
+		\left(n_0-1, g(n_1), n_1 - g(n_1) - 1\right)
+		& \text{if } n_0\ge 2, n_1 \ge 2, c = 0. \\
+\CRH \left(g\right)
+			\left(n_0-1, n_1, c-1\right)
+		& \text{if } n_0\ge 2, n_1\ge 2, c\ge 1.
+\end{cases}
+\end{aligned}
+\end{equation}
+\end{defn}
+
+It is trivial to see that for all $g\in \mathcal{F}$, $\CRH(g)$ is a Gallina Fixpoint (a Gallina-complied recursive function) in $\mathcal{F}_3$ since its second input $n_0$ decreases by $1$ at every recursive step.
+
+\begin{defn} \label{defn: countdown rec}
+The \textit{countdown recursor} is an operator $\CR : \mathcal{F}_1 \to \mathcal{F}_1$ such that for all $g\in \mathcal{F}_1$ and $n\in \mathbb{N}$:
+\begin{equation}
+\CR(g)(n) = \CRH(g)(n, g(n), n - g(n) - 1)
+\end{equation}
+\end{defn}
+
+Since it is built by a composition of a Gallina Fixpoint $\CRH$ and a Gallina function $g$, $\CR(g)$ is indeed a Gallina function in $\mathcal{F}_1$. We prove that $\CR$ is the equivalence of the countdown operation in Gallina for contractions:
+
+\begin{lem} \label{lem: CRH_countdown}
+Let $f: \mathbb{N}\to \mathbb{N}$ be a contraction. Suppose a function $\widetilde{f}\in \mathcal{F}_1$ computes $f$, then $\CR\left(\widetilde{f}\right)$ is a function in $\mathcal{F}_1$ computing $f^*$.
+\end{lem}
+
+\begin{proof}
+TODO TODO TODO
+\end{proof}
+
+With this lemma, we can define the equivalence of the inverse Ackermann hierarchy in Gallina:
+
+\begin{defn}
+The Gallina inverse Ackermann hierarchy is a sequence of functions $\wt{\alpha}_0, \wt{\alpha}_1, \ldots $ such that for all $m, n\in \mathbb{N}$:
+\begin{equation}
+\wt{\alpha}_m(n) = \begin{cases}
+n - 2 & \text{if } m = 0 \\ \CR\left(\wt{\alpha}_{m-1}\right)(n) & \text{if } m \ge 1
+\end{cases}
+\end{equation}
+Note that $x-y$ in Gallina is equivalent to $\max\{x-y, 0\}$ in practice.
+\end{defn}
+
+\Cref{lem: CRH_countdown} and \Cref{thm: inv_ack_countdown} trivially implies that $\wt{\alpha}_m$ is a Gallina computation of $\alpha_m$ for all $m\in \mathbb{N}$.
+
+The important thing to come up with Gallina computations for the hierarchy is we want to compute them in linear time. We assert the hierarchy $\left\{\wt{\alpha}_m\right\}$ succeeds in doing so:
+
+\begin{thm}
+For each $m \in \mathbb{N}$, computing $\wt{\alpha}_m(n)$ takes at most $(m + o(1))n$ steps, where $n$ tends to infinity.
+\end{thm}
+
+\begin{proof}
+TODO TODO TODO
+\end{proof}
+
+\subsection{Inverse Ackermann in linear time}
+
+TODO TODO TODO

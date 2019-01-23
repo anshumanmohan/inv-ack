@@ -44,15 +44,46 @@
 
 %% The amssymb package provides various useful mathematical symbols
 \usepackage{amssymb}
+\usepackage{amsmath}
 %% The amsthm package provides extended theorem environments
-%% \usepackage{amsthm}
+\usepackage{amsthm}
+
+\usepackage[colorlinks=True, citecolor=red, linkcolor=blue]{hyperref}
+\usepackage{cleveref}
 
 %% The lineno packages adds line numbers. Start line numbering with
 %% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
 %% for the whole article with \linenumbers.
 \usepackage{lineno}
 
+%% Use package enumitem to align enumeration and itemization
+\usepackage{enumitem}
+
 \journal{Information Processing Letters}
+
+
+%% NEW COMMANDS =============================================
+
+\newcommand{\Ack}{\ensuremath{\text{A}}}
+\newcommand{\CA}{\ensuremath{\text{C}}}
+\renewcommand{\S}{\ensuremath{\text{S}}}
+\newcommand{\CR}{\ensuremath{\text{CR}}}
+\newcommand{\CRH}{\ensuremath{\text{CRH}}}
+\newcommand{\wt}[1]{\ensuremath{\widetilde{#1}}}
+
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{ex}[thm]{Example}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{col}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem*{hypo}{Hypothesis}
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem*{rem}{Remarks}
+
+%% DOCUMENT =================================================
 
 \begin{document}
 
@@ -68,7 +99,7 @@
 %% use the cortext command for theassociated footnote;
 %% use the ead command for the email address,
 %% and the form \ead[url] for the home page:
-\title{Inverse Ackermann in Linear Time}
+\title{An alternative definition for the Inverse Ackermann function, and a linear time computation in Gallina}
 
 %% \tnotetext[label1]{}
 %% \author{Name\corref{cor1}\fnref{label2}}
@@ -89,7 +120,7 @@
 \address{}
 
 \begin{abstract}
-We build a heirarchy of functions in Gallina that computes the result of the inverse Ackermann function in linear time. Some of the functions in the heirarchy are themselves novel results.
+We build a hierarchy of functions that are upper inverse of the usual Ackermann hierarchy, then use this inverse hierarchy to compute the inverse of the diagonal Ackermann function $\Ack{n, n}$. We show that this computation is consistent with the usual definition of the inverse Ackermann function $\alpha(n)$ and implement this computation in Gallina, where we show that it runs in linear time.
 \end{abstract}
 
 \begin{keyword}
@@ -111,9 +142,13 @@ Inverse Ackermann \sep Automata \sep Union-Find \sep Division
 \label{sec:overview}
 \input{overview.tex}
 
-\section{The Inverse Ackermann Heirarchy}
-\label{sec:heirarchy}
-\input{heirarchy.tex}
+\section{The Inverse Ackermann Hierarchy}
+\label{sec:hierarchy}
+\input{hierarchy.tex}
+
+\section{A linear time computation in Gallina}
+\label{sec:computation}
+\input{computation.tex}
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
@@ -125,20 +160,18 @@ Inverse Ackermann \sep Automata \sep Union-Find \sep Division
 %% If you have bibdatabase file and want bibtex to generate the
 %% bibitems, please use
 %%
-%%  \bibliographystyle{elsarticle-num} 
-%%  \bibliography{<your bibdatabase>}
+\bibliographystyle{elsarticle-num}
+\bibliography{references.bib}
 
 %% else use the following coding to input the bibitems directly in the
 %% TeX file.
 
-\begin{thebibliography}{00}
+%%\begin{thebibliography}{00}
 
 %% \bibitem{label}
 %% Text of bibliographic item
 
-\bibitem{}
-
-\end{thebibliography}
+%%\end{thebibliography}
 \end{document}
 \endinput
 %%
