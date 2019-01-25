@@ -41,7 +41,7 @@ As many texts have suggested, $\Ack(m, n)$ increases extremely fast on both inpu
 \Ack(k, k) < n \le \Ack(k+1, k+1)
 \end{equation}
 
-The naive algorithm would need to compute $\Ack{t, t}$ for $t = 0, 1, \ldots, k, k+1$ before terminating. Although one could argue that the total time to compute $\Ack{t, t}$ for $t\le k$ is still $O(n)$, as they are all less than $n$, the time to compute $\Ack(k+1, k+1)$ could be astronomically larger than $n$. This situation motivates the need for an alternative, more efficient approach to compute the inverse Ackermann function.
+The naive algorithm would need to compute $\Ack{t, t}$ for $t = 0, 1, \ldots, k, k+1$ before terminating. Although one could argue that the total time to compute $\Ack(t, t)$ for $t\le k$ is still $O(n)$, as they are all less than $n$, the time to compute $\Ack(k+1, k+1)$ could be astronomically larger than $n$. This situation motivates the need for an alternative, more efficient approach to compute the inverse Ackermann function.
 
 \subsection{The hierarchy of Ackermann functions}
 

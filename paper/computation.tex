@@ -5,7 +5,7 @@ In order for this computation to run in linear time, we need to first make sure 
 \alpha_m(n+2) = 1 + \alpha_m(\alpha_{m-1}(n+2)) \ \ \ \forall m\in \mathbb{N}_{>0}
 \end{equation}
 
-\subsection{Inverse Ackermann hierarchy in linear time}
+\subsection{Inverse Ackermann hierarchy in linear time}  \label{subsec: inv_ack_hier linear}
 
 First note that, in the Gallina specification, all natural numbers are represented with a string of $\S$, the successor notation. All recursive functions in Gallina are required to decrease on one of its inputs, one or a few successors per recursive step. Thus all recursive functions, or Fixpoints in Gallina, must run in at least linear time over one of their inputs.
 
@@ -65,7 +65,7 @@ Note that $x-y$ in Gallina is equivalent to $\max\{x-y, 0\}$ in practice.
 
 The important thing to come up with Gallina computations for the hierarchy is we want to compute them in linear time. We assert the hierarchy $\left\{\wt{\alpha}_m\right\}$ succeeds in doing so:
 
-\begin{thm}
+\begin{thm}  \label{thm: inv_ack_hier linear}
 For each $m \in \mathbb{N}$, computing $\wt{\alpha}_m(n)$ takes at most $(m + o(1))n$ steps, where $n$ tends to infinity.
 \end{thm}
 
@@ -73,6 +73,50 @@ For each $m \in \mathbb{N}$, computing $\wt{\alpha}_m(n)$ takes at most $(m + o(
 TODO TODO TODO
 \end{proof}
 
-\subsection{Inverse Ackermann in linear time}
+\subsection{Inverse Ackermann in linear time}  \label{subsec: inv_ack linear}
 
-TODO TODO TODO
+As mentioned, the task is to find the minimum $x$ for which $\alpha_x(n) \le x + 3$ for $n\ge 4$. It is tempting to go for a naive approach, after all the efficiencies we have developed so far: Starting from $x=0$, we iteratively compute $\alpha_x(n)$ and compare it with $x+3$. However, by our earlier analysis in \Cref{thm: inv_ack_hier linear}, the total amount of time needed is
+
+$$ T(n) = \sum_{m = 0}^{\alpha(n)-1}(m + o(1))n = O\left(n\alpha(n)^2\right) $$
+
+which is pretty efficient, given how slow-growing $\alpha(n)$ is. However, our ultimate goal is $O(n)$ time, thus we came up with a better approach. Interestingly, it is also based on \Cref{thm: inv_ack_hier linear}. Specifically, using \eqref{eq: countdown}, \Cref{thm: inv_ack_hier linear} implies we can actually compute $\alpha_m(n)$ in $O(\alpha_{m-1}(n))$ time, \textit{if} $\alpha_{m-1}(n)$ is given. It is thus beneficial if we retain the value of $\alpha_{m-1}(n)$ when computing $\alpha_m(n)$. The definition below is our Gallina recursor for this.
+
+\begin{defn}  \label{defn: inv_ack_recursor_helper}
+The inverse Ackermann recursor helper is a function $\IARH : \mathcal{F}_1\times \mathbb{N}^3 \to \mathbb{N}$ such that for all $g\in \mathcal{F}_1, n, c_0, c\in \mathbb{N}$, we have:
+\begin{equation}
+\begin{aligned}
+& \IARH(g, n, c_0, c) =  \\
+& \begin{cases}
+c & \text{if } c = 1 \\
+1 + \IARH\left(\CR(g), n, n - \CR(g)(n) - 1, c - 1\right) & \text{if } c \ge 1, c_0 = 0 \\
+\IARH\left(g, n - 1, c_0 - 1, c - 1\right) & \text{if } c \ge 1, c_0 \ge 1
+\end{cases}
+\end{aligned}
+\end{equation}
+Note that $n - 1$ in Gallina means $\max\{n-1, 0\}$ here.
+\end{defn}
+
+\begin{defn}  \label{defn: inv_ack_recursor}
+The inverse Ackermann recursor is a function $\IAR \in \mathcal{F}_1$ such that for all $n\in \mathbb{N}$, we have
+\begin{equation}
+\IAR(n) = \begin{cases}
+0 & \text{if } n \le 1 \\ \IARH\left(\alpha_0, n + 2, 2, n\right) & \text{if } n\ge 2
+\end{cases}
+\end{equation}
+\end{defn}
+
+The following theorem is a central result in this paper, which asserts the correctness of $\IAR$.
+
+\begin{thm} \label{thm: inv_ack_correct}
+$\IAR$ is a Gallina function computing $\alpha(n)$.
+\end{thm}
+
+It is trivial to see that both $\IARH$ and $\IAR$ are Gallina functions. It suffices to show that $\IAR(n) = \alpha(n)$ for $n\ge 2$, since their values already match for $n\le 1$. Furthermore, if we trace the first two recursive steps in $\IARH$, we obtain
+\begin{equation}
+\IARH(n+2, \alpha_0, 2, n) = 1 + \IARH(\alpha_1, n-2, n-\alpha_1(n)-1, n-3) \ \ \forall n\ge 2
+\end{equation}
+It then suffices to show the following:
+
+\begin{lem}
+For all $n\ge 2$, $\IARH(\alpha_1, n, n - \alpha_1(n) - 1, n - 3) = \min\left\{m : \alpha_m(n+2)\le m+3 \right\}$.
+\end{lem}
