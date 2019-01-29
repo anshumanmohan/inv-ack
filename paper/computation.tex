@@ -30,7 +30,7 @@ Let $\mathcal{F}_k$ be the set of all Gallina functions $g: \mathbb{N}^k \to \ma
 \end{equation}
 \end{defn}
 
-It is trivial to see that for all $g\in \mathcal{F}$, $\CRH(g)$ is a Gallina Fixpoint (a Gallina-complied recursive function) in $\mathcal{F}_3$ since its second input $n_0$ decreases by $1$ at every recursive step.
+It is trivial to see that for all $g\in \mathcal{F}$, $\CRH(g)$ is a Gallina Fixpoint (a Gallina-complied recursive function) in $\mathcal{F}_3$ since its first input $n_0$ decreases by $1$ at every recursive step.
 
 \begin{defn} \label{defn: countdown rec}
 The \textit{countdown recursor} is an operator $\CR : \mathcal{F}_1 \to \mathcal{F}_1$ such that for all $g\in \mathcal{F}_1$ and $n\in \mathbb{N}$:
@@ -45,8 +45,29 @@ Since it is built by a composition of a Gallina Fixpoint $\CRH$ and a Gallina fu
 Let $f: \mathbb{N}\to \mathbb{N}$ be a contraction. Suppose a function $\widetilde{f}\in \mathcal{F}_1$ computes $f$, then $\CR\left(\widetilde{f}\right)$ is a function in $\mathcal{F}_1$ computing $f^*$.
 \end{lem}
 
-\begin{proof}
-TODO TODO TODO
+\begin{proof}[Proof Sketch]
+Let $g := \wt{f}$.
+Firstly, from \Cref{defn: countdown rec helper}, we can prove that for all $n_0, n1, c, k\in \mathbb{N}$ such that $n_0\ge 2$ and $k\le \min\{n_0, c\}$:
+\begin{equation*}
+\CRH(g)\left(n_0, n_1, c\right) = \CRH(g)\left(n_0 - k, n_1, c - k\right)
+\end{equation*}
+This implies that if $n_0\ge c + 2$, then
+\begin{equation*}
+\CRH(g)\left(n_0, n_1, c\right) = 1 + \CRH(g)\left(n_0 - c - 1, g(n_1), n_1 - g(n_1) - 1\right)
+\end{equation*}
+If $n - 1\ge g(n) \ge 1$, let $n_0 := n$, $n_1 := g(n)$, $c := n - g(n) - 1$ gives:
+\begin{equation*}
+\begin{aligned}
+& \CRH(g)\left(n, g(n), n - g(n) - 1\right) \\
+& = 1 + \CRH(g)\left(g(n), g(g(n)), g(n) - g(g(n)) - 1\right)
+\end{aligned}
+\end{equation*}
+Or
+\begin{equation*}
+\CR(g)(n) = 1 + \CR(g)(g(n))
+\end{equation*}
+Together with the initial values of $\CRH(g)$, we conclude that $\CRH(g)$, or $\CRH\left(\wt{f}\right)$ indeed computes $f^*$.
+
 \end{proof}
 
 With this lemma, we can define the equivalence of the inverse Ackermann hierarchy in Gallina:

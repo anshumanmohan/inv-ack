@@ -722,3 +722,20 @@ replace x with (x + 0). replace (S (S (x + 0) + 2)) with (x + 0 + 4).
 rewrite (inv_ack_helper_thm x 0 _). rewrite (plus_comm _ 2). simpl.
 omega. omega. omega. omega. omega.
 Qed.
+
+
+Fixpoint sum_f (f : nat -> nat) (k n : nat) :=
+match k with
+| 0 => n
+| S k' => n + sum_f f k' (f n)
+end.
+
+Definition HS n := match (inv_ack_hier 2), (inv_ack_hier 3 n) with
+| f, m => m + sum_f f (m - 1) (f n) end.
+
+Compute HS 5.
+Compute HS 6.
+Compute HS 9.
+Compute HS 4.
+
+Time Compute (inv_ack 10000).

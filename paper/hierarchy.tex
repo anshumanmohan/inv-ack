@@ -20,9 +20,13 @@ A function $f: \mathbb{N} \to \mathbb{N}$ is a \textit{contraction} if $f(0) = 0
 
 \begin{thm} \label{thm: countdown contraction}
 If $f: \mathbb{N} \to \mathbb{N}$ is a contraction, then
-\begin{equation}
+\begin{equation*}
 A = \left\{k: f^{(k)}(n) \le 1\right\} \neq \varnothing \ \text{ and } \ f^*(n) = \min A
-\end{equation}
+\end{equation*}
+In other words,
+\begin{equation*}
+\forall n, k\in \mathbb{N}, \ f^*(n) \le k \iff f^{(k)}(n) \le 1
+\end{equation*}
 \end{thm}
 
 \begin{proof}[Proof sketch]
@@ -66,12 +70,23 @@ Having sufficiently established the inverse Ackermann hierarchy, we now link it 
 
 The canonical Ackermann hierarchy is in short a somewhat ``cleaner'' variant of the Ackermann hierarchy, with simpler initial values, but still built on the repeated application operation.
 
+\begin{defn} \label{defn: rep_app}
+For any function $F: \mathbb{N} \to \mathbb{N}$, the \textit{repeater} of $F$ is another function $F^R : \mathbb{N} \to \mathbb{N}$ defined by:
+\begin{equation}
+F^R(n) = \begin{cases}
+1 & \text{ if } n = 0 \\ F\left(F^R(n - 1)\right) & \text{ if } n \ge 1
+\end{cases}
+\end{equation}
+In other words, $F^R(n) = F^{(n)}\left(F^R(0)\right) = F^{(n)}(1) \ \ \forall n$.
+\end{defn}
+
+Formally defining the repeated application operation helps us define the canonical Ackermann hierarchy in a neat way below.
+
 \begin{defn} \label{defn: can_ack_hier}
 The canonical Ackermann hierarchy is a sequence of functions $\text{C}_0, \text{C}_1, \ldots $ defined as:
 \begin{enumerate}
 	\item $\CA_0(n) = n + 2 \ \ \ \forall n\in \mathbb{N}$.
-	\item $\CA_m(0) = 1 \ \ \ \forall m\in\mathbb{N}_{>0}$.
-	\item $\CA_m(n) = \CA_{m-1}\left(\CA_m(n-1)\right) = \CA_{m-1}^{(n)}(0) \ \ \forall m, n\in \mathbb{N}_{>0}$.
+	\item $\CA_m = \CA_{m-1}^R \ \ \forall m\in \mathbb{N}_{>0}$.
 \end{enumerate}
 \end{defn}
 
@@ -90,45 +105,38 @@ In other words
 
 Before proving this theorem, we will need to prove each function in the inverse and canonical Ackermann hierarchy is increasing (non-strictly). Then \eqref{eq: inv_ack_can_ack} is sufficient to explain the ``inverse'' relationship between them.
 
-\begin{lem} \label{lem: inv_ack_hier_incr}
-For all $m\in \mathbb{N}$, $\alpha_m$ is increasing.
+%\begin{lem} \label{lem: inv_ack_hier_incr}
+%For all contraction $f$, if $f$ is increasing then so is $f^*$.
+%\end{lem}
+%
+%\begin{proof}
+%
+%\end{proof}
+%
+%\begin{lem}
+%For all function $F: \mathbb{N}\to \mathbb{N}$, if $F$ is increasing then so is $F^R$.
+%\end{lem}
+%
+%\begin{proof}
+%TODO TODO TODO
+%\end{proof}
+
+\begin{lem}  \label{lem: countdown_rep_app}
+For any functions $f, F: \mathbb{N} \to \mathbb{N}$, if $f$ is a contraction and $\forall n, N\in \mathbb{N}$, $f(N) \le n \iff N \le F(n)$, then
+$$ \forall n, N\in \mathbb{N}, N\le f^*(n) \iff N \le F^R(n) $$
 \end{lem}
 
 \begin{proof}
-TODO TODO TODO
+By \Cref{thm: countdown contraction} and \Cref{defn: rep_app}, we have:
+$\displaystyle f^*(N)\le n \iff f^{(n)}(N) \le 1 \iff N \le F^{(n)}(1) = F^R(n) $
 \end{proof}
 
-\begin{lem}
-For all $m\in \mathbb{N}$, $\CA_m$ is increasing.
-\end{lem}
-
-\begin{proof}
-TODO TODO TODO
-\end{proof}
-
-Now we can proceed with proof for \Cref{thm: inv_ack_can_ack}
+Now we can proceed with the proof for \Cref{thm: inv_ack_can_ack}
 
 \begin{proof}[Proof of \Cref{thm: inv_ack_can_ack}]
-We prove by induction on $m$.
-
-\noindent\textbf{Base case:} $m = 0$. The goal becomes $N - 2\le n \iff N\le n + 2$, which is trivial.
-
-\noindent\textbf{Inductive step:} Let us choose any $m, n_0, N_0\in \mathbb{N}$. Suppose that we have:
-\begin{equation}
-\forall n, N\in \mathbb{N}, \alpha_{m-1}(N) \le n \iff N \le \CA_{m-1}(n)
-\end{equation}
-There are two directions:
-\begin{enumerate}[leftmargin=*]
-	\item $(\implies)$. Suppose $\alpha_m(N_0) \le n_0$. If $N_0\le 1$, we automatically have $N_0 = C_m(0)\le C_m(n)$. Otherwise we have
-	\begin{equation*}
-	\alpha_m(N) = 1 + \alpha_m(\alpha_{m-1}(N)) \le n
-	\implies \alpha_m(\alpha_{m-1})
-	\end{equation*}
-	TODO TODO TODO TODO
-	
-	\item $N_0\le \CA_m(n_0) \implies \alpha_m(N_0) \le n_0$. TODO TODO TODO
-\end{enumerate}
-
+We prove by induction on $m$. The base case is the following statement:
+$$ \forall n, N\in \mathbb{N}, \ N - 2\le n \iff N \le n + 2 $$
+, which is trivial. The inductive step follows directly from \Cref{lem: countdown_rep_app}.
 \end{proof}
 
 Now that we have established our canonical Ackermann hierarchy and its relation with the inverse Ackermann hierarchy, let us connect it to the original Ackermann hierarchy to complete the link.
@@ -137,8 +145,15 @@ Now that we have established our canonical Ackermann hierarchy and its relation 
 For all $m, n\in \mathbb{N}$, we have $\CA_m(n+2) = \Ack_{m+1}(n) + 2$.
 \end{thm}
 
-\begin{proof}
-TODO TODO TODO
+\begin{proof} TODO TODO TODO.
+%An induction on $m$ will suffice. The base case is the following:
+%$$ \forall n\in \mathbb{N}, \ (n + 2) + 2 = \Ack_1(n) + 2 $$
+%, which is trivial. For the inductive step, suppose $m\ge 1$ and
+%$\displaystyle \forall n\in \mathbb{N}, \CA_{m-1}(n+2) = \Ack_m(n) + 2 $.
+%
+%We need to prove the statement $P(n) := \CA_m(n+2) = \Ack_{m+1}(n) + 2$ holds for all $n\in \mathbb{N}$. Again, we use induction on $n$.
+%
+%For $n = 0$, $P(0) := \CA_m(2) = \Ack_{m+1}(0) + 2$, or $\CA_{m-1}(\CA_{m-1}(1)) = \Ack_m(1) + 2$.
 \end{proof}
 
 \subsection{Linking it all together}
