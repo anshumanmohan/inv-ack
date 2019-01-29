@@ -1,5 +1,0 @@
-[0] Config.pm:302> INFO - This is Biber 2.10
-[0] Config.pm:305> INFO - Logfile is 'inv-ack.blg'
-[31] biber-MSWIN64:313> INFO - === 
-[60] Biber.pm:371> INFO - Reading 'inv-ack.bcf'
-[149] Utils.pm:193> WARN - No data sources defined!

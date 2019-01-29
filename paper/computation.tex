@@ -133,11 +133,21 @@ $\IAR$ is a Gallina function computing $\alpha(n)$.
 \end{thm}
 
 It is trivial to see that both $\IARH$ and $\IAR$ are Gallina functions. It suffices to show that $\IAR(n) = \alpha(n)$ for $n\ge 2$, since their values already match for $n\le 1$. Furthermore, if we trace the first two recursive steps in $\IARH$, we obtain
-\begin{equation}
-\IARH(n+2, \alpha_0, 2, n) = 1 + \IARH(\alpha_1, n-2, n-\alpha_1(n)-1, n-3) \ \ \forall n\ge 2
-\end{equation}
+\begin{equation*}
+\begin{aligned}
+& \IARH(n+2, \alpha_0, 2, n) \\
+& = 1 + \IARH(\alpha_1, n-2, n-\alpha_1(n)-1, n-3) \ \ \forall n\ge 2
+\end{aligned}
+\end{equation*}
 It then suffices to show the following:
 
+\begin{lem}  \label{lem: inv_ack_rec_helper}
+For all $n\ge 2$,
+$$\IARH(\alpha_1, n, n - \alpha_1(n) - 1, n - 3) = \min\left\{m : \alpha_m(n+2)\le m+3 \right\}$$.
+\end{lem}
+
+Before proving \Cref{lem: inv_ack_rec_helper}, we need an intermediate lemma.
+
 \begin{lem}
-For all $n\ge 2$, $\IARH(\alpha_1, n, n - \alpha_1(n) - 1, n - 3) = \min\left\{m : \alpha_m(n+2)\le m+3 \right\}$.
+For all $n\ge 
 \end{lem}
