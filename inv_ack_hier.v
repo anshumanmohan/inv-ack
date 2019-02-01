@@ -103,59 +103,58 @@ Qed.
 
 Definition shrinking (f : nat -> nat) := forall m, f m <= m - 1.
 
+(* A couple examples of the kind of proof cleanup I think we could do *)
 Theorem repeat_shrinking : forall f k l n,
-(shrinking f) -> (k < l) -> (repeat f l n <= repeat f k n - 1).
+    (shrinking f) -> (k < l) -> (repeat f l n <= repeat f k n - 1).
 Proof.
-intros f k l n Hf. unfold shrinking in Hf.
-generalize dependent l. induction k.
-- simpl. intros. destruct l. inversion H. clear H. induction l. simpl. apply Hf.
-  apply (Nat.le_trans _ (repeat f (S l) n) _). simpl.
-  apply (Nat.le_trans _ (f(repeat f l n) - 1) _). apply Hf. apply Nat.le_sub_l.
-  apply IHl.
-- induction l. intro. inversion H.
-  intro. inversion H. rewrite H1. simpl. apply Hf.
-  apply (Nat.le_trans _ (repeat f l n) _).
-  + simpl. apply (Nat.le_trans _ (repeat f l n - 1) _). apply Hf. apply Nat.le_sub_l.
-  + apply IHl. apply H1.
+  intros. generalize dependent l.
+  unfold shrinking in H. induction k.
+  - simpl; intros. destruct l; [inversion H0|].
+    induction l; [trivial|].
+    apply (Nat.le_trans _ (repeat f (S l) n) _); [|apply IHl; omega].
+    apply (Nat.le_trans _ (f (repeat f l n) - 1) _); simpl; [apply H | omega].
+  - induction l; [inversion 1|].
+    intro. inversion H0; [subst; simpl; trivial|].
+    apply (Nat.le_trans _ (repeat f l n) _); [simpl | apply IHl; omega].
+    apply (Nat.le_trans _ (repeat f l n - 1) _); [apply H|omega].
 Qed.
 
 Theorem shrink_threshold : forall f n t,
+    (shrinking f) ->
+    (n > t) ->
+    (exists k, (repeat f (S k) n <= t) /\ (t < repeat f k n)).
+Proof.
+  Theorem shrink_threshold : forall f n t,
 (shrinking f) ->
 (n > t) ->
 (exists k, (repeat f (S k) n <= t) /\ (t < repeat f k n)).
 Proof.
-intros f n t Hf Hn.
-assert (n = (n-t) + t).
-{ rewrite plus_comm. apply (le_plus_minus t _).
-  unfold gt in Hn. apply Nat.lt_le_incl. trivial. }
-remember (n-t) as l.
-assert (t = n - l).
-{ rewrite Heql. rewrite sub_compl. trivial. apply Nat.lt_le_incl. trivial. }
-rewrite H0.
-clear Heql. clear H.
-assert (l <> 0).
-{ intro. rewrite H in H0. rewrite minus_n_0 in H0. rewrite H0 in Hn.
-  apply Nat.lt_irrefl in Hn. trivial. }
-clear H0.
-destruct l. exfalso. apply H. trivial. clear H.
-induction l.
-- exists 0. split.
-  replace (n - 1) with (repeat f 0 n - 1). apply Hf. trivial.
-  simpl. apply sub_lt. rewrite le_succ_l. apply (lt_lt_0 t n). trivial. omega.
-- assert (n - S(S l) = n - S l - 1).
-  { rewrite <- sub_add_distr. rewrite plus_comm. trivial. }
-  rewrite H. remember (n - S l) as s.
-  destruct IHl as [h Hs]. destruct Hs as [Hs1 Hs2].
-  apply le_cases in Hs1. destruct Hs1 as [Hs1 | Hs1].
-  + exists h. split. trivial. rewrite <- le_succ_l in Hs2. rewrite <- le_succ_l.
-    apply (Nat.le_trans _ (S s) _). apply Peano.le_n_S. apply le_sub_l. trivial.
-  + destruct Hs1 as [Hs0 Hs1]. exists (S h). simpl. split.
-    * rewrite <- Hs0. apply Hf.
-    * simpl in Hs0. rewrite Hs0. destruct s.
-      exfalso. apply Hs1. trivial.
-      simpl. rewrite minus_n_0. apply Nat.lt_succ_diag_r.
+  intros f n t Hf Hn.
+  assert (n = (n - t) + t) by omega.
+  remember (n - t) as l.
+  assert (t = n - l) by omega.
+  rewrite H0.
+  clear Heql. clear H.
+  assert (l <> 0) by omega.
+  clear H0.
+  destruct l. omega.
+  clear H.
+  induction l.
+  - exists 0. split.
+    replace (n - 1) with (repeat f 0 n - 1). apply Hf. trivial.
+    simpl. apply sub_lt. rewrite le_succ_l. apply (lt_lt_0 t n). trivial. omega.
+  - assert (n - S(S l) = n - S l - 1) by omega.
+    rewrite H. remember (n - S l) as s.
+    destruct IHl as [h Hs]. destruct Hs as [Hs1 Hs2].
+    apply le_cases in Hs1. destruct Hs1 as [Hs1 | Hs1].
+    + exists h. split. trivial. rewrite <- le_succ_l in Hs2. rewrite <- le_succ_l.
+      apply (Nat.le_trans _ (S s) _). apply Peano.le_n_S. apply le_sub_l. trivial.
+    + destruct Hs1 as [Hs0 Hs1]. exists (S h). simpl. split.
+      * rewrite <- Hs0. apply Hf.
+      * simpl in Hs0. rewrite Hs0. destruct s.
+        exfalso. apply Hs1. trivial.
+        simpl. rewrite minus_n_0. apply Nat.lt_succ_diag_r.
 Qed.
-
 
 Lemma repeat_shrink : forall f, shrinking f -> (forall n k, repeat f k n <= n - k).
 Proof.
@@ -203,9 +202,24 @@ match n with
           end
 end.
 
+Fixpoint next_level_worker' (f : nat -> nat) (n n1 cd : nat) : nat :=
+  match n, n1 with
+  | 0, _ => 0
+  | 1, _ => 0
+  | _, 0 => 1
+  | _, 1 => 1
+  | S n', _ =>
+    match cd with
+    | 0 => match (f n1) with | n2 => S(next_level_worker f n' n2 (n1 - n2 - 1)) end
+    | S cd' => next_level_worker f n' n1 cd'
+    end
+  end.
+
 Definition next_level f n
 := match (f n) with | n1 => next_level_worker f n n1 (n - n1 - 1)
 end.
+
+(* example of potential cleanup *)
 
 Definition next_level_fast f n
 := match n with
@@ -215,6 +229,13 @@ Definition next_level_fast f n
           | n1 => S(next_level f n1) end
 end.
 
+Definition next_level_fast' f n :=
+  match n with
+  | 0 => 0
+  | 1 => 0
+  | _ => S (next_level f (f n))
+  end.
+  
 Definition sub2 (n : nat) : nat := n - 2.
 
 Compute sub2 2.
@@ -267,6 +288,7 @@ Qed.
 
 (* MAIN THEOREMS *)
 
+(* Another example *)
 
 Theorem next_level_repeat_1 : forall f n k,
 shrinking f -> (repeat f k n <= 1 <-> next_level f n <= k).
@@ -283,18 +305,34 @@ apply IHk. trivial. omega.
 Qed.
 
 
+Theorem next_level_repeat_1' : forall f n k,
+    shrinking f ->
+    repeat f k n <= 1 <-> next_level f n <= k.
+Proof.
+  intros. generalize dependent n. induction k.
+  - intro n. simpl. destruct n; [unfold next_level; simpl; omega|].
+    destruct n; [unfold next_level; simpl; omega|].
+    rewrite next_level_interstate_2; [omega | trivial | omega].
+  - intro n; destruct n.
+    + unfold next_level. rewrite shrink_f_0; [simpl; omega | trivial].
+    + destruct n; [unfold next_level; rewrite shrink_f_1; trivial; simpl; omega|]. 
+      rewrite repeat_S_comm.
+      rewrite next_level_interstate_2; [|trivial | omega].
+      rewrite <- le_S_n_m; trivial.
+Qed.
+
 Theorem next_level_repeat_2 : forall (f : nat -> nat) (n k : nat),
-        shrinking f
-        -> ((next_level f n = k)
-        <-> (repeat f k n <= 1 /\ (forall p, repeat f p n <= 1 -> k <= p))). 
+    shrinking f ->
+    next_level f n = k <->
+    repeat f k n <= 1 /\ forall p, repeat f p n <= 1 -> k <= p. 
 Proof.
 intros f n k Hf. split.
 - intro Hk. split.
   + rewrite next_level_repeat_1. omega. trivial.
-  + intros p Hp. rewrite <- Hk. rewrite <- next_level_repeat_1. trivial. trivial.
+  + intros p Hp. rewrite <- Hk. rewrite <- next_level_repeat_1; trivial.
 - intro Hk. destruct Hk as [Hk1 Hk2].
-  apply le_antisym. rewrite <- next_level_repeat_1. trivial. trivial.
-  apply (Hk2 (next_level f n)). rewrite next_level_repeat_1. trivial. trivial.
+  apply le_antisym. rewrite <- next_level_repeat_1; trivial.
+  apply (Hk2 (next_level f n)). rewrite next_level_repeat_1; trivial. 
 Qed.
 
 
@@ -418,22 +456,27 @@ Qed.
 (* PACKING EVERYTHING *)
 
 Definition inv_ack_like_rel f F : Prop :=
-(shrinking f) /\ (increasing f)
-/\ (can_inv_rel f F) /\ (growing F) /\ (increasing F).
-
+  shrinking f /\
+  increasing f /\
+  can_inv_rel f F /\
+  growing F /\
+  increasing F.
 
 Theorem next_level_inv_ack_like : forall f F,
-inv_ack_like_rel f F -> inv_ack_like_rel (next_level f) (next_can_level F).
+    inv_ack_like_rel f F ->
+    inv_ack_like_rel (next_level f) (next_can_level F).
 Proof.
-intros. destruct H. destruct H0. destruct H1. destruct H2.
-assert (shrinking (next_level f)). { apply next_level_shrink. trivial. }
-assert (can_inv_rel (next_level f) (next_can_level F)).
-{ apply inv_next_level_can; trivial. }
-split. { trivial. }
-split. { apply next_level_incr; trivial. }
-split. { apply inv_next_level_can; trivial. }
-split. { apply (can_inv_growing (next_level f) _); trivial. }
-apply (can_inv_increasing (next_level f) _); trivial. apply next_level_incr; trivial.
+  intros. destruct H as [? [? [? [? ?]]]].
+  assert (shrinking (next_level f))
+    by now apply next_level_shrink.
+  assert (can_inv_rel (next_level f) (next_can_level F))
+    by now apply inv_next_level_can.
+  split; [trivial|].
+  split; [apply next_level_incr; trivial|].
+  split; [apply inv_next_level_can; trivial|].
+  split; [apply (can_inv_growing (next_level f) _); trivial|].
+  apply (can_inv_increasing (next_level f) _);
+    [|apply next_level_incr|]; trivial.
 Qed.
 
 
@@ -442,63 +485,136 @@ Qed.
 (* ZEROTH LEVEL : MINUS *)
 Definition minus_b b n := n - b.
 
-Definition minus_2 n := match n with | 0 => 0 | 1 => 0 | S(S n') => n' end.
+Definition minus_2 n :=
+  match n with
+  | 0 | 1 => 0
+  | S (S n') => n'
+  end.
 
 Lemma minus_2_correct: forall n, minus_2 n = n - 2.
 Proof.
-unfold minus_2. destruct n. trivial. destruct n. trivial. omega.
+  unfold minus_2. 
+  destruct n; [trivial | destruct n; [trivial | omega]].
 Qed.
 
 Theorem minus_2_shrink: shrinking minus_2.
-Proof.
-intro. rewrite minus_2_correct. omega.
-Qed.
+Proof. intro. rewrite minus_2_correct. omega. Qed.
 
-
+Theorem minus_b_shrink: forall b, 0 < b -> shrinking (minus_b b).
+Proof. unfold minus_b, shrinking. intros. omega. Qed.
+ 
 (* HIGHER LEVELS *)
 
-Fixpoint inv_ack_hier i n
-:= match i with
-   | 0 => minus_2 n
-   | S i' => next_level (inv_ack_hier i') n
-end.
+(* I think you want minus_b here *)
+Fixpoint inv_ack_hier i n :=
+  match i with
+  | 0 => minus_2 n
+  | S i' => next_level (inv_ack_hier i') n
+  end.
 
-Fixpoint ack_hier i n
-:= match i with
-   | 0 => S(S n)
+(* trying with minus_b instead... *)
+Fixpoint inv_ack_hier_b b i n :=
+  match i with
+  | 0 => minus_b b n
+  | S i' => next_level (inv_ack_hier_b b i') n
+  end.
+
+Fixpoint ack_hier i n :=
+  match i with
+   | 0 => S (S n)
    | S i' => next_can_level (ack_hier i') n
 end.
 
-Fixpoint inv_ack_hier_fast i n
-:= match i with
+Fixpoint ack_hier_b b i n :=
+  match i with
+   | 0 => n + b
+   | S i' => next_can_level (ack_hier_b b i') n
+  end.
+
+Fixpoint inv_ack_hier_fast i n :=
+  match i with
    | 0 => minus_2 n
    | S i' => next_level_fast (inv_ack_hier i') n
-end.
+   end.
+(* Two things, 
+   1. how about
+      S i' => next_level_fast (inv_ack_hier_fast i') n
+   2. how about minus_b instead? 
+ *)
 
+(* trying both of these below... *)
+Fixpoint inv_ack_hier_faster_b b i n :=
+  match i with
+   | 0 => minus_b b n
+   | S i' => next_level_fast (inv_ack_hier_faster_b b i') n
+  end.
+
+Lemma issame: forall f n,
+    next_level f n = next_level_fast f n.
+Abort.
+
+Lemma issame2: forall i n,
+    inv_ack_hier_fast i n = inv_ack_hier_faster_b 2 i n.
+Proof.
+  intros. unfold inv_ack_hier_faster_b, inv_ack_hier_fast.
+  destruct i; [unfold minus_b; apply minus_2_correct|].
+  f_equal. unfold inv_ack_hier.
+  destruct i; [unfold minus_b; admit|]. 
+Abort.
 
 Theorem inv_hier_ack_hier :
-forall i, inv_ack_like_rel (inv_ack_hier i) (ack_hier i).
+  forall i, inv_ack_like_rel (inv_ack_hier i) (ack_hier i).
 Proof.
-induction i.
-- simpl. unfold inv_ack_like_rel. unfold minus_b. split.
-  { unfold shrinking. intro. apply minus_2_shrink. } split.
-  { unfold increasing. intros. repeat rewrite minus_2_correct. omega. } split.
-  { unfold can_inv_rel. intros. rewrite minus_2_correct. omega.  } split.
-  { unfold growing. intros. replace (S n) with (1 + n). omega. trivial. }
-  { unfold increasing. intros. omega. }
-- apply next_level_inv_ack_like. trivial.
+  induction i.
+  - simpl. unfold inv_ack_like_rel.
+    split; [unfold shrinking; apply minus_2_shrink|].
+    split; [unfold increasing; intros; repeat rewrite minus_2_correct; omega|].
+    split; [unfold can_inv_rel; intros; rewrite minus_2_correct; omega|].
+    split; [unfold growing; intros; replace (S n) with (1 + n) by omega; trivial; omega|].
+    unfold increasing. intros. omega. 
+  - apply next_level_inv_ack_like. trivial.
 Qed.
 
+Theorem inv_hier_ack_hier_b :
+  forall b i,
+    0 < b -> inv_ack_like_rel (inv_ack_hier_b b i) (ack_hier_b b i).
+Proof.
+  induction i; intro.
+  - simpl. unfold inv_ack_like_rel; unfold minus_b.
+    split; [unfold shrinking; apply minus_b_shrink; omega|].
+    split; [unfold increasing; intros; omega|].
+    split; [unfold can_inv_rel; intros; omega|].
+    split; [unfold growing; intros; replace (S n) with (1 + n) by omega; trivial; omega|].
+    unfold increasing. intros. omega.
+  - apply next_level_inv_ack_like; specialize (IHi H); trivial.
+Qed.
 
 Corollary inv_ack_hier_each_incr : forall i, increasing (inv_ack_hier i).
-intro. assert (H := (inv_hier_ack_hier i)). unfold inv_ack_like_rel in H.
-destruct H as [_ H]. destruct H as [H _]. trivial. Qed.
+  intro.
+  pose proof inv_hier_ack_hier i.
+  unfold inv_ack_like_rel in H.
+  destruct H as [_ [H _]];  trivial.
+Qed.
 
+Corollary inv_ack_hier_each_incr_b : forall b i,
+    0 < b -> increasing (inv_ack_hier_b b i).
+  intros.
+  pose proof (inv_hier_ack_hier_b b i H).
+  unfold inv_ack_like_rel in H0.
+  destruct H0 as [_ [H0 _]];  trivial.
+Qed.
 
 Corollary inv_ack_hier_each_shrink : forall i, shrinking (inv_ack_hier i).
-intro. assert (H := (inv_hier_ack_hier i)). unfold inv_ack_like_rel in H.
-destruct H as [H _]. trivial. Qed.
+  intro. pose proof inv_hier_ack_hier i.
+  unfold inv_ack_like_rel in H.
+  destruct H as [H _]; trivial.
+Qed.
 
+Corollary inv_ack_hier_each_shrink_b : forall b i, 0 < b -> shrinking (inv_ack_hier_b b i).
+  intros. pose proof (inv_hier_ack_hier_b b i H).
+  unfold inv_ack_like_rel in H0.
+  destruct H0 as [H0 _]; trivial.
+Qed.
 
 Corollary inv_ack_hier_shrink : forall i n,
 (3 <= n) -> (inv_ack_hier (S i) n) <= inv_ack_hier i n.
@@ -552,9 +668,7 @@ Qed.
 
 
 Lemma ack_hier_1 : forall m, ack_hier m 1 = 3.
-Proof.
-induction m. trivial. trivial. Qed.
-
+Proof. induction m; trivial. Qed.
 
 Theorem ack_hier_Ack : forall m n, ack_hier m (n + 2) = Ack (m + 1) n + 2.
 Proof.
