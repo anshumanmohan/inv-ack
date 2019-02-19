@@ -106,6 +106,11 @@ Qed.
 Definition shrinking (f : nat -> nat) :=
   forall m, f m <= m - 1.
 
+(*
+Why not...
+Definition shrinking (f : nat -> nat) := forall m, f m < m.
+*)
+
 (** A couple examples of the kind of proof cleanup I think we could do **)
 Theorem repeat_shrinking : forall f k l n,
     (shrinking f) -> (k < l) -> (repeat f l n <= repeat f k n - 1).
@@ -188,10 +193,8 @@ Fixpoint next_level_worker (f : nat -> nat) (n n1 cd : nat) : nat
 (** Anshuman's version: **)
 Fixpoint next_level_worker' (f : nat -> nat) (n n1 cd : nat) : nat :=
   match n, n1 with
-  | 0, _ => 0
-  | 1, _ => 0
-  | _, 0 => 1
-  | _, 1 => 1
+  | 0, _ | 1, _ => 0
+  | _, 0 => 1 | _, 1 => 1
   | S n', _ =>
     match cd with
     | 0 => S (next_level_worker' f n' (f n1) (n1 - f n1 - 1))
@@ -201,6 +204,8 @@ Fixpoint next_level_worker' (f : nat -> nat) (n n1 cd : nat) : nat :=
 
 Definition next_level f n := next_level_worker f n (f n) (n - f n - 1).
 
+Definition next_level' f n := next_level_worker' f n (f n) (n - f n - 1).
+
 
 (** example of potential cleanup **)
 
@@ -209,24 +214,46 @@ Definition next_level_fast f n
      | 0 => 0
      | 1 => 0
      | _ => match (f n) with
-            | n1 => S(next_level f n1) end
+            | n1 => S (next_level f n1) end
      end.
 
+(* this is the countdown of f *)
 Definition next_level_fast' f n :=
   match n with
   | 0 | 1 => 0
   | _ => S (next_level f (f n))
   end.
+(* but we need to make it a fixpoint and explain the
+   decreasing argument.
+   Are there hidden requirements that have not been fleshed out?
+   f needs to be shrinking?
+ *) 
+
+(* Fixpoint next_level_fix f n {struct n} := *)
+(*   match n with *)
+(*   | 0 | S 0  => 0 *)
+(*   | S (S _) => S (next_level_fix f (f n)) *)
+(*   end. *)
+
 
 Definition sub2 (n : nat) : nat := n - 2.
+(* Just use "Nat.sub 2" ? *)
 
-Compute sub2 2.
-Compute sub2 1.
-Compute sub2 3.
+Compute next_level_fast' sub2 2.
+Compute next_level_fast' sub2 3.
+Compute next_level sub2 8.
 
-Compute next_level sub2 2.
-Compute next_level sub2 3.
-Compute next_level sub2 4.
+Lemma countdown_gives_div_2: forall n,
+    next_level (Nat.sub 2) n = n / 2 .
+Proof. Abort.
+
+Definition mylog := next_level' (next_level' sub2).
+
+Compute Nat.log2 3.
+
+Lemma countdown_gives_log_2: forall n,
+    next_level' (next_level' (Nat.sub 2)) n = Nat.log2 n.
+Proof. Abort.        
 
 (* ================================================
 ============= THEOREMS ============================ *)
@@ -373,10 +400,67 @@ Qed.
 Definition can_inv_rel (f F : nat -> nat) : Prop
   := forall n N, f N <= n <-> N <= F n.
 
+(* this is the repeater of F *)
 Fixpoint next_can_level F n : nat :=
   match n with
   | 0 => 1
   | S n' => F (next_can_level F n')
+  end.
+
+Lemma repeater_gives_times_2: forall n,
+    next_can_level (Nat.add 2) n = S (n * 2).
+Proof.
+  intros. induction n; trivial.
+  simpl. do 2 f_equal.
+  rewrite <- IHn; f_equal.
+Qed.
+
+Lemma repeater_gives_times_n: forall n m,
+    next_can_level (Nat.add n) m =  S (n * m).
+Proof.
+  intros. induction m; [simpl; omega|].
+  replace (S (n * S m)) with (n + S (n * m)) by (rewrite Nat.mul_succ_r; omega).
+  simpl; f_equal; omega.
+Qed.
+(** There is an off-by-one issue here, obviously **)
+
+(** Let's try and fix the off-by-one issue. **)
+
+(* this is the repeater of F with a dumb modification *)
+Fixpoint next_can_level' F n : nat :=
+  match n with
+  | 0 => 0
+  | S n' => F (next_can_level' F n')
+  end.
+
+Lemma repeater_gives_times_n_correctly: forall n m,
+    next_can_level' (Nat.add n) m =  n * m.
+Proof.
+  intros. induction m; [simpl; omega|].
+  simpl; rewrite IHm; rewrite Nat.mul_succ_r; omega.
+Qed.
+
+(* Fine... *)
+
+Compute next_can_level' (Nat.add 2) 5.
+Compute (next_can_level' (next_can_level' (Nat.add 2)) 5).
+(* Well, this is very wrong... but this makes a lot of sense actually. *)
+
+(* Okay so let's try and encode Wikipedia's definition of 
+ * Knuth's Up Arrow *)
+
+Require Coq.Program.Wf.
+
+Fixpoint kua a n b :=
+  match n with
+  | 0 => a * b
+  | S n' =>
+    let fix kua' b :=
+        match b with
+        | 0 => 1
+        | S b' => kua a n' (kua' b')
+        end
+    in kua' b
   end.
 
 Definition growing (F : nat -> nat) : Prop := forall n, S n <= F n.
