@@ -8,7 +8,7 @@ Firstly, to define some sort of ``inverse'' for the repeat application operation
 Given a function $f: \mathbb{N} \to \mathbb{N}$. The \textit{countdown} of $f$, denoted by $f^*$ is given by:
 \begin{equation} \label{eq: countdown}
 f^*(n) = \begin{cases}
-0 & \text{ if } n \le \max\{0, 1, f(n)\} \\ 1 + f^*(f(n)) & \text{ if } n > \max\{0, 1, f(n)\}
+0 & \text{ if } n \le \max\{1, f(n)\} \\ 1 + f^*(f(n)) & \text{ if } n > \max\{1, f(n)\}
 \end{cases}
 \end{equation}
 \end{defn}
@@ -44,7 +44,7 @@ Then by a strong induction on $n$, the theorem holds.
 With the above countdown operation, we can build the inverse Ackermann hierarchy.
 
 \begin{defn} \label{defn: inv_ack_hier}
-The inverse Ackermann hierarchy is a sequence of functions $\alpha_0, \alpha_1, \ldots $ recursively defined as:
+The inverse Ackermann hierarchy is a sequence of functions $\left\{\alpha_m\right\}_{m=0}^\infty$ recursively defined as:
 \begin{enumerate}
 	\item $\alpha_0(n) = \max\{n-2, 0\} \ \ \ \forall n \in \mathbb{N}$.
 	\item $\alpha_m = \alpha_{m-1}^*  \ \ \ \forall m\in \mathbb{N}_{>0}$.
@@ -61,7 +61,7 @@ For all $m\in\mathbb{N}$, $\alpha_m$ is a contraction and
 \end{thm}
 
 \begin{proof}
-TODO TODO TODO
+We proceed by induction on $m$. For $m = 0$, 
 \end{proof}
 
 Having sufficiently established the inverse Ackermann hierarchy, we now link it to the Ackermann hierarchy in \cref{defn: ack_hier}. However, the relationship is not trivially clear, as the Peter-Ackermann function is in fact not exactly their inverses. We first define a \textit{canonical} variant of the Ackermann hierarchy, then use it as an intermediate to link first two hierarchies.

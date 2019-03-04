@@ -2,14 +2,7 @@ Require Import Omega.
 Require Import Setoid.
 
 
-(*
-=============================================================================
-****************** SECTION 0: PRELIMINARIES *********************************
-=============================================================================
-*)
-
-
-(* ************ 0.1. USEFUL LEMMAS ABOUT NAT ********************** *)
+(* USEFUL LEMMAS ABOUT NAT *)
 
 Lemma le_add_le_sub_r : forall n m p : nat, n + p <= m -> n <= m - p.
 apply Nat.le_add_le_sub_r. Qed.
@@ -95,7 +88,7 @@ apply le_antisym. Qed.
 
 
 
-(* ****** 0.2. CONTRACTING FUNCTIONS *************** *)
+(* LEMMAS ABOUT SHRINKING FUNCTIONS *)
 
 Fixpoint repeat (f: nat -> nat) (rep n : nat) : nat
 := match rep with
@@ -109,169 +102,87 @@ induction k. { trivial. }
 intro. simpl. simpl in IHk. rewrite IHk. trivial.
 Qed.
 
-Definition contracting (f : nat -> nat) := forall m, f m <= m - 1.
+Definition shrinking (f : nat -> nat) := forall m, f m <= m - 1.
 
-Theorem repeat_contracting : forall f k l n,
-(contracting f) -> (k < l) -> (repeat f l n <= repeat f k n - 1).
+Theorem repeat_shrinking : forall f k l n,
+(shrinking f) -> (k < l) -> (repeat f l n <= repeat f k n - 1).
 Proof.
-intros f k l n Hf. unfold contracting in Hf.
-induction l. { omega. }
-intro. inversion H.
-- apply Hf.
-- clear H0 m. apply IHl in H1.
-  apply (Nat.le_trans _ (repeat f l n - 1) _). apply Hf. omega.
+intros f k l n Hf. unfold shrinking in Hf.
+generalize dependent l. induction k.
+- simpl. intros. destruct l. inversion H. clear H. induction l. simpl. apply Hf.
+  apply (Nat.le_trans _ (repeat f (S l) n) _). simpl.
+  apply (Nat.le_trans _ (f(repeat f l n) - 1) _). apply Hf. apply Nat.le_sub_l.
+  apply IHl.
+- induction l. intro. inversion H.
+  intro. inversion H. rewrite H1. simpl. apply Hf.
+  apply (Nat.le_trans _ (repeat f l n) _).
+  + simpl. apply (Nat.le_trans _ (repeat f l n - 1) _). apply Hf. apply Nat.le_sub_l.
+  + apply IHl. apply H1.
+Qed.
+
+Theorem shrink_threshold : forall f n t,
+(shrinking f) ->
+(n > t) ->
+(exists k, (repeat f (S k) n <= t) /\ (t < repeat f k n)).
+Proof.
+intros f n t Hf Hn.
+assert (n = (n-t) + t).
+{ rewrite plus_comm. apply (le_plus_minus t _).
+  unfold gt in Hn. apply Nat.lt_le_incl. trivial. }
+remember (n-t) as l.
+assert (t = n - l).
+{ rewrite Heql. rewrite sub_compl. trivial. apply Nat.lt_le_incl. trivial. }
+rewrite H0.
+clear Heql. clear H.
+assert (l <> 0).
+{ intro. rewrite H in H0. rewrite minus_n_0 in H0. rewrite H0 in Hn.
+  apply Nat.lt_irrefl in Hn. trivial. }
+clear H0.
+destruct l. exfalso. apply H. trivial. clear H.
+induction l.
+- exists 0. split.
+  replace (n - 1) with (repeat f 0 n - 1) by trivial. apply Hf. trivial.
+  simpl. apply sub_lt. omega. omega.
+- replace (n - S(S l)) with (n - S l - 1) by omega.
+  remember (n - S l) as s.
+  destruct IHl as [h Hs]. destruct Hs as [Hs1 Hs2].
+  apply le_cases in Hs1. destruct Hs1 as [Hs1 | Hs1].
+  + exists h. split. { trivial. } { omega. }
+  + destruct Hs1 as [Hs0 Hs1]. exists (S h). simpl. split.
+    * rewrite <- Hs0. apply Hf.
+    * simpl in Hs0. omega.
 Qed.
 
 
-Lemma repeat_contract : forall f, contracting f -> (forall n k, repeat f k n <= n - k).
+Lemma repeat_shrink : forall f, shrinking f -> (forall n k, repeat f k n <= n - k).
 Proof.
-intros f Hf n. induction k. { simpl. omega. }
-simpl. apply (Nat.le_trans _ (repeat f k n - 1) _). apply Hf. omega.
+intros f Hf n. induction k.
+- simpl. omega.
+- simpl. apply (Nat.le_trans _ (repeat f k n - 1) _). apply Hf. omega.
 Qed.
 
 
-Lemma contract_f_0 : forall f, (contracting f) -> (forall k, repeat f k 0 = 0).
+Lemma shrink_f_0 : forall f, (shrinking f) -> (forall k, repeat f k 0 = 0).
 Proof.
-induction k. { trivial. }
-simpl. rewrite IHk. assert (f 0 <= 0). { apply H. } omega.
+induction k. trivial.
+simpl. rewrite IHk.
+assert (f 0 <= 0). { apply H. } inversion H0. rewrite H2. rewrite H2. trivial.
 Qed.
 
 
-Lemma contract_f_1 : forall f, (contracting f) -> (forall k, repeat f (S k) 1 = 0).
+Lemma shrink_f_1 : forall f, (shrinking f) -> (forall k, repeat f (S k) 1 = 0).
 Proof.
-induction k. { simpl. specialize (H 1). omega. }
-replace (repeat f (S (S k)) 1) with (f (repeat f (S k) 1)) by trivial.
-rewrite IHk. specialize (H 0). omega.
+induction k. simpl.
+specialize (H 1). inversion H. rewrite H1. trivial.
+replace (repeat f (S (S k)) 1) with (f (repeat f (S k) 1)).
+rewrite IHk.
+specialize (H 0). inversion H. rewrite H1. trivial.
+trivial.
 Qed.
 
 
-
-(* *********** 0.3. INCREASING FUNCTIONS ****************** *)
-
-Definition increasing (f : nat -> nat) : Prop := forall n m, n <= m -> f n <= f m.
-
-Definition increasing_strict (f : nat -> nat) : Prop := forall n m, n < m -> f n < f m.
-
-
-Lemma incr_S : forall f, increasing f <-> (forall n, f n <= f (S n)).
-Proof.
-intro f.
-split.
-- intros. apply H. omega.
-- unfold increasing. intros.
-  generalize dependent n.
-  induction m.
-  { intros. inversion H0. omega. }
-  intros. inversion H0.
-  + omega.
-  + apply IHm in H2. apply (Nat.le_trans _ (f m) _).
-    trivial. apply H.
-Qed.
-
-
-Lemma incr_strict_S : forall f, increasing_strict f <-> (forall n, f n < f (S n)).
-Proof.
-intro f.
-split.
-- intros. apply H. omega.
-- unfold increasing_strict. intros.
-  generalize dependent n.
-  induction m.
-  { intros. inversion H0. }
-  intros. inversion H0.
-  + apply H.
-  + apply IHm in H2. apply (Nat.lt_trans _ (f m) _).
-    trivial. apply H.
-Qed.
-
-
-Lemma repeat_incr : forall f, increasing f -> (forall k, increasing (repeat f k)).
-Proof.
-intro f. unfold increasing. intro Hf.
-induction k. simpl. intros. trivial.
-intros. simpl. apply Hf. apply IHk. trivial.
-Qed.
-
-
-
-(* ************* 0.4. UPPER AND LOWER INVERSES ***************** *)
-
-(* f is the upper inverse of F: f N is the smallest n such that F n >= N *)
-Definition upp_inv_rel (f F : nat -> nat) : Prop
-:= forall n N, f N <= n <-> N <= F n.
-
-(* f is the lower inverse of F: f N is the largest n such that F n <= N *)
-Definition low_inv_rel (f F : nat -> nat) : Prop
-:= forall n N, n <= f N <-> F n <= N.
-
-
-
-(* ************ 0.5. PROPERTIES PRESERVED BY INVERSES **************** *)
-
-
-Definition st_expanding (F : nat -> nat) : Prop := forall n, S n <= F n.
-
-Definition we_expanding (F : nat -> nat) : Prop := forall n, n <= F n - 1.
-
-
-Lemma contract_upp_inv_st_expand :
-forall f F, contracting f -> upp_inv_rel f F -> st_expanding F.
-Proof.
-intros f F Hf HfF n. rewrite <- (HfF n _).
-apply (Nat.le_trans _ (S n - 1) _). apply Hf. omega.
-Qed.
-
-
-Lemma contract_low_inv_we_expand :
-forall f F, contracting f -> low_inv_rel f F -> we_expanding F.
-Proof.
-intros f F Hf HfF n.
-destruct n. { omega. }
-rewrite le_succ_l. rewrite <- lt_add_lt_sub_l. simpl.
-rewrite <- not_le. rewrite <- (HfF _ _).
-intro.
-assert (S n <= S n - 1).
-{ apply (Nat.le_trans _ (f (S n)) _). apply H. apply Hf. }
-omega.
-Qed.
-
-
-Lemma contract_upp_inv_positive :
-forall f F, contracting f -> upp_inv_rel f F -> (forall n, 0 < F n).
-Proof.
-intros f F Hf HfF n. apply (Nat.le_trans _ (S n) _). omega.
-generalize dependent n. apply (contract_upp_inv_st_expand f F). trivial. trivial.
-Qed.
-
-
-Lemma contract_incr_upp_inv_incr :
-forall f F, contracting f -> increasing f -> upp_inv_rel f F -> increasing F.
-Proof.
-intros f F Hf_sh Hf_in HfF. rewrite incr_S. intro.
-rewrite <- (HfF (S n) _). apply (Nat.le_trans _ n _).
-- rewrite (HfF n _). trivial.
-- omega.
-Qed.
-
-
-Lemma contract_incr_low_inv_incr :
-forall f F, contracting f -> increasing f -> low_inv_rel f F -> increasing F.
-Proof.
-intros f F Hf_sh Hf_in HfF. rewrite incr_S. intro.
-rewrite <- (HfF n _). apply (Nat.le_trans _ (S n) _).
-- omega.
-- rewrite (HfF (S n) _). trivial.
-Qed.
-
-
-
-(*
-=============================================================================
-****************** SECTION 1: COUNTDOWN *************************************
-=============================================================================
-*)
-
-(* **************** 1.1. DEFINITION *************************************)
+(* ================================================
+========= DEFINITIONS ============================ *)
 
 Fixpoint countdown_worker (f : nat -> nat) (n n1 cd : nat) : nat
 :=
@@ -303,138 +214,151 @@ end.
 
 Definition sub2 (n : nat) : nat := n - 2.
 
+Compute sub2 2.
+Compute sub2 1.
+Compute sub2 3.
+
+Compute countdown sub2 2.
+Compute countdown sub2 3.
+Compute countdown sub2 4.
+
+(* ================================================
+============= THEOREMS ============================ *)
 
 
-(*==================================================================
-**************** 1.2. THEOREMS ************************************* *)
-
-
-(* LEMMAS ABOUT COUNTDOWN_WORKER *)
+(* LEMMAS ABOUT NEXT_LEVEL_WORKER *)
 
 Lemma countdown_interstate_1 : forall f n n1 cd k,
 (2 <= n1) -> (k <= cd) -> (k <= n)
 -> countdown_worker f n n1 cd = countdown_worker f (n - k) n1 (cd - k).
 Proof.
-intros f n n1 cd k Hn1.
-generalize dependent cd.
-generalize dependent k.
-induction n. { trivial. }
-intros k cd Hk Hkn1.
-destruct k. {
-  replace (S n - 0) with (S n) by omega. 
-  replace (cd - 0) with cd by omega. trivial. }
+intros f n n1 cd k Hn1. generalize dependent cd.
+generalize dependent k. induction n. { trivial. }
+intros k cd Hk Hkn1. destruct k. { repeat rewrite minus_n_0. trivial. }
 destruct cd. { inversion Hk. }
-replace (S n - S k) with (n - k) by omega.
-replace (S cd - S k) with (cd - k) by omega.
+apply le_S_n_m in Hk. repeat rewrite Nat.sub_succ. rewrite <- le_S_n_m in Hkn1.
 rewrite <- IHn.
-- destruct n. { trivial. }
-  destruct n1. { inversion Hn1. }
-  destruct n1. { inversion Hn1. inversion H0. }
+- destruct n. trivial.
+  destruct n1. inversion Hn1. destruct n1. inversion Hn1. inversion H0.
   trivial.
-- omega.
-- omega.
+- trivial.
+- trivial.
 Qed.
 
 
 Lemma countdown_interstate_2 : forall f n,
-contracting f -> 2 <= n -> countdown f n = 1 + countdown f (f n).
+shrinking f -> 2 <= n -> countdown f n = 1 + countdown f (f n).
 Proof.
-intros. unfold countdown.
-destruct n. { omega. }
-destruct n. { omega. }
+intros. unfold countdown. destruct n. inversion H0.
+destruct n. inversion H0. inversion H2.
 remember (f (S (S n))) as n1.
-destruct n1. { trivial. }
-destruct n1. { trivial. }
+destruct n1. { trivial. } destruct n1. { trivial. }
 remember (S (S n) - S (S n1) - 1) as cd.
-rewrite (countdown_interstate_1 _ _ _ _ cd).
-- replace (cd - cd) with 0 by omega.
-  rewrite Heqcd.
-  replace (S (S n) - (S (S n) - S (S n1) - 1)) with ((S (S (S n1)))).
-  + trivial.
-  + replace (S (S n) - S (S n1) - 1) with (S(S n) - (S(S(S n1)))) by omega.
-    assert ((S(S n1)) <= (S n)). { rewrite Heqn1. apply H. } omega.
-- omega.
-- trivial.
-- omega.
+rewrite (countdown_interstate_1 _ _ _ _ cd). rewrite Nat.sub_diag.
+assert (S(S n) - cd = (S (S (S n1)))).
+{ rewrite Heqcd. rewrite <- sub_add_distr. rewrite plus_comm. rewrite sub_compl.
+  trivial. rewrite <- le_S_n_m. rewrite Heqn1. apply H. }
+rewrite H1. trivial. omega. trivial. omega.
 Qed.
 
 
-(* CORRECTNESS THEOREMS *)
+(* MAIN THEOREMS *)
 
 
 Theorem countdown_repeat_1 : forall f n k,
-contracting f -> (repeat f k n <= 1 <-> countdown f n <= k).
+shrinking f -> (repeat f k n <= 1 <-> countdown f n <= k).
 Proof.
-intros.
-generalize dependent n.
-induction k.
-{ intro n. simpl.
+intros. generalize dependent n. induction k.
+{ intro n. simpl. destruct n. { unfold countdown. simpl. omega. }
   destruct n. { unfold countdown. simpl. omega. }
-  destruct n. { unfold countdown. simpl. omega. }
-  rewrite countdown_interstate_2. omega. trivial. omega.
-}
+  rewrite countdown_interstate_2. omega. trivial. omega. }
 intro n.
-destruct n. { unfold countdown. rewrite contract_f_0. simpl. omega. trivial. }
-destruct n. { unfold countdown. rewrite contract_f_1. simpl. omega. trivial. }
-rewrite repeat_S_comm.
-rewrite countdown_interstate_2.
-- rewrite IHk. omega.
-- trivial.
-- omega.
+destruct n. { unfold countdown. rewrite shrink_f_0. simpl. omega. trivial. }
+destruct n. { unfold countdown. rewrite shrink_f_1. simpl. omega. trivial. }
+rewrite repeat_S_comm. rewrite countdown_interstate_2. rewrite <- le_S_n_m.
+apply IHk. trivial. omega.
 Qed.
 
 
 Theorem countdown_repeat_2 : forall (f : nat -> nat) (n k : nat),
-        contracting f
+        shrinking f
         -> ((countdown f n = k)
         <-> (repeat f k n <= 1 /\ (forall p, repeat f p n <= 1 -> k <= p))). 
 Proof.
-intros f n k Hf.
-split.
+intros f n k Hf. split.
 - intro Hk. split.
   + rewrite countdown_repeat_1. omega. trivial.
   + intros p Hp. rewrite <- Hk. rewrite <- countdown_repeat_1. trivial. trivial.
 - intro Hk. destruct Hk as [Hk1 Hk2].
-  apply le_antisym.
-  + rewrite <- countdown_repeat_1. trivial. trivial.
-  + apply (Hk2 (countdown f n)). rewrite countdown_repeat_1. trivial. trivial.
+  apply le_antisym. rewrite <- countdown_repeat_1. trivial. trivial.
+  apply (Hk2 (countdown f n)). rewrite countdown_repeat_1. trivial. trivial.
 Qed.
 
 
-(* CONTRACTING PRESERVE THEOREM *)
+(* PROPER SHRINKING PRESERVE THEOREM *)
 
-Theorem countdown_contract : forall f,
-contracting f -> contracting (countdown f).
+Theorem countdown_shrink : forall f,
+shrinking f -> shrinking (countdown f).
 Proof.
-intros f Hf. unfold contracting.
+intros f Hf. unfold shrinking.
 intros. rewrite <- countdown_repeat_1.
-apply (Nat.le_trans _ (m - (m - 1)) _).
-apply repeat_contract. trivial. omega. trivial.
+assert (forall n k, repeat f k n <= n - k).
+{ apply repeat_shrink. trivial. }
+specialize (H m (m - 1)). omega. trivial.
 Qed.
 
-(* INCREASING PRESERVE THEOREM *)
+
+(* INCREASING FUNCTIONS *)
+
+Definition increasing (f : nat -> nat) : Prop := forall n m, n <= m -> f n <= f m.
+
+Definition increasing_strict (f : nat -> nat) : Prop := forall n m, n < m -> f n < f m.
+
+
+Lemma incr_S : forall f, increasing f <-> (forall n, f n <= f (S n)).
+Proof.
+intro. split. { intros. apply H. omega. }
+{ unfold increasing. intros. generalize dependent n. induction m.
+- intros. inversion H0. omega.
+- intros. inversion H0. omega. apply IHm in H2. apply (Nat.le_trans _ (f m) _).
+  trivial. apply H. }
+Qed.
+
+
+Lemma incr_strict_S : forall f, increasing_strict f <-> (forall n, f n < f (S n)).
+Proof.
+intro. split. { intros. apply H. omega. }
+{ unfold increasing_strict. intros. generalize dependent n. induction m.
+- intros. inversion H0.
+- intros. inversion H0. apply H. apply IHm in H2. apply (Nat.lt_trans _ (f m) _).
+  trivial. apply H. }
+Qed.
+
+
+Lemma repeat_incr : forall f, increasing f -> (forall k, increasing (repeat f k)).
+Proof.
+intro f. unfold increasing. intro Hf.
+induction k. simpl. intros. trivial.
+intros. simpl. apply Hf. apply IHk. trivial.
+Qed.
+
 
 Theorem countdown_incr : forall f,
-contracting f -> increasing f -> increasing (countdown f).
+shrinking f -> increasing f -> increasing (countdown f).
 Proof.
-intros f Hf0 Hf1 n m Hnm.
-apply countdown_repeat_1. trivial.
+intros f Hf0 Hf1 n m Hnm. apply countdown_repeat_1. trivial.
 assert (increasing (repeat f (countdown f m))).
 { apply repeat_incr. trivial. }
-specialize (H n m).
-apply H in Hnm.
+specialize (H n m). apply H in Hnm.
 apply (Nat.le_trans _ (repeat f (countdown f m) m) _).
-- trivial.
-- apply countdown_repeat_1. trivial. trivial.
+trivial. apply countdown_repeat_1. trivial. trivial.
 Qed.
 
 
-(*
-=============================================================================
-****************** SECTION 2: REPEATER **************************************
-=============================================================================
-*)
+(* THE ACKERMANN HIERARCHY *)
 
+Definition upp_inv_rel (f F : nat -> nat) : Prop
+:= forall n N, f N <= n <-> N <= F n.
 
 Fixpoint repeater F n : nat :=
 match n with
@@ -443,8 +367,35 @@ match n with
 end.
 
 
-Theorem upp_inv_preserve : forall f F,
-contracting f -> increasing f -> upp_inv_rel f F
+Definition growing (F : nat -> nat) : Prop := forall n, S n <= F n.
+
+
+Lemma upp_inv_growing : forall f F, shrinking f -> upp_inv_rel f F -> growing F.
+Proof.
+intros f F Hf HfF n. rewrite <- (HfF n _).
+apply (Nat.le_trans _ (S n - 1) _). apply Hf. omega.
+Qed.
+
+
+Lemma upp_inv_positive : forall f F,
+shrinking f -> upp_inv_rel f F -> (forall n, 0 < F n).
+Proof.
+intros f F Hf HfF n. apply (Nat.le_trans _ (S n) _). omega.
+generalize dependent n. apply (upp_inv_growing f F). trivial. trivial.
+Qed.
+
+
+Lemma upp_inv_increasing : forall f F,
+shrinking f -> increasing f -> upp_inv_rel f F -> increasing F.
+Proof.
+intros f F Hf_sh Hf_in HfF. rewrite incr_S. intro.
+rewrite <- (HfF (S n) _). apply (Nat.le_trans _ n _).
+rewrite (HfF n _). trivial. omega.
+Qed.
+
+
+Theorem inv_countdown_can : forall f F,
+shrinking f -> increasing f -> upp_inv_rel f F
 -> upp_inv_rel (countdown f) (repeater F).
 Proof.
 intros f F Hf1 Hf2 HfF. unfold upp_inv_rel.
@@ -454,39 +405,33 @@ intro. simpl.
 destruct N. { unfold countdown. simpl. omega. }
 destruct N.
 { unfold countdown. simpl. split.
-  - intro. apply (contract_upp_inv_positive f F). trivial. trivial.
+  - intro. apply (upp_inv_positive f F). trivial. trivial.
   - intro. omega. }
 rewrite countdown_interstate_2. rewrite <- le_S_n_m.
 rewrite (IHn (f (S (S N)))). apply HfF. trivial. omega.
 Qed.
 
 
-Print low_inv_rel.
-
-
-(*
 (* PACKING EVERYTHING *)
 
 Definition inv_ack_like_rel f F : Prop :=
-(contracting f) /\ (increasing f)
-/\ (upp_inv_rel f F) /\ (st_expanding F) /\ (increasing F).
-
+(shrinking f) /\ (increasing f)
+/\ (upp_inv_rel f F) /\ (growing F) /\ (increasing F).
 
 
 Theorem countdown_inv_ack_like : forall f F,
 inv_ack_like_rel f F -> inv_ack_like_rel (countdown f) (repeater F).
 Proof.
 intros. destruct H. destruct H0. destruct H1. destruct H2.
-assert (contracting (countdown f)). { apply countdown_contract. trivial. }
+assert (shrinking (countdown f)). { apply countdown_shrink. trivial. }
 assert (upp_inv_rel (countdown f) (repeater F)).
-{ apply upp_inv_preserve; trivial. }
+{ apply inv_countdown_can; trivial. }
 split. { trivial. }
 split. { apply countdown_incr; trivial. }
-split. { apply upp_inv_preserve; trivial. }
-split. { apply (contract_upp_inv_st_expand (countdown f) _); trivial. }
-apply (contract_incr_upp_inv_incr (countdown f) _); trivial. apply countdown_incr; trivial.
+split. { apply inv_countdown_can; trivial. }
+split. { apply (upp_inv_growing (countdown f) _); trivial. }
+apply (upp_inv_increasing (countdown f) _); trivial. apply countdown_incr; trivial.
 Qed.
-*)
 
 
 (* INVERSE ACKERMANN HIERARCHY *)
@@ -501,7 +446,7 @@ Proof.
 unfold minus_2. destruct n. trivial. destruct n. trivial. omega.
 Qed.
 
-Theorem minus_2_contract: contracting minus_2.
+Theorem minus_2_shrink: shrinking minus_2.
 Proof.
 intro. rewrite minus_2_correct. omega.
 Qed.
@@ -533,10 +478,10 @@ forall i, inv_ack_like_rel (inv_ack_hier i) (ack_hier i).
 Proof.
 induction i.
 - simpl. unfold inv_ack_like_rel. unfold minus_b. split.
-  { unfold contracting. intro. apply minus_2_contract. } split.
+  { unfold shrinking. intro. apply minus_2_shrink. } split.
   { unfold increasing. intros. repeat rewrite minus_2_correct. omega. } split.
   { unfold upp_inv_rel. intros. rewrite minus_2_correct. omega.  } split.
-  { unfold st_expanding. intros. replace (S n) with (1 + n). omega. trivial. }
+  { unfold growing. intros. replace (S n) with (1 + n). omega. trivial. }
   { unfold increasing. intros. omega. }
 - apply countdown_inv_ack_like. trivial.
 Qed.
@@ -547,27 +492,27 @@ intro. assert (H := (inv_hier_ack_hier i)). unfold inv_ack_like_rel in H.
 destruct H as [_ H]. destruct H as [H _]. trivial. Qed.
 
 
-Corollary inv_ack_hier_each_contract : forall i, contracting (inv_ack_hier i).
+Corollary inv_ack_hier_each_shrink : forall i, shrinking (inv_ack_hier i).
 intro. assert (H := (inv_hier_ack_hier i)). unfold inv_ack_like_rel in H.
 destruct H as [H _]. trivial. Qed.
 
 
-Corollary inv_ack_hier_contract : forall i n,
+Corollary inv_ack_hier_shrink : forall i n,
 (3 <= n) -> (inv_ack_hier (S i) n) <= inv_ack_hier i n.
 Proof.
-intros. assert (Hi := (inv_ack_hier_each_contract i)). simpl.
+intros. assert (Hi := (inv_ack_hier_each_shrink i)). simpl.
 rewrite <- countdown_repeat_1. remember (inv_ack_hier i n) as m.
 destruct m.
 - simpl. destruct i. { simpl in Heqm. rewrite minus_2_correct in Heqm. omega. }
   symmetry in Heqm. simpl in Heqm. rewrite countdown_repeat_2 in Heqm.
-  destruct Heqm as [Heqm _]. simpl in Heqm. trivial. apply inv_ack_hier_each_contract.
+  destruct Heqm as [Heqm _]. simpl in Heqm. trivial. apply inv_ack_hier_each_shrink.
 - rewrite repeat_S_comm. apply (Nat.le_trans _ (inv_ack_hier i n - m) _).
-  apply repeat_contract. trivial. omega.
+  apply repeat_shrink. trivial. omega.
 - trivial.
 Qed.
 
 
-Corollary inv_ack_hier_contract_gen : forall i j n,
+Corollary inv_ack_hier_shrink_gen : forall i j n,
 (3 <= n) -> (i <= j) -> (inv_ack_hier j n) <= inv_ack_hier i n.
 Proof.
 intros i j n Hn Hij. generalize dependent i.
@@ -575,7 +520,7 @@ induction j. { intros. inversion Hij. trivial. }
 intros. inversion Hij.
 { trivial. }
 apply (Nat.le_trans _ (inv_ack_hier j n) _).
-{ apply inv_ack_hier_contract. trivial. }
+{ apply inv_ack_hier_shrink. trivial. }
 apply IHj. trivial.
 Qed.
 
@@ -698,9 +643,9 @@ intros i n Hin.
 unfold inv_ack_helper. remember (inv_ack_hier i) as f0.
 remember (inv_ack_hier (S i)) as f1. remember (inv_ack_hier (S(S i))) as f2.
 assert (4 <= n) as Hn.
-{ assert (H := (inv_ack_hier_each_contract i n)). rewrite <- Heqf0 in H. omega. }
+{ assert (H := (inv_ack_hier_each_shrink i n)). rewrite <- Heqf0 in H. omega. }
 assert (f1 n <= f0 n).
-{ rewrite Heqf1. rewrite Heqf0. apply inv_ack_hier_contract. omega. }
+{ rewrite Heqf1. rewrite Heqf0. apply inv_ack_hier_shrink. omega. }
 rewrite inv_ack_interstate_2. simpl.
 replace (f0 n - (f0 n - f1 n)) with (f1 n).
 assert (f2 = countdown f1) as Hf12. { rewrite Heqf1. rewrite Heqf2. trivial. }
@@ -712,7 +657,7 @@ replace (f0 n - (i + 3) - (f0 n - f1 n) - 1) with (f1 n - S (i + 3)).
   rewrite (plus_comm 1 _). rewrite <- sub_sub_comm. omega.
 - rewrite Hf12. rewrite plus_comm.
   rewrite countdown_interstate_2. trivial.
-  rewrite Heqf1. apply inv_ack_hier_each_contract. omega.
+  rewrite Heqf1. apply inv_ack_hier_each_shrink. omega.
 - omega.
 - omega.
 Qed.
@@ -728,7 +673,7 @@ intro. clear H0. unfold inv_ack. rewrite inv_ack_interstate_2.
 rewrite H. rewrite <- sub_add_distr. rewrite <- sub_add_distr.
 rewrite plus_comm. rewrite <- minus_2_correct in H.
 rewrite <- H. rewrite <- (countdown_interstate_2 minus_2 _). trivial.
-apply minus_2_contract. omega. omega.
+apply minus_2_shrink. omega. omega.
 Qed.
 
 
@@ -749,7 +694,7 @@ split.
 - intro. assert (H1 := H). rewrite IHi in H. rewrite inv_ack_interstate_3. omega.
   apply (Nat.le_trans _ (inv_ack_hier (S i + k) n) _).
   apply (Nat.le_trans _ (S i + k + 4) _). omega. trivial.
-  apply inv_ack_hier_contract_gen. trivial. omega.
+  apply inv_ack_hier_shrink_gen. trivial. omega.
 - intro. rewrite IHi. rewrite inv_ack_interstate_3 in H. omega.
   rewrite H0. omega.
 - omega.
@@ -764,7 +709,7 @@ destruct n.
 simpl. destruct x. simpl. omega.
 rewrite inv_ack_Ack. simpl. split.
 - intro. apply (Nat.le_trans _ (inv_ack_hier 0 3) _).
-  apply inv_ack_hier_contract_gen. trivial. omega. simpl. omega.
+  apply inv_ack_hier_shrink_gen. trivial. omega. simpl. omega.
 - intro. omega. }
 rewrite inv_ack_interstate_4. destruct x. { simpl. omega. }
 rewrite <- le_S_n_m. rewrite inv_ack_Ack.
