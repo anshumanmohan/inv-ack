@@ -55,9 +55,6 @@ This is equivalent to
 \Ack(k, k) < n \le \Ack(k+1, k+1)
 \end{equation}
 
-<<<<<<< HEAD
-The naive algorithm would need to compute $\Ack(t, t)$ for $t = 0, 1, \ldots, k, k+1$ before terminating. Although one could argue that the total time to compute $\Ack(t, t)$ for $t\le k$ is still $O(n)$, as they are all less than $n$, the time to compute $\Ack(k+1, k+1)$ could be astronomically larger than $n$. This situation motivates the need for an alternative, more efficient approach to compute the inverse Ackermann function.
-=======
 The naive algorithm would need to compute 
 $\Ack(t, t)$ for $t = 0, 1, \ldots, k, k+1$ before terminating. 
 {\color{magenta} Although one could argue that the total time to 
@@ -66,29 +63,9 @@ less than $n$, the time to compute $\Ack(k+1, k+1)$ could be
 astronomically larger than $n$.} This situation motivates the 
 need for an alternative, more efficient approach for computing 
 the inverse Ackermann function.
->>>>>>> ea3ab7244c9a81f06217436752a28ec6aacdf383
 
-\subsection{Alternative representations}
+\subsection{The hierarchy of Ackermann functions}
 
-<<<<<<< HEAD
-One popular representation for the Ackermann functions is via Knuth's up-arrow notations. They are defined by Knuth in \cite{knuth} as follows:
-\begin{equation}
-a\uparrow^n b = \begin{cases}
-ab & \text{ if } n = 0 \\ 1 & \text{ if } n \ge 1, b = 0 \\
-a \uparrow^{n-1} (a \uparrow^n (b - 1)) & \text{ if } n \ge 1, b \ge 1
-\end{cases} \ \ \ \forall a, b \in \mathbb{N}
-\end{equation}
-
-The Knuth's up-arrow notation is related to the Ackermann function by the following identity:
-\begin{equation}
-\Ack(m, n) = 2 \uparrow^{m-2} (n + 3) - 3 \ \ \ \forall n \ \forall m \ge 2
-\end{equation}
-, which also inspires the following hierarchical perspective of the Ackermann function.
-If one denotes $\text{A}_m(n) = \Ack(m, n)$, one can think of the Ackermann function as a hierarchy of functions, each level $A_m$ is a recursive function built with the previous level $A_{m-1}$:
-
-\begin{defn} \label{defn: ack_hier}
-	The Ackermann hierarchy is a sequence of functions $\left\{\text{A}_m\right\}_{m=0}^\infty$ defined by:
-=======
 If one denotes {\color{magenta}$\text{A}_m(n) = \Ack(m, n)$}, one can think 
 of the Ackermann function as a hierarchy of functions, each 
 level $A_m$ is a recursive function built with the previous 
@@ -97,7 +74,6 @@ level $A_{m-1}$:
 \begin{defn} \label{defn: ack_hier}
 	The Ackermann hierarchy is a sequence of functions 
 	$\text{A}_0, \text{A}_1, \ldots $ defined as:
->>>>>>> ea3ab7244c9a81f06217436752a28ec6aacdf383
 	\begin{enumerate}
 		\item $A_0(n) = n + 1 \ \ \ \forall n\in \mathbb{N}$.
 		\item $A_m(0) = A_{m-1}(1) \ \ \ \forall m\in \mathbb{N}_{>0}$.
@@ -109,11 +85,7 @@ level $A_{m-1}$:
 	$\text{A}_m(n) = \Ack(m, n) \ \ \forall m, n\in \mathbb{N}$.
 \end{defn}
 
-<<<<<<< HEAD
-We will show in this paper that each function in this hierarchy has an approximate inverse, upon which we can compute the inverse Ackermann function as defined in \Cref{defn: ack}.
-=======
 This hierarchical perspective can be reversed, as shown in the 
 next section, to form an inverse Ackermann hierarchy of functions, 
 upon which we can compute the inverse Ackermann function as 
 defined in \Cref{defn: ack}.
->>>>>>> ea3ab7244c9a81f06217436752a28ec6aacdf383

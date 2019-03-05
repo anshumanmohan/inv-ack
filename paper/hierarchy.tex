@@ -13,7 +13,7 @@ Given a function $f: \mathbb{N} \to \mathbb{N}$.
 The \textit{countdown} of $f$, denoted by $f^*$, is given by:
 \begin{equation} \label{eq: countdown}
 f^*(n) = \begin{cases}
-0 & \text{ if } n \le \max\{1, f(n)\} \\ 1 + f^*(f(n)) & \text{ if } n > \max\{1, f(n)\}
+0 & \text{ if } n \le \max\{0, 1, f(n)\} \\ 1 + f^*(f(n)) & \text{ if } n > \max\{0, 1, f(n)\}
 \end{cases}
 \end{equation}
 \end{defn}
@@ -54,12 +54,8 @@ With the above countdown operation in hand, we can
 build the inverse Ackermann hierarchy.
 
 \begin{defn} \label{defn: inv_ack_hier}
-<<<<<<< HEAD
-The inverse Ackermann hierarchy is a sequence of functions $\left\{\alpha_m\right\}_{m=0}^\infty$ recursively defined as:
-=======
 The inverse Ackermann hierarchy is a sequence of 
 functions $\alpha_0, \alpha_1, \ldots $ recursively defined as:
->>>>>>> ea3ab7244c9a81f06217436752a28ec6aacdf383
 \begin{enumerate}
 	\item $\alpha_0(n) = \max\{n-2, 0\} \ \ \ \forall n \in \mathbb{N}$.
 	\item $\alpha_m = \alpha_{m-1}^*  \ \ \ \forall m\in \mathbb{N}_{>0}$.
@@ -77,7 +73,7 @@ For all $m\in\mathbb{N}$, $\alpha_m$ is a contraction and
 \end{thm}
 
 \begin{proof}
-We proceed by induction on $m$. For $m = 0$, 
+TODO TODO TODO
 \end{proof}
 
 Having sufficiently established the inverse Ackermann 
