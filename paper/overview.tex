@@ -3,17 +3,21 @@
 The time complexity of the union-find data structure has traditionally
 been hard to estimate, especially when it is implemented with the 
 heuristic rules of \emph{path compression} and \emph{weighted union}. 
-Tarjan \cite{tarjan} showed that for a sequence of $m$ FINDs intermixed with $n-1$ UNIONs 
+Tarjan \cite{tarjan} showed that for a sequence of $m$ FINDs 
+intermixed with $n-1$ UNIONs 
 such that $m \geq n$, the time required $t(m,n)$ is bounded
-as: $k_{1}m\alpha(m,n) \leq t(m,n) \leq k_{2}m\alpha(m,n)$.
-
+as: $k_{1}m\alpha(m,n) \leq t(m,n) \leq k_{2}m\alpha(m,n)$. 
 Here $k_{1}$ and $k_{2}$ are positive constants and $\alpha(m,n)$ is 
 the inverse of the Ackermann function.
 
-The Ackermann function, commonly denoted $\Ack(m, n)$, was first defined by Ackermann \cite{ackermann}, but this definition was not as widely used as the below variant, given by Peter and Robinson \cite{peter-ackermann}:
+The Ackermann function, commonly denoted $\Ack(m, n)$, 
+was first defined by Ackermann \cite{ackermann}, but this 
+definition was not as widely used as the following variant, 
+given by Peter and Robinson \cite{peter-ackermann}:
 
 \begin{defn} \label{defn: ack}
-The Peter-Ackermann function is a recursive two-variable function $\text{A} : \mathbb{N}^2 \to \mathbb{N}$ such that:
+The Peter-Ackermann function is a recursive two-variable 
+function $\text{A} : \mathbb{N}^2 \to \mathbb{N}$ such that:
 \begin{equation}
 A(m, n) = \begin{cases}
 n + 1 & \text{ if } m = 0 \\
@@ -23,28 +27,50 @@ A(m-1, A(m, n-1)) & \text{ if } m > 0, n > 0
 \end{equation}
 The diagonal Ackermann function is then denoted simply as:
 \begin{equation}
-\Ack(n) = \Ack(n, n)
+{\color{magenta}\Ack(n) = \Ack(n, n)}
 \end{equation}
 \end{defn}
 
 
 \begin{defn} \label{defn: inv_ack}
-The inverse Ackermann function $\alpha(n)$, as defined by many authors, is the minimum $k$ for which $n \le \Ack(k, k)$:
+Several authors \cite{blah} have defined the inverse Ackermann 
+function $\alpha(n)$ as the minimum $k$ for which $n \le \Ack(k, k)$:
 \begin{equation}
 \alpha(n) = \min\left\{k\in \mathbb{N} : n \le \Ack(k, k)\right\}
 \end{equation}
 \end{defn}
 
-As many texts have suggested, $\Ack(m, n)$ increases extremely fast on both inputs, hence does $\Ack(n, n)$. This implies $\alpha(n)$ increases extremely slow, although it still tends to infinity. However, it does not mean computing $\alpha(n)$ for each $n$ is an easy task. In fact, the naive method would iteratively check $\Ack(k, k)$ for $k = 0, 1, \ldots, $ until $n \le \Ack(k, k)$, which could lead to unimaginably large computation time. For instance, suppose $n > 1$, and $\alpha(n) = k+1$. This is equivalent to
+$\Ack(m, n)$ increases extremely fast on both inputs, 
+and, consequently, so does $\Ack(n, n)$. 
+This implies $\alpha(n)$ increases extremely slowly, 
+although it still tends to infinity. However, this does 
+not mean that computing $\alpha(n)$ for each $n$ is an easy 
+task. In fact, the naive method would iteratively check 
+$\Ack(k, k)$ for $k = 0, 1, \ldots, $ until $n \le \Ack(k, k)$. 
+The computation time would be staggering. 
+For instance, suppose $n > 1$, and $\alpha(n) = k+1$. 
+This is equivalent to
 
 \begin{equation}
 \Ack(k, k) < n \le \Ack(k+1, k+1)
 \end{equation}
 
+<<<<<<< HEAD
 The naive algorithm would need to compute $\Ack(t, t)$ for $t = 0, 1, \ldots, k, k+1$ before terminating. Although one could argue that the total time to compute $\Ack(t, t)$ for $t\le k$ is still $O(n)$, as they are all less than $n$, the time to compute $\Ack(k+1, k+1)$ could be astronomically larger than $n$. This situation motivates the need for an alternative, more efficient approach to compute the inverse Ackermann function.
+=======
+The naive algorithm would need to compute 
+$\Ack(t, t)$ for $t = 0, 1, \ldots, k, k+1$ before terminating. 
+{\color{magenta} Although one could argue that the total time to 
+compute $\Ack(t, t)$ for $t\le k$ is still $O(n)$, as they are all 
+less than $n$, the time to compute $\Ack(k+1, k+1)$ could be 
+astronomically larger than $n$.} This situation motivates the 
+need for an alternative, more efficient approach for computing 
+the inverse Ackermann function.
+>>>>>>> ea3ab7244c9a81f06217436752a28ec6aacdf383
 
 \subsection{Alternative representations}
 
+<<<<<<< HEAD
 One popular representation for the Ackermann functions is via Knuth's up-arrow notations. They are defined by Knuth in \cite{knuth} as follows:
 \begin{equation}
 a\uparrow^n b = \begin{cases}
@@ -62,12 +88,32 @@ If one denotes $\text{A}_m(n) = \Ack(m, n)$, one can think of the Ackermann func
 
 \begin{defn} \label{defn: ack_hier}
 	The Ackermann hierarchy is a sequence of functions $\left\{\text{A}_m\right\}_{m=0}^\infty$ defined by:
+=======
+If one denotes {\color{magenta}$\text{A}_m(n) = \Ack(m, n)$}, one can think 
+of the Ackermann function as a hierarchy of functions, each 
+level $A_m$ is a recursive function built with the previous 
+level $A_{m-1}$:
+
+\begin{defn} \label{defn: ack_hier}
+	The Ackermann hierarchy is a sequence of functions 
+	$\text{A}_0, \text{A}_1, \ldots $ defined as:
+>>>>>>> ea3ab7244c9a81f06217436752a28ec6aacdf383
 	\begin{enumerate}
 		\item $A_0(n) = n + 1 \ \ \ \forall n\in \mathbb{N}$.
 		\item $A_m(0) = A_{m-1}(1) \ \ \ \forall m\in \mathbb{N}_{>0}$.
-		\item $A_{m}(n) = A_{m-1}^{(n)}(0) \ \ \ \forall m\in \mathbb{N}_{>0}$,
+		\item $A_{m}(n) = A_{m-1}^{(n)}(0) \ \ \ \forall n, m\in \mathbb{N}_{>0}$,
 	\end{enumerate}
-	\noindent where $f^{(n)}(x)$ denotes the result of applying $n$ times the function $f$ to the input $x$. This hierarchy satisfies $\text{A}_m(n) = \Ack(m, n) \ \ \forall m, n\in \mathbb{N}$.
+	\noindent where $f^{(n)}(x)$ {\color{magenta}denotes 
+	the result of applying $n$ times the function $f$ to 
+	the input $x$.} This hierarchy satisfies 
+	$\text{A}_m(n) = \Ack(m, n) \ \ \forall m, n\in \mathbb{N}$.
 \end{defn}
 
+<<<<<<< HEAD
 We will show in this paper that each function in this hierarchy has an approximate inverse, upon which we can compute the inverse Ackermann function as defined in \Cref{defn: ack}.
+=======
+This hierarchical perspective can be reversed, as shown in the 
+next section, to form an inverse Ackermann hierarchy of functions, 
+upon which we can compute the inverse Ackermann function as 
+defined in \Cref{defn: ack}.
+>>>>>>> ea3ab7244c9a81f06217436752a28ec6aacdf383
