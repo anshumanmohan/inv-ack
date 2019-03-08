@@ -97,11 +97,10 @@ Qed.
    It asserts that this countdown function obeys the conditions
    set up for countdown in "countdown_repeater.v" *)
 Theorem countdown_to_repeat : forall a f,
-contracting f
--> contract_strict_from (S a) f
--> countdown_to_repeat_rel a f (countdown_to a f).
+countdownable_to a f -> countdown_to_repeat_rel a f (countdown_to a f).
 Proof.
-intros a f Hf Haf n k.
+intros a f Haf n k.
+destruct Haf as [Hf Haf].
 unfold countdown_to.
 split.
 - intro. rewrite not_lt. intro.
@@ -135,16 +134,15 @@ Qed.
 
 (* RECURSION FOR CONTRACTORS THEOREM *)
 Theorem countdown_to_contractor : forall a f n,
-contracting f
--> contract_strict_from (S a) f
--> S a <= n
+countdownable_to a f -> S a <= n
 -> countdown_to a f n = S(countdown_to a f (f n)).
 Proof.
-intros a f n Hf Haf Han.
+intros a f n Hf Han.
 assert (H0 := Hf).
 apply (countdown_to_repeat a f) in H0.
-- rewrite countdown_to_rel_recursion in H0.
-  destruct (H0 n) as [Hfn0 Hfn1].
-  tauto. apply Hf. apply Haf.
-- apply Haf.
+rewrite countdown_to_rel_recursion in H0.
+- destruct (H0 n) as [Hfn0 Hfn1].
+  apply Hfn1. apply Han.
+- apply Hf.
+- apply Hf.
 Qed.
