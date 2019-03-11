@@ -4,179 +4,46 @@ Require Import prelims.
 
 (*
 =============================================================================
-****************** SECTION 1: COUNTDOWN AND REPEATER ************************
+****************** SECTION 2: COUNTDOWN AND REPEATER ************************
 =============================================================================
 *)
 
-(* Countdown is non-trivial to define, our approach is to provide a sort of interface
-   for it by separating the core property and the actual definition. We provide the
-   relation "countdown_to_repeat_rel" to state the condition for "cf" to be the countdown
-   to "a" of "f". All facts about countdown can be proven just using this condition
-   without touching the real definition, which will be provided later *)
-
-(* ****** 1.1. COUNTDOWN ******************************* *)
-
-
-(* ****** 1.1.1. DEFINITIONS ********************)
-
-(* Basically says that "cf n" is the minimum number of times we need to
-   repeat "f" to get a result less than or equal to "a" *)
-Definition countdown_to_repeat_rel (a : nat) (f cf : nat -> nat) : Prop
-:= forall n k : nat, cf n <= k <-> repeat f k n <= a.
+(* This section contains the actual definition of countdown, as we previously
+   only work with its properties (i.e. what countdown should be, rather than
+   what it actually is.
+   I choose a different approach than my previous approach here, which is
+   actually simpler (very straighforward), but will require a longer proof of
+   correctness
+   What happened to the previous approach? I am trying to clean its code to
+   get rid of edge cases (e.g. check if (f n) is below 1 or not), not done yet
+   Also, this new approach is both simpler and faster. It takes o(n) time instead
+   of O(n) !
+   We also introduce the repeater and its relation to countdown *)
 
 
-(* Usual recursive property of countdown : "cf n = 1 + cf (f n)" *)
-Definition countdown_to_recurse_rel (a : nat) (f cf : nat -> nat) : Prop
-:= forall n, ((n <= a) -> cf n = 0) /\ ((S a <= n) -> cf n = S (cf (f n))).
+(* ****** 2.1. DEFINITION *************************************)
 
+(* Basically, repeats "f" "k" times or until we go below "a".
+   Output "min(k, min{l : repeat f l n <= a})" *)
+Fixpoint countdown_to_worker (a : nat) (f : nat -> nat) (n k : nat)
+: nat :=
+match k with
+| 0    => 0
+| S k' => match (n - a) with
+          | 0   => 0
+          | S _ => S (countdown_to_worker a f (f n) k') end
+end.
 
-(* General formula derived from the recursive property above *)
-Lemma countdown_to_recurse_formula :
-forall a f cf n k, contracting f
--> countdown_to_recurse_rel a f cf
--> S a <= repeat f k n
--> cf n = (S k) + cf (repeat f (S k) n).
-Proof.
-intros a f cf n k Hf Hfcf Han.
-induction k.
-{ simpl. simpl in Han. destruct (Hfcf n) as [_ Hfcfn].
-  apply Hfcfn. apply Han. }
-simpl in Han. rewrite IHk.
-- simpl. destruct (Hfcf (f (repeat f k n))) as [_ Hfcfn].
-  apply Hfcfn in Han. omega.
-- apply (Nat.le_trans _ (f (repeat f k n)) _).
-  + apply Han.
-  + apply Hf.
-Qed.
+(* Actual defintion. We give the worker a budget of "n" steps, which
+   guarantees it reach below "a" before terminating *)
+Definition countdown_to a f n := countdown_to_worker a f n n.
 
-
-(* Proof that the two above conditions are equivalent *)
-Theorem countdown_to_rel_recursion :
-forall a f cf, contracting f
--> contract_strict_from (S a) f
--> (countdown_to_repeat_rel a f cf <-> countdown_to_recurse_rel a f cf).
-Proof.
-intros a f cf Hf Haf.
-unfold countdown_to_repeat_rel.
-unfold countdown_to_recurse_rel.
-split.
-- intros Hfcf n. split.
-  + rewrite <- (Hfcf n 0). omega.
-  + intro Han. remember (cf (f n)) as k.
-    assert (cf n <= S k).
-    { rewrite Hfcf. rewrite repeat_S_comm.
-      rewrite <- Hfcf. omega. }
-    assert (~ cf n <= k).
-    { rewrite Hfcf. destruct k. { simpl. omega. }
-      rewrite repeat_S_comm. rewrite <- Hfcf.
-      omega. }
-    omega.
-- intros Hfcf n k. split.
-  + intro Hkn. rewrite not_lt. intro.
-    rewrite (countdown_to_recurse_formula a f cf n k) in Hkn.
-    * omega.
-    * apply Hf.
-    * unfold countdown_to_recurse_rel. apply Hfcf.
-    * apply H.
-  + remember (n - a) as m.
-    destruct m.
-    { intro. destruct (Hfcf n) as [Hfcfn _].
-      rewrite Hfcfn. omega. omega. }
-    assert (S a <= n) as Han by omega.
-    destruct (repeat_contract_strict_threshold a f n) as [x Hx].
-    * apply Hf.
-    * apply Haf.
-    * apply Han.
-    * intro. destruct Hx as [Hxn Hxna].
-      destruct Hxna as [Hxnal Hxnar].
-      assert (cf n = S x).
-      { rewrite (countdown_to_recurse_formula a f cf n x).
-        - destruct (Hfcf (repeat f (S x) n)) as [Hfcfxn _].
-          apply Hfcfxn in Hxnal. omega.
-        - apply Hf.
-        - unfold countdown_to_recurse_rel. apply Hfcf.
-        - apply Hxnar. }
-      rewrite H0. apply not_le. intro.
-      apply (repeat_contract f n k x) in Hf.
-      omega. apply H1.
-Qed.
-
-
-(* ****** 1.1.1. PROPERTIES ********************)
-
-
-(* Countdown preserves increasing-ness of contractions *)
-Theorem countdown_to_incr : forall a f cf,
-contracting f -> increasing f
--> countdown_to_repeat_rel a f cf -> increasing cf.
-Proof.
-intros a f cf Hf0 Hf1 Hfcf n m Hnm.
-unfold countdown_to_repeat_rel in Hfcf.
-rewrite Hfcf.
-apply (Nat.le_trans _ (repeat f (cf m) m) _).
-- apply (repeat_incr (cf m) f) in Hf1. apply Hf1. apply Hnm.
-- rewrite <- Hfcf. trivial.
-Qed.
-
-
-(* Countdown preserves contracting-ness of contractions *)
-Theorem countdown_to_contract : forall a f cf,
-(1 <= a) -> contracting f
--> contract_strict_from (S a) f
--> countdown_to_repeat_rel a f cf
--> contracting cf /\ contract_strict_from 1 cf.
-Proof.
-intros a f cf Ha Hf Haf Hfcf.
-split.
-- intro. rewrite (Hfcf n n).
-  rewrite not_lt. intro.
-  apply repeat_contract_strict in H.
-  + omega.
-  + apply Hf.
-  + apply Haf.
-- intros n Hn. destruct n. { omega. }
-  rewrite <- le_S_n_m. rewrite (Hfcf _ n).
-  destruct n. { trivial. }
-  remember (repeat f n (S (S n)) - a) as m.
-  destruct m.
-  { apply (Nat.le_trans _ (repeat f n (S (S n))) _).
-    apply Hf. omega. }
-  assert (S n + repeat f (S n) (S (S n)) <= (S n) + a).
-  { apply (Nat.le_trans _ (S (S n)) _).
-    apply (repeat_contract_strict a _ _).
-    - apply Hf.
-    - apply Haf.
-    - omega.
-    - omega. }
-  omega.
-Qed.
-
-(* Basically: "f" has a countdown to "a" if
+(* Basically: "f" has a proper countdown to "a" if
    it is a contraction that is strict from "a" *)
 Definition countdownable_to (a : nat) (f : nat -> nat) : Prop
 := contracting f /\ contract_strict_from (S a) f.
 
 
-(* Just the combination of the two preservation theorems above *)
-Theorem countdown_countdownable : forall a f cf,
-(1 <= a) -> countdownable_to a f
--> (countdown_to_repeat_rel a f cf)
--> countdownable_to a cf.
-Proof.
-intros a f cf Ha Haf Hafcf.
-destruct Haf as [Haf0 Haf1].
-apply (countdown_to_contract a f cf) in Haf0.
-- destruct Haf0 as [Hcf0 Hcf1].
-  split.
-  + apply Hcf0.
-  + intros n Han. apply Hcf1. omega.
-- apply Ha.
-- apply Haf1.
-- apply Hafcf.
-Qed.
-
-
-(* ****** 1.2. REPEATER ******************************** *)
 
 (* Can be easily defined and computed, so we define it directly *)
 Fixpoint repeater_from (a : nat) (f : nat -> nat) (n : nat) : nat
@@ -185,11 +52,171 @@ Fixpoint repeater_from (a : nat) (f : nat -> nat) (n : nat) : nat
    | S n' => f (repeater_from a f n')
 end. 
 
-(* It actually is just "repeat" from "prelims" in disguise *)
+
+(* ****** 1.2. THEOREMS ************************************* *)
+
+
+(* *** REPEATER iS REPEAT **** *)
 Theorem repeater_from_repeat :
 forall a f n, repeater_from a f n = repeat f n a.
 Proof.
 intros a f n.
 induction n. { trivial. }
 simpl. rewrite IHn. trivial.
+Qed.
+
+
+(* *** COUNTDOWN CORRECTNESS THEOREMS *** *)
+
+(* INITIAL VALUE THEOREM
+   Basically countdown returns 0 if "n" is already below "a" *)
+Theorem countdown_to_init : forall a f n k,
+(n <= a) -> (countdown_to_worker a f n k = 0).
+Proof.
+intros a f n k Hna.
+unfold countdown_to_worker.
+destruct k. { trivial. }
+replace (n - a) with 0 by omega.
+trivial.
+Qed.
+
+
+(* INTERMEDIATE STATE LEMMA
+   Similar to the general recursion formula for "countdown_to_recurse_rel" *)
+Theorem countdown_to_intermediate : forall a f n k i,
+contracting f
+-> S i <= k
+-> S a <= repeat f i n
+-> countdown_to_worker a f n k
+   = (S i) + countdown_to_worker a f (repeat f (S i) n) (k - (S i)).
+Proof.
+assert (forall a f n k, contracting f -> 1 <= k -> S a <= n
+        -> countdown_to_worker a f n k
+        = 1 + countdown_to_worker a f (f n) (k - 1)
+        ) as case_0.
+{ simpl. intros a f n k Hf Hk Ha.
+  destruct k. { omega. }
+  replace (S k - 1) with k by omega.
+  unfold countdown_to_worker.
+  replace (n-a) with (S(n - S a)) by omega.
+  trivial.
+}
+intros a f n k i Hf Hik Hai.
+induction i.
+{ simpl. apply case_0; trivial. }
+rewrite IHi.
+- simpl. remember (f (repeat f i n)) as m.
+  remember (k - S i) as l.
+  replace (k - S(S i)) with (l - 1) by omega.
+  rewrite case_0.
+  + omega.
+  + trivial.
+  + omega.
+  + simpl in Hai. rewrite Heqm. trivial.
+- omega.
+- apply (Nat.le_trans _ (repeat f (S i) n) _).
+  + trivial.
+  + apply Hf.
+Qed.
+
+(* COUNTDOWN VS REPEAT THEOREM
+   This is the correctness theorem for this countdown defintion 
+   It asserts that this countdown function obeys the conditions
+   set up for countdown in "countdown_repeater.v" *)
+
+Theorem countdown_to_repeat : forall a f n k,
+countdownable_to a f -> countdown_to a f n <= k <-> repeat f k n <= a.
+Proof.
+intros a f n k Haf.
+destruct Haf as [Hf Haf].
+unfold countdown_to.
+split.
+- intro. rewrite not_lt. intro.
+  rewrite (countdown_to_intermediate a f n n k) in H.
+  + omega.
+  + apply Hf.
+  + apply (Nat.le_trans _ (S k + (repeat f (S k) n)) _).
+    * omega.
+    * apply (repeat_contract_strict a f n k). apply Hf. apply Haf. apply H0.
+  + apply H0.
+- intro. destruct k.
+  { simpl in H. rewrite (countdown_to_init a f n).
+    omega. apply H. }
+  remember (n - a) as m.
+  destruct m. { rewrite countdown_to_init; omega. }
+  destruct (repeat_contract_strict_threshold a f n).
+  + apply Hf.
+  + apply Haf.
+  + omega.
+  + destruct H0 as [Hx0 Hx1]. destruct Hx1 as [Hxl Hxr].
+    assert (countdown_to_worker a f n n = S x) as Hx.
+    { rewrite (countdown_to_intermediate a f n n x).
+      - rewrite countdown_to_init. omega. apply Hxl.
+      - apply Hf.
+      - apply Hx0.
+      - apply Hxr. }
+    rewrite Hx. apply not_le. intro.
+    apply (repeat_contract f n (S k) x) in H0.
+    omega. apply Hf.
+Qed.
+
+(* RECURSION FOR CONTRACTORS THEOREM *)
+Theorem countdown_to_recursion : forall a f n,
+countdownable_to a f
+-> (n <= a -> countdown_to a f n = 0)
+    /\ (S a <= n -> countdown_to a f n = S(countdown_to a f (f n))).
+Proof.
+intros a f n Hf.
+split.
+- intro Han. unfold countdown_to.
+  apply countdown_to_init. apply Han.
+- intro Han.
+  assert (countdown_to a f n <= S (countdown_to a f (f n))) as G1.
+  { rewrite countdown_to_repeat by apply Hf.
+    rewrite repeat_S_comm.
+    rewrite <- countdown_to_repeat by apply Hf.
+    trivial. }
+  assert (1 <= countdown_to a f n) as G0.
+  { rewrite le_lt_S. rewrite <- not_le.
+    rewrite countdown_to_repeat by apply Hf.
+    simpl. omega. }
+  assert (countdown_to a f (f n) <= countdown_to a f n - 1).
+  { rewrite countdown_to_repeat by apply Hf.
+    rewrite <- repeat_S_comm.
+    replace (S (countdown_to a f n - 1)) with (countdown_to a f n) by omega.
+    rewrite <- countdown_to_repeat by apply Hf.
+    trivial. }
+  omega.
+Qed.
+
+
+(* COUNTDOWNABILITY PRESERVATION THEOREM *)
+Theorem countdown_countdownable : forall a f t,
+(1 <= a) -> countdownable_to a f
+-> countdownable_to t (countdown_to a f).
+Proof.
+intros a f t Ha Haf.
+split.
+- intro n. rewrite countdown_to_repeat by apply Haf.
+  rewrite not_lt. intro.
+  apply repeat_contract_strict in H.
+  + omega.
+  + apply Haf.
+  + apply Haf.
+- intros n Hn. destruct n. { omega. }
+  rewrite <- le_S_n_m.
+  rewrite countdown_to_repeat by apply Haf.
+  destruct n. { trivial. }
+  remember (repeat f n (S (S n)) - a) as m.
+  destruct m.
+  { apply (Nat.le_trans _ (repeat f n (S (S n))) _).
+    apply Haf. omega. }
+  assert (S n + repeat f (S n) (S (S n)) <= (S n) + a).
+  { apply (Nat.le_trans _ (S (S n)) _).
+    apply (repeat_contract_strict a _ _).
+    - apply Haf.
+    - apply Haf.
+    - omega.
+    - omega. }
+  omega.
 Qed.

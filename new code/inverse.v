@@ -128,14 +128,14 @@ Qed.
    is the upper inverse of the tower (n + 2), 2n, 2^n, ...
    However I haven't cleaned that part in the old code yet *)
 
-Theorem countdown_repeater_upp_inverse : forall a f cf F,
-countdown_to_repeat_rel a f cf
--> upp_inv_rel f F
--> upp_inv_rel cf (repeater_from a F).
+Theorem countdown_repeater_upp_inverse : forall a f F,
+countdownable_to a f -> upp_inv_rel f F
+-> upp_inv_rel (countdown_to a f) (repeater_from a F).
 Proof.
-intros a f cf F Hfcf HfF n N.
+intros a f F Haf HfF n N.
 rewrite repeater_from_repeat.
-rewrite (Hfcf N n).
 apply (upp_inv_repeat n _ _) in HfF.
-apply HfF.
+rewrite <- (HfF a N).
+apply countdown_to_repeat.
+apply Haf.
 Qed.

@@ -2,7 +2,6 @@ Require Import Omega.
 Require Import prelims.
 Require Import countdown_repeater.
 Require Import inverse.
-Require Import countdown_compute.
 
 (*
 =============================================================================
@@ -196,8 +195,15 @@ match n with
            | _ => 1 end (inv_hyperop n' a) b
 end.
 
+Theorem inv_hyperop_recursion :
+forall n a, inv_hyperop (S n) a
+= countdown_to (match n with | 0 => a | 1 => 0 | _ => 1 end) (inv_hyperop n a).
+Proof.
+trivial.
+Qed.
+
 Theorem inv_hyperop_0_countdownable :
-forall a, countdownable_to a (inv_hyperop 0 a).
+forall a k, countdownable_to k (inv_hyperop 0 a).
 Proof.
 intro a. split; intro n; simpl; omega.
 Qed.
@@ -206,46 +212,103 @@ Theorem inv_hyperop_1 :
 forall a b, inv_hyperop 1 a b = b - a.
 Proof.
 intros a b.
-assert (countdown_to_recurse_rel a (inv_hyperop 0 a) (inv_hyperop 1 a)).
-{ remember (inv_hyperop 0 a) as f.
-  replace (inv_hyperop 1 a) with (countdown_to a f) by (rewrite Heqf; trivial).
-  rewrite <- countdown_to_rel_recursion
-  by (rewrite Heqf; apply inv_hyperop_0_countdownable).
-  apply countdown_to_repeat.
-  rewrite Heqf. apply inv_hyperop_0_countdownable. }
-unfold countdown_to_recurse_rel in H.
+rewrite inv_hyperop_recursion.
 remember (b - a) as m.
 generalize dependent b. induction m.
-- intros b Hb. apply H. omega.
+- intros b Hb.
+  apply countdown_to_recursion.
+  apply inv_hyperop_0_countdownable. omega.
 - intros b Hb. remember (m + a) as n.
   rewrite <- (IHm n) by omega.
   replace n with (inv_hyperop 0 a b) by (simpl; omega).
-  apply H. omega.
+  apply countdown_to_recursion.
+  apply inv_hyperop_0_countdownable. omega.
+Qed.
+
+Corollary inv_hyperop_1_repeat :
+forall a k m, repeat (inv_hyperop 1 a) k m = m - k * a.
+Proof.
+intros a k m. induction k.
+- simpl. omega.
+- remember (inv_hyperop 1 a) as f. simpl.
+  rewrite IHk. rewrite Heqf.
+  rewrite inv_hyperop_1. omega.
+Qed.
+
+Theorem inv_hyperop_correct :
+forall a n, (2 <= a) ->
+countdownable_to (match n with | 0 => a | 1 => 0 | _ => 1 end) (inv_hyperop n a)
+/\ upp_inv_rel (inv_hyperop n a) (hyperop n a).
+Proof.
+intros a n Ha.
+induction n.
+{ split.
+  - apply inv_hyperop_0_countdownable.
+  - intros n N. simpl. omega.
+}
+destruct n.
+{ split.
+  - split; intro n; rewrite inv_hyperop_1; omega.
+  - intros n N. rewrite inv_hyperop_1.
+    rewrite hyperop_1. omega.
+}
+rewrite inv_hyperop_recursion.
+replace (hyperop (S (S n)) a) with
+        (repeater_from (match n with | 0 => 0 | S _ => 1 end) (hyperop (S n) a))
+        by trivial.
+destruct IHn as [IHn0 IHn1].
+split.
+- destruct n.
+  { split.
+    - intro n. rewrite countdown_to_repeat by apply IHn0.
+      rewrite inv_hyperop_1_repeat. assert (1 <= a) by omega.
+      apply (mult_le_compat_l 1 a n) in H. omega.
+    - intros n Hn.
+      destruct n. { omega. } destruct n. { omega. }
+      rewrite <- le_S_n_m.
+      rewrite countdown_to_repeat by apply IHn0.
+      rewrite inv_hyperop_1_repeat. apply (Nat.le_sub_le_add_l).
+      apply (Nat.le_trans _ ((S n) * 2) _).
+      +  omega.
+      + apply (mult_le_compat_l 2 a (S n)) in Ha. omega.
+  }
+  apply countdown_countdownable.
+  trivial. apply IHn0.
+- apply countdown_repeater_upp_inverse; trivial.
 Qed.
 
 
-Theorem inv_hyperop_countdownable :
-forall n a, (1 <= a) -> countdownable_to
-           (match n with | 0 => a | 1 => 0 | _ => 1 end) (inv_hyperop n a).
+Corollary inv_hyperop_upp_inverse :
+forall a n, (2 <= a) -> upp_inv_rel (inv_hyperop n a) (hyperop n a).
 Proof.
-destruct n.
-{ intros a Ha. split; intro n; simpl; omega. }
-destruct n.
-{ intros a Ha. split; intro n; rewrite inv_hyperop_1; omega. }
-induction n.
-Admitted.
+apply inv_hyperop_correct.
+Qed.
 
-Theorem inv_hyperop_correct :
-forall n a, upp_inv_rel (inv_hyperop n a) (hyperop n a).
+
+(* ****** 5.5. DIVISION AND LOGARITHM ********************************* *)
+
+(* Computes ceiling of b / a *)
+Definition div a b := inv_hyperop 2 a b.
+
+Theorem div_correct : forall a b m, (1 <= a) -> div a b <= m <-> b <= m * a.
 Proof.
-intros n a.
-induction n.
-- intros bi bh. simpl. omega.
-- remember (match n with | 0 => a | 1 => 0 | _ => 1 end) as x0.
-  replace (inv_hyperop (S n) a) with
-  (countdown_to x0 (inv_hyperop n a)) by (rewrite Heqx0; trivial).
-  replace (hyperop (S n) a) with
-  (repeater_from x0 (hyperop n a)) by (rewrite Heqx0; trivial).
-  apply (countdown_repeater_upp_inverse x0 (inv_hyperop n a) _ _).
-  + apply countdown_to_repeat.
-Admitted.
+intros a b m Ha.
+destruct a . { omega. }
+unfold div.
+rewrite inv_hyperop_recursion.
+rewrite countdown_to_repeat by (split; intro n; rewrite inv_hyperop_1; omega).
+rewrite inv_hyperop_1_repeat.
+omega.
+Qed.
+
+
+(* Computes ceiling of log_a(b) *)
+Definition log a b := inv_hyperop 3 a b.
+
+Theorem log_correct : forall a b m, (2 <= a) -> log a b <= m <-> b <= a ^ m.
+Proof.
+intros a b m Ha.
+unfold log. rewrite <- hyperop_3.
+apply inv_hyperop_upp_inverse.
+apply Ha.
+Qed.
