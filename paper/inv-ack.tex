@@ -1,25 +1,25 @@
-%% 
+%%
 %% Copyright 2007-2018 Elsevier Ltd
-%% 
+%%
 %% This file is part of the 'Elsarticle Bundle'.
 %% ---------------------------------------------
-%% 
+%%
 %% It may be distributed under the conditions of the LaTeX Project Public
 %% License, either version 1.2 of this license or (at your option) any
 %% later version.  The latest version of this license is in
 %%    http://www.latex-project.org/lppl.txt
 %% and version 1.2 or later is part of all distributions of LaTeX
 %% version 1999/12/01 or later.
-%% 
+%%
 %% The list of all files belonging to the 'Elsarticle Bundle' is
 %% given in the file `manifest.txt'.
-%% 
+%%
 
 %% Template article for Elsevier's document class `elsarticle'
 %% with numbered style bibliographic references
 %% SP 2008/03/01
 %%
-%% 
+%%
 %%
 %% $Id: elsarticle-template-num.tex 64 2013-05-15 12:23:51Z rishi $
 %%
@@ -59,10 +59,27 @@
 %% Use package enumitem to align enumeration and itemization
 \usepackage{enumitem}
 
+\usepackage{listings}
+
 \journal{Information Processing Letters}
 
 
 %% NEW COMMANDS =============================================
+
+\lstset{basicstyle=\tt,}
+\makeatletter
+\newlength{\@mli}
+\newcommand{\mli}[1]{%
+  \settowidth{\@mli}{\lstinline/#1/}
+  \hspace{-.5ex}\begin{minipage}[t]{\@mli}\lstinline/#1/\end{minipage}}
+\makeatother
+\newcommand{\li}[1]{\ifmmode\mbox{\mli{#1}}\else\mbox{\lstinline/#1/}\fi}
+
+\newcommand{\cdt}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} \downarrow_{#2} \mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}}}
+
+\newcommand{\rf}[2]{#1\uparrow_{#2}}
+\newcommand{\W}{\text{W}}
+\newcommand{\contract}{\text{\scshape{Contr}}}
 
 \newcommand{\Ack}{\ensuremath{\text{A}}}
 \newcommand{\CA}{\ensuremath{\text{C}}}
@@ -101,7 +118,7 @@
 %% use the cortext command for theassociated footnote;
 %% use the ead command for the email address,
 %% and the form \ead[url] for the home page:
-\title{An alternative definition for the Inverse Ackermann function, and a linear time computation in Gallina}
+\title{Inverting the Ackermann Hierarchy}
 
 %% \tnotetext[label1]{}
 %% \author{Name\corref{cor1}\fnref{label2}}
@@ -122,14 +139,20 @@
 \address{}
 
 \begin{abstract}
-We build a hierarchy of functions that are an upper inverse 
-of the usual Ackermann hierarchy, and then use this inverse 
-hierarchy to compute the inverse of the diagonal Ackermann 
-function $\Ack(n, n)$. We show that this computation is 
-consistent with the usual definition of the inverse Ackermann 
-function $\alpha(n)$. We implement this computation in Gallina, 
+
+
+We build a hierarchy of functions that are an upper inverse
+of the usual Ackermann hierarchy, and then use this inverse
+hierarchy to compute the inverse of the diagonal Ackermann
+function $\Ack(n, n)$. We show that this computation is
+consistent with the usual definition of the inverse Ackermann
+function $\alpha(n)$. We implement this computation in Gallina,
 where we show that it runs in linear time.
 \end{abstract}
+
+%An alternative definition for the Inverse Ackermann function, and a linear time computation in Gallina
+
+
 
 \begin{keyword}
 Inverse Ackermann \sep Automata \sep Union-Find \sep Division
@@ -150,6 +173,13 @@ Inverse Ackermann \sep Automata \sep Union-Find \sep Division
 \label{sec:overview}
 \input{overview.tex}
 
+\section{Some crappy theorems to put in place}
+\input{theorems.tex}
+
+\section{Increasing Functions and Their Inverses}
+\label{sec:incr}
+\input{increasing.tex}
+
 \section{The Inverse Ackermann Hierarchy}
 \label{sec:hierarchy}
 \input{hierarchy.tex}
@@ -169,7 +199,7 @@ Inverse Ackermann \sep Automata \sep Union-Find \sep Division
 %% bibitems, please use
 %%
 \bibliographystyle{elsarticle-num}
-\bibliography{references.bib}
+%\bibliography{references.bib}
 
 %% else use the following coding to input the bibitems directly in the
 %% TeX file.

@@ -1,0 +1,45 @@
+\begin{lem} \label{lem: cdt_init}
+For all $a, b\in \mathbb{N}$, $f : \mathbb{N}\to \mathbb{N}$ we have $\W\cdt{f}{a} (n, b) = 0 \ \forall n\le a$.
+\end{lem}
+\begin{proof}
+Trivial.
+\end{proof}
+
+\begin{lem} \label{lem: cdt_intermediate}
+For all $a, n, b, i\in \mathbb{N}$ and $f \in \contract$ such that $i < b$ and $a < f^{(i)}(n)$:
+\begin{equation}  \label{eq: cdt_intermediate}
+\W\cdt{f}{a}(n, b) = 1 + i + \W\cdt{f}{a}\left(f^{1+i}(n), b - i - 1\right)
+\end{equation}
+\end{lem}
+\begin{proof}
+We proceed by induction on $i$. Let
+$$\begin{aligned}
+ P(i) \triangleq \W\cdt{f}{a}(n, b) = 1 + i + \W\cdt{f}{a}\left(f^{1+i}(n), b - i - 1\right) \\ \forall b, n : b\ge i+1, f^{(i)}(n) > a
+\end{aligned}$$
+\begin{enumerate}[leftmargin=*]
+	\item \textit{Base case.} For $i = 0$, our goal $P(0)$ is:
+	$$ \W\cdt{f}{a}(n, b) = 1 + \W\cdt{f}{a}\left(f(n), b - 1\right) $$
+	where $b \ge 1, f(n)\ge a+1$, which is trivial.
+	\item \textit{Inductive case.} Suppose $P(i)$ has been proven. Then
+	$$ P(i+1) \triangleq \W\cdt{f}{a}(n, b) = 2 + i + \W\cdt{f}{a}\left( f^{2+i}(n), b - i - 2 \right)$$
+	for $b \ge i+2, f^{1+i}(n) \ge a+1$. This also implies $b\ge i+1$ and $f^{(i)}(n) \ge f^{1+i}(n)\ge a+1$ by $f\in \contract$, thus $P(i)$ holds. It suffices to prove:
+	$$ \W\cdt{f}{a}\left(f^{1+i}(n), b-i-1\right) = 1 + \W\cdt{f}{a}\left( f^{2+i}(n), b-i-2 \right)$$
+	Note that this is in fact $P(0)$ with $(b, n) \leftarrow \left(b-i-1, f^{(1+i)}(n)\right)$. Since $f^{(1+i)}(n) \ge a+1$ and $b-i-1\ge 1$, the above holds and proof is complete. 
+\end{enumerate}
+\end{proof}
+
+\begin{thm} \label{thm: cdt_repeat}
+For all $a\in \mathbb{N}$ and $f\in \contract_{1+a}$, we have
+\begin{equation} \label{eq: cdt_minimum}
+\cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\}
+\end{equation}
+Or equivalently,
+\begin{equation} \label{eq: cdt_repeat}
+\cdt{f}{a}(n) \le k \iff f^{(k)}(n) \le a \ \ \forall n, k \in \mathbb{N}
+\end{equation}
+\end{thm}
+\begin{proof}
+First, to see why \eqref{eq: cdt_minimum} and \eqref{eq: cdt_repeat} are equivalent, we rewrite \eqref{eq: cdt_minimum} in the following way:
+$$ \left(f^{(\cdt{f}{a}(n))}(n) \le a\right) \wedge \left(f^{(l)}(n) \le a \implies \cdt{f}{a}(n) \le l \ \ \forall l\right)$$
+
+\end{proof}
