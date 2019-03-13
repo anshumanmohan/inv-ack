@@ -189,6 +189,24 @@ split.
   omega.
 Qed.
 
+Corollary countdown_to_antirecursion : forall a f n,
+countdownable_to a f
+-> countdown_to a f (f n) = countdown_to a f n - 1.
+Proof.
+intros a f n Haf.
+assert (H := Haf).
+destruct (Nat.lt_ge_cases a n) as [Han | Han];
+apply (countdown_to_recursion a f n) in H.
+- apply H in Han. omega.
+- assert (f n <= a) as Hafn.
+  { apply (Nat.le_trans _ n _).
+    - apply Haf.
+    - apply Han. }
+  apply (countdown_to_recursion a f (f n)) in Haf.
+  apply Haf in Hafn.
+  apply H in Han. omega.
+Qed.
+
 
 (* COUNTDOWNABILITY PRESERVATION THEOREM *)
 Theorem countdown_countdownable : forall a f t,

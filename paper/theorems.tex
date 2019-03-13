@@ -1,13 +1,58 @@
-\begin{lem} \label{lem: cdt_init}
+Before we begin, let us clarify that the definition of $\mathbb{N}$ and operations on $\mathbb{N}$ in Gallina follow the Presburger Arithmetic \cite{presburger}, in which the most operations agree with usual operations on $\mathbb{Z}$, except subtraction, which is defined as:
+\begin{lstlisting}
+Fixpoint sub (n m : nat) : nat :=
+match n with
+| 0 => n
+| S k => match m with
+         | 0 => n
+         | S l => sub k l
+         end
+end.
+\end{lstlisting}
+Essentially $\li{sub} \ n \ m = \max\{n - m, 0\}$. We will use this subtraction for the rest of the paper.
+
+The Presburger Arithmetic, despite being weaker than Peano Arithmetic, is a decidable theory. The Coq standard library includes \li{Omega}, an extensive listing of provable facts about $\mathbb{N}$ in Presburger Arithmetic, among which the most useful for our paper includes common laws of commutativity and associativity for addition, transitivity of $\le$ and $<$, and the law of excluded middle in comparisons on $\mathbb{N}$:
+\begin{equation}
+(n \le m) \vee (m + 1 \le n) \ \ \forall n, m
+\end{equation}
+, which is provable without the actual law of excluded middle in classical logic. This enables us to prove all results in this paper with Gallina's baseline intuitionistic logic. Readers can refer to the \Cref{appendix} for Coq versions of the proofs.
+
+\begin{lem} \label{lem: contract-repeat-threshold}
+For all $a, n\in\mathbb{N}$ and $f\in \contract_{1+a}$,
+\begin{equation}
+\exists m : \left(f^{(m)}(n) \le a \right) \wedge \left(f^{(l)}(n)\le a \implies m \le l \ \forall l \right)
+\end{equation}
+\end{lem}
+\begin{proof}
+Although the existence of $m$ is guaranteed by the well-ordering principle of $\mathbb{N}$, provided there is at least one $l$ so that $f^{(l)}(n)\le a$, we will achieve better by proving it in Gallina's baseline intuitionistic logic (without importing the law of excluded middle). Firstly we fix $n$ and observe that if $n\le a$, $m = 0$ is the desired choice since:
+$$ f^{(0)}(n) = n \le a \ \text{ and } \ 0 \le l \ \forall l $$
+Thus we can restrict ourselves to when $a\le n$, which then allows us to define $c$ such that $n = a + c$. We prove the following statement by induction:
+$$ P(c) \triangleq \exists m : \left(f^{(m)}(n) \le n - c \right) \wedge \left(f^{(l)}(n)\le n - c \implies m \le l \ \forall l \right) $$
+under assumptions $f\in \contract_{n-c+1}$, $c\le n$.
+\begin{enumerate}[leftmargin=*]
+	\item \textit{Base case.} For $c = 0$, this corresponds to when $n = a$, which has been proven above.
+	\item \textit{Inductive step.} Suppose $P(c)$ is proved with witness $m_c$. Note that the assumptions are now $f\in \contract_{n-c}$ and $c+1\le n$, there are two cases:
+	\begin{itemize}[leftmargin=*, label={-}]
+		\item $f^{\left(m_c\right)}(n) = n - c$. Then $f^{\left(m_c+1\right)}(n) \le n - c - 1$ by the first assumption. Let $m_{c+1} = m_c + 1$, for all $l$:
+		$$ f^{(l)}(n)\le n - c - 1 < f^{\left(m_c\right)}(n) \implies l > m_c \implies l \ge m_{c+1} $$
+		\item $f^{\left(m_c\right)}(n) \le n - c - 1$. Let $m_{c+1} = m_c$, for all $l$:
+		$$ f^{(l)}(n)\le n - c - 1\le n - c \overset{P(c)}{\implies} l\ge m_{c} = m_{c+1} $$
+	\end{itemize}
+	In any cases, we can find a witness $m_{c+1}$ for $P(c+1)$. Thus the proof is complete by induction.
+\end{enumerate}
+\end{proof}
+
+
+\begin{lem} \label{lem: cdt-init}
 For all $a, b\in \mathbb{N}$, $f : \mathbb{N}\to \mathbb{N}$ we have $\W\cdt{f}{a} (n, b) = 0 \ \forall n\le a$.
 \end{lem}
 \begin{proof}
 Trivial.
 \end{proof}
 
-\begin{lem} \label{lem: cdt_intermediate}
+\begin{lem} \label{lem: cdt-intermediate}
 For all $a, n, b, i\in \mathbb{N}$ and $f \in \contract$ such that $i < b$ and $a < f^{(i)}(n)$:
-\begin{equation}  \label{eq: cdt_intermediate}
+\begin{equation}  \label{eq: cdt-intermediate}
 \W\cdt{f}{a}(n, b) = 1 + i + \W\cdt{f}{a}\left(f^{1+i}(n), b - i - 1\right)
 \end{equation}
 \end{lem}
@@ -22,24 +67,138 @@ $$\begin{aligned}
 	where $b \ge 1, f(n)\ge a+1$, which is trivial.
 	\item \textit{Inductive case.} Suppose $P(i)$ has been proven. Then
 	$$ P(i+1) \triangleq \W\cdt{f}{a}(n, b) = 2 + i + \W\cdt{f}{a}\left( f^{2+i}(n), b - i - 2 \right)$$
-	for $b \ge i+2, f^{1+i}(n) \ge a+1$. This also implies $b\ge i+1$ and $f^{(i)}(n) \ge f^{1+i}(n)\ge a+1$ by $f\in \contract$, thus $P(i)$ holds. It suffices to prove:
+	for $b \ge i+2, f^{1+i}(n) \ge a+1$. This also implies $b\ge i+1$ and $\displaystyle f^{(i)}(n) \ge f^{1+i}(n)\ge a+1$ by $f\in \contract$, thus $P(i)$ holds. It suffices to prove:
 	$$ \W\cdt{f}{a}\left(f^{1+i}(n), b-i-1\right) = 1 + \W\cdt{f}{a}\left( f^{2+i}(n), b-i-2 \right)$$
 	Note that this is in fact $P(0)$ with $(b, n) \leftarrow \left(b-i-1, f^{(1+i)}(n)\right)$. Since $f^{(1+i)}(n) \ge a+1$ and $b-i-1\ge 1$, the above holds and proof is complete. 
 \end{enumerate}
 \end{proof}
 
-\begin{thm} \label{thm: cdt_repeat}
+\begin{thm} \label{thm: cdt-repeat}
 For all $a\in \mathbb{N}$ and $f\in \contract_{1+a}$, we have
-\begin{equation} \label{eq: cdt_minimum}
-\cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\}
+\begin{equation} \label{eq: cdt-minimum}
+\cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} \ \ \forall n
 \end{equation}
 Or equivalently,
-\begin{equation} \label{eq: cdt_repeat}
-\cdt{f}{a}(n) \le k \iff f^{(k)}(n) \le a \ \ \forall n, k \in \mathbb{N}
+\begin{equation} \label{eq: cdt-repeat}
+\cdt{f}{a}(n) \le k \iff f^{(k)}(n) \le a \ \ \forall n, k
 \end{equation}
 \end{thm}
 \begin{proof}
-First, to see why \eqref{eq: cdt_minimum} and \eqref{eq: cdt_repeat} are equivalent, we rewrite \eqref{eq: cdt_minimum} in the following way:
-$$ \left(f^{(\cdt{f}{a}(n))}(n) \le a\right) \wedge \left(f^{(l)}(n) \le a \implies \cdt{f}{a}(n) \le l \ \ \forall l\right)$$
+First, to see why \eqref{eq: cdt-minimum} and \eqref{eq: cdt-repeat} are equivalent, we rewrite \eqref{eq: cdt-minimum} in the following way:
+$$ \left(f^{(\cdt{f}{a}(n))}(n) \le a\right) \wedge \left(f^{(l)}(n) \le a \implies \cdt{f}{a}(n) \le l \ \ \forall l\right) \ \ \forall n$$
+To prove $\eqref{eq: cdt-minimum} \implies \eqref{eq: cdt-repeat}$, it suffices to show
+$$ \cdt{f}{a}(n) \le l \implies f^{(l)}(n) \le a \ \ \forall l $$
+, which holds due to the fact $\displaystyle f^{(l)}(n) \le f^{(\cdt{f}{a}(n))}(n) \le a$ by $f\in \contract$. To prove $\eqref{eq: cdt-repeat}\implies \eqref{eq: cdt-minimum}$, it suffices to show 
+$$\displaystyle f^{(\cdt{f}{a}(n))}(n) \le a$$
+, which in turn holds by substituting $k$ by $\cdt{f}{a}(n)$ in \eqref{eq: cdt-repeat}. Thus $\eqref{eq: cdt-minimum}\iff \eqref{eq: cdt-repeat}$ and we need only to prove \eqref{eq: cdt-minimum}. Using \cref{lem: contract-repeat-threshold}, there exists an $m$ such that
+\begin{align}
+& f^{(m)}(n) \le a \label{eq: cdt-repeat-tmp-1} \\
+& f^{(k)}(n)\le a \implies m \le k \ \ \forall k \label{eq: cdt-repeat-tmp-2}
+\end{align}
+It then suffices to prove $m = \cdt{f}{a}(n)$. Suppose firstly that $m = 0$. Then $n = f^{(0)}(n)\le a$, thus $\cdt{f}{a}(n) = \W\cdt{f}{a}(n, n) = 0 = m$ by \cref{lem: cdt-init}.
 
+Now consider $m > 0$. We would like to apply \cref{lem: cdt-intermediate} to get
+$$ \cdt{f}{a}(n) = \W\cdt{f}{a}(n, n) = m + \W\cdt{f}{a}\left(f^{(m)}(n), n-m\right) $$
+, then use \cref{lem: cdt-init} over \eqref{eq: cdt-repeat-tmp-1} to conclude that $\cdt{f}{a}(n) = m$. It then suffices to prove the premises of \cref{lem: cdt-intermediate}, namely $a < f^{(m-1)}(n)$ and $m-1 < n$.
+
+The former follows by contradiction (LEM on $\mathbb{N}$ is implicit here): if $f^{(m-1)}(n) \le a$, \eqref{eq: cdt-repeat-tmp-2} implies $m\le m-1$, which is wrong for $m > 0$. The latter then easily follows by $f\in \contract_{1+a}$:
+$$ n \ge 1 + f(n) \ge 2 + f(f(n)) \ge \cdots \ge m + f^{(m)}(n) $$
+Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
 \end{proof}
+
+\begin{rem}
+We will mainly be using \eqref{eq: cdt-repeat} in our subsequent proofs due to its power. As already shown, \eqref{eq: cdt-repeat} implies \eqref{eq: cdt-minimum} without the need for $f\in \contract_{1+a}$. It is also easier to manipulate algebraically due to its neat form as a logical sentence.
+\end{rem}
+
+\begin{thm} \label{thm: cdt-recursion}
+For all $a\in \mathbb{N}$ and $f\in \contract_{1+a}$, $\cdt{f}{a}$ satisfies:
+$$ \cdt{f}{a}(n) = \begin{cases}
+0 & \text{ if } n \le a \\ 1 + \cdt{f}{a}(f(n)) & \text{ if } n \ge a + 1
+\end{cases} $$
+\end{thm}
+\begin{proof}
+The case $n\le a$ is trivial by \cref{lem: cdt-init}. Suppose $n\ge a+1$,
+\begin{enumerate}[leftmargin=*]
+	\item Let $\cdt{f}{a}(f(n)) = m$. We prove $\cdt{f}{a}(n)\le 1+m$, or $f^{1+m}(n) \le a$. But this is equivalent to $f^{(m)}(f(n)) \le a$, which holds by $m$'s definition.
+	\item Note that $n\ge a+1$ implies $\cdt{f}{a}(n) = 1 + \W\cdt{f}{a}(f(n), n - 1)$ by \cref{lem: cdt-intermediate}. Let $\cdt{f}{a}(n) = p + 1$. We prove $\cdt{f}{a}(f(n))\le p$, or $f^{(p)}(f(n))\le a$. But this is equivalent to $f^{p+1}(n)\le a$, which holds by $p$'s definition.
+\end{enumerate}
+The proof is then complete.
+\end{proof}
+
+\begin{thm} \label{thm: cdt-contr-0}
+For all $a\ge 1$, if $f\in \contract_{1+a}$, then $\cdt{f}{a}\ \in \contract_{1+c} \ \forall c$.
+\end{thm}
+\begin{proof}
+Firstly we show that $\cdt{f}{a}$ is a contraction, namely showing $\cdt{f}{a}(n)\le n \ \forall n$, which has already been proved in the proof of \cref{thm: cdt-repeat}. To show $\cdt{f}{a}$ is strict from $1+c$, it suffices to show it is strict from $1$, equivalently $\cdt{f}{a}(n) \le n - 1 \ \forall n\ge 1$. By \cref{thm: cdt-repeat}, we need to show $f^{(n-1)}(n)\le a$. Assume the converse, then:
+$$ n \ge 1 + f(n)\ge 2 + f(f(n)) \ge \cdots \ge (n-1) + f^{(n-1)}(n) $$
+Thus $f^{(n-1)}(n)\le 1 \le a$, a contradiction. The theorem then follows.
+\end{proof}
+
+\begin{thm} \label{thm: upp-inv-cdt-rf}
+For all $a\in \mathbb{N}$, if $f\in \contract_{1+a}$ is the upper inverse of $F: \mathbb{N}\to \mathbb{N}$, then $\cdt{f}{a}$ is the upper inverse of $\rf{F}{a}$.
+\end{thm}
+\begin{proof}
+Assuming $f\in \contract_{1+a}$ and is the upper inverse of $F$, we need to show:
+$$ \cdt{f}{a}(N) \le n \iff N \le \rf{F}{a}(n) \ \ \forall n, N $$
+By \cref{thm: cdt-repeat}, the LHS is equivalent to $f^{(n)}(N)\le a$. Rewrite $\rf{F}{a}(n) = F^{(n)}(a)$, we have, by the upper inverse relation of $f$ to $F$:
+$$ \begin{aligned}
+f^{(n)}(N) \le a & \iff f^{(n-1)}(N) \le F(a) \iff f^{(n-2)}(N) \le F^{(2)}(a) \\
+ & \iff \cdots \iff N \le F^{(n)}(a) 
+\end{aligned}$$
+The proof is complete.
+\end{proof}
+
+\begin{lem}  \label{lem: inv-hyperop-0-contr1}
+For all $a\in \mathbb{N}$, $a\angle{0}\in \contract_1$.
+\end{lem}
+\begin{proof}
+Trivial.
+\end{proof}
+
+\begin{thm}
+For all $a, b\in \mathbb{N}$, $a\angle{1}b = b - a$.
+\end{thm}
+\begin{proof}
+Rewriting $a\angle{1} = \cdt{\left(a\angle{0}\right)}{a}$. By \cref{lem: inv-hyperop-0-contr1}, $a\angle{0} \in \contract_1 \subset \contract_{1+a}$, \cref{thm: cdt-recursion} applies.
+$$ a\angle{1}b = \begin{cases}
+0 & \text{ if } b\le a \\ 1 + a\angle{1}(b - 1) & \text{ if } b\ge a+1
+\end{cases} $$
+A simple induction will then confirms $a\angle{1}b = b - a \ \forall b$.
+\end{proof}
+
+\begin{col} \label{col: inv-hyperop-1-contr1}
+For all $a\ge 1$, $a\angle{1} \in \contract_1$.
+\end{col}
+
+\begin{col}
+For all $a, b\in \mathbb{N}$, $a\ge 1$, $a\angle{2}b = \displaystyle \left\lceil \frac{b}{a} \right\rceil$.
+\end{col}
+
+\begin{thm}
+For all $a\ge 2$, let $a_0 = a$, $a_1 = 0$, $a_n = 1 \ \forall n\ge 2$. Then for all $n$, $a\angle{n} \in \contract_{1+a_n}$ and is the upper inverse of $a[n]$.
+\end{thm}
+\begin{proof}
+Let
+$$\begin{aligned}
+P(n) \triangleq & \ \left(a\angle{n} \in \contract_{1+a_n}\right)\\
+Q(n) \triangleq & \ \left(a\angle{n}b \le c \iff b\le a[n]c \ \forall b, c\right)
+\end{aligned}$$
+Note that for all $n$, $a\angle{n+1} = \cdt{a\angle{n}}{a_n}$ and $a[n+1] = \rf{a[n]}{a_n}$. Thus $P(n)$ implies $Q(n+1)$ by \cref{thm: upp-inv-cdt-rf}. Hence it suffices to prove $Q(0)$ and $P(n)\ \forall n$. Now
+$$ Q(0) \equiv \left(b - 1 \le c \iff b\le  c + 1 \ \forall b, c\right) $$
+, which is trivial. Since $P(0)$ and $P(1)$ have been covered by \cref{lem: inv-hyperop-0-contr1} and \cref{col: inv-hyperop-1-contr1}, we prove $P(n)\ \forall n\ge 2$ by induction.
+\begin{enumerate}[leftmargin=*]
+	\item \textit{Base case.} By $P(1)$ and \cref{thm: cdt-repeat},
+	$$ a\angle{2}b \le k \iff \left(a\angle{1}\right)^{(k)}(b) \le 0 \iff b \le ka $$
+	For all $b$, $b\le ba$ and if $b\ge 2$, $b \le 2(b-1)\le a(b-1)$ since $a\ge 2$, so $a\angle{2} \in \contract_2$, as desired.
+	\item \textit{Inductive step.} We need to prove $a\angle{n+1}\in \contract_2$, or $\cdt{a\angle{n}}{1} \ \in \contract_2$, given $a\angle{n}\in \contract_2$. But this follows directly from \cref{thm: cdt-contr-0} with $a = c = 1$.
+\end{enumerate}
+By induction, the proof is complete.
+\end{proof}
+
+\begin{col}
+For all $a, b\in \mathbb{N}$, $a\ge 2$, $a\angle{3}b = \displaystyle \left\lceil \log_a(b) \right\rceil$.
+\end{col}
+
+\begin{col}
+For all $a, b\in \mathbb{N}$, $a\ge 2$, $a\angle{4}b = \log^*_a(b) $.
+\end{col}

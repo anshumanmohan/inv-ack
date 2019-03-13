@@ -75,15 +75,6 @@
 \makeatother
 \newcommand{\li}[1]{\ifmmode\mbox{\mli{#1}}\else\mbox{\lstinline/#1/}\fi}
 
-\newcommand{\cdt}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} \downarrow_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
-
-\newcommand{\rf}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} \uparrow_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
-
-\newcommand{\invhyper}{I}
-\renewcommand{\angle}[1]{\langle #1\rangle}
-
-\newcommand{\W}{\text{W}}
-\newcommand{\contract}{\text{\scshape{Contr}}}
 
 \newcommand{\Ack}{\ensuremath{\text{A}}}
 \newcommand{\CA}{\ensuremath{\text{C}}}
@@ -177,20 +168,17 @@ Inverse Ackermann \sep Automata \sep Union-Find \sep Division
 \label{sec:overview}
 \input{overview.tex}
 
-\section{Some crappy theorems to put in place}
-\input{theorems.tex}
-
 \section{Increasing Functions and Their Inverses}
 \label{sec:incr}
-\input{increasing.tex}
+%\input{increasing.tex}
 
 \section{The Inverse Ackermann Hierarchy}
 \label{sec:hierarchy}
-\input{hierarchy.tex}
+%\input{hierarchy.tex}
 
 \section{A linear time computation in Gallina}
 \label{sec:computation}
-\input{computation.tex}
+%\input{computation.tex}
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
