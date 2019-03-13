@@ -148,6 +148,28 @@ f^{(n)}(N) \le a & \iff f^{(n-1)}(N) \le F(a) \iff f^{(n-2)}(N) \le F^{(2)}(a) \
 The proof is complete.
 \end{proof}
 
+We formally redefine the hyperoperation hierarchy using repeater first, then build the corresponding inverse hyperoperations using the countdown.
+
+\begin{defn}
+The hyperoperations are a series of two-variable functions, denoted by $\left\{a[k]b : k\in \mathbb{N}\right\}$ where for all $a, b, n\in \mathbb{N}$:
+\begin{enumerate}
+	\item $a[0]b = b + 1$.
+	\item $a[n+1]b = \rf{\left(a[n]\right)}{a_n}(b)$ where $a_0 = a$, $a_1 = 0$ and $a_n = 1 \ \forall n\ge 2$.
+\end{enumerate}
+Here each $a[n]$ is treated as a single variable function $\mathbb{N}\to \mathbb{N}$ with fixed $a$.
+\end{defn}
+
+As discussed, this new definition matches the old definition of hyperoperations. It aims to provide a correspondence with the inverse hyperoperation hierarchy introduced later.
+
+\begin{defn}
+The inverse hyperoperations are a series of two-variable functions, denoted by $\left\{a\angle{k}b : k\in \mathbb{N}\right\}$ where for all $a, b, n\in \mathbb{N}$:
+\begin{enumerate}
+	\item $a\angle{0}b = b - 1$.
+	\item $a\angle{n+1}b = \cdt{\left(a\angle{n}\right)}{a_n}(b)$ where $a_0 = a$, $a_1 = 0$ and $a_n = 1 \ \forall n\ge 2$.
+\end{enumerate}
+Here each $a\angle{n}$ is treated as a single variable function $\mathbb{N}\to \mathbb{N}$ with fixed $a$.
+\end{defn}
+
 \begin{lem}  \label{lem: inv-hyperop-0-contr1}
 For all $a\in \mathbb{N}$, $a\angle{0}\in \contract_1$.
 \end{lem}
