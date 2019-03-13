@@ -111,9 +111,9 @@ as well as the Ackermann function itself.  All of our functions are structurally
 Coq is immediately convinced of their termination.  Moreover, all of our functions run in linear
 time (in the size of a number's representation in unary or binary), so they are as asymptotically efficient as they can be, and thus suitable for extraction\footnote{A criterion more useful in practice for $\mathsf{log}_b$ and perhaps $\mathsf{log}^*_b$ than the other members of the hierarchy, to be sure.}.  Finally, our techniques are succinct: the code to invert the Ackermann function fits onto a single page of this paper, and our entire Coq development is only {\color{red} X} lines. The rest of this paper is organized as follows.
 \begin{itemize}
-\item[\S\ref{blah}] We explain our core techniques of \emph{repeaters} and \emph{countdowns} that allow us to define each level of the Ackermann hierarchy---and their upper inverses---in a straightforward and uniform manner.  We show how countdowns, in particular, can be written
+\item[\S\ref{blah}] We explain our core techniques of \emph{repeaters} and \emph{countdowns}. {\color{red}that allow us to define each level of the Ackermann hierarchy---and their upper inverses---in a straightforward and uniform manner.} We show how countdowns, in particular, can be written
     structurally recursively.
-\item[\S\ref{blah}] We show how to use our techniques to define the Ackermann and upper inverse Ackermann functions themselves.
+\item[\S\ref{blah}] We show how to use our techniques to define the Ackermann and upper inverse Ackermann functions themselves. {\color{red}Add inverse hyperop?}
 \item[\S\ref{blah}] We detail a few optimizations that improve the running time of our individual hierarchy inverse functions from $O(n^2)$ to $O(n)$, and then further improve the running time of our inverse Ackermann function from $O\big(n \cdot \alpha(n)\big)$ to $O(n)$.
 \item[\S\ref{blah}] We extend our functions in several useful ways: to the two-argument inverse Ackermann, lower inverses, and binary representations.
 \item[\S\ref{blah}] We discuss related work and give some closing thoughts.
