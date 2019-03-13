@@ -1,27 +1,90 @@
+% Aquinas' promise:
+% We explain our core techniques of repeaters and countdowns that allow us to define each level of the Ackermann hierarchy—and their upper inverses—in a straightforward and uniform manner. We show how countdowns, in particular, can be written structurally recursively.
+
+% Anshuman proposes:
+% We introduce our core techniques of repeaters and countdowns. 
+% We show how countdowns, in particular, can be written structurally recursively.
+
+\iffalse
 In this section we build the inverse Ackermann hierarchy, 
 defining and proving the inverse relationship between 
-this heirarchy and the Ackermann hierarchy.
+this hierarchy and the Ackermann hierarchy.
+\fi
+% Hiding because this will now be in the next section.
+
+\subsection{The repeater operation}
+
+First, we develop a simple way to move 
+from one level of the hyperoperation hierarchy to the
+next. Addition is level 1, and $b$ repetitions of addition
+give multiplication, which is level 2. Next, $b$ repetitions of 
+multiplication give exponentiation, which is level 3. However, 
+there is a subtlety here: in the former case, we add $a$ 
+repeatedly to an \textit{initial value}, which must clearly be $0$. 
+In the latter case, we multiply $a$ repeatedly to an initial value, 
+which must now be $1$. Accounting for this initial value, we arrive at
+the \textit{repeater\_from} operation, which takes a function 
+$f: \mathbb{N} \to \mathbb{N}$ and applies it repeatedly in this special way:
+
+$$\rf{f}{a}(n) \triangleq (\textit{blah})$$.
 
 \subsection{The countdown operation}
 
-Firstly, to define some sort of ``inverse'' for the repeat 
-application operation found in \Cref{defn: ack_hier}, we 
-define the following \textit{countdown} operation:
+\begin{defn} \label{defn: contracting}
+A function $f : \mathbb{N} \to \mathbb{N}$ is a
+\textit{contraction} if $\forall n \in \mathbb{N}, f(n) \le n$. 
+Further, given an $a \in \mathbb{N}$, a contraction  
+$f$ is \textit{strict from} 
+$a$ if $\forall n \ge a, f(n) < n$.
+\end{defn}
 
 \begin{defn} \label{defn: countdown}
-Given a function $f: \mathbb{N} \to \mathbb{N}$. 
-The \textit{countdown} of $f$, denoted by $f^*$, is given by:
+Given a contraction that is strict from some $a$, 
+the \textit{countdown\_to} operation on $f$, 
+written $\cdt{f}{a}(n)$, is the number of times
+that $f$ can be compositionally applied to $n$
+without the result going below $a$. 
+
 \begin{equation} \label{eq: countdown}
-f^*(n) = \begin{cases}
-0 & \text{ if } n \le \max\{0, 1, f(n)\} \\ 1 + f^*(f(n)) & \text{ if } n > \max\{0, 1, f(n)\}
-\end{cases}
+\cdt{f}{a}( n ) \triangleq (\textit{blah, but much simplified})
 \end{equation}
 \end{defn}
+
+Repeater can be written in Coq without much trouble, but Countdown
+proves a little more challenging. The definition above is a somewhat
+simplified version of the version in our development, which we shall
+discuss briefly here. 
+
+{\color{red}(listing of final code of countdown\_to\_worker)}
+
+Essentially, we introduce the notion of a \textit{budget}, which is 
+the maximum number of times we will try to compositionally 
+apply $f$ on the input. If a certain number of compositional applications 
+of $f$ makes the input go below $a$, \emph{i.e.} $f^{k}(n) < a$, 
+we return $k$, the number of applications it took. If we exhaust the 
+budget and have still not gone below $a$, 
+we fail by returning the budget itself.
+
+This defnition is somewhat clunky, but it can clearly be written
+structurally recursively in Coq, with the budget as the decreasing
+argument. Further, it should be clear to see that 
+if we provide the worker with a budget of $n$ and also ensure that the 
+function $f$ is a contraction that is strict from $a$, we will 
+never run out of budget, and the return value will truly be the 
+number of times $f$ was applied. In our proofs, we always use 
+\textit{countdown\_to\_worker} with these two conditions satisfied, 
+\emph{i.e.}
+
+{\color{red}(code of countdown\_to and countdownable\_to)
+
+
+% Hiding because I'm trying to refine this into a simpler version above.
+\iffalse
 The important observation is that, if the sequence 
 $\{n, f(n), f(f(n)), \ldots\}$ strictly decreases to 
 $0$, then $f^*$ counts the minimum index where it reaches 
 $1$ or below. We give a formal definition for functions 
-with such decreasing sequences:
+with such decreasing sequences:}
 
 \begin{defn} \label{defn: contraction}
 A function $f: \mathbb{N} \to \mathbb{N}$ is a \textit{contraction} if $f(0) = 0$ and $f(n) \le n-1 \ \forall n > 0$.
@@ -47,7 +110,12 @@ f^*(n) = \begin{cases}
 \end{equation*}
 Then by a strong induction on $n$, the theorem holds.
 \end{proof}
+\fi
+% ...end of hide 
+% iding because I'm trying to refine this into a simpler version above.
 
+% Hiding because Linh is going to incorporate this into the next section.
+\iffalse 
 \subsection{The inverse Ackermann hierarchy}
 
 With the above countdown operation in hand, we can 
@@ -234,3 +302,5 @@ TODO TODO TODO
 In the next section, we will devise an algorithm to compute each 
 of the functions in the inverse Ackermann hierarchy in linear time, 
 and an algorithm to compute the inverse Ackermann function in linear time.
+
+\fi

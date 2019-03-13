@@ -19,19 +19,19 @@ Require Import prelims.
    Also, this new approach is both simpler and faster. It takes o(n) time instead
    of O(n) !
    We also introduce the repeater and its relation to countdown *)
- 
+
 
 (* ****** 2.1. DEFINITION *************************************)
 
 (* Basically, repeats "f" "k" times or until we go below "a".
    Output "min(k, min{l : repeat f l n <= a})" *)
-Fixpoint countdown_to_worker (a : nat) (f : nat -> nat) (n b : nat)
+Fixpoint countdown_to_worker (a : nat) (f : nat -> nat) (n k : nat)
 : nat :=
-match b with
+match k with
 | 0    => 0
-| S b' => match (n - a) with
+| S k' => match (n - a) with
           | 0   => 0
-          | S _ => S (countdown_to_worker a f (f n) b') end
+          | S _ => S (countdown_to_worker a f (f n) k') end
 end.
 
 (* Actual defintion. We give the worker a budget of "n" steps, which
@@ -50,7 +50,8 @@ Fixpoint repeater_from (a : nat) (f : nat -> nat) (n : nat) : nat
 := match n with
    | 0 => a
    | S n' => f (repeater_from a f n')
-   end.
+end. 
+
 
 (* ****** 1.2. THEOREMS ************************************* *)
 
@@ -186,6 +187,24 @@ split.
     rewrite <- countdown_to_repeat by apply Hf.
     trivial. }
   omega.
+Qed.
+
+Corollary countdown_to_antirecursion : forall a f n,
+countdownable_to a f
+-> countdown_to a f (f n) = countdown_to a f n - 1.
+Proof.
+intros a f n Haf.
+assert (H := Haf).
+destruct (Nat.lt_ge_cases a n) as [Han | Han];
+apply (countdown_to_recursion a f n) in H.
+- apply H in Han. omega.
+- assert (f n <= a) as Hafn.
+  { apply (Nat.le_trans _ n _).
+    - apply Haf.
+    - apply Han. }
+  apply (countdown_to_recursion a f (f n)) in Haf.
+  apply Haf in Hafn.
+  apply H in Han. omega.
 Qed.
 
 
