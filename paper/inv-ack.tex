@@ -66,7 +66,17 @@
 
 %% NEW COMMANDS =============================================
 
-\lstset{basicstyle=\tt,}
+\lstdefinestyle{myStyle}{
+	language=java,
+	basicstyle=\fontsize{10}{12}\selectfont\ttfamily,
+	stepnumber=1,
+	numbersep=10pt,
+	tabsize=2,
+	showspaces=false,
+	showstringspaces=false
+}
+
+\lstset{style=myStyle}
 \makeatletter
 \newlength{\@mli}
 \newcommand{\mli}[1]{%
@@ -174,23 +184,19 @@ Inverse Ackermann \sep Automata \sep Union-Find \sep Division
 
 %% main text
 \section{Overview}
-\label{sec:overview}
+\label{sec: overview}
 \input{overview.tex}
 
 \section{Repeater and Countdown}
-\label{sec:hierarchy}
+\label{sec: hierarchy}
 \input{hierarchy.tex}
 
-\section{The Inverse Ackermann Hierarchy}
-\label{sec:incr}
-\input{increasing.tex}
+\section{The Inverse Ackermann Function}
+\label{sec: inv-ack}
 
-\section{Some crappy theorems to put in place}
-\input{theorems.tex}
-
-\section{A linear time computation in Gallina}
-\label{sec:computation}
-\input{computation.tex}
+\section{Further Discussion}
+\label{sec: discussion}
+%\input{computation.tex}
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections

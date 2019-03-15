@@ -22,21 +22,76 @@ multiplication give exponentiation, which is level 3. However,
 there is a subtlety here: in the former case, we add $a$ 
 repeatedly to an \textit{initial value}, which must clearly be $0$. 
 In the latter case, we multiply $a$ repeatedly to an initial value, 
-which must now be $1$. Accounting for this initial value, we arrive at
-the \textit{repeater\_from} operation, which takes a function 
-$f: \mathbb{N} \to \mathbb{N}$ and applies it repeatedly in this special way:
-
-$$\rf{f}{a}(n) \triangleq (\textit{blah})$$.
-
-\subsection{The countdown operation}
-
-\begin{defn} \label{defn: contracting}
-A function $f : \mathbb{N} \to \mathbb{N}$ is a
-\textit{contraction} if $\forall n \in \mathbb{N}, f(n) \le n$. 
-Further, given an $a \in \mathbb{N}$, a contraction  
-$f$ is \textit{strict from} 
-$a$ if $\forall n \ge a, f(n) < n$.
+which must now be $1$. In general, the formal definition for hyperoperation is
+\begin{enumerate}
+	\item \textit{Initial level:} $a[0]b = b + 1 \ \forall b$.
+	\item \textit{Initial values:} $a[n+1]0 = a$ if $n = 0$, $0$ if $n = 1$, and $1$ otherwise.
+	\item \textit{Recursive rule:} $ a[n+1]b = a[n]\left(a[n+1](b - 1)\right) \ \forall n \ \forall b \ge 1$
+\end{enumerate}
+The recursive formula may look complicated at first, but in fact is just \emph{repeated application} in disguise. By fixing $a$ and treating $a[n]b$ as a function of $b$, we can write
+$$ \begin{aligned}
+a[n+1]b & = a[n]\left(a[n+1](b-1)\right) = a[n]\left(a[n](a[n+1](b-2))\right) \\
+ & =  \underbrace{\left( a[n]\circ a[n]\circ \cdots \circ a[n] \right)}_{b \text{ times}} \left(a[n+1]0\right) = \left(a[n]\right)^{(b)}\left(a[n+1]0\right)
+\end{aligned} $$
+where $f^{(k)}(u) \triangleq (f\circ f\circ \cdots \circ f)(u)$ denotes applying a function $f$ to an input $u$ $k$ times. In order to view the relationship between the $(\text{n+1})^{\text{th}}$- and $(\text{n})^{\text{th}}$-levels in a \emph{functional} way, we need an operation that transforms the latter to the former, which leads us to the notion of \emph{repeater}.
+\begin{defn}
+For all $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a) \ \forall n$.
 \end{defn}
+The Gallina definition is modified to structurally decrease on $n$:
+\begin{lstlisting}
+Fixpoint repeater_from (a:nat) (f:nat->nat) (n:nat)
+:= match n with
+   | 0 => a
+   | S n' => f (repeater_from a f n')
+end. 
+\end{lstlisting}
+The notation $\rf{f}{a}(b)$ does much better at separating the function, i.e. the repeater of $f$, and the variable $n$ than $f^{(n)}(a)$, while making clear that $a$ is a parameter of \emph{repeater} itself. It allows a simple and function-oriented definition of hyperoperations:
+\begin{equation}
+a[n]b = \begin{cases}
+b + 1 & \hspace{-10pt}\text{ if } n = 0 \\
+\rf{a[n-1]}{a_n}(b) & \hspace{-10pt}\text{ if } n \ge 1
+\end{cases}
+\ \ \text{ where } \ a_n = \begin{cases}
+a & \hspace{-10pt}\text{ if } n = 1 \\
+0 & \hspace{-10pt}\text{ if } n = 2 \\
+1 & \hspace{-10pt}\text{ if } n \ge 3
+\end{cases}
+\end{equation}
+
+\subsection{Increasing expansions and their inverse}
+
+Our goal is to find an inverse hierarchy to the hyperoperations, which should include division, logarithm and $\log^*$ as inverses to multiplication, exponentiation and tetration. The advent of repeater motivates an ``inverse repeater'' operation that takes us to the next level in the supposed ``inverse hyperoperation'' hierarchy. Before going into details, let us clarify the notion of ``inverse''.
+\begin{defn} \label{defn: inverse}
+	For all $F:\mathbb{N}\to \mathbb{N}$, $f:\mathbb{N}\to \mathbb{N}$ is the \emph{upper inverse} of $F$ if $f(n) = \min\{m : F(m)\ge n\} \ \forall n$, and is the \emph{lower inverse} of $F$ if $f(n) = \max\{m : F(m)\le n\} \ \forall n$.
+\end{defn}
+To construct a useful notion of inverse for our purpose, observe that for $a\ge 2$, each $a[n]$ is strictly increasing and grows to infinity with its input, while not always reaches $0$, which ensures the existence of the upper but not the lower inverse, since $\{m : a[n]m \le 0 \} = \varnothing$ for $n\ge 3$. Thus we decide to go on with the upper inverse notion, and leave the other for discussion in \cref{sec: discussion}. Furthermore, we can restrict ourselves to only considering strictly increasing $F$, which in fact gives more sense to the above definition since inverse preserves increasing-ness, and allows us to describe upper inverse in a simple logical sentence:
+\begin{thm} \label{thm: upp-inverse-rel}
+	If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m : f(n)\le m \iff n \le F(m)$.
+\end{thm}
+\begin{proof}
+Fix $n$, the sentence $n\le F(m) \iff f(n)\le m \ \forall m$ implies: (1) $f(n)$ is lower bound to the set $\{m: F(m)\ge n \}$ and (2) $f(n)$ is in the set itself since plugging in $m := f(n)$ will yield $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we immediately have $n\le F(m)\implies f(n)\le m \ \forall m$. Now for all $m \ge f(n)$, $F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus complete the proof.
+\end{proof}
+The last property we would like $F$ to have is one that ensures strict increasing-ness can be preserved through \emph{repeater}. Suppose for some $a$ and strictly increasing $F$, the function $\rf{F}{a}\ $ is strictly increasing, then the chain $a$, $F(a)$, $F^{(2)}(a)$, \ldots has to be strictly increasing, which leads to the notion of \emph{expansions}.
+\begin{defn}
+Given $a\in \mathbb{N}$, a function $F:\mathbb{N}\to\mathbb{N}$ is an \emph{expansion from} $a$ if $F(n)\ge n+1 \ \forall n\ge a$.
+\end{defn}
+Conveniently, if $a\ge 1$ and $F$ is an expansion from $a$, $\rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$ $\forall n$, so $\rf{F}{a}\ $ is itself an expansion from $0$. Combined with the preservation of strict increasing-ness through repeater, we can collectively define strictly increasing expansions on $\mathbb{N}$ to be \emph{repeatable} from any $a\ge 1$, with repeatability being preserved through \emph{repeater} from $a$. In the next section, we show how repeatable functions' upper inverses can be constructed in a systematic way that allow us to build inverses for the hyperoperation hierarchy.
+
+\subsection{Contractions and the countdown operation}
+
+This is the final step leading to the inverse hypeoperations, where we develop a way to climb from the one inverse level to the next. Suppose $f$ is the upper inverse of a repeatable (i.e. strictly increasing expansion) $F$, then for $a\ge 1$, $\rf{F}{a}\ $ is repeatable and has an upper inverse $f^*$. Now $\forall n, m$,
+$$\begin{aligned}
+ f^*(n)\le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \iff f(n)\le F^{(m-1)}(a) \\
+ & \iff f^{(2)}(n)\le F^{(m-2)}(a) \iff \ldots \iff f^{(m)}(n)\le a
+\end{aligned} $$
+This implies $f^*(n)$ is the minimum number of times $f$ needs to be repeated over $n$ to yield a result below $a$. Before we can define $f^*(n)$ to be the minimum of $\{m: f^{(m)}\le a \}$ and claim success, we need to make sure: (1) that set is non-empty, so that it has a minimum, and (2) we can reliably find that minimum within finitely many steps. The most ideal situation would be that the chain $n$, $f(n)$, $f^{(2)}(n)$, \ldots decreases strictly until reaching $a$, which leads to the notion of \emph{contractions}.
+\begin{defn} \label{defn: contracting}
+A function $f : \mathbb{N} \to \mathbb{N}$ is a \textit{contraction} if $f(n) \le n \ \forall n\in \mathbb{N}$. Given an $a \ge 1$, a contraction $f$ is \textit{strict from} $a$ if $n\ge f(n)+1 \ \forall n\ge a$. We further denote by $\contract$ the set of contractions and $\contract_a$ the set of contractions strict from $a$.
+\end{defn}
+That leaves the question: what type of functions $F$ whose inverses are contractions? Wonderfully, we already have an answer:
+\begin{thm}
+If $F$ is a strictly increasing expansion from $a$, the upper inverse $f$ of $F$ is (non-strictly) increasing contraction,  from $a$.
+\end{thm}
 
 \begin{defn} \label{defn: countdown}
 Given a contraction that is strict from some $a$, 
