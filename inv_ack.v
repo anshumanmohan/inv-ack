@@ -73,5 +73,5 @@ Definition inv_ack n := match (inv_ack_hier 0) with
                         f => inv_ack_worker f (f n) 0 n end.
 
 
-Compute inv_ack 7.
-Compute ackermann 2 2.
+(* Compute inv_ack 7. *)
+(* Compute ackermann 2 2. *)
