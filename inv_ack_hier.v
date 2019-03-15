@@ -239,9 +239,9 @@ Definition next_level_fast' f n :=
 Definition sub2 (n : nat) : nat := n - 2.
 (* Just use "Nat.sub 2" ? *)
 
-Compute next_level_fast' sub2 2.
-Compute next_level_fast' sub2 3.
-Compute next_level sub2 8.
+(* Compute next_level_fast' sub2 2. *)
+(* Compute next_level_fast' sub2 3. *)
+(* Compute next_level sub2 8. *)
 
 Lemma countdown_gives_div_2: forall n,
     next_level (Nat.sub 2) n = n / 2 .
@@ -249,7 +249,7 @@ Proof. Abort.
 
 Definition mylog := next_level' (next_level' sub2).
 
-Compute Nat.log2 3.
+(* Compute Nat.log2 3. *)
 
 Lemma countdown_gives_log_2: forall n,
     next_level' (next_level' (Nat.sub 2)) n = Nat.log2 n.
@@ -442,8 +442,8 @@ Qed.
 
 (* Fine... *)
 
-Compute next_can_level' (Nat.add 2) 5.
-Compute (next_can_level' (next_can_level' (Nat.add 2)) 5).
+(* Compute next_can_level' (Nat.add 2) 5. *)
+(* Compute (next_can_level' (next_can_level' (Nat.add 2)) 5). *)
 (* Well, this is very wrong... but this makes a lot of sense actually. *)
 
 (* Okay so let's try and encode Wikipedia's definition of 
@@ -929,9 +929,9 @@ Fixpoint sum_f (f : nat -> nat) (k n : nat) :=
 Definition HS n := match (inv_ack_hier 2), (inv_ack_hier 3 n) with
                    | f, m => m + sum_f f (m - 1) (f n) end.
 
-Compute HS 5.
-Compute HS 6.
-Compute HS 9.
-Compute HS 4.
+(* Compute HS 5. *)
+(* Compute HS 6. *)
+(* Compute HS 9. *)
+(* Compute HS 4. *)
 
-Time Compute (inv_ack 10000).
+(* Time Compute (inv_ack 10000). *)
