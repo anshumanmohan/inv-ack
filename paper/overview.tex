@@ -27,14 +27,13 @@ it to $n$, and then increment $k$ until $n \le \Ack(k)$.  Unfortunately, the run
 
 \paragraph{The hyperoperation/Knuth/Ackermann hierarchy}
 
-The Ackermann function is relatively simple to define, but a little hard to understand.  We 
-think of it as a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.\Ack(n,b)$, where for each $n>0$, $\Ack_n$ iterates over the previous $\Ack_{n-1}$ $b$ times,
-\emph{with a kludge}.
+The Ackermann function is relatively simple to define, but a little hard to understand.  We think of it as a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.\Ack(n,b)$, where for each $n>0$, $\Ack_n$ being the result of applying the previous $\Ack_{n-1}$ $b$ times, with a \emph{kludge}.
 
-The desire to clean up this kludge, as well as generalize the natural sequence of functions ``addition,'' ``multiplication,'' ``exponentiation,'' \ldots, lead to the development of two
-related ideas: hyperoperations~\cite{blah}, written $a [n] b$, and Knuth arrows~\cite{blah}, written
-$a \uparrow^n b$.  Since hyperoperations are a little more general (in particular, $a \uparrow^n b = a[n+2]b)$, we will focus on them.  Hereafter we will refer to this sequence of functions as ``the hierarchy'' when we mean the general pattern rather than \emph{e.g.} specifically ``the Ackermann hierarchy'' or ``the hyperoperation hierarchy''.  To illustrate the pattern, and demonstrate the Ackermann kludge, the following table contains the first 5 hyperations (indexed by $n$ and named), along with how they relate to the $\Ack_n$ functions, and their inverses:
-\[
+The desire to clean up this kludge, and to generalize the natural sequence of functions ``addition,'' ``multiplication,'' ``exponentiation,'' \ldots, lead to the development of two related ideas: hyperoperations~\cite{blah}, written $a [n] b$, and Knuth arrows~\cite{blah}, written $a \uparrow^n b$.  Since hyperoperations are a little more general (in particular, $a \uparrow^n b = a[n+2]b)$, we will focus on them.
+%Hereafter we will refer to this sequence of functions as ``the hierarchy'' when we mean the general pattern rather than \emph{e.g.} specifically ``the Ackermann hierarchy'' or ``the hyperoperation hierarchy''.
+To illustrate the pattern, and the Ackermann kludge, \Cref{table: hyperop-ack-inv} contains the first 5 hyperoperations (indexed by $n$ and named), along with their relation to $\Ack_n$ functions, and their inverses.
+\begin{table}[h]
+	\[
 \begin{array}{cc|cc|cc}
 n & \text{function} & \quad a [n] b \quad & \quad \Ack_n(b) \quad & \text{inverse} \\
 \hline
@@ -45,10 +44,15 @@ n & \text{function} & \quad a [n] b \quad & \quad \Ack_n(b) \quad & \text{invers
 [2pt]
 4 & \text{tetration} & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \begin{array}{@{}c@{}}\text{iterated}\\[-3pt]\text{logarithm}\end{array} & \mathsf{log}^*_a b 
 \end{array}
-\]
-The kludge has three parts.  First, the Ackermann hierarchy is related to the hyperoperation hierarchy when $a=2$; second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation (\textbf{not} the previous $\Ack_{n-1}$!) three extra times; lastly, $\Ack_n$ subtracts three\footnote{It might appear that $\Ack_{1}$ and $\Ack_{2}$
-break this pattern, but they do not since $2 + (b + 3) - 3 = 2 + b$ and $2 \cdot (b + 3) - 3 = 2b + 3$.}.  Our initial goal of inverting the Ackermann function can thus be broken
-into three parts: first, inverting each individual member of the hyperoperation hierarchy; second, using these individual inverses to invert the diagonal hyperoperation {\color{red}$a [n] n$}; and lastly adjusting for the kludge.
+\] \caption{Hyperoperations, Ackermann functions and inverse.}
+\label{table: hyperop-ack-inv}
+\end{table}
+
+The kludge seems to be a conjugacy between the Ackermann hierarchy and the hyperoperations at $a=2$. For each $n$, we $\Ack_n = \phi^{-1}\circ \left(2[n]\right)\circ\phi$ where $\phi(n) = n+3$\footnote{It might appear that $\Ack_{1}$ and $\Ack_{2}$ break this pattern, but they do not since $2 + (b + 3) - 3 = 2 + b$ and $2 \cdot (b + 3) - 3 = 2b + 3$.}. It is thus worth studying and inverting the hyperoperations before handling the Ackermann hierarchy.
+
+%The kludge has three parts.  First, the Ackermann hierarchy is related to the hyperoperation hierarchy when $a=2$; second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation (\textbf{not} the previous $\Ack_{n-1}$!) three extra times; lastly, $\Ack_n$ subtracts three\footnote{It might appear that $\Ack_{1}$ and $\Ack_{2}$
+%break this pattern, but they do not since $2 + (b + 3) - 3 = 2 + b$ and $2 \cdot (b + 3) - 3 = 2b + 3$.}.  Our initial goal of inverting the Ackermann function can thus be broken
+%into three parts: first, inverting each individual member of the hyperoperation hierarchy; second, using these individual inverses to invert the diagonal hyperoperation {\color{red}$a [n] n$}; and lastly adjusting for the kludge.
 
 %\[
 %\begin{array}{c|cccc|c}
@@ -66,8 +70,7 @@ into three parts: first, inverting each individual member of the hyperoperation 
 \paragraph{Increasing functions and their inverses}
 Defining increasing functions is often significantly simpler than defining their inverses.
 The Church numeral encodings of addition, multiplication, and even exponentiation
-are each simpler than their corresponding inverses of subtraction, division, and logarithm. We
-see the same pattern in mechanized contexts: defining multiplication in Gallina is
+are each simpler than their corresponding inverses of subtraction, division, and logarithm. We see the same pattern in mechanized contexts: defining multiplication in Gallina is
 child's play, but defining division is unexpectedly painful:
 \begin{tabular}{@{}l@{~~~}|@{~~~}l}
 \begin{lstlisting}
@@ -110,13 +113,19 @@ We provide a complete solution to inverting each individual function in the Acke
 as well as the Ackermann function itself.  All of our functions are structurally recursive, so
 Coq is immediately convinced of their termination.  Moreover, all of our functions run in linear
 time (in the size of a number's representation in unary or binary), so they are as asymptotically efficient as they can be, and thus suitable for extraction\footnote{A criterion more useful in practice for $\mathsf{log}_b$ and perhaps $\mathsf{log}^*_b$ than the other members of the hierarchy, to be sure.}.  Finally, our techniques are succinct: the code to invert the Ackermann function fits onto a single page of this paper, and our entire Coq development is only {\color{red} X} lines. The rest of this paper is organized as follows.
+%\begin{itemize}
+%\item[\S\ref{blah}] We explain our core techniques of \emph{repeaters} and \emph{countdowns}. {\color{red}that allow us to define each level of the Ackermann hierarchy---and their upper inverses---in a straightforward and uniform manner.} We show how countdowns, in particular, can be written
+%    structurally recursively.
+%\item[\S\ref{blah}] We show how to use our techniques to define the Ackermann and upper inverse Ackermann functions themselves. {\color{red}Add inverse hyperop?}
+%\item[\S\ref{blah}] We detail a few optimizations that improve the running time of our individual hierarchy inverse functions from $O(n^2)$ to $O(n)$, and then further improve the running time of our inverse Ackermann function from $O\big(n \cdot \alpha(n)\big)$ to $O(n)$.
+%\item[\S\ref{blah}] We extend our functions in several useful ways: to the two-argument inverse Ackermann, lower inverses, and binary representations.
+%\item[\S\ref{blah}] We discuss related work and give some closing thoughts.
+%\end{itemize}
 \begin{itemize}
-\item[\S\ref{blah}] We explain our core techniques of \emph{repeaters} and \emph{countdowns}. {\color{red}that allow us to define each level of the Ackermann hierarchy---and their upper inverses---in a straightforward and uniform manner.} We show how countdowns, in particular, can be written
-    structurally recursively.
-\item[\S\ref{blah}] We show how to use our techniques to define the Ackermann and upper inverse Ackermann functions themselves. {\color{red}Add inverse hyperop?}
-\item[\S\ref{blah}] We detail a few optimizations that improve the running time of our individual hierarchy inverse functions from $O(n^2)$ to $O(n)$, and then further improve the running time of our inverse Ackermann function from $O\big(n \cdot \alpha(n)\big)$ to $O(n)$.
-\item[\S\ref{blah}] We extend our functions in several useful ways: to the two-argument inverse Ackermann, lower inverses, and binary representations.
-\item[\S\ref{blah}] We discuss related work and give some closing thoughts.
+	\item[\S\ref{sec: countdown-repeater}] Starting from hyperoperations, we discuss the concepts \emph{repeater} and \emph{expansions}, and how the need for their inverse leads to \emph{countdowns}.
+	\item[\S\ref{sec: inv-hyperop}] We show how to use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base; and sketch a method to find the Inverse Ackermann function.
+	\item[\S\ref{sec: inv-ack}] We detail a specialized computation for the Inverse Ackermann function, improving over the sketch's running time of $O\big(n \cdot \alpha(n)\big)$ to $O(n)$.
+	\item[\S\ref{sec: discussion}] We extend our functions in several useful ways: to the two-argument inverse Ackermann, lower inverses, and binary representations.
 \end{itemize}
 All of our techniques are mechanized in Coq~\cite{blah}, and for online readers, 
 each theorem and definition is hyperlinked to our Coq development for browsing.

@@ -68,7 +68,7 @@
 
 \lstdefinestyle{myStyle}{
 	language=java,
-	basicstyle=\fontsize{10}{12}\selectfont\ttfamily,
+	basicstyle=\fontsize{11}{12}\selectfont\ttfamily,
 	stepnumber=1,
 	numbersep=10pt,
 	tabsize=2,
@@ -94,6 +94,7 @@
 
 \newcommand{\W}{\text{W}}
 \newcommand{\contract}{\text{\scshape{Contr}}}
+\newcommand{\repeatable}{\text{\scshape{Rept}}}
 
 \newcommand{\Ack}{\ensuremath{\text{A}}}
 \newcommand{\CA}{\ensuremath{\text{C}}}
@@ -115,6 +116,20 @@
 \theoremstyle{definition}
 \newtheorem{defn}{Definition}[section]
 \newtheorem*{rem}{Remarks}
+
+\crefname{thm}{theorem}{theorems}
+\crefname{defn}{definition}{definitions}
+\crefname{lem}{lemma}{lemmas}
+\crefname{col}{corollary}{corollaries}
+\crefname{ex}{example}{examples}
+\crefname{prop}{proposition}{propositions}
+
+\Crefname{thm}{Theorem}{Theorems}
+\Crefname{defn}{Definition}{Definitions}
+\Crefname{lem}{Lemma}{Lemmas}
+\Crefname{col}{Corollary}{Corollaries}
+\Crefname{ex}{Example}{Examples}
+\Crefname{prop}{Proposition}{Propositions}
 
 %% DOCUMENT =================================================
 
@@ -188,8 +203,12 @@ Inverse Ackermann \sep Automata \sep Union-Find \sep Division
 \input{overview.tex}
 
 \section{Repeater and Countdown}
-\label{sec: hierarchy}
+\label{sec: countdown-repeater}
 \input{hierarchy.tex}
+
+\section{Division, Log, Log* and Inverse Hyperoperations}
+\label{sec: inv-hyperop}
+\input{inv-hyperop.tex}
 
 \section{The Inverse Ackermann Function}
 \label{sec: inv-ack}

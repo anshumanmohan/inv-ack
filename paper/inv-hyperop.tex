@@ -1,0 +1,54 @@
+\begin{lem}  \label{lem: inv-hyperop-0-contr1}
+For all $a\in \mathbb{N}$, $a\angle{0}\in \contract_1$.
+\end{lem}
+\begin{proof}
+Trivial.
+\end{proof}
+
+\begin{thm}
+For all $a, b\in \mathbb{N}$, $a\angle{1}b = b - a$.
+\end{thm}
+\begin{proof}
+Rewriting $a\angle{1} = \cdt{\left(a\angle{0}\right)}{a}$. By \cref{lem: inv-hyperop-0-contr1}, $a\angle{0} \in \contract_1 \subset \contract_{1+a}$, \cref{thm: cdt-recursion} applies.
+$$ a\angle{1}b = \begin{cases}
+0 & \text{ if } b\le a \\ 1 + a\angle{1}(b - 1) & \text{ if } b\ge a+1
+\end{cases} $$
+A simple induction will then confirms $a\angle{1}b = b - a \ \forall b$.
+\end{proof}
+
+\begin{col} \label{col: inv-hyperop-1-contr1}
+For all $a\ge 1$, $a\angle{1} \in \contract_1$.
+\end{col}
+
+\begin{col}
+For all $a, b\in \mathbb{N}$, $a\ge 1$, $a\angle{2}b = \displaystyle \left\lceil \frac{b}{a} \right\rceil$.
+\end{col}
+
+\begin{thm}
+For all $a\ge 2$, let $a_0 = a$, $a_1 = 0$, $a_n = 1 \ \forall n\ge 2$. Then for all $n$, $a\angle{n} \in \contract_{1+a_n}$ and is the upper inverse of $a[n]$.
+\end{thm}
+\begin{proof}
+Let
+$$\begin{aligned}
+P(n) \triangleq & \ \left(a\angle{n} \in \contract_{1+a_n}\right)\\
+Q(n) \triangleq & \ \left(a\angle{n}b \le c \iff b\le a[n]c \ \forall b, c\right)
+\end{aligned}$$
+Note that for all $n$, $a\angle{n+1} = \cdt{a\angle{n}}{a_n}$ and $a[n+1] = \rf{a[n]}{a_n}$. Thus $P(n)$ implies $Q(n+1)$ by \cref{thm: upp-inv-cdt-rf}. Hence it suffices to prove $Q(0)$ and $P(n)\ \forall n$. Now
+$$ Q(0) \equiv \left(b - 1 \le c \iff b\le  c + 1 \ \forall b, c\right) $$
+, which is trivial. Since $P(0)$ and $P(1)$ have been covered by \cref{lem: inv-hyperop-0-contr1} and \cref{col: inv-hyperop-1-contr1}, we prove $P(n)\ \forall n\ge 2$ by induction.
+\begin{enumerate}[leftmargin=*]
+	\item \textit{Base case.} By $P(1)$ and \cref{thm: cdt-repeat},
+	$$ a\angle{2}b \le k \iff \left(a\angle{1}\right)^{(k)}(b) \le 0 \iff b \le ka $$
+	For all $b$, $b\le ba$ and if $b\ge 2$, $b \le 2(b-1)\le a(b-1)$ since $a\ge 2$, so $a\angle{2} \in \contract_2$, as desired.
+	\item \textit{Inductive step.} We need to prove $a\angle{n+1}\in \contract_2$, or $\cdt{a\angle{n}}{1} \ \in \contract_2$, given $a\angle{n}\in \contract_2$. But this follows directly from \cref{thm: cdt-contr-0} with $a = c = 1$.
+\end{enumerate}
+By induction, the proof is complete.
+\end{proof}
+
+\begin{col}
+For all $a, b\in \mathbb{N}$, $a\ge 2$, $a\angle{3}b = \displaystyle \left\lceil \log_a(b) \right\rceil$.
+\end{col}
+
+\begin{col}
+For all $a, b\in \mathbb{N}$, $a\ge 2$, $a\angle{4}b = \log^*_a(b) $.
+\end{col}
