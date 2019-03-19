@@ -1,54 +1,123 @@
-\begin{lem}  \label{lem: inv-hyperop-0-contr1}
-For all $a\in \mathbb{N}$, $a\angle{0}\in \contract_1$.
+In this section, we apply the \emph{countdown} operation to build the inverse hyperoperation hierarchy, along the way we will define division, logarithm and iterated logarithm in terms of \emph{countdown}.
+
+In consistence with the in-use upper inverse notion, we aim at the ceiling of division and $\log$ on real numbers, $\left\lceil b/a \right\rceil$ and $\left\lceil \log_ab \right\rceil$. The iterated logarithm is formally defined as the number of times $\log$ needs to be applied to the input to for the result to be not above $1$, thus it is natural to define it using \emph{countdown}.
+Similar to how we discover \emph{repeater}, we treat $a$ as a parameter and consider $\lambda b.\left\lceil b/a \right\rceil$, $\lambda b.\left\lceil \log_ab \right\rceil$ and $\lambda b. \log^*_ab$ as functions of $b$. 
+\begin{defn} \label{defn: divc}
+	For all $a\ge 1$, define $\divc(a, b) \triangleq \cdt{\left(\lambda b. (b-a)\right)}{0}(b) \ \forall b$.
+\begin{lstlisting}
+Definition divc a b := countdown_to 0 (fun n => n - a) b.
+\end{lstlisting}\vspace*{-0.5\baselineskip}
+\end{defn}
+\begin{defn} \label{defn: logc}
+	For all $a\ge 2$, define $\logc(a, b) = \cdt{\left(\lambda b. \divc(a, b)\right)}{1}(b) \ \forall b$.
+\begin{lstlisting}
+Definition logc a b := countdown_to 1 (divc a) b.
+\end{lstlisting}\vspace*{-0.5\baselineskip}
+\end{defn}
+\begin{defn} \label{defn: log*}
+	For all $a\ge 2$, define $\log^*(a, b) = \cdt{\left(\lambda b. \logc(a, b)\right)}{1}(b) \ \forall b$.
+\begin{lstlisting}
+Definition logstar a b := countdown_to 1 (logc a) b.
+\end{lstlisting}\vspace*{-0.5\baselineskip}
+\end{defn}
+Note that the above Coq definitions are total functions and thus are defined even at $a = 0$ for both and $a = 1$ for logc and log*. However, their behaviors at these values are never used in practice, and thus not discussed in this paper. To prove these definitions are correct, it suffices to prove
+$\divc(a, b) = \left\lceil b/a \right\rceil \ \forall b\forall a\ge 1$ since it leads to $\logc$'s correctness, which in turn implies $\log^*$'s. We will prove it along with the whole hyperoperation hierarchy's correctness later.
+\begin{defn} \label{defn: inv-hyperop}
+	The inverse hyperoperations are a series of two-variable functions, denoted by $\left\{a\angle{k}b : k\in \mathbb{N}\right\}$ where for all $a, b, n\in \mathbb{N}$:
+	\begin{equation}
+	a\angle{n}b = \begin{cases}
+	b - 1 & \hspace{-10pt}\text{ if } n = 0 \\
+	\cdt{a\angle{n-1}}{a_n}(b) & \hspace{-10pt}\text{ if } n \ge 1
+	\end{cases}
+	\ \ \text{ where } \ a_n = \begin{cases}
+	a & \hspace{-10pt}\text{ if } n = 1 \\
+	0 & \hspace{-10pt}\text{ if } n = 2 \\
+	1 & \hspace{-10pt}\text{ if } n \ge 3
+	\end{cases}
+	\end{equation}
+	Here each $a\angle{n}$ is treated as a single variable function $\mathbb{N}\to \mathbb{N}$ with fixed $a$.
+\end{defn}
+We proceed to prove the hierarchy $\left\{a\angle{n}\right\}$ are inverses of $\left\{a[n]\right\}$, beginning with a few lemmas. Firstly, it should be trivial to see that $a\angle{0}\in \contract_0$ for all $a$. It allows us to compute the next level.
+
+\begin{lem}
+For all $a, b\in \mathbb{N}$, $a\angle{1}b = b - a$.
 \end{lem}
 \begin{proof}
-Trivial.
-\end{proof}
-
-\begin{thm}
-For all $a, b\in \mathbb{N}$, $a\angle{1}b = b - a$.
-\end{thm}
-\begin{proof}
-Rewriting $a\angle{1} = \cdt{\left(a\angle{0}\right)}{a}$. By \cref{lem: inv-hyperop-0-contr1}, $a\angle{0} \in \contract_1 \subset \contract_{1+a}$, \cref{thm: cdt-recursion} applies.
-$$ a\angle{1}b = \begin{cases}
+Since $a\angle{0} \in \contract_1 \subset \contract_{a}$, \cref{thm: cdt-recursion} applies.
+$$ a\angle{1}b = \cdt{\left(a\angle{0}\right)}{a}(b) = \begin{cases}
 0 & \text{ if } b\le a \\ 1 + a\angle{1}(b - 1) & \text{ if } b\ge a+1
 \end{cases} $$
 A simple induction will then confirms $a\angle{1}b = b - a \ \forall b$.
 \end{proof}
-
 \begin{col} \label{col: inv-hyperop-1-contr1}
 For all $a\ge 1$, $a\angle{1} \in \contract_1$.
 \end{col}
-
-\begin{col}
-For all $a, b\in \mathbb{N}$, $a\ge 1$, $a\angle{2}b = \displaystyle \left\lceil \frac{b}{a} \right\rceil$.
+Using $\divc$'s and subsequently $\logc$'s and $\log^*$'s definitions, we can fit them into the inverse hyperoperations.
+\begin{col} \label{col: inv-hyperop-234}
+For all $a \mathbb{N}$:
+\begin{enumerate}
+	\item If $a\ge 1$, $a\angle{2}b = \divc(a, b) \ \forall b$.
+	\item If $a\ge 2$, $a\angle{3}b = \logc(a, b) \ \forall b$ and $a\angle{4}b = \logstarc(a, b) \ \forall b$.
+\end{enumerate}
 \end{col}
-
-\begin{thm}
-For all $a\ge 2$, let $a_0 = a$, $a_1 = 0$, $a_n = 1 \ \forall n\ge 2$. Then for all $n$, $a\angle{n} \in \contract_{1+a_n}$ and is the upper inverse of $a[n]$.
+Now we are ready to prove the correctness of the inverse hyperoperations.
+\begin{thm} \label{thm: inv-hyperop-correct}
+For all $a\in \mathbb{N}$, $a\angle{n} = \left(a[n]\right)^{-1}_+$ holds for all $n\le 1$, for all $n \le 2$ if $a\ge 1$, and for all $n$ if $a\ge 2$.
 \end{thm}
 \begin{proof}
-Let
-$$\begin{aligned}
-P(n) \triangleq & \ \left(a\angle{n} \in \contract_{1+a_n}\right)\\
-Q(n) \triangleq & \ \left(a\angle{n}b \le c \iff b\le a[n]c \ \forall b, c\right)
-\end{aligned}$$
-Note that for all $n$, $a\angle{n+1} = \cdt{a\angle{n}}{a_n}$ and $a[n+1] = \rf{a[n]}{a_n}$. Thus $P(n)$ implies $Q(n+1)$ by \cref{thm: upp-inv-cdt-rf}. Hence it suffices to prove $Q(0)$ and $P(n)\ \forall n$. Now
-$$ Q(0) \equiv \left(b - 1 \le c \iff b\le  c + 1 \ \forall b, c\right) $$
-, which is trivial. Since $P(0)$ and $P(1)$ have been covered by \cref{lem: inv-hyperop-0-contr1} and \cref{col: inv-hyperop-1-contr1}, we prove $P(n)\ \forall n\ge 2$ by induction.
-\begin{enumerate}[leftmargin=*]
-	\item \textit{Base case.} By $P(1)$ and \cref{thm: cdt-repeat},
-	$$ a\angle{2}b \le k \iff \left(a\angle{1}\right)^{(k)}(b) \le 0 \iff b \le ka $$
-	For all $b$, $b\le ba$ and if $b\ge 2$, $b \le 2(b-1)\le a(b-1)$ since $a\ge 2$, so $a\angle{2} \in \contract_2$, as desired.
-	\item \textit{Inductive step.} We need to prove $a\angle{n+1}\in \contract_2$, or $\cdt{a\angle{n}}{1} \ \in \contract_2$, given $a\angle{n}\in \contract_2$. But this follows directly from \cref{thm: cdt-contr-0} with $a = c = 1$.
-\end{enumerate}
-By induction, the proof is complete.
+Let $a_0 = a$, $a_1 = 0$, $a_n = 1 \ \forall n\ge 2$. Define
+$$
+P(n) \triangleq  \left(a[n] \in \repeatable_{a_n}\right)\ \text{ and } \
+Q(n) \triangleq  \left(a\angle{n} = \left(a[n]\right)^{-1}_+ \right)
+$$
+Our goals are $Q(0), Q(1) \ \forall a$, $Q(2) \ \forall a\ge 1$ and $Q(n) \ \forall n \ \forall a\ge 2$. Note that for all $n$, $a\angle{n+1} = \cdt{a\angle{n}}{a_n}$ and $a[n+1] = \rf{a[n]}{a_n}\ $. By \cref{thm: cdt-inv-rf},
+\begin{align}
+P(n) \to Q(n) \to Q(n+1) \ \forall n \ \forall a \label{eq: tmp-induction-1} \\
+(a_n\ge 1) \to P(n) \to P(n+1) \ \forall n \label{eq: tmp-induction-2}
+\end{align}
+For all $a$, $P(0) \equiv \left(\lambda b.(b+1)\in \repeatable_a \right)$ and
+$$Q(0) \equiv \left(a\angle{0} = \left(a[0]\right)^{-1}_+\right) \equiv \left(b-1\le c \iff b\le c+1 \ \forall b, c \right)$$
+, which are both trivial. By \eqref{eq: tmp-induction-1}, $Q(1)$ also holds, which completes our first goal. Now suppose $a\ge 1$, $a_0 = a\ge 1$, so $P(1)$ holds by $P(0)$ and \eqref{eq: tmp-induction-2}. By $Q(1)$ and \eqref{eq: tmp-induction-1}, $Q(2)$ also holds, which completes the second goal.
+
+Suppose $a\ge 2$ and consider the third goal, by \eqref{eq: tmp-induction-1} and $Q(0)$, it suffices to show $P(n)$ for all $n$. By \eqref{eq: tmp-induction-2} and the fact $a_n\ge 1 \ \forall n\neq 1$, it remains to show $P(2)$, which is equivalent to
+$$ a[2]\in \repeatable_0 \iff (ab < ac \ \forall b < c) \wedge (ab \ge b+1 \ \forall b\ge 1) $$
+, which is trivial for $a\ge 2$. By induction, the third goal and the proof are complete.
 \end{proof}
-
+With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^*$, as well as the whole inverse hyperoperation hierarchy.
 \begin{col}
-For all $a, b\in \mathbb{N}$, $a\ge 2$, $a\angle{3}b = \displaystyle \left\lceil \log_a(b) \right\rceil$.
+	For all $a \in\mathbb{N}$:
+	\begin{enumerate}
+		\item If $a\ge 1$, $\divc(a, b) = \left\lceil \frac{b}{a} \right\rceil \ \forall b$.
+		\item If $a\ge 2$, $\logc(a, b) = \left\lceil \log_ab \right\rceil \ \forall b$ and $\logstarc(a, b) = \log^*_ab \ \forall b$.
+	\end{enumerate}
 \end{col}
-
-\begin{col}
-For all $a, b\in \mathbb{N}$, $a\ge 2$, $a\angle{4}b = \log^*_a(b) $.
-\end{col}
+\begin{proof}
+	The result follows directly from \cref{col: inv-hyperop-234}, \cref{thm: inv-hyperop-correct} and the facts $a[2]b = ab$, $a[3]b = a^b$ and $a[4]b = \ ^ba$ for all $a, b$.
+\end{proof}
+\begin{rem}
+	By \cref{thm: cdt-recursion}, we also have useful recursive formulas for $\divc$, $\logc$ and $\logstarc$:
+	\begin{align*}
+	\divc(a, b) & = 1 + \divc(a, b - a) &\hspace{-20pt} \text{ if } b > 0 &\text{ and } 0 \text{ otherwise}. \\
+	\logc(a, b) & = 1 + \logc\left(a, \left\lceil b/a \right\rceil\right) &\hspace{-20pt} \text{ if } b > 1 &\text{ and } 0 \text{ otherwise}. \\
+	\logstarc(a, b) & = 1 + \divc(a, \left\lceil \log_ab \right\rceil) &\hspace{-20pt} \text{ if } b > 1 &\text{ and } 0 \text{ otherwise}.
+	\end{align*}
+\end{rem}
+Using the Ackermann kludge from \cref{sec: overview}, we sketch a method to find the inverse Ackermann function from the inverse hyperoperations.
+\begin{thm} \label{thm: inv-hyperop-inv-ack}
+	For all $n, k$, $n\le \Ack(k, k) \iff 2\angle{k}(n+3)\le k+3$.
+\end{thm}
+\begin{proof}
+	$n\le \Ack(k, k) \iff n\le 2[k](k+3) - 3$. Now $2[k]$ is an expansion by \cref{thm: inv-hyperop-correct}'s proof, so $2[k](k+3) \ge k+3\ge 3$, so  $n\le 2[k](k+3) - 3 \iff n+3 \le 2[k](k+3)\iff 2\angle{k}(n+3)\le k+3$, again by \cref{thm: inv-hyperop-correct}.
+\end{proof}
+\Cref{thm: inv-hyperop-inv-ack} allows a simple method to compute the Inverse Ackermann function, based on the \emph{budget} idea in \emph{countdown worker}.
+\begin{defn}
+	The \emph{inverse Ackermann worker} of $f$ is a function $\W\alpha\ : \mathbb{N}^4\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
+	$$ \W\alpha(f, n, k, b) = \begin{cases}
+	k & \text{if } b = 0 \vee f(n)\le k+3 \\ \W\alpha(\cdt{f}{a_k}\ , n, k+1, b-1) & \text{if } b \ge 1 \wedge f(n) > k+3
+	\end{cases} $$
+	where $a_0 = 2$, $a_1 = 0$ and $a_k = 1 \ \forall k\ge 2$.
+\end{defn}
+The function $\W\alpha$ takes a function $f$ and pretends it was the first level of the inverse hyperoperation hierarchy. It then keeps applying countdown to $f$, supposedly arrives at the $\text{m}^{\text{th}}$-level at the $\text{m}^{\text{th}}$-recursive step, until the budget $b$ is exhausted or $f(n)\le k+3$, i.e. \emph{early stopping}, and will output $k$. If at the beginning $k=0$ and $f = 2\angle{0}$, the early stopping condition becomes $2\angle{k}n \le k+3$, which when replace $n$ by $n+3$ gives what we need in \cref{thm: inv-hyperop-inv-ack}.
+The inverse Ackermann function can be defined as follows.
+\begin{thm} For all $n$, we have $\alpha(n) = \W\alpha(\lambda m.(m - 1), n+3, 0, n)$.
+\end{thm}

@@ -101,7 +101,7 @@ This implies $f^*(n)$ is the minimum number of times $f$ needs to be composition
 \end{rem}
 That leaves the question: what type of functions $F$ whose inverses are contractions? Wonderfully, we already have an answer:
 \begin{thm} \label{thm: expansion-inv-contraction}
-For all $a\ge 1$, $F\in \repeatable_a \implies f\triangleq F^{-1}_+\in \contract_a$.
+For all $a\in \mathbb{N}$, $F\in \repeatable_a \implies f\triangleq F^{-1}_+\in \contract_a$.
 \end{thm}
 \begin{proof}
 For all $n$, $F(n)\ge n \implies n \ge f(n)$, so $f$ is a contraction. If $n\ge a+1$, $n-1\ge a$, so $F(n-1)\ge n \implies n-1\ge f(n)$, so $f$ is strict above $a$.
@@ -152,7 +152,7 @@ While a repeater exists for all functions not necessarily repeatable, and hence 
 \subsection{Countdown Computation}
 
 \begin{defn} \label{defn: countdown-worker}
-For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown worker} of $f$ to $a$ is a function $\W\cdt{f}{a}: \mathbb{N}^2\to \mathbb{N}$ such that:
+For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown worker} to $a$ of $f$ is a function $\W\cdt{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
 $$ \W\cdt{f}{a}(n, b) = \begin{cases}
 0 & \text{if } b = 0 \vee n\le a \\ 1 +\W\cdt{f}{a}(f(n), b-1) & \text{if } b \ge 1 \wedge n > a
 \end{cases} $$
@@ -286,10 +286,12 @@ Using \cref{lem: contract-repeat-threshold}, there exists an $m$ such that
 	$$ n \ge 1 + f(n) \ge 2 + f(f(n)) \ge \cdots \ge m + f^{(m)}(n) $$
 	Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
 \end{proof}
-Now, \eqref{eq: rf-upp-inv} and \cref{thm: cdt-repeat} are already enough to establish the correctness of the Coq definitions \emph{countdown} and \emph{countdown worker}. We thus unite \cref{defn: informal-countdown,defn: countdown} as they are equivalent. We wrap everything up in the following theorem.
+Now, \eqref{eq: rf-upp-inv} and \cref{thm: cdt-repeat} are already enough to establish the correctness of the Coq definitions \emph{countdown} and \emph{countdown worker}. We thus unite \cref{defn: informal-countdown,defn: countdown} as they are equivalent. We wrap everything up in the following two theorems, one for $a\ge 1$ and one for $a = 0$.
 \begin{thm} \label{thm: cdt-inv-rf}
-	If $a\ge 1$ and $F\in \repeatable_a$, then $\rf{F}{a}\ \in \repeatable_0$ and $f\triangleq F^{-1}_+$ satisfies $f \in \contract_{a}$ and $\displaystyle \cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+ \in \contract_0$.
+	For all $a$ and $F\in \repeatable_a$, $f\triangleq F^{-1}_+$ satisfies $f \in \contract_{a}$ and $\displaystyle \cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+$. Furthermore, if $a\ge 1$, $\rf{F}{a}\ \in \repeatable_0$ and $\cdt{f}{a}\ \in \contract_0$.
 \end{thm}
 \begin{proof}
-	A simple induction shows that $F^{(n)}(a)\ge a + n\ge 1+n \ \forall n$, so $\rf{F}{a}\ \in \repeatable_0$. $f\triangleq F^{-1}_+ \in \contract_{a}$ and $\left(\rf{F}{a}\ \right)^{-1}_+ \in \contract_0$ follows both by \cref{thm: expansion-inv-contraction}. Finally $\cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+$ due to \eqref{eq: rf-upp-inv}.
+	By \cref{thm: expansion-inv-contraction}, $f\triangleq F^{-1}_+ \in \contract_a$, and $\cdt{f}{a}\ = \left(\rf{F}{a}\ \right)^{-1}_+$ follows from \eqref{eq: rf-upp-inv} and \cref{col: cdt-repeat}.
+	Now if $a\ge 1$, a simple induction shows that $F^{(n)}(a)\ge a + n\ge 1 + n \ \forall n$, so $\rf{F}{a}\ \in \repeatable_0$, hence $\cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+ \in \contract_0$ by \cref{thm: expansion-inv-contraction}.
 \end{proof}
+

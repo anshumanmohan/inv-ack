@@ -96,6 +96,13 @@
 \newcommand{\contract}{\text{\scshape{Contr}}}
 \newcommand{\repeatable}{\text{\scshape{Rept}}}
 
+\newcommand{\divc}{\text{divc}}
+\newcommand{\logc}{\text{logc}}
+\newcommand{\logstarc}{\text{logc*}}
+
+\newcommand{\runtime}{\mathcal{T}}
+\newcommand{\bigO}{\text{O}}
+
 \newcommand{\Ack}{\ensuremath{\text{A}}}
 \newcommand{\CA}{\ensuremath{\text{C}}}
 \renewcommand{\S}{\ensuremath{\text{S}}}
@@ -115,7 +122,7 @@
 \newtheorem*{hypo}{Hypothesis}
 \theoremstyle{definition}
 \newtheorem{defn}{Definition}[section]
-\newtheorem*{rem}{Remarks}
+\newtheorem{rem}[thm]{Remark}
 
 \crefname{thm}{theorem}{theorems}
 \crefname{defn}{definition}{definitions}
@@ -212,6 +219,7 @@ Inverse Ackermann \sep Automata \sep Union-Find \sep Division
 
 \section{The Inverse Ackermann Function}
 \label{sec: inv-ack}
+\input{inv-ack-improve.tex}
 
 \section{Further Discussion}
 \label{sec: discussion}

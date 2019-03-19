@@ -1,0 +1,19 @@
+In this section, we provide a time analysis for the previous idea of the inverse Ackermann function. In particular, we prove that its running time is $O(n^2)$. We then provide a simple improvement that can cut the running time to $O(n\cdot\alpha(n))$, and a subsequent improvement that ultimately reduces it to $O(n)$.
+\subsection{Time Analysis}
+In this section, let us forget about the axiom of extensionality and identify each function on $\mathbb{N}$ with its \emph{computation}, i.e. the program that computes it in Coq. We will be careful not to conclude $f = g$ when they agree on all inputs but are computed with different pieces of code. It allows us to formalize a definition of running time of functions.
+\begin{defn}
+	Given a function $f:\mathbb{N}\to\mathbb{N}$ in Coq, the \emph{running time} of $f$ on input $n\in \mathbb{N}$, denoted by $\runtime(f, n)$ is the total number of computational steps it takes to compute $f(n)$.
+\end{defn}
+Below are several useful lemmas for our analysis.
+\begin{lem}
+	For all $a, n$, $\runtime(\lambda n.(n - a), n) = \Theta(\min\{a, n\})$ per subtraction's Coq definition.
+\end{lem}
+\begin{lem}
+	Per composition's Coq definition, for all $f$ and $g: \mathbb{N}\to \mathbb{N}$, $\runtime(f\circ g, n) = \runtime(f, g(n)) + \runtime(g, n)$.
+\end{lem}
+\begin{lem}
+	Per our Coq definition of \emph{countdown}, for all $a$, $f\in \contract_{a}$, $$\runtime\left(\cdt{f}{a}\ , n\right) = \sum_{i=0}^{\cdt{f}{a}(n)} \runtime\left(f, f^{(i)}(n)\right) + \bigO\left(a\cdot \cdt{f}{a}(n)\right) $$
+\end{lem}
+\subsection{Hard-coding the first two levels}
+
+\subsection{Leveraging the link between two levels}
