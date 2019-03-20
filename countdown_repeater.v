@@ -50,6 +50,20 @@ Fixpoint repeater_from (a : nat) (f : nat -> nat) (n : nat) : nat :=
   | S n' => f (repeater_from a f n')
   end. 
 
+Fixpoint repeater_from_tail ans f n : nat :=
+  match n with
+  | 0 => ans
+  | S n' => repeater_from_tail (f ans) f n'
+  end.
+
+Lemma repeater_from_tail_correct:
+  forall a f n, repeater_from a f n = repeater_from_tail a f n.
+Proof.
+  induction n; trivial.
+  simpl; intros. rewrite IHn; clear IHn.
+  generalize dependent a. induction n; trivial.
+  simpl; intro. apply IHn.
+Qed.
 
 (* ****** 1.2. THEOREMS ************************************* *)
 

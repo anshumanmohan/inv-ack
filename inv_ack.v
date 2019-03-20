@@ -67,6 +67,66 @@ Fixpoint inv_ack_worker (f : nat -> nat) (n thr bud : nat) : nat :=
 Definition inv_ack n :=
   match (inv_ack_hier 0) with f => inv_ack_worker f (f n) 0 n end.
 
+Fixpoint inv_ack_naive (n : nat) (ans : nat) (bud : nat) : nat :=
+  match bud with
+  | 0 => 0
+  | S bud' =>
+    match (n - (ackermann ans ans)) with
+    | 0 => ans
+    | _ => inv_ack_naive n (ans + 1) (bud')
+    end
+  end.
 
-(* Compute inv_ack 7. *)
-(* Compute ackermann 2 2. *)
+Definition inv_ack_naive_outer n := inv_ack_naive n 0 n.
+
+(* Compute inv_ack_naive_outer 62. *)
+(* Obviously this gets busy calculating A(4). *)
+
+(* So let's try to do better: 
+   Stop calculating A(4) the moment the "rolling answer" blows past n.
+   This works out well because Ackermann grows monotonically even _within_ the calculation of a single term.
+ *)
+
+(* 
+ * Here we have a tail-recursive variant of repeater_from, 
+ * with an added feature: 
+ * If we cross the "target", we stop and return 
+ * our working answer 
+*)
+Fixpoint repeater_from_tail_target ans f n target : nat :=
+  match target - ans with
+  | 0 => ans
+  | _ =>
+    match n with
+    | 0 => ans
+    | S n' => repeater_from_tail_target (f ans) f n' target
+    end
+  end.
+
+Fixpoint ackermann_target target m n :=
+  match m with
+  | 0 => S n
+  | S m' => repeater_from_tail_target (ackermann_target target m' 1) (ackermann_target target m') n target
+  end.
+
+Compute ackermann_target 70 4 4.
+(* --> returns 70 immediately. Because it is not
+   concerned with actually calculating A(4,4). *)
+
+Fixpoint inv_ack_target (n : nat) (ans : nat) (bud : nat) : nat :=
+  match bud with
+  | 0 => 0
+  | S bud' =>
+    match (n - (ackermann_target n ans ans)) with
+    | 0 => ans
+    | _ => inv_ack_target n (ans + 1) (bud')
+    end
+  end.
+
+Definition inv_ack_target_outer n := inv_ack_target n 0 n.
+
+(* Compute inv_ack_target_outer 1000. *)
+
+Compute inv_ack 62.
+Time Compute inv_ack_naive_outer 61.
+Time Compute inv_ack_target_outer 1000.
