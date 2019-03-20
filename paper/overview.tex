@@ -14,22 +14,30 @@ A(m-1, 1) & \text{ if } m > 0, n = 0 \\
 A(m-1, A(m, n-1)) & \text{ if } m > 0, n > 0
 \end{cases}
 \end{equation}
-The diagonal Ackermann function $\Ack(n)$ is then defined by $\Ack(n) \triangleq \Ack(n, n)$.
 \end{defn}
-The diagonal Ackermann function grows explosively: starting from $\Ack(0)$, the first four terms are $1, 3, 7, 61$.  The fifth term is $2^{2^{2^{65,536}}} - 3$, and the sixth dwarfs the fifth.
-This explosive behavior is problematical when we turn our attention to the canonical definition of 
+The diagonal Ackermann function $\Ack(n)$ is then defined by $\Ack(n) \triangleq \Ack(n, n)$.	
+The diagonal Ackermann function grows explosively: starting from $\Ack(0)$, the first four terms are $1, 3, 7, 61$.  The fifth term is $2^{2^{2^{65,536}}}-3$, and the sixth dwarfs the fifth.
+This explosive behavior becomes problematical when we consider
 the inverse Ackermann function\cite{blah}.
 \begin{defn} \label{defn: inv_ack}
 The inverse Ackermann function $\alpha(n)$ is canonically defined as the minimum $k$ for which $n \le \Ack(k)$, \emph{i.e.} $\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}$.
 \end{defn}
 In a sense this definition is computational: starting with $k=0$, calculate $\Ack(k)$, compare
-it to $n$, and then increment $k$ until $n \le \Ack(k)$.  Unfortunately, the running time of this algorithm is $\Omega(\Ack(\alpha(n)))$, so to compute, for example, $\alpha(100) \mapsto^{*} 4$ in this way requires more than $\Ack(4) = 2^{2^{2^{65,536}}}$ steps!
+it to $n$, and then increment $k$ until $n \le \Ack(k)$.  
+Unfortunately, the running time of this algorithm is $\Omega(\Ack(\alpha(n)))$.
+For example, computing $\alpha(100) \mapsto^{*} 4$ in this way requires 
+more than $\Ack(4) = 2^{2^{2^{65,536}}}$ steps!
 
-\paragraph{The hyperoperation/Knuth/Ackermann hierarchy}
+\subsection{The hyperoperation/Knuth/Ackermann hierarchy}
 
 The Ackermann function is relatively simple to define, but a little hard to understand.  We think of it as a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.\Ack(n,b)$, where for each $n>0$, $\Ack_n$ being the result of applying the previous $\Ack_{n-1}$ $b$ times, with a \emph{kludge}.
 
-The desire to clean up this kludge, and to generalize the natural sequence of functions ``addition,'' ``multiplication,'' ``exponentiation,'' \ldots, lead to the development of two related ideas: hyperoperations~\cite{blah}, written $a [n] b$, and Knuth arrows~\cite{blah}, written $a \uparrow^n b$.  Since hyperoperations are a little more general (in particular, $a \uparrow^n b = a[n+2]b)$, we will focus on them.
+The desire to clean up this kludge, and to generalize the natural sequence 
+of functions ``addition,'' ``multiplication,'' ``exponentiation,'' \ldots, 
+lead to the development of two related ideas: hyperoperations~\cite{blah}, 
+written $a [n] b$, and Knuth arrows~\cite{blah}, written $a \uparrow^n b$.  
+We will focus on hyperoperations since they are more general 
+(in particular, $a \uparrow^n b = a[n+2]b)$.
 %Hereafter we will refer to this sequence of functions as ``the hierarchy'' when we mean the general pattern rather than \emph{e.g.} specifically ``the Ackermann hierarchy'' or ``the hyperoperation hierarchy''.
 To illustrate the pattern, and the Ackermann kludge, \Cref{table: hyperop-ack-inv} contains the first 5 hyperoperations (indexed by $n$ and named), along with their relation to $\Ack_n$ functions, and their inverses.
 \begin{table}[h]
@@ -48,7 +56,7 @@ n & \text{function} & \quad a [n] b \quad & \quad \Ack_n(b) \quad & \text{invers
 \label{table: hyperop-ack-inv}
 \end{table}
 
-The kludge seems to be a conjugacy between the Ackermann hierarchy and the hyperoperations at $a=2$. For each $n$, we $\Ack_n = \phi^{-1}\circ \left(2[n]\right)\circ\phi$ where $\phi(n) = n+3$\footnote{It might appear that $\Ack_{1}$ and $\Ack_{2}$ break this pattern, but they do not since $2 + (b + 3) - 3 = 2 + b$ and $2 \cdot (b + 3) - 3 = 2b + 3$.}. It is thus worth studying and inverting the hyperoperations before handling the Ackermann hierarchy.
+The kludge seems to be a conjugacy between the Ackermann hierarchy and the hyperoperations at $a=2$. For each $n$, we note $\Ack_n = \phi^{-1}\circ \left(2[n]\right)\circ\phi$ where $\phi(n) = n+3$.\footnote{It might appear that $\Ack_{1}$ and $\Ack_{2}$ break this pattern, but they do not since $2 + (b + 3) - 3 = 2 + b$ and $2 \cdot (b + 3) - 3 = 2b + 3$.} It is thus worth studying and inverting the hyperoperations before handling the Ackermann hierarchy.
 
 %The kludge has three parts.  First, the Ackermann hierarchy is related to the hyperoperation hierarchy when $a=2$; second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation (\textbf{not} the previous $\Ack_{n-1}$!) three extra times; lastly, $\Ack_n$ subtracts three\footnote{It might appear that $\Ack_{1}$ and $\Ack_{2}$
 %break this pattern, but they do not since $2 + (b + 3) - 3 = 2 + b$ and $2 \cdot (b + 3) - 3 = 2b + 3$.}.  Our initial goal of inverting the Ackermann function can thus be broken
@@ -67,11 +75,12 @@ The kludge seems to be a conjugacy between the Ackermann hierarchy and the hyper
 %\end{array}
 %\]
 
-\paragraph{Increasing functions and their inverses}
+\subsection{Increasing functions and their inverses}
 Defining increasing functions is often significantly simpler than defining their inverses.
 The Church numeral encodings of addition, multiplication, and even exponentiation
-are each simpler than their corresponding inverses of subtraction, division, and logarithm. We see the same pattern in mechanized contexts: defining multiplication in Gallina is
+are each simpler than their corresponding inverses of subtraction, division, and logarithm. Below, we see the same pattern in mechanized contexts: defining multiplication in Gallina is
 child's play, but defining division is unexpectedly painful:
+
 \begin{tabular}{@{}l@{~~~}|@{~~~}l}
 \begin{lstlisting}
 Fixpoint mult a b :=
@@ -89,8 +98,8 @@ Fixpoint div a b :=
  end.
 \end{lstlisting}
 \end{tabular} \\
-The definition of \li{mult} is of course accepted immediately by Coq; indeed
-it is the precise way multiplication is defined in the standard library.  The function
+The definition of \li{mult} is of course accepted immediately by Coq; indeed,
+it is exactly how multiplication is defined in the standard library.  The function
 \li{div} should calculate multiplication's upper inverse,
 \emph{i.e.} $\li{div}~x~y \mapsto^{*} \lceil \frac{x}{y} \rceil$, but the definition
 is rejected by the termination checker.  Coq worries that
@@ -100,15 +109,15 @@ is right to be nervous, since \li{div} will not in fact terminate
 when $\li{a}>0$ and $\li{b}=0$.
 
 Of course, division \emph{can} be defined, but an elegant definition is a little
-subtle---certainly, something beyond merely checking that $\li{b}>0$ is needed.
+subtle---certainly, we need to do more than just check that $\li{b}>0$.
 One method is to define a custom termination measure~\cite{Chlipala?}, but this is
 both vaguely unsatisfying and not always easy to generalize.  The standard library employs
-a cleverer approach to define division, but {\color{red} we are not aware of any explanation of the technique used, nor is it trivial to extend to other members of the hierarchy}.  One indication
-that this is so is that the Coq standard library does not include a $\mathsf{log}_b$ function\footnote{Coq's standard library \textbf{does} include a $\mathsf{log}_2$ function, but 
+a cleverer approach to define division, but {\color{red} we are not aware of any explanation of the technique used, and we also find it hard to extend that technique to other members of the hierarchy}.  One indication
+of this difficulty is that the Coq standard library does not include a $\mathsf{log}_b$ function.\footnote{Coq's standard library \textbf{does} include a $\mathsf{log}_2$ function, but 
 change-of-base does not work on {\color{red} nat}:
-$\left \lfloor \frac{\lfloor \mathsf{log}_2 100 \rfloor}{\lfloor \mathsf{log}_2 7 \rfloor} \right \rfloor = 3 \not = 2 = \lfloor \mathsf{log}_7 100 \rfloor$.  {\color{blue} efficiency of standard library version?} {\color{red} SSReflect?}}.
+$\left \lfloor \frac{\lfloor \mathsf{log}_2 100 \rfloor}{\lfloor \mathsf{log}_2 7 \rfloor} \right \rfloor = 3 \not = 2 = \lfloor \mathsf{log}_7 100 \rfloor$.  {\color{blue} efficiency of standard library version?} {\color{red} SSReflect?}}
 
-\paragraph{Contributions}
+\subsection{Contributions}
 We provide a complete solution to inverting each individual function in the Ackermann hierarchy,
 as well as the Ackermann function itself.  All of our functions are structurally recursive, so
 Coq is immediately convinced of their termination.  Moreover, all of our functions run in linear

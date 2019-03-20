@@ -14,7 +14,9 @@ this hierarchy and the Ackermann hierarchy.
 
 \subsection{The repeater operation}
 
-The next hyperoperation is built upon the previous using repeated application. Addition is level 1, and $b$ repetitions of addition
+The first hyperoperation is simply successor, and after that, 
+every hyperoperation is the repeated application of the previous. 
+Addition is level 1, and $b$ repetitions of addition
 give multiplication, which is level 2. Next, $b$ repetitions of 
 multiplication give exponentiation, which is level 3. However, 
 there is a subtlety here: in the former case, we add $a$ 
@@ -29,7 +31,7 @@ which is $1$. In general, the formal definition for hyperoperation is
 The recursive formula may look complicated at first, but in fact is just \emph{repeated application} in disguise. By fixing $a$ and treating $a[n]b$ as a function of $b$, we can write
 $$ \begin{aligned}
 a[n+1]b & = a[n]\left(a[n+1](b-1)\right) = a[n]\left(a[n](a[n+1](b-2))\right) \\
- & =  \underbrace{\left( a[n]\circ a[n]\circ \cdots \circ a[n] \right)}_{b \text{ times}} \left(a[n+1]0\right) = \left(a[n]\right)^{(b)}\left(a[n+1]0\right)
+ & =  \underbrace{\left( a[n]\circ a[n]\circ \cdots \circ a[n] \right)}_{b \text{ times}} \left(a[n+1]0\right) = \left(a[n]\right)^{b}\left(a[n+1]0\right)
 \end{aligned} $$
 where $f^{(k)}(u) \triangleq (f\circ f\circ \cdots \circ f)(u)$ denotes applying a function $f$ to an input $u$ $k$ times. In order to view the relationship between the $(\text{n+1})^{\text{th}}$- and $(\text{n})^{\text{th}}$-levels in a \emph{functional} way, we need an operation that transforms the latter to the former, which leads us to the notion of \emph{repeater}.
 \begin{defn}
@@ -37,11 +39,11 @@ For all $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater 
 \end{defn}
 The Gallina definition is modified to structurally decrease on $n$:
 \begin{lstlisting}
-Fixpoint repeater_from (a:nat) (f:nat->nat) (n:nat)
-:= match n with
-   | 0 => a
-   | S n' => f (repeater_from a f n')
-end. 
+Fixpoint repeater_from (a:nat) (f:nat->nat) (n:nat) := 
+  match n with
+  | 0 => a
+  | S n' => f (repeater_from a f n')
+  end. 
 \end{lstlisting}
 The notation $\rf{f}{a}(b)$ does much better at separating the function, i.e. the repeater of $f$, and the variable $n$ than $f^{(n)}(a)$, while making clear that $a$ is a parameter of \emph{repeater} itself. It allows a simple and function-oriented definition of hyperoperations:
 \begin{equation}

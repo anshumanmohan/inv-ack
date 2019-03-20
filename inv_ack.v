@@ -71,9 +71,9 @@ Fixpoint inv_ack_naive (n : nat) (ans : nat) (bud : nat) : nat :=
   match bud with
   | 0 => 0
   | S bud' =>
-    match (n - (ackermann ans ans)) with
+    match n - (ackermann ans ans) with
     | 0 => ans
-    | _ => inv_ack_naive n (ans + 1) (bud')
+    | _ => inv_ack_naive n (S ans) bud'
     end
   end.
 
@@ -109,7 +109,7 @@ Fixpoint ackermann_target target m n :=
   | S m' => repeater_from_tail_target (ackermann_target target m' 1) (ackermann_target target m') n target
   end.
 
-Compute ackermann_target 70 4 4.
+(* Compute ackermann_target 70 4 4. *)
 (* --> returns 70 immediately. Because it is not
    concerned with actually calculating A(4,4). *)
 
@@ -125,8 +125,8 @@ Fixpoint inv_ack_target (n : nat) (ans : nat) (bud : nat) : nat :=
 
 Definition inv_ack_target_outer n := inv_ack_target n 0 n.
 
-(* Compute inv_ack_target_outer 1000. *)
-
-Compute inv_ack 62.
-Time Compute inv_ack_naive_outer 61.
-Time Compute inv_ack_target_outer 1000.
+(* Time Compute inv_ack 62. *)
+(* Time Compute inv_ack_naive_outer 65. *) (* too slow *)
+(* Time Compute inv_ack_target_outer 65. *)
+(* Time Compute inv_ack 1000. *)
+(* Time Compute inv_ack_target_outer 1000. *)
