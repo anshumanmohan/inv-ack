@@ -115,7 +115,7 @@ We are ready to present the proof for \Cref{thm: inv-ack-hier-runtime-improved}.
 \end{proof}
 Thus by hard-coding $\alpha_1$ as $\lambda m.(m-2)$, each level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 4^i\log n\big)$ time.
 
-\subsection{An improved inverse Ackermann function}
+\subsection{An improved inverse Ackermann computation}
 Using the previous improvement, we can improve the running time of $\alpha(n)$ per \Cref{defn: inv-ack-hier} by hard-coding the output when $n\le 1 = \Ack(0, 0)$, and starting $\W\alpha$ with $f := \alpha_1$ and $n := \alpha_1(n)$. In other words,
 $$ \tilde{\alpha}(n) = \begin{cases}
 0 & \text{ if } n \le 1 \\ \W\alpha\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2

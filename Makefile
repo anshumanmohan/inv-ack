@@ -23,6 +23,11 @@ inv_ack.vo: prelims.vo countdown_repeater.vo inverse.vo applications.vo inv_ack.
 inv_ack_hier.vo: inv_ack_hier.v
 	$(CC) inv_ack_hier.v
 
+.PHONY: paper
+paper:
+	cd paper; pdflatex inv-ack.tex; cd -
+
+
 .PHONY: clean
 clean:
 	rm -f *.vo *.glob paper/*.pdf paper/*.aux paper/*.log paper/*.out paper/*.spl

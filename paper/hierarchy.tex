@@ -14,7 +14,9 @@ this hierarchy and the Ackermann hierarchy.
 
 \subsection{The repeater operation}
 
-The next hyperoperation is built upon the previous using repeated application. Addition is level 1, and $b$ repetitions of addition
+The first hyperoperation is simply successor, and after that, 
+every hyperoperation is the repeated application of the previous. 
+Addition is level 1, and $b$ repetitions of addition
 give multiplication, which is level 2. Next, $b$ repetitions of 
 multiplication give exponentiation, which is level 3. However, 
 there is a subtlety here: in the former case, we add $a$ 
@@ -37,11 +39,11 @@ For all $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater 
 \end{defn}
 The Gallina definition is modified to structurally decrease on $n$:
 \begin{lstlisting}
-Fixpoint repeater_from (a:nat) (f:nat->nat) (n:nat)
-:= match n with
-   | 0 => a
-   | S n' => f (repeater_from a f n')
-end. 
+Fixpoint repeater_from (a:nat) (f:nat->nat) (n:nat) := 
+  match n with
+  | 0 => a
+  | S n' => f (repeater_from a f n')
+  end. 
 \end{lstlisting}
 The notation $\rf{f}{a}(b)$ does much better at separating the function, i.e. the repeater of $f$, and the variable $n$ than $f^{(n)}(a)$, while making clear that $a$ is a parameter of \emph{repeater} itself. It allows a simple and function-oriented definition of hyperoperations:
 \begin{equation}

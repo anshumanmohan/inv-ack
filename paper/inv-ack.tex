@@ -24,7 +24,8 @@
 %% $Id: elsarticle-template-num.tex 64 2013-05-15 12:23:51Z rishi $
 %%
 %%
-\documentclass[preprint,12pt]{elsarticle}
+\documentclass[a4paper,USenglish,cleveref, autoref]{lipics-v2019}
+% \documentclass[preprint,12pt]{elsarticle}
 
 %% Use the option review to obtain double line spacing
 %% \documentclass[authoryear,preprint,review,12pt]{elsarticle}
@@ -48,8 +49,8 @@
 %% The amsthm package provides extended theorem environments
 \usepackage{amsthm}
 
-\usepackage[colorlinks=True, citecolor=red, linkcolor=blue]{hyperref}
-\usepackage{cleveref}
+%\usepackage[colorlinks=True, citecolor=red, linkcolor=blue]{hyperref}
+%\usepackage{cleveref}
 
 %% The lineno packages adds line numbers. Start line numbering with
 %% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
@@ -58,17 +59,15 @@
 
 %% Use package enumitem to align enumeration and itemization
 \usepackage{enumitem}
-
 \usepackage{listings}
 
-\journal{Information Processing Letters}
 
 
 %% NEW COMMANDS =============================================
 
 \lstdefinestyle{myStyle}{
 	language=java,
-	basicstyle=\fontsize{11}{12}\selectfont\ttfamily,
+	basicstyle=\fontsize{10}{11}\selectfont\ttfamily,
 	stepnumber=1,
 	numbersep=10pt,
 	tabsize=2,
@@ -140,9 +139,23 @@
 
 %% DOCUMENT =================================================
 
+\bibliographystyle{plainurl}% the mandatory bibstyle
+
+\title{Inverting the Ackermann Hierarchy}
+
+%\titlerunning{dummy short title}%optional, please use if title is longer than one line
+
+\author{John Q. Public}{Dummy University Computing Laboratory, Country}{}{}{}%TODO mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty. Please provide at least the name of the affiliation and the country. The full address is optional
+
+\authorrunning{J.\,Q. Public}
+
+\keywords{keyword1, keyword2, keyword3}%TODO mandatory; please add comma-separated list of keywords
+
+
 \begin{document}
 
-\begin{frontmatter}
+\maketitle
+%\begin{frontmatter}
 
 %% Title, authors and addresses
 
@@ -154,7 +167,6 @@
 %% use the cortext command for theassociated footnote;
 %% use the ead command for the email address,
 %% and the form \ead[url] for the home page:
-\title{Inverting the Ackermann Hierarchy}
 
 %% \tnotetext[label1]{}
 %% \author{Name\corref{cor1}\fnref{label2}}
@@ -170,13 +182,11 @@
 %% \address[label1]{}
 %% \address[label2]{}
 
-\author{}
+%\author{}
 
-\address{}
+%\address{}
 
 \begin{abstract}
-
-
 We build a hierarchy of functions that are an upper inverse
 of the usual Ackermann hierarchy, and then use this inverse
 hierarchy to compute the inverse of the diagonal Ackermann
@@ -188,19 +198,7 @@ where we show that it runs in linear time.
 
 %An alternative definition for the Inverse Ackermann function, and a linear time computation in Gallina
 
-
-
-\begin{keyword}
-Inverse Ackermann \sep Automata \sep Union-Find \sep Division
-%% keywords here, in the form: keyword \sep keyword
-
-%% PACS codes here, in the form: \PACS code \sep code
-
-%% MSC codes here, in the form: \MSC code \sep code
-%% or \MSC[2008] code \sep code (2000 is the default)
-\end{keyword}
-
-\end{frontmatter}
+%\end{frontmatter}
 
 %% \linenumbers
 
@@ -235,7 +233,7 @@ Inverse Ackermann \sep Automata \sep Union-Find \sep Division
 %% If you have bibdatabase file and want bibtex to generate the
 %% bibitems, please use
 %%
-\bibliographystyle{elsarticle-num}
+\bibliographystyle{plainurl}% the mandatory bibstyle
 %\bibliography{references.bib}
 
 %% else use the following coding to input the bibitems directly in the
