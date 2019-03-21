@@ -24,14 +24,14 @@ which is $1$. In general, the formal definition for hyperoperation is
 \begin{enumerate}
 	\item \textit{Initial level:} $a[0]b = b + 1 \ \forall b$.
 	\item \textit{Initial values:} $a[n+1]0 = a$ if $n = 0$, $0$ if $n = 1$, and $1$ otherwise.
-	\item \textit{Recursive rule:} $ a[n+1]b = a[n]\left(a[n+1](b - 1)\right) \ \forall n \ \forall b \ge 1$
+	\item \textit{Recursive rule:} $ a[n+1]b = a[n]\big(a[n+1](b - 1)\big) \ \forall n \ \forall b \ge 1$
 \end{enumerate}
-The recursive formula may look complicated at first, but in fact is just \emph{repeated application} in disguise. By fixing $a$ and treating $a[n]b$ as a function of $b$, we can write
+The seemingly complicated recursive rule is in fact just \emph{repeated application} in disguise. By fixing $a$ and treating $a[n]b$ as a function of $b$, we can write
 $$ \begin{aligned}
-a[n+1]b & = a[n]\left(a[n+1](b-1)\right) = a[n]\left(a[n](a[n+1](b-2))\right) \\
- & =  \underbrace{\left( a[n]\circ a[n]\circ \cdots \circ a[n] \right)}_{b \text{ times}} \left(a[n+1]0\right) = \left(a[n]\right)^{(b)}\left(a[n+1]0\right)
+a[n+1]b & = a[n]\big(a[n+1](b-1)\big) = a[n]\big(a[n](a[n+1](b-2))\big) \\
+ & =  \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big) = \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
 \end{aligned} $$
-where $f^{(k)}(u) \triangleq (f\circ f\circ \cdots \circ f)(u)$ denotes applying a function $f$ to an input $u$ $k$ times. In order to view the relationship between the $(\text{n+1})^{\text{th}}$- and $(\text{n})^{\text{th}}$-levels in a \emph{functional} way, we need an operation that transforms the latter to the former, which leads us to the notion of \emph{repeater}.
+where $f^{(k)}(u) \triangleq (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ successive applications of a function $f$ to an input $u$, with $f^{(0)}(u) = u $ (applying $0$ times). In order to view the relationship between the $(\text{n+1})^{\text{th}}$- and $\text{n}^{\text{th}}$-levels in a \emph{functional} way, we need an operation that transforms the latter to the former, which leads to the notion of \emph{repeater}.
 \begin{defn}
 For all $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a) \ \forall n$.
 \end{defn}

@@ -1,5 +1,6 @@
-In this section, we apply the \emph{countdown} operation to build the inverse hyperoperation hierarchy, along the way we will define division, logarithm and iterated logarithm in terms of \emph{countdown}.
+In this section, we apply the \emph{countdown} operation to build the inverse hyperoperation hierarchy, along the way we will define division, logarithm and iterated logarithm in terms of \emph{countdown}, before modifying the inverse hyperoperations to sketch an inverse Ackermann hierarchy.
 
+\subsection{The Inverse Hyperoperations}
 In consistence with the in-use upper inverse notion, we aim at the ceiling of division and $\log$ on real numbers, $\left\lceil b/a \right\rceil$ and $\left\lceil \log_ab \right\rceil$. The iterated logarithm is formally defined as the number of times $\log$ needs to be applied to the input to for the result to be not above $1$, thus it is natural to define it using \emph{countdown}.
 Similar to how we discover \emph{repeater}, we treat $a$ as a parameter and consider $\lambda b.\left\lceil b/a \right\rceil$, $\lambda b.\left\lceil \log_ab \right\rceil$ and $\lambda b. \log^*_ab$ as functions of $b$. 
 \begin{defn} \label{defn: divc}
@@ -102,22 +103,91 @@ With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^
 	\logstarc(a, b) & = 1 + \divc(a, \left\lceil \log_ab \right\rceil) &\hspace{-20pt} \text{ if } b > 1 &\text{ and } 0 \text{ otherwise}.
 	\end{align*}
 \end{rem}
-Using the Ackermann kludge from \cref{sec: overview}, we sketch a method to find the inverse Ackermann function from the inverse hyperoperations.
-\begin{thm} \label{thm: inv-hyperop-inv-ack}
-	For all $n, k$, $n\le \Ack(k, k) \iff 2\angle{k}(n+3)\le k+3$.
+
+\subsection{The Inverse Ackermann hierarchy}
+
+% NEW METHOD FOR INVERSE ACKERMANN
+Using countdown, we can effectively build an inverse Ackermann hierarchy, where each level $\alpha_i$ is the inverse of $\Ack_i$. Since for each $n$, $\Ack_{i+1} = \rf{\Ack_i}{\Ack_i(1)}$, so it the recursive rule $\alpha_{i+1} \triangleq \cdt{\alpha_i}{\Ack_i(1)}$ seems tempting. However it stills depends on $\Ack_i$, rather than fully on $\alpha_i$, which makes it ineffective. Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\big)^{-1}_+$ and $\alpha_{i+1} = \big(A_{i+1}\big)^{-1}_+$. Then for all $n, m$, $A_{i+1}(m) = \big(A_i\big)^{(m)}\big(A_i(1)\big)$, so
+\begin{equation} \label{eq: inv-ack-hier-derive}
+\alpha_{i+1}(n)\le m \iff n\le \big(A_i\big)^{(m+1)}(1) \iff \big(\alpha_i\big)^{(m+1)}(n) \le 1
+\end{equation}
+This is equivalent to $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\big\}$, or $\alpha_{i+1}(n) = \cdt{\alpha_i}{1}\big(\alpha_i(n)\big)$. We can thus define the following inverse Ackermann hierarchy.
+\begin{defn} \label{defn: inv-ack-hier}
+	The \emph{inverse Ackermann hierarchy} is a series of functions $\{\alpha_i\}_{i=0}^{n}$ such that
+	$$ \alpha_i = \begin{cases}
+	\lambda n.(n - 1) & \text{if } i = 0
+	\\ \big(\cdt{\alpha_{i-1}}{1}\big)\circ \alpha_{i-1} & \text{if } i\ge 1 \end{cases}$$
+\end{defn}
+Their correctness have already been established in \eqref{eq: inv-ack-hier-derive}. We can then provide another computation for the inverse Ackermann function.
+\begin{thm} \label{thm: inv-ack-hier-correct}
+	%For all $n, k$, $n\le \Ack(k, k) \!\!\iff \!\! \alpha_k(n)\le k$. Thus
+	For all $n$, $\alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}$.
 \end{thm}
-\begin{proof}
-	$n\le \Ack(k, k) \iff n\le 2[k](k+3) - 3$. Now $2[k]$ is an expansion by \cref{thm: inv-hyperop-correct}'s proof, so $2[k](k+3) \ge k+3\ge 3$, so  $n\le 2[k](k+3) - 3 \iff n+3 \le 2[k](k+3)\iff 2\angle{k}(n+3)\le k+3$, again by \cref{thm: inv-hyperop-correct}.
-\end{proof}
-\Cref{thm: inv-hyperop-inv-ack} allows a simple method to compute the Inverse Ackermann function, based on the \emph{budget} idea in \emph{countdown worker}.
-\begin{defn}
+The following Coq-complied recursive function can compute $\alpha$ effectively.
+\begin{defn} \label{defn: inv-ack-worker}
 	The \emph{inverse Ackermann worker} of $f$ is a function $\W\alpha\ : \mathbb{N}^4\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
 	$$ \W\alpha(f, n, k, b) = \begin{cases}
-	k & \text{if } b = 0 \vee f(n)\le k+3 \\ \W\alpha(\cdt{f}{a_k}\ , n, k+1, b-1) & \text{if } b \ge 1 \wedge f(n) > k+3
+	k & \text{if } b = 0 \vee n\le k \\ \W\alpha(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k+1, b-1) & \text{if } b \ge 1 \wedge n \ge k+1
 	\end{cases} $$
-	where $a_0 = 2$, $a_1 = 0$ and $a_k = 1 \ \forall k\ge 2$.
 \end{defn}
-The function $\W\alpha$ takes a function $f$ and pretends it was the first level of the inverse hyperoperation hierarchy. It then keeps applying countdown to $f$, supposedly arrives at the $\text{m}^{\text{th}}$-level at the $\text{m}^{\text{th}}$-recursive step, until the budget $b$ is exhausted or $f(n)\le k+3$, i.e. \emph{early stopping}, and will output $k$. If at the beginning $k=0$ and $f = 2\angle{0}$, the early stopping condition becomes $2\angle{k}n \le k+3$, which when replace $n$ by $n+3$ gives what we need in \cref{thm: inv-hyperop-inv-ack}.
-The inverse Ackermann function can be defined as follows.
-\begin{thm} For all $n$, we have $\alpha(n) = \W\alpha(\lambda m.(m - 1), n+3, 0, n)$.
+The function $\W\alpha$ takes a function $f$ and pretends it was the first level of the inverse Ackermann hierarchy. It then keeps composing $\cdt{f}{1}\ $ to $f$, supposedly arrives at the $\text{m}^{\text{th}}$-level in the hierarchy after the $\text{m}^{\text{th}}$-recursive step, until the budget $b$ is exhausted or $n\le k$, and will output $k$. The following theorem provides the appropriate setting for $\W\alpha$ to work.
+\begin{thm} \label{thm: inv-ack-worker-correct}
+	For all $n$, $\W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{thm}
+Here, we give $\W\alpha$ a budget of $n$ and prove that it is sufficient for $\W\alpha$ to arrive at the correct value for $\alpha(n)$. We start by the following lemma.
+\begin{lem} \label{lem: inv-ack-worker-intermediate}
+	For all $n, b, k$ such that $k+1\le \min\big\{b, \alpha_k(n)\big\}$, $$\W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)$$
+\end{lem}
+\begin{proof}
+	 We prove $P(k) \ \forall k$ by induction, where.
+	 $$ \begin{aligned}
+	 P(k) \triangleq \forall n, b \ \ & (\alpha_k(n)\ge k+1) \to (b\ge k+1)\\ & \to \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+	 \end{aligned}
+	 $$
+	\begin{enumerate}[leftmargin=*]
+		\item \emph{Base case}. $ \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\cdt{\big(\alpha_0}{1}\big)\circ \alpha_0, \cdt{\alpha_0}{1}\big(\alpha_0(n)\big), 1, b - 1\big) $ by $\W\alpha$'s recursive rule with $b\ge 1$ and $\alpha_0(n)\le 1$. Since $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$ per \cref{defn: inv-ack-hier}, $P(0)$ holds.
+		
+		\item \emph{Inductive step.} Suppose $\alpha_{k+1}(n)\ge k+2$ and $b\ge k+2$. Then $\alpha_k(n)\ge k+1$ and $b\ge k+1$, so $P(k)$ applies. It suffices to show
+		$$ \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+		= \W\alpha\big(\alpha_{k+2}, \alpha_{k+2}(n), k+2, b-k-2\big) $$
+		Per \cref{defn: inv-ack-hier}, $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this is just $\W\alpha$'s recursive rule with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$.
+	\end{enumerate}
+The proof is complete by induction.
+\end{proof}
+%Next, a lemma connecting the value of $\W\alpha(f, n, k , b)$ and $k$, which is important because the recursive rule alone does not tell how the value of $\W\alpha$ changes at each recursive step.
+%\begin{lem}
+%	For all $f, n, k, b$, $\W\alpha\big(f, n, k, b\big) \ge k$.
+%\end{lem}
+%\begin{proof}
+%	Fix $n$, if $k \ge n$, equality occurs. Consider only $k\le n$, using backwards induction, suppose $\W\alpha\big(f, n, k, b\big) \ge k \ \forall f, b$ for some $1\le k\le n$. Now fix $f, b$ and consider $\W\alpha\big(f, n, k-1, b\big)$. If $b = 0$, equality occurs. Otherwise, $\W\alpha\big(f, n, k-1, b\big) = \W\alpha\big(f, n, k, b\big) \ge k \ge k-1$. The proof is complete.
+%\end{proof}
+Now we are ready to prove the correctness of the inverse Ackermann worker.
+\begin{proof}[Proof of \Cref{thm: inv-ack-worker-correct}]
+	Since the sequence $\big\{\alpha_k(n)\big\}_{k=1}^{\infty}$ decreases while $\{k\}_{k=1}^{\infty}$ increases to infinity, there exists $m \triangleq \min\big\{k : \alpha_k(n) \le k \} = \alpha(n)$. Note that $m\le n$ since $\alpha_n(n)\le n$.
+	If $m = 0$, $\alpha_0(n)\le 0 \!\! \implies \!\! \alpha_0(n) = 0$. Thus $\W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) = 0 = m$. If $m \ge 1$, \cref{lem: inv-ack-worker-intermediate} implies
+	$$ \W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) = \W\alpha\big(\alpha_m, \alpha_m(n), m, n - m\big) = m $$
+	where the last equality follows from the recursive rule.
+\end{proof}
+
+
+% OLD METHOD FOR INVERSE ACKERMANN
+
+%Using the Ackermann kludge from \cref{sec: overview}, we sketch a method to find the inverse Ackermann function from the inverse hyperoperations.
+%\begin{thm} \label{thm: inv-hyperop-inv-ack}
+%	For all $n, k$, $n\le \Ack(k, k) \iff 2\angle{k}(n+3)\le k+3$.
+%\end{thm}
+%\begin{proof}
+%	$n\le \Ack(k, k) \iff n\le 2[k](k+3) - 3$. Now $2[k]$ is an expansion by \cref{thm: inv-hyperop-correct}'s proof, so $2[k](k+3) \ge k+3\ge 3$, so  $n\le 2[k](k+3) - 3 \iff n+3 \le 2[k](k+3)\iff 2\angle{k}(n+3)\le k+3$, again by \cref{thm: inv-hyperop-correct}.
+%\end{proof}
+%\Cref{thm: inv-hyperop-inv-ack} allows a simple method to compute the Inverse Ackermann function, based on the \emph{budget} idea in \emph{countdown worker}.
+%\begin{defn} \label{defn: inv-ack-worker}
+%	The \emph{inverse Ackermann worker} of $f$ is a function $\W\alpha\ : \mathbb{N}^4\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
+%	$$ \W\alpha(f, n, k, b) = \begin{cases}
+%	k - 3 & \text{if } b = 0 \vee f(n)\le k+3 \\ \W\alpha(\cdt{f}{a_k}\ , n, k+1, b-1) & \text{if } b \ge 1 \wedge f(n) > k+3
+%	\end{cases} $$
+%	where $a_0 = 2$, $a_1 = 0$ and $a_k = 1 \ \forall k\ge 2$.
+%\end{defn}
+%The function $\W\alpha$ takes a function $f$ and pretends it was the first level of the inverse hyperoperation hierarchy. It then keeps applying countdown to $f$, supposedly arrives at the $\text{m}^{\text{th}}$-level at the $\text{m}^{\text{th}}$-recursive step, until the budget $b$ is exhausted or $f(n)\le k+3$, i.e. \emph{early stopping}, and will output $k$. If at the beginning $k=3$ and $f = 2\angle{0}$, the early stopping condition becomes $2\angle{k}n \le k+3$, which when replace $n$ by $n+3$ gives what we need in \cref{thm: inv-hyperop-inv-ack}.
+%The inverse Ackermann function can be defined as follows.
+%\begin{thm} For all $n$, we have $\alpha(n) = \W\alpha(\lambda m.(m - 1), n+3, 3, n)$.
+%\end{thm}

@@ -70,8 +70,7 @@ The kludge seems to be a conjugacy between the Ackermann hierarchy and the hyper
 \paragraph{Increasing functions and their inverses}
 Defining increasing functions is often significantly simpler than defining their inverses.
 The Church numeral encodings of addition, multiplication, and even exponentiation
-are each simpler than their corresponding inverses of subtraction, division, and logarithm. We see the same pattern in mechanized contexts: defining multiplication in Gallina is
-child's play, but defining division is unexpectedly painful:
+are each simpler than their corresponding inverses of subtraction, division, and logarithm. We see the same pattern in mechanized contexts: defining multiplication in Gallina is trivial, but defining division is unexpectedly painful:\\[5pt]
 \begin{tabular}{@{}l@{~~~}|@{~~~}l}
 \begin{lstlisting}
 Fixpoint mult a b :=
@@ -88,7 +87,7 @@ Fixpoint div a b :=
  | _ => 1 + div (a - b) b
  end.
 \end{lstlisting}
-\end{tabular} \\
+\end{tabular} \\[5pt]
 The definition of \li{mult} is of course accepted immediately by Coq; indeed
 it is the precise way multiplication is defined in the standard library.  The function
 \li{div} should calculate multiplication's upper inverse,
@@ -124,7 +123,7 @@ time (in the size of a number's representation in unary or binary), so they are 
 \begin{itemize}
 	\item[\S\ref{sec: countdown-repeater}] Starting from hyperoperations, we discuss the concepts \emph{repeater} and \emph{expansions}, and how the need for their inverse leads to \emph{countdowns}.
 	\item[\S\ref{sec: inv-hyperop}] We show how to use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base; and sketch a method to find the Inverse Ackermann function.
-	\item[\S\ref{sec: inv-ack}] We detail a specialized computation for the Inverse Ackermann function, improving over the sketch's running time of $O\big(n \cdot \alpha(n)\big)$ to $O(n)$.
+	\item[\S\ref{sec: inv-ack}] We detail a specialized computation for the Inverse Ackermann function, improving over the sketch's running time of $\bigO\big(n^2\big)$ to $\bigO(n)$.
 	\item[\S\ref{sec: discussion}] We extend our functions in several useful ways: to the two-argument inverse Ackermann, lower inverses, and binary representations.
 \end{itemize}
 All of our techniques are mechanized in Coq~\cite{blah}, and for online readers, 

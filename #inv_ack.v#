@@ -93,4 +93,6 @@ match i with
 | S i' => compose_sum (rtime i') (alpha i') (countdown_to 1 (alpha i') n) n + (alpha i n)
 end.
 
-Compute rtime 2 13.
+Compute rtime 6 1000.
+Compute rtime 1 20.
+Compute rtime 1 1000.
