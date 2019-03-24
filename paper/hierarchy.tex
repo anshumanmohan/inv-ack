@@ -29,10 +29,12 @@ which is $1$. In general, the formal definition for hyperoperation is
 	\item \textit{Recursive rule:} $ a[n+1]b = a[n]\big(a[n+1](b - 1)\big) \ \forall n \ \forall b \ge 1$
 \end{enumerate}
 The seemingly complicated recursive rule is in fact just \emph{repeated application} in disguise. By fixing $a$ and treating $a[n]b$ as a function of $b$, we can write
-$$ \begin{aligned}
+\begin{equation*}
+\begin{aligned}
 a[n+1]b & = a[n]\big(a[n+1](b-1)\big) = a[n]\big(a[n](a[n+1](b-2))\big) \\
  & =  \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big) = \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
-\end{aligned} $$
+\end{aligned}
+\end{equation*}
 where $f^{(k)}(u) \triangleq (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ successive applications of a function $f$ to an input $u$, with $f^{(0)}(u) = u $ (applying $0$ times). In order to view the relationship between the $(\text{n+1})^{\text{th}}$- and $\text{n}^{\text{th}}$-levels in a \emph{functional} way, we need an operation that transforms the latter to the former, which leads to the notion of \emph{repeater}.
 \begin{defn}
 For all $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a) \ \forall n$.
@@ -93,7 +95,9 @@ f^*(n)\le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \iff f(n)\le F^{(m-1)}(a) \\
 \end{aligned} 
 \end{equation}
 Letting $m = f^*(n)$ to get $f^{(f^*(n))}\le a$ and combined with the above:
-$$ \left(f^{(f^*(n))} \le a \right) \wedge \left( \forall m, f^{(m)}(n)\le a \implies m \ge f^*(n) \right) $$
+\begin{equation*}
+\left(f^{(f^*(n))} \le a \right) \wedge \left( \forall m, f^{(m)}(n)\le a \implies m \ge f^*(n) \right)
+\end{equation*}
 This implies $f^*(n)$ is the minimum number of times $f$ needs to be compositionally applied to $n$ to yield a result below or equal to $a$. Before we can define $f^*(n)$ to be the minimum of $\{m: f^{(m)}(n)\le a \}$ and claim success, we need to make sure: (1) that set is non-empty, so that it has a minimum, and (2) we can reliably find that minimum within finitely many steps. The most ideal situation would be that the chain $n$, $f(n)$, $f^{(2)}(n)$, \ldots decreases strictly until reaching $a$, which leads to the notion of \emph{contractions}.
 \begin{defn} \label{defn: contracting}
 	A function $f : \mathbb{N} \to \mathbb{N}$ is a \textit{contraction} if $f(n) \le n \ \forall n\in \mathbb{N}$. Given an $a \ge 1$, a contraction $f$ is \textit{strict above} $a$ if $n\ge f(n)+1 \ \forall n > a$. We further denote by $\contract$ the set of contractions and $\contract_a$ the set of contractions strict above $a$.
@@ -155,9 +159,11 @@ While a repeater exists for all functions not necessarily repeatable, and hence 
 
 \begin{defn} \label{defn: countdown-worker}
 For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown worker} to $a$ of $f$ is a function $\W\cdt{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
-$$ \W\cdt{f}{a}(n, b) = \begin{cases}
+\begin{equation*}
+\W\cdt{f}{a}(n, b) = \begin{cases}
 0 & \text{if } b = 0 \vee n\le a \\ 1 +\W\cdt{f}{a}(f(n), b-1) & \text{if } b \ge 1 \wedge n > a
-\end{cases} $$
+\end{cases}
+\end{equation*}
 \end{defn}
 
 Essentially, \emph{countdown worker} operates on two arguments, the \emph{true argument} $n$, which we wish to count down to $a$, and the \emph{budget} $b$,
@@ -182,9 +188,9 @@ Definition countdown_to a f n := countdown_worker a f n n.
 \end{lstlisting}
 \end{defn}
 Before beginning, let us clarify that the definition of $\mathbb{N}$ and operations on $\mathbb{N}$ in Gallina follow the Presburger Arithmetic \cite{presburger}, which despite being weaker than Peano Arithmetic, is a decidable theory. The Coq standard library includes \texttt{Omega}, an extensive listing of provable facts about $\mathbb{N}$ in Presburger Arithmetic, including everything used in this paper, most notably the law of excluded middle for comparisons on $\mathbb{N}$:
-\begin{equation}
+\begin{equation*}
 (n \le m) \vee (m + 1 \le n) \ \ \forall n, m
-\end{equation}
+\end{equation*}
 , which is provable without the actual law of excluded middle in classical logic. This enables us to prove all results in this paper with Coq's baseline intuitionistic logic. Readers can refer to the \Cref{appendix} for Coq versions of the proofs.
 %in which the most operations agree with usual operations on $\mathbb{Z}$, except subtraction, which is defined as:
 %\begin{lstlisting}
@@ -209,16 +215,22 @@ Firstly, we begin with a lemma asserting the existence of the countdown value it
 \begin{proof}
   Fix $n$ and observe that if $n\le a$, $m = 0$ is the desired choice since $ f^{(0)}(n) = n \le a \ \text{ and } \ 0 \le l \ \forall l $.
 	Consider only when $a\le n$, we can define $c$ such that $n = a + c$. We prove the following statement by induction:
-	$$ P(c) \triangleq \exists m : \left(f^{(m)}(n) \le n - c \right) \wedge \left(f^{(l)}(n)\le n - c \implies m \le l \ \forall l \right) $$
+	\begin{equation*}
+	P(c) \triangleq \exists m : \left(f^{(m)}(n) \le n - c \right) \wedge \left(f^{(l)}(n)\le n - c \implies m \le l \ \forall l \right)
+	\end{equation*}
 	under assumptions $f\in \contract_{n-c}$ and $c\le n$.
 	\begin{enumerate}[leftmargin=*]
 		\item \textit{Base case.} The case $c = 0$ implies $n = a$, which has been proven above.
 		\item \textit{Inductive step.} Suppose $P(c)$ is proved with witness $m_c$. Note that the assumptions are now $f\in \contract_{n-c}$ and $c+1\le n$, there are two cases:
-		\begin{itemize}[leftmargin=*, label={-}]
-			\item $f^{\left(m_c\right)}(n) = n - c$. Then $f^{\left(m_c+1\right)}(n) \le n - c - 1$ by the first assumption. Let $m_{c+1} = m_c + 1$, for all $l$:
-			$$ f^{(l)}(n)\le n - c - 1 < f^{\left(m_c\right)}(n) \implies l > m_c \implies l \ge m_{c+1} $$
+		\begin{itemize}[leftmargin=*, label={--}]
+			\item $f^{\left(m_c\right)}(n) = n - c$. Then $f^{\left(m_c+1\right)}(n) \le n - c - 1$. Let $m_{c+1} = m_c + 1$, for all $l$:
+			\begin{equation*}
+			f^{(l)}(n)\le n - c - 1 < f^{\left(m_c\right)}(n) \implies l > m_c \implies l \ge m_{c+1}
+			\end{equation*}
 			\item $f^{\left(m_c\right)}(n) \le n - c - 1$. Let $m_{c+1} = m_c$, for all $l$:
-			$$ f^{(l)}(n)\le n - c - 1\le n - c \overset{P(c)}{\implies} l\ge m_{c} = m_{c+1} $$
+			\begin{equation*}
+			f^{(l)}(n)\le n - c - 1\le n - c \overset{P(c)}{\implies} l\ge m_{c} = m_{c+1}
+			\end{equation*}
 		\end{itemize}
 		In any cases, we can find a witness $m_{c+1}$ for $P(c+1)$. Thus the proof is complete by induction.\vspace*{-\baselineskip}
 	\end{enumerate}
@@ -240,17 +252,23 @@ The next lemma shows the internal working of \emph{countdown worker} at the $\te
 \end{lem}
 \begin{proof}
 	We proceed by induction on $i$. Define
-	$$\begin{aligned}
+	\begin{equation*}
+	\begin{aligned}
 	P(i) \triangleq \W\cdt{f}{a}(n, b) = 1 + i + \W\cdt{f}{a}\left(f^{1+i}(n), b - i - 1\right) \\ \forall b, n : b\ge i+1, f^{(i)}(n) > a
-	\end{aligned}$$
+	\end{aligned}
+	\end{equation*}
 	\begin{enumerate}[leftmargin=*]
 		\item \textit{Base case.} For $i = 0$, our goal $P(0)$ is:
-		$$ \W\cdt{f}{a}(n, b) = 1 + \W\cdt{f}{a}\left(f(n), b - 1\right) $$
+		$\W\cdt{f}{a}(n, b) = 1 + \W\cdt{f}{a}\left(f(n), b - 1\right)$
 		where $b \ge 1, f(n)\ge a+1$, which is trivial.
 		\item \textit{Inductive step.} Suppose $P(i)$ has been proven. Then
-		$$ P(i+1) \triangleq \W\cdt{f}{a}(n, b) = 2 + i + \W\cdt{f}{a}\left( f^{2+i}(n), b - i - 2 \right)$$
+		\begin{equation*}
+		P(i+1) \triangleq \W\cdt{f}{a}(n, b) = 2 + i + \W\cdt{f}{a}\left( f^{2+i}(n), b - i - 2 \right)
+		\end{equation*}
 		for $b \ge i+2, f^{1+i}(n) \ge a+1$. This also implies $b\ge i+1$ and $\displaystyle f^{(i)}(n) \ge f^{1+i}(n)\ge a+1$ by $f\in \contract$, thus $P(i)$ holds. It suffices to prove:
-		$$ \W\cdt{f}{a}\left(f^{1+i}(n), b-i-1\right) = 1 + \W\cdt{f}{a}\left( f^{2+i}(n), b-i-2 \right)$$
+		\begin{equation*}
+		\W\cdt{f}{a}\left(f^{1+i}(n), b-i-1\right) = 1 + \W\cdt{f}{a}\left( f^{2+i}(n), b-i-2 \right)
+		\end{equation*}
 		This is in fact $P(0)$ with $(b, n)$ being substituted for $\left(b-i-1, f^{(1+i)}(n)\right)$. Since $f^{(1+i)}(n) \ge a+1$ and $b-i-1\ge 1$, the above holds and the proof is complete.\vspace*{-\baselineskip}
 	\end{enumerate}
 \end{proof}
@@ -274,18 +292,22 @@ Now it is time to prove the correctness of \emph{countdown worker}.
 %	, which holds due to the fact $\displaystyle f^{(l)}(n) \le f^{(\cdt{f}{a}(n))}(n) \le a$ by $f\in \contract$. To prove $\eqref{eq: cdt-repeat}\implies \eqref{eq: cdt-minimum}$, it suffices to show $\displaystyle f^{(\cdt{f}{a}(n))}(n) \le a$
 %	, which in turn holds by substituting $k$ by $\cdt{f}{a}(n)$ in \eqref{eq: cdt-repeat}. Thus $\eqref{eq: cdt-minimum}\iff \eqref{eq: cdt-repeat}$ and we need only to prove \eqref{eq: cdt-minimum}.
 Using \cref{lem: contract-repeat-threshold}, there exists an $m$ such that
-	\begin{align}
-	& f^{(m)}(n) \le a \label{eq: cdt-repeat-tmp-1} \\
-	& f^{(k)}(n)\le a \implies m \le k \ \ \forall k \label{eq: cdt-repeat-tmp-2}
-	\end{align}
+	\begin{equation}
+	\left(f^{(m)}(n) \le a\right) \label{eq: cdt-repeat-tmp} \wedge
+	 \left(f^{(k)}(n)\le a \implies m \le k \ \ \forall k\right)
+	\end{equation}
 	It then suffices to prove $m = \cdt{f}{a}(n)$. Suppose firstly that $m = 0$. Then $n = f^{(0)}(n)\le a$, thus $\cdt{f}{a}(n) = \W\cdt{f}{a}(n, n) = 0 = m$ by \cref{lem: cdt-init}.
 	
 	Now consider $m > 0$. We would like to apply \cref{lem: cdt-intermediate} to get
-	$$ \cdt{f}{a}(n) = \W\cdt{f}{a}(n, n) = m + \W\cdt{f}{a}\left(f^{(m)}(n), n-m\right) $$
-	, then use \cref{lem: cdt-init} over \eqref{eq: cdt-repeat-tmp-1} to conclude that $\cdt{f}{a}(n) = m$. It then suffices to prove the premises of \cref{lem: cdt-intermediate}, namely $a < f^{(m-1)}(n)$ and $m-1 < n$.
+	\begin{equation*}
+	\cdt{f}{a}(n) = \W\cdt{f}{a}(n, n) = m + \W\cdt{f}{a}\left(f^{(m)}(n), n-m\right)
+	\end{equation*}
+	, then use \cref{lem: cdt-init} over \eqref{eq: cdt-repeat-tmp}'s first conjunct to conclude that $\cdt{f}{a}(n) = m$. It then suffices to prove the premises of \cref{lem: cdt-intermediate}, namely $a < f^{(m-1)}(n)$ and $m-1 < n$.
 	
-	The former follows by contradiction (LEM on $\mathbb{N}$ is implicit here): if $f^{(m-1)}(n) \le a$, \eqref{eq: cdt-repeat-tmp-2} implies $m\le m-1$, which is wrong for $m > 0$. The latter then easily follows by $f\in \contract_{a}$:
-	$$ n \ge 1 + f(n) \ge 2 + f(f(n)) \ge \cdots \ge m + f^{(m)}(n) $$
+	The former follows by contradiction: if $f^{(m-1)}(n) \le a$, \eqref{eq: cdt-repeat-tmp}'s second conjunct implies $m\le m-1$, which is wrong for $m > 0$. The latter then easily follows by $f\in \contract_{a}$:
+	\begin{equation*}
+	n \ge 1 + f(n) \ge 2 + f(f(n)) \ge \cdots \ge m + f^{(m)}(n)
+	\end{equation*}
 	Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
 \end{proof}
 Now, \eqref{eq: rf-upp-inv} and \cref{thm: cdt-repeat} are already enough to establish the correctness of the Coq definitions \emph{countdown} and \emph{countdown worker}. We thus unite \cref{defn: informal-countdown,defn: countdown} as they are equivalent. We wrap everything up in the following two theorems, one for $a\ge 1$ and one for $a = 0$.

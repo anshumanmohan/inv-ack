@@ -45,9 +45,11 @@ For all $a, b\in \mathbb{N}$, $a\angle{1}b = b - a$.
 \end{lem}
 \begin{proof}
 Since $a\angle{0} \in \contract_1 \subset \contract_{a}$, \cref{thm: cdt-recursion} applies.
-$$ a\angle{1}b = \cdt{\left(a\angle{0}\right)}{a}(b) = \begin{cases}
+\begin{equation*}
+a\angle{1}b = \cdt{\left(a\angle{0}\right)}{a}(b) = \begin{cases}
 0 & \text{ if } b\le a \\ 1 + a\angle{1}(b - 1) & \text{ if } b\ge a+1
-\end{cases} $$
+\end{cases}
+\end{equation*}
 A simple induction will then confirms $a\angle{1}b = b - a \ \forall b$.
 \end{proof}
 \begin{col} \label{col: inv-hyperop-1-contr1}
@@ -67,21 +69,25 @@ For all $a\in \mathbb{N}$, $a\angle{n} = \left(a[n]\right)^{-1}_+$ holds for all
 \end{thm}
 \begin{proof}
 Let $a_0 = a$, $a_1 = 0$, $a_n = 1 \ \forall n\ge 2$. Define
-$$
+\begin{equation*}
 P(n) \triangleq  \left(a[n] \in \repeatable_{a_n}\right)\ \text{ and } \
 Q(n) \triangleq  \left(a\angle{n} = \left(a[n]\right)^{-1}_+ \right)
-$$
+\end{equation*}
 Our goals are $Q(0), Q(1) \ \forall a$, $Q(2) \ \forall a\ge 1$ and $Q(n) \ \forall n \ \forall a\ge 2$. Note that for all $n$, $a\angle{n+1} = \cdt{a\angle{n}}{a_n}$ and $a[n+1] = \rf{a[n]}{a_n}\ $. By \cref{thm: cdt-inv-rf},
 \begin{align}
 P(n) \to Q(n) \to Q(n+1) \ \forall n \ \forall a \label{eq: tmp-induction-1} \\
 (a_n\ge 1) \to P(n) \to P(n+1) \ \forall n \label{eq: tmp-induction-2}
 \end{align}
 For all $a$, $P(0) \equiv \left(\lambda b.(b+1)\in \repeatable_a \right)$ and
-$$Q(0) \equiv \left(a\angle{0} = \left(a[0]\right)^{-1}_+\right) \equiv \left(b-1\le c \iff b\le c+1 \ \forall b, c \right)$$
+\begin{equation*}
+Q(0) \equiv \left(a\angle{0} = \left(a[0]\right)^{-1}_+\right) \equiv \left(b-1\le c \iff b\le c+1 \ \forall b, c \right)
+\end{equation*}
 , which are both trivial. By \eqref{eq: tmp-induction-1}, $Q(1)$ also holds, which completes our first goal. Now suppose $a\ge 1$, $a_0 = a\ge 1$, so $P(1)$ holds by $P(0)$ and \eqref{eq: tmp-induction-2}. By $Q(1)$ and \eqref{eq: tmp-induction-1}, $Q(2)$ also holds, which completes the second goal.
 
 Suppose $a\ge 2$ and consider the third goal, by \eqref{eq: tmp-induction-1} and $Q(0)$, it suffices to show $P(n)$ for all $n$. By \eqref{eq: tmp-induction-2} and the fact $a_n\ge 1 \ \forall n\neq 1$, it remains to show $P(2)$, which is equivalent to
-$$ a[2]\in \repeatable_0 \iff (ab < ac \ \forall b < c) \wedge (ab \ge b+1 \ \forall b\ge 1) $$
+\begin{equation*}
+a[2]\in \repeatable_0 \iff (ab < ac \ \forall b < c) \wedge (ab \ge b+1 \ \forall b\ge 1)
+\end{equation*}
 , which is trivial for $a\ge 2$. By induction, the third goal and the proof are complete.
 \end{proof}
 With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^*$, as well as the whole inverse hyperoperation hierarchy.
@@ -113,10 +119,12 @@ Using countdown, we can effectively build an inverse Ackermann hierarchy, where 
 \end{equation}
 This is equivalent to $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\big\}$, or $\alpha_{i+1}(n) = \cdt{\alpha_i}{1}\big(\alpha_i(n)\big)$. We can thus define the following inverse Ackermann hierarchy.
 \begin{defn} \label{defn: inv-ack-hier}
-	The \emph{inverse Ackermann hierarchy} is a series of functions $\{\alpha_i\}_{i=0}^{n}$ such that
-	$$ \alpha_i = \begin{cases}
+	The \emph{inverse Ackermann hierarchy} $\{\alpha_i\}_{i=0}^{n}$ is a series of functions $\mathbb{N}\to \mathbb{N}$ such that
+\begin{equation*}
+	\alpha_i = \begin{cases}
 	\lambda n.(n - 1) & \text{if } i = 0
-	\\ \big(\cdt{\alpha_{i-1}}{1}\big)\circ \alpha_{i-1} & \text{if } i\ge 1 \end{cases}$$
+	\\ \big(\cdt{\alpha_{i-1}}{1}\big)\circ \alpha_{i-1} & \text{if } i\ge 1 \end{cases}
+\end{equation*}
 \end{defn}
 Their correctness have already been established in \eqref{eq: inv-ack-hier-derive}. We can then provide another computation for the inverse Ackermann function.
 \begin{thm} \label{thm: inv-ack-hier-correct}
@@ -126,9 +134,11 @@ Their correctness have already been established in \eqref{eq: inv-ack-hier-deriv
 The following Coq-complied recursive function can compute $\alpha$ effectively.
 \begin{defn} \label{defn: inv-ack-worker}
 	The \emph{inverse Ackermann worker} of $f$ is a function $\W\alpha\ : \mathbb{N}^4\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
-	$$ \W\alpha(f, n, k, b) = \begin{cases}
+	\begin{equation} \label{eq: inv-ack-worker-recursion}
+	\W\alpha(f, n, k, b) = \begin{cases}
 	k & \text{if } b = 0 \vee n\le k \\ \W\alpha(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k+1, b-1) & \text{if } b \ge 1 \wedge n \ge k+1
-	\end{cases} $$
+	\end{cases}
+	\end{equation}
 \end{defn}
 The function $\W\alpha$ takes a function $f$ and pretends it was the first level of the inverse Ackermann hierarchy. It then keeps composing $\cdt{f}{1}\ $ to $f$, supposedly arrives at the $\text{m}^{\text{th}}$-level in the hierarchy after the $\text{m}^{\text{th}}$-recursive step, until the budget $b$ is exhausted or $n\le k$, and will output $k$. The following theorem provides the appropriate setting for $\W\alpha$ to work.
 \begin{thm} \label{thm: inv-ack-worker-correct}
@@ -136,23 +146,29 @@ The function $\W\alpha$ takes a function $f$ and pretends it was the first level
 \end{thm}
 Here, we give $\W\alpha$ a budget of $n$ and prove that it is sufficient for $\W\alpha$ to arrive at the correct value for $\alpha(n)$. We start by the following lemma.
 \begin{lem} \label{lem: inv-ack-worker-intermediate}
-	For all $n, b, k$ such that $k+1\le \min\big\{b, \alpha_k(n)\big\}$, $$\W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)$$
+	For all $n, b, k$ such that $k+1\le \min\big\{b, \alpha_k(n)\big\}$, \begin{equation*}
+	\W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+	\end{equation*}
 \end{lem}
 \begin{proof}
-	 We prove $P(k) \ \forall k$ by induction, where.
-	 $$ \begin{aligned}
+	 We prove $P(k) \ \forall k$ by induction, where
+	 \begin{equation*}
+	 \begin{aligned}
 	 P(k) \triangleq \forall n, b \ \ & (\alpha_k(n)\ge k+1) \to (b\ge k+1)\\ & \to \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
 	 \end{aligned}
-	 $$
+	 \end{equation*}
 	\begin{enumerate}[leftmargin=*]
-		\item \emph{Base case}. $ \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\cdt{\big(\alpha_0}{1}\big)\circ \alpha_0, \cdt{\alpha_0}{1}\big(\alpha_0(n)\big), 1, b - 1\big) $ by $\W\alpha$'s recursive rule with $b\ge 1$ and $\alpha_0(n)\le 1$. Since $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$ per \cref{defn: inv-ack-hier}, $P(0)$ holds.
+		\item \emph{Base case}. $ \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\cdt{\big(\alpha_0}{1}\big)\circ \alpha_0, \cdt{\alpha_0}{1}\big(\alpha_0(n)\big), 1, b - 1\big) $ by
+		\eqref{eq: inv-ack-worker-recursion} with $b\ge 1$ and $\alpha_0(n)\le 1$. Since $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$ per \cref{defn: inv-ack-hier}, $P(0)$ holds.
 		
 		\item \emph{Inductive step.} Suppose $\alpha_{k+1}(n)\ge k+2$ and $b\ge k+2$. Then $\alpha_k(n)\ge k+1$ and $b\ge k+1$, so $P(k)$ applies. It suffices to show
-		$$ \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
-		= \W\alpha\big(\alpha_{k+2}, \alpha_{k+2}(n), k+2, b-k-2\big) $$
-		Per \cref{defn: inv-ack-hier}, $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this is just $\W\alpha$'s recursive rule with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$.
+		\begin{equation*}
+		\W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+		= \W\alpha\big(\alpha_{k+2}, \alpha_{k+2}(n), k+2, b-k-2\big)
+		\end{equation*}
+		Per \cref{defn: inv-ack-hier}, $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this is just \eqref{eq: inv-ack-worker-recursion} with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$, so $P(k+1)$ holds.
 	\end{enumerate}
-The proof is complete by induction.
+ The proof is complete by induction.
 \end{proof}
 %Next, a lemma connecting the value of $\W\alpha(f, n, k , b)$ and $k$, which is important because the recursive rule alone does not tell how the value of $\W\alpha$ changes at each recursive step.
 %\begin{lem}

@@ -30,4 +30,4 @@ paper:
 
 .PHONY: clean
 clean:
-	rm -f *.vo *.glob paper/*.pdf paper/*.aux paper/*.log paper/*.out paper/*.spl
+	rm -f *.vo *.glob paper/inv-ack.pdf paper/*.aux paper/*.log paper/*.out paper/*.spl
