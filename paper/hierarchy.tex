@@ -126,7 +126,7 @@ Inspired by \eqref{eq: rf-upp-inv}, we provide a neat, algebraically manipulable
 	$\forall a, \forall f\in \contract_{a}$, $\cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a \ \forall n, m$.
 \end{col}
 \begin{proof}
-	Fix $a$ and $n$. It suffices to prove the $(\!\!\implies\!\!)$ direction, since the other is trivial. Suppose $\cdt{f}{a}(n)\le m$, we get $f^{(m)}(n)\le f^{(\cdt{f}{a}(n))}(n)$ due to $f\in \contract$, and $f^{(\cdt{f}{a}(n))}(n)\le a$ due to \cref{thm: cdt-repeat}%, which completes the proof.
+	Fix $a$ and $n$. It suffices to prove the $(\!\!\implies\!\!)$ direction, since the other is trivial. Suppose $\cdt{f}{a}(n)\le m$, we get $f^{(m)}(n)\le f^{(\cdt{f}{a}(n))}(n)$ due to $f\in \contract$, and $f^{(\cdt{f}{a}(n))}(n)\le a$ due to \cref{thm: cdt-repeat}, which completes the proof.
 \end{proof}
 %\begin{thm} \label{thm: upp-inv-cdt-rf}
 %	For all $a\in \mathbb{N}$, if $f\in \contract_{a}$ is the upper inverse of $F: \mathbb{N}\to \mathbb{N}$, then $\cdt{f}{a}$ is the upper inverse of $\rf{F}{a}$.
@@ -134,14 +134,16 @@ Inspired by \eqref{eq: rf-upp-inv}, we provide a neat, algebraically manipulable
 Another useful result it the recursive formula for \emph{countdown}.
 \begin{thm} \label{thm: cdt-recursion}
 	For all $a\in \mathbb{N}$ and $f\in \contract_{a}$, $\cdt{f}{a}$ satisfies:
-	$$ \cdt{f}{a}(n) = \begin{cases}
+	\begin{equation*}
+	\cdt{f}{a}(n) = \begin{cases}
 	0 & \text{ if } n \le a \\ 1 + \cdt{f}{a}(f(n)) & \text{ if } n \ge a + 1
-	\end{cases} $$
+	\end{cases}
+	\end{equation*}
 \end{thm}
 \begin{proof}
 By \cref{col: cdt-repeat}, $n\le a \iff f^{(0)}(n)\le a \iff \cdt{f}{a}(n)\le 0$, thus the case $n\le a$ is resolved. Suppose $n\ge a+1$ and let $\cdt{f}{a}(f(n)) = m$. We have $\cdt{f}{a}(n)\le 1+m \!\! \iff \!\! f^{(1+m)}(n) \le a$, which is equivalent to $f^{(m)}(f(n)) \le a$, which holds by $m$'s definition.
 
-Now since $n\ge a+1$, $\cdt{f}{a}(n)\ge 1$ by the above. Let $\cdt{f}{a}(n) = p+1$. It remains to prove $\cdt{f}{a}(f(n))\le p$, or $f^{(p)}(f(n))\le a$. But this is equivalent to $f^{p+1}(n)\le a$, which holds by $p$'s definition.
+Now since $n\ge a+1$, $\cdt{f}{a}(n)\ge 1$ by the above. Let $\cdt{f}{a}(n) = p+1$. It remains to prove $\cdt{f}{a}(f(n))\le p$, or $f^{(p)}(f(n))\le a$, or $f^{p+1}(n)\le a$, which holds by $p$'s definition.
 \end{proof}
 
 While a repeater exists for all functions not necessarily repeatable, and hence can be written in Coq without much trouble, a \emph{countdown} only exists for certain functions, most conveniently contractions, hence proves a little more challenging for Coq. In the next section we give a formal computation using a \emph{countdown worker}, which terminates by Coq standards for all functions, while successfully produces the countdown when given a contraction.
@@ -180,18 +182,18 @@ match k with
           | _ => S (countdown_worker a f (f n) k') end
 end.
 \end{lstlisting}
-It is clear that with a sufficient budget, \emph{countdown worker} should compute the correct \emph{countdown} value when $f$ is a contraction strict from $a$. We will show that a budget of $n$ is sufficient. Let us use following Coq-compatible definition of \emph{countdown}, which is also used in our code base.
+It is clear that with a sufficient budget, \emph{countdown worker} should compute the correct \emph{countdown} value when $f$ is a contraction strict from $a$. We will show that a budget of $n$ is sufficient, using several lemmas about \emph{countdown worker}. Let us use following Coq-compatible definition of \emph{countdown}, which is also used in our code base.
 \begin{defn} \label{defn: countdown}
-In this section, define the countdown to $a$ of $f$ to be a function such that: $\cdt{f}{a}(n) = \W\cdt{f}{a}(n, n) \ \forall n$.
+In this section, define  $\cdt{f}{a}(n) = \W\cdt{f}{a}(n, n) \ \forall n$.
 \begin{lstlisting}
 Definition countdown_to a f n := countdown_worker a f n n.
 \end{lstlisting}
 \end{defn}
-Before beginning, let us clarify that the definition of $\mathbb{N}$ and operations on $\mathbb{N}$ in Gallina follow the Presburger Arithmetic \cite{presburger}, which despite being weaker than Peano Arithmetic, is a decidable theory. The Coq standard library includes \texttt{Omega}, an extensive listing of provable facts about $\mathbb{N}$ in Presburger Arithmetic, including everything used in this paper, most notably the law of excluded middle for comparisons on $\mathbb{N}$:
-\begin{equation*}
-(n \le m) \vee (m + 1 \le n) \ \ \forall n, m
-\end{equation*}
-, which is provable without the actual law of excluded middle in classical logic. This enables us to prove all results in this paper with Coq's baseline intuitionistic logic. Readers can refer to the \Cref{appendix} for Coq versions of the proofs.
+%Before beginning, let us clarify that the definition of $\mathbb{N}$ and operations on $\mathbb{N}$ in Gallina follow the Presburger Arithmetic \cite{presburger}, which despite being weaker than Peano Arithmetic, is a decidable theory. The Coq standard library includes \texttt{Omega}, an extensive listing of provable facts about $\mathbb{N}$ in Presburger Arithmetic, including everything used in this paper, most notably the law of excluded middle for comparisons on $\mathbb{N}$:
+%\begin{equation*}
+%(n \le m) \vee (m + 1 \le n) \ \ \forall n, m
+%\end{equation*}
+%, which is provable without the actual law of excluded middle in classical logic. This enables us to prove all results in this paper with Coq's baseline intuitionistic logic. Readers can refer to the \Cref{appendix} for Coq versions of the proofs.
 %in which the most operations agree with usual operations on $\mathbb{Z}$, except subtraction, which is defined as:
 %\begin{lstlisting}
 %Fixpoint sub (n m : nat) : nat :=
@@ -204,39 +206,39 @@ Before beginning, let us clarify that the definition of $\mathbb{N}$ and operati
 %\end{lstlisting}
 %Essentially $\li{sub} \ n \ m = \max\{n - m, 0\}$. We will use this subtraction for the rest of the paper.
 
-Firstly, we begin with a lemma asserting the existence of the countdown value itself. Although its existence is guaranteed by the well-ordering principle of $\mathbb{N}$, we will achieve better by proving it in intuitionistic logic.
+%Firstly, we begin with a lemma asserting the existence of the countdown value itself. Although its existence is guaranteed by the well-ordering principle of $\mathbb{N}$, we will achieve better by proving it in intuitionistic logic.
+%
+%\begin{lem} \label{lem: contract-repeat-threshold}
+%	For all $a, n\in\mathbb{N}$ and $f\in \contract_{a}$,
+%	\begin{equation}
+%	\exists m : \left(f^{(m)}(n) \le a \right) \wedge \left(f^{(l)}(n)\le a \implies m \le l \ \forall l \right)
+%	\end{equation}
+%\end{lem}
+%\begin{proof}
+%  Fix $n$ and observe that if $n\le a$, $m = 0$ is the desired choice since $ f^{(0)}(n) = n \le a \ \text{ and } \ 0 \le l \ \forall l $.
+%	Consider only when $a\le n$, we can define $c$ such that $n = a + c$. We prove the following statement by induction:
+%	\begin{equation*}
+%	P(c) \triangleq \exists m : \left(f^{(m)}(n) \le n - c \right) \wedge \left(f^{(l)}(n)\le n - c \implies m \le l \ \forall l \right)
+%	\end{equation*}
+%	under assumptions $f\in \contract_{n-c}$ and $c\le n$.
+%	\begin{enumerate}[leftmargin=*]
+%		\item \textit{Base case.} The case $c = 0$ implies $n = a$, which has been proven above.
+%		\item \textit{Inductive step.} Suppose $P(c)$ is proved with witness $m_c$. Note that the assumptions are now $f\in \contract_{n-c}$ and $c+1\le n$, there are two cases:
+%		\begin{itemize}[leftmargin=*, label={--}]
+%			\item $f^{\left(m_c\right)}(n) = n - c$. Then $f^{\left(m_c+1\right)}(n) \le n - c - 1$. Let $m_{c+1} = m_c + 1$, for all $l$:
+%			\begin{equation*}
+%			f^{(l)}(n)\le n - c - 1 < f^{\left(m_c\right)}(n) \implies l > m_c \implies l \ge m_{c+1}
+%			\end{equation*}
+%			\item $f^{\left(m_c\right)}(n) \le n - c - 1$. Let $m_{c+1} = m_c$, for all $l$:
+%			\begin{equation*}
+%			f^{(l)}(n)\le n - c - 1\le n - c \overset{P(c)}{\implies} l\ge m_{c} = m_{c+1}
+%			\end{equation*}
+%		\end{itemize}
+%		In any cases, we can find a witness $m_{c+1}$ for $P(c+1)$. Thus the proof is complete by induction.\vspace*{-\baselineskip}
+%	\end{enumerate}
+%\end{proof}
 
-\begin{lem} \label{lem: contract-repeat-threshold}
-	For all $a, n\in\mathbb{N}$ and $f\in \contract_{a}$,
-	\begin{equation}
-	\exists m : \left(f^{(m)}(n) \le a \right) \wedge \left(f^{(l)}(n)\le a \implies m \le l \ \forall l \right)
-	\end{equation}
-\end{lem}
-\begin{proof}
-  Fix $n$ and observe that if $n\le a$, $m = 0$ is the desired choice since $ f^{(0)}(n) = n \le a \ \text{ and } \ 0 \le l \ \forall l $.
-	Consider only when $a\le n$, we can define $c$ such that $n = a + c$. We prove the following statement by induction:
-	\begin{equation*}
-	P(c) \triangleq \exists m : \left(f^{(m)}(n) \le n - c \right) \wedge \left(f^{(l)}(n)\le n - c \implies m \le l \ \forall l \right)
-	\end{equation*}
-	under assumptions $f\in \contract_{n-c}$ and $c\le n$.
-	\begin{enumerate}[leftmargin=*]
-		\item \textit{Base case.} The case $c = 0$ implies $n = a$, which has been proven above.
-		\item \textit{Inductive step.} Suppose $P(c)$ is proved with witness $m_c$. Note that the assumptions are now $f\in \contract_{n-c}$ and $c+1\le n$, there are two cases:
-		\begin{itemize}[leftmargin=*, label={--}]
-			\item $f^{\left(m_c\right)}(n) = n - c$. Then $f^{\left(m_c+1\right)}(n) \le n - c - 1$. Let $m_{c+1} = m_c + 1$, for all $l$:
-			\begin{equation*}
-			f^{(l)}(n)\le n - c - 1 < f^{\left(m_c\right)}(n) \implies l > m_c \implies l \ge m_{c+1}
-			\end{equation*}
-			\item $f^{\left(m_c\right)}(n) \le n - c - 1$. Let $m_{c+1} = m_c$, for all $l$:
-			\begin{equation*}
-			f^{(l)}(n)\le n - c - 1\le n - c \overset{P(c)}{\implies} l\ge m_{c} = m_{c+1}
-			\end{equation*}
-		\end{itemize}
-		In any cases, we can find a witness $m_{c+1}$ for $P(c+1)$. Thus the proof is complete by induction.\vspace*{-\baselineskip}
-	\end{enumerate}
-\end{proof}
-
-The next lemma shows that \emph{countdown worker} returns $0$ when $n\le a$, which is intended for \emph{countdown}. It follows trivially from \cref{defn: countdown-worker}.
+We start with a simple fact that \emph{countdown worker} returns $0$ when $n\le a$, which is intended for \emph{countdown}. It follows trivially from \cref{defn: countdown-worker}.
 
 \begin{lem} \label{lem: cdt-init}
 	For all $a, b\in \mathbb{N}$, $f : \mathbb{N}\to \mathbb{N}$ we have $\W\cdt{f}{a} (n, b) = 0 \ \forall n\le a$.
@@ -253,9 +255,7 @@ The next lemma shows the internal working of \emph{countdown worker} at the $\te
 \begin{proof}
 	We proceed by induction on $i$. Define
 	\begin{equation*}
-	\begin{aligned}
-	P(i) \triangleq \W\cdt{f}{a}(n, b) = 1 + i + \W\cdt{f}{a}\left(f^{1+i}(n), b - i - 1\right) \\ \forall b, n : b\ge i+1, f^{(i)}(n) > a
-	\end{aligned}
+	P(i) \triangleq \left(\W\cdt{f}{a}(n, b) = 1 + i + \W\cdt{f}{a}\left(f^{1+i}(n), b - i - 1\right) \ \forall b, n : b\ge i+1, f^{(i)}(n) > a\right)
 	\end{equation*}
 	\begin{enumerate}[leftmargin=*]
 		\item \textit{Base case.} For $i = 0$, our goal $P(0)$ is:
@@ -269,7 +269,7 @@ The next lemma shows the internal working of \emph{countdown worker} at the $\te
 		\begin{equation*}
 		\W\cdt{f}{a}\left(f^{1+i}(n), b-i-1\right) = 1 + \W\cdt{f}{a}\left( f^{2+i}(n), b-i-2 \right)
 		\end{equation*}
-		This is in fact $P(0)$ with $(b, n)$ being substituted for $\left(b-i-1, f^{(1+i)}(n)\right)$. Since $f^{(1+i)}(n) \ge a+1$ and $b-i-1\ge 1$, the above holds and the proof is complete.\vspace*{-\baselineskip}
+		This is in fact $P(0)$ with $(b, n)$ substituted for $\left(b-i-1, f^{(1+i)}(n)\right)$. Since $f^{(1+i)}(n) \ge a+1$ and $b-i-1\ge 1$, the above holds and $P(i+1)$ follows. The proof is complete.\vspace*{-\baselineskip}
 	\end{enumerate}
 \end{proof}
 Now it is time to prove the correctness of \emph{countdown worker}. 
@@ -291,7 +291,7 @@ Now it is time to prove the correctness of \emph{countdown worker}.
 %	$$ \cdt{f}{a}(n) \le l \implies f^{(l)}(n) \le a \ \ \forall l $$
 %	, which holds due to the fact $\displaystyle f^{(l)}(n) \le f^{(\cdt{f}{a}(n))}(n) \le a$ by $f\in \contract$. To prove $\eqref{eq: cdt-repeat}\implies \eqref{eq: cdt-minimum}$, it suffices to show $\displaystyle f^{(\cdt{f}{a}(n))}(n) \le a$
 %	, which in turn holds by substituting $k$ by $\cdt{f}{a}(n)$ in \eqref{eq: cdt-repeat}. Thus $\eqref{eq: cdt-minimum}\iff \eqref{eq: cdt-repeat}$ and we need only to prove \eqref{eq: cdt-minimum}.
-Using \cref{lem: contract-repeat-threshold}, there exists an $m$ such that
+Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$ (we are also able prove its existence in Coq's baseline intuitionistic logic in our code base), then
 	\begin{equation}
 	\left(f^{(m)}(n) \le a\right) \label{eq: cdt-repeat-tmp} \wedge
 	 \left(f^{(k)}(n)\le a \implies m \le k \ \ \forall k\right)

@@ -4,19 +4,28 @@ In this section, let us forget about the axiom of extensionality and identify ea
 \begin{defn}
 	Given a function $f:\mathbb{N}\to\mathbb{N}$ in Coq, the \emph{running time} of $f$ on input $n\in \mathbb{N}$, denoted by $\runtime(f, n)$ is the total number of computational steps it takes to compute $f(n)$.
 \end{defn}
-Below are several useful lemmas for our analysis.
+Below are several useful lemmas for our analysis, the first two of which are trivial.
 \begin{lem} \label{lem: sub-runtime}
 	For all $a, n$, $\runtime(\lambda n.(n - a), n) = \Theta(\min\{a, n\})$ per subtraction's Coq definition.
 \end{lem}
 \begin{lem} \label{lem: compose-runtime}
-	Per composition's Coq definition, for all $f$ and $g: \mathbb{N}\to \mathbb{N}$, $\runtime(f\circ g, n) = \runtime(f, g(n)) + \runtime(g, n)$.
+	Per Coq's definition of functional composition, for all $f$ and $g: \mathbb{N}\to \mathbb{N}$, $\runtime(f\circ g, n) = \runtime(f, g(n)) + \runtime(g, n)$.
 \end{lem}
 \begin{lem} \label{lem: cdt-runtime}
-	Per our definition of \emph{countdown} (\Cref{defn: countdown}), for all $a\ge 1$ and $f\in \contract_{a}$, $\runtime\big(\cdt{f}{a}\ , n\big) = 1 \ \forall n\le 1$ and
+	Per \cref{defn: countdown}, $\forall a\ge 1$ and $f\in \contract_{a}$, $\runtime\big(\cdt{f}{a}\ , n\big) = 1 \ \forall n\le 1$ and
 	\begin{equation*}
 	\runtime\big(\cdt{f}{a}\ , n\big) = \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime\left(f, f^{(i)}(n)\right) + \Theta\big(a\cdot \cdt{f}{a}(n)\big) \ \ \forall n\ge 2
 	\end{equation*}
 \end{lem}
+\begin{proof}
+	Per \cref{defn: countdown-worker}, the computation takes $\cdt{f}{a}(n)$ recursive calls of $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, with $i\ge 0$, the value $n_i \triangleq f^{(i)}(n)$ is given for two computations to take place: $n_i - a$, which takes $\Theta(a)$ time, and $f(n_i) = n_{i+1}$, which takes $\runtime\big(f, n_i\big)$ time. The total time is then
+	\begin{equation*}
+	\runtime\big(\cdt{f}{a}\ , n\big)
+	= \sum_{i=0}^{\cdt{f}{a}(n) - 1} \left[\runtime\left(f, f^{(i)}(n)\right) + \Theta(a)\right]
+	= \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime\left(f, f^{(i)}(n)\right) + \Theta\big(a\cdot \cdt{f}{a}(n)\big)
+	\end{equation*}
+	, which completes the proof.
+\end{proof}
 From \cref{lem: compose-runtime} and \cref{lem: cdt-runtime}, the following lemma easily follows.
 \begin{lem} \label{lem: inv-ack-hier-runtime}
 	Per \cref{defn: inv-ack-hier} and \cref{defn: countdown}, for all $i$, 
@@ -91,8 +100,7 @@ Before proving this lemma, we need two crucial technical lemmas.
 	\begin{equation*}
 	\begin{aligned}
 	\runtime\big(\alpha_3, n\big) & =
-	\sum_{k=0}^{\alpha_{3}(n)}\runtime\left(\alpha_2, \left\lceil \frac{n+3}{2^k} \right\rceil - 3\right) + \alpha_{3}(n) \\
-	& \le \sum_{k=0}^{\alpha_3(n)}\left(\frac{n+3}{2^k} + 1\right) - 3\big(\alpha_3(n) + 1\big) + \alpha_3(n) \\
+	\sum_{k=0}^{\alpha_{3}(n)}\runtime\left(\alpha_2, \left\lceil \frac{n+3}{2^k} \right\rceil - 3\right) + \alpha_{3}(n)  \le \sum_{k=0}^{\alpha_3(n)}\left(\frac{n+3}{2^k} + 1\right) - 3\big(\alpha_3(n) + 1\big) + \alpha_3(n) \\
 	& \le \sum_{k=0}^{\alpha_3(n)}\frac{n+3}{2^k} - \alpha_3(n) - 2 \le 2(n+3) - 2 = 2n + 4
 	\end{aligned}
 	\end{equation*}

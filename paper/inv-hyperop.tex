@@ -1,4 +1,4 @@
-In this section, we apply the \emph{countdown} operation to build the inverse hyperoperation hierarchy, along the way we will define division, logarithm and iterated logarithm in terms of \emph{countdown}, before modifying the inverse hyperoperations to sketch an inverse Ackermann hierarchy.
+In this section, we apply the \emph{countdown} operation to build the inverse hyperoperation hierarchy, while also defining division, logarithm and iterated logarithm in terms of \emph{countdown}, before modifying the inverse hyperoperations to sketch an inverse Ackermann hierarchy.
 
 \subsection{The Inverse Hyperoperations}
 In consistence with the in-use upper inverse notion, we aim at the ceiling of division and $\log$ on real numbers, $\left\lceil b/a \right\rceil$ and $\left\lceil \log_ab \right\rceil$. The iterated logarithm is formally defined as the number of times $\log$ needs to be applied to the input to for the result to be not above $1$, thus it is natural to define it using \emph{countdown}.
@@ -166,9 +166,8 @@ Here, we give $\W\alpha$ a budget of $n$ and prove that it is sufficient for $\W
 		\W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
 		= \W\alpha\big(\alpha_{k+2}, \alpha_{k+2}(n), k+2, b-k-2\big)
 		\end{equation*}
-		Per \cref{defn: inv-ack-hier}, $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this is just \eqref{eq: inv-ack-worker-recursion} with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$, so $P(k+1)$ holds.
+		Per \cref{defn: inv-ack-hier}, $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this is just \eqref{eq: inv-ack-worker-recursion} with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$, so $P(k+1)$ holds. The proof is complete by induction.\vspace*{-\baselineskip}
 	\end{enumerate}
- The proof is complete by induction.
 \end{proof}
 %Next, a lemma connecting the value of $\W\alpha(f, n, k , b)$ and $k$, which is important because the recursive rule alone does not tell how the value of $\W\alpha$ changes at each recursive step.
 %\begin{lem}
