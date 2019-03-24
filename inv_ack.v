@@ -125,8 +125,35 @@ Fixpoint inv_ack_target (n : nat) (ans : nat) (bud : nat) : nat :=
 
 Definition inv_ack_target_outer n := inv_ack_target n 0 n.
 
+
+(* Compute inv_ack 7. *)
+(* Compute ackermann 2 2. *)
 (* Time Compute inv_ack 62. *)
 (* Time Compute inv_ack_naive_outer 65. *) (* too slow *)
 (* Time Compute inv_ack_target_outer 65. *)
 (* Time Compute inv_ack 1000. *)
 (* Time Compute inv_ack_target_outer 1000. *)
+
+(* *********** 6.3. TIME ANALYSIS ********************* *)
+
+Definition next_lvl f := compose (countdown_to 1 f) f.
+
+Fixpoint alpha i : nat -> nat :=
+match i with
+| 0 => (fun b => b - 2)
+| S i' => next_lvl (alpha i')
+end.
+
+Fixpoint compose_sum (t : nat -> nat) (f : nat -> nat) k n : nat :=
+match k with
+| 0 => t n
+| S k' => t n + compose_sum t f k' (f n)
+end.
+
+Fixpoint rtime i n : nat :=
+match i with
+| 0 => 1
+| S i' => compose_sum (rtime i') (alpha i') (countdown_to 1 (alpha i') n) n + (alpha i n)
+end.
+
+(* Compute rtime 2 13. *)
