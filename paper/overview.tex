@@ -58,7 +58,7 @@ n & \text{function} & \quad a [n] b \quad & \quad \Ack_n(b) \quad & \text{invers
 \label{table: hyperop-ack-inv}
 \end{table}
 
-The kludge has three parts.  First, the Ackermann hierarchy is related to the hyperoperation hierarchy when $a=2$; second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation (\textbf{not} the previous $\Ack_{n-1}$!) three extra times; lastly, $\Ack_n$ subtracts three\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not break this pattern since $2 + (b + 3) - 3 = 2 + b$ and $2 \cdot (b + 3) - 3 = 2b + 3$.}.
+The kludge has three parts.  First, the Ackermann hierarchy is related to the hyperoperation hierarchy when $a=2$; second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation (\textbf{not} the previous $\Ack_{n-1}$!) three extra times; lastly, $\Ack_n$ subtracts three.\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not break this pattern: $2 + (b + 3) - 3 = 2 + b$, and $2 \cdot (b + 3) - 3 = 2b + 3$.}
 It is worth studying and inverting the hyperoperations before handling the Ackermann function.
 
 %Our initial goal of inverting the Ackermann function can thus be broken
@@ -84,6 +84,29 @@ It is worth studying and inverting the hyperoperations before handling the Acker
 Defining increasing functions is often significantly simpler than defining their inverses.
 The Church numeral encodings of addition, multiplication, and even exponentiation
 are each simpler than their corresponding inverses of subtraction, division, and logarithm. Similarly, defining multiplication in Gallina is trivial, but defining division is unexpectedly painful.\\[5pt]
+
+\hide{
+\begin{minipage}[c]{0.4\textwidth}
+\begin{lstlisting}
+Fixpoint mult a b :=
+ match a with
+ | 0 => 0
+ | S a' => b + mult a' b  
+ end.
+\end{lstlisting}
+\end{minipage}
+\vline
+\begin{minipage}[c]{0.4\textwidth}
+\begin{lstlisting}
+Fixpoint div a b :=
+ match a with
+ | 0 => 0
+ | _ => 1 + div (a - b) b 
+ end.
+\end{lstlisting}
+\end{minipage}
+} % This is an alternate option that has its own aesthetic issues
+
 \begin{tabular}{@{}l@{~~~}|@{~~~}l}
 \begin{lstlisting}
 Fixpoint mult a b :=
@@ -107,8 +130,8 @@ it is the precise way multiplication is defined in the standard library.  The fu
 \emph{i.e.} $\li{div}~x~y \mapsto^{*} \lceil \frac{x}{y} \rceil$, but the definition
 is rejected by the termination checker.  Coq worries that
 \li{a - b} might not be structurally smaller than \li{a}, since
-subtraction is ``just another function,'' and is thus treated opaquely.  And indeed Coq
-is right to be nervous, since \li{div} will not in fact terminate
+subtraction is ``just another function,'' and is thus treated opaquely. Indeed, Coq
+is right to be nervous, since \li{div} will not terminate
 when $\li{a}>0$ and $\li{b}=0$.
 
 Of course, division \emph{can} be defined, but an elegant definition is a little
