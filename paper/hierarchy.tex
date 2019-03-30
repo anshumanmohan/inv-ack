@@ -73,7 +73,7 @@ a & \text{when } n = 1 \\
 
 Our goal is to find an inverse hierarchy to the hyperoperations, which should include division, logarithm and iterated logarithm as inverses to multiplication, exponentiation and tetration. The advent of repeater motivates an ``inverse repeater'' operation that takes us to the next level in the supposed ``inverse hyperoperation'' hierarchy. Before going into details, we clarify our setting, starting with the notion of ``inverse''.
 
-\paragraph{Inverse of increasing functions} On $\mathbb{Q}$ or $\mathbb{R}$, many functions are bijections and thus have an inverse in a normal sense. Functions on $\mathbb{N}$ are often non-bijections and thus should be treated differently.
+\subsubsection*{Inverse of increasing functions} On $\mathbb{Q}$ or $\mathbb{R}$, many functions are bijections and thus have an inverse in a normal sense. Functions on $\mathbb{N}$ are often non-bijections and thus should be treated differently.
 \begin{defn} \label{defn: inverse}
 	For all $F:\mathbb{N}\to \mathbb{N}$, $f:\mathbb{N}\to \mathbb{N}$ is the \emph{upper inverse} of $F$ if $f(n) = \min\{m : F(m)\ge n\} \ \forall n$, denoted by $F^{-1}_+$, and is the \emph{lower inverse} of $F$ if $f(n) = \max\{m : F(m)\le n\} \ \forall n$, denoted by $F^{-1}_-$.
 \end{defn}
@@ -85,7 +85,7 @@ To construct a useful notion of inverse for our purpose, observe that for $a\ge 
 Fix $n$, the sentence $n\le F(m) \iff f(n)\le m \ \forall m$ implies: (1) $f(n)$ is a lower bound to $\{m: F(m)\ge n \}$ and (2) $f(n)$ is in the set itself since plugging in $m := f(n)$ will yield $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we immediately have $n\le F(m)\implies f(n)\le m \ \forall m$. Now for all $m \ge f(n)$, $F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus complete the proof.
 \end{proof}
 
-\paragraph{Expansions} Another property $F$ needs to have is one that ensures strict increasing-ness is preserved through \emph{repeater}. Suppose for some $a$ and strictly increasing $F$, the function $\rf{F}{a}\ $ is strictly increasing, then the chain $a$, $F(a)$, $F^{(2)}(a)$, \ldots has to be strictly increasing, which leads to the notion of \emph{expansions} and \emph{strict expansions}.
+\subsubsection*{Expansions} Another property $F$ needs to have is one that ensures strict increasing-ness is preserved through \emph{repeater}. Suppose for some $a$ and strictly increasing $F$, the function $\rf{F}{a}\ $ is strictly increasing, then the chain $a$, $F(a)$, $F^{(2)}(a)$, \ldots has to be strictly increasing, which leads to the notion of \emph{expansions} and \emph{strict expansions}.
 \begin{defn}
 Given $a\in \mathbb{N}$, a function $F:\mathbb{N}\to\mathbb{N}$ is an \emph{expansion} if $F(n)\ge n \ \forall n$. An expansion $F$ is \emph{strict from} $a$ if $F(n)\ge n+1 \ \forall n\ge a$.
 \end{defn}
