@@ -1,31 +1,18 @@
-% Aquinas' promise:
-% We explain our core techniques of repeaters and countdowns that allow us to define each level of the Ackermann hierarchy—and their upper inverses—in a straightforward and uniform manner. We show how countdowns, in particular, can be written structurally recursively.
-
-% Anshuman proposes:
-% We introduce our core techniques of repeaters and countdowns.
-% We show how countdowns, in particular, can be written structurally recursively.
-
-\iffalse
-In this section we build the inverse Ackermann hierarchy,
-defining and proving the inverse relationship between
-this hierarchy and the Ackermann hierarchy.
-\fi
-% Hiding because this will now be in the next section.
-
-\subsection{The repeater operation}
-
-The first hyperoperation is simply successor, and after that,
+Let us now consider hyperoperations more carefully
+to clarify how they relate to the Ackermann function.
+The first hyperoperation (level 0) is simply successor, and after that,
 every hyperoperation is the repeated application of the previous.
 Addition is level 1, and $b$ repetitions of addition
 give multiplication, which is level 2. Next, $b$ repetitions of
 multiplication give exponentiation, which is level 3. However,
 there is a subtlety here: in the former case, we add $a$
-repeatedly to an \textit{initial value}, which must clearly be $0$.
+repeatedly to an initial value, \emph{which should be $0$}.
 In the latter case, we multiply $a$ repeatedly to an initial value,
-which is $1$. In general, the formal definition for hyperoperation is
-\[
+\emph{which should be $1$}. The formal definition for hyperoperation is:
+\begin{equation}
+\label{eq:hyper}
 \begin{array}{@{}l@{\qquad\quad}l}
-\textit{1. Initial level: } a[0]b ~ \triangleq ~ b + 1 & 
+\textit{1. Initial level: } a[0]b ~ \triangleq ~ b + 1 &
 \textit{2. Initial values: } a[n+1]0 ~ \triangleq ~
 \begin{cases}
 a & \text{when } n = 0 \\
@@ -35,7 +22,7 @@ a & \text{when } n = 0 \\
 \\
 \multicolumn{2}{@{}l}{\textit{3. Recursive rule: } a[n+1](b+1) ~ \triangleq ~ a[n]\big(a[n+1]b\big)}
 \end{array}
-\]
+\end{equation}
 The seemingly complicated recursive rule is in fact just \emph{repeated application} in disguise. By fixing $a$ and treating $a[n]b$ as a function of $b$, we can write
 \begin{equation*}
 \begin{array}{lll}
@@ -43,17 +30,59 @@ a[n+1]b & ~ = ~ a[n]\big(a[n+1](b-1)\big) & ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big
  & ~ = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big) & ~ = ~ \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
 \end{array}
 \end{equation*}
-where $f^{(k)}(u) ~ \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ successive applications of a function $f$ to an input $u$, with $f^{(0)}(u) = u $ (applying $0$ times). In order to view the relationship between the $(\text{n+1})^{\text{th}}$- and $\text{n}^{\text{th}}$-levels in a \emph{functional} way, we need an operation that transforms the latter to the former, which leads to the notion of \emph{repeater}.
+where $f^{(k)}(u) ~ \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ successive applications of a function $f$ to an input $u$, with $f^{(0)}(u) = u $ (applying $0$ times).
+
+This insight will help us encode both the Ackermann function (equation~\ref{eq:ackermann}) and hyperoperations~\eqref{eq:hyper} in Coq.  Notice that the recursive case of hyperoperation---and
+indeed, the third case of the Ackermann function---is troublesome to encode in Coq due to
+the deep nested recursion.  In the outer recursive call, the first argument ($n$) is shrinking 
+but the second is expanding explosively; in the inner recursive call, the first argument is 
+constant but the second is shrinking. The elegant solution uses double recursion~\cite{someone?} as follows:
+\begin{lstlisting}
+Fixpoint ackermann_original (m n : nat) : nat :=
+  match m with
+  | 0    => 1 + n
+  | S m' => let fix ackermann' (n : nat) : nat :=
+              match n with
+              | 0 => ackermann_original m' 1
+              | S n' => ackermann_original m' (ackermann' n')
+              end
+            in ackermann' n
+  end.
+
+Definition hyperop_initial (a n : nat) : nat :=
+  match n with 0 => a | 1 => 0 | _ => 1 end.
+
+Fixpoint hyperop_original (a n b : nat) : nat :=
+  match n with
+  | 0    => 1 + b
+  | S n' => let fix hyperop' (b : nat) :=
+              match b with
+              | 0 => hyperop_initial a n'
+              | S b' => hyperop_original a n' (hyperop' b')
+              end
+            in hyperop' b
+  end.
+\end{lstlisting}
+Coq is immediately satisfied since both recursive calls are structurally smaller.
+Moreover, having encoded both notions in this style, the structural similarities 
+are readily apparent.  In fact, the only essential difference is the initial values 
+(the second case of both definitions): the Ackermann function uses $\Ack(n-1,1)$, whereas
+hyperoperations use the initial values given in~\eqref{eq:hyper}.
+
+Our realization that the deep recursion in both notions is expressing the same idea
+of repeated application leads to another useful idea.  We can express the relationship 
+between the $(\text{n+1})^{\text{th}}$- and $\text{n}^{\text{th}}$-levels in 
+a \emph{functional} way if we develop a higher-order function that transforms the latter 
+to the former.  We call this idea a \emph{repeater}:
 \begin{defn}
 For all $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 \end{defn}
 The Gallina definition is modified to structurally decrease on $n$:
-\marginpar{maybe f should be the first argument here?}
 \begin{lstlisting}
-Fixpoint repeater_from (a:nat) (f:nat->nat) (n:nat) : nat :=
+Fixpoint repeater_from (f:nat->nat) (a:nat) (n : nat) : nat :=
   match n with
   | 0 => a
-  | S n' => f (repeater_from a f n')
+  | S n' => f (repeater_from f a n')
   end.
 \end{lstlisting}
 The notation $\rf{f}{a}(b)$ does much better at separating the function, i.e. the repeater of $f$, and the variable $n$ than $f^{(n)}(a)$, while making clear that $a$ is a parameter of \emph{repeater} itself. It allows a simple and function-oriented definition of hyperoperations:
@@ -68,6 +97,32 @@ a & \text{when } n = 1 \\
 1 & \text{otherwise}
 \end{cases}
 \end{equation*}
+The Ackermann function is likewise expressed elegantly using repeater:
+
+
+
+In turn, this will clarify how these two notions are
+related to each other
+
+
+The pen-and-paper definition of the Ackermann function is given above as equation \eqref{eq:ackermann}.  Encoding this idea into Coq requires a little care 
+
+ in the third case $\Ack\big(n-1,\Ack(n,m-1)\big)$.  
+ 
+ 
+
+% Aquinas' promise:
+% We explain our core techniques of repeaters and countdowns that allow us to define each level of the Ackermann hierarchy—and their upper inverses—in a straightforward and uniform manner. We show how countdowns, in particular, can be written structurally recursively.
+
+% Anshuman proposes:
+% We introduce our core techniques of repeaters and countdowns.
+% We show how countdowns, in particular, can be written structurally recursively.
+
+
+
+
+
+
 
 \subsection{The Upper Inverse and Expansions}
 

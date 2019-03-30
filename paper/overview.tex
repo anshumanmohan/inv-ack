@@ -6,13 +6,19 @@ can be hard to understand, and the inverse in particular can be hard to define i
 is so.
 \begin{defn} \label{defn: ack}
 The Ackermann-P\'eter function~\cite{blah} (hereafter just ``the'' Ackermann function; see \S\ref{sec:related}) is a recursive two-variable function $\text{A} : \mathbb{N}^2 \to \mathbb{N}$ defined as follows.
-\begin{equation*}
-A(m, n) \triangleq \begin{cases}
-n + 1 & \text{ if } m = 0 \\
-A(m-1, 1) & \text{ if } m > 0, n = 0 \\
-A(m-1, A(m, n-1)) & \text{ if } m > 0, n > 0
+\begin{equation}
+\label{eq:ackermann}
+A(n, m) \triangleq \begin{cases}
+m + 1 & \text{ when } n = 0 \\
+A(n-1, 1) & \text{ when } n > 0, m = 0 \\
+A\big(n-1, A(n, m-1)\big) & \text{ otherwise}
 \end{cases}
-\end{equation*}
+%A(m, n) \triangleq \begin{cases}
+%n + 1 & \text{ if } m = 0 \\
+%A(m-1, 1) & \text{ if } m > 0, n = 0 \\
+%A(m-1, A(m, n-1)) & \text{ if } m > 0, n > 0
+%\end{cases}
+\end{equation}
 The one-variable diagonal Ackermann function $\Ack : \mathbb{N} \to \mathbb{N}$ is then defined by $\Ack(n) \triangleq \Ack(n, n)$.	
 \end{defn}
 

@@ -67,12 +67,14 @@
 
 \lstdefinestyle{myStyle}{
 %	language=Coq,
-    keywords={Definition,Fixpoint,match,with,end},
+    keywords={Definition,Fixpoint,match,with,end,let,in,fix},
 	basicstyle=\fontsize{10}{11}\selectfont\ttfamily,
     keywordstyle=\color{blue},
 	stepnumber=1,
-	numbersep=10pt,
 	tabsize=2,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=5pt,
 	showspaces=false,
 	showstringspaces=false
 }
@@ -88,7 +90,7 @@
 
 \newcommand{\cdt}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} \downarrow_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
 
-\newcommand{\rf}[2]{{\color{red}#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{\uparrow}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}}
+\newcommand{\rf}[2]{{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{(*)}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}}
 
 \newcommand{\invhyper}{I}
 \renewcommand{\angle}[1]{\langle #1\rangle}
@@ -209,9 +211,13 @@ where we show that it runs in linear time.
 \label{sec: overview}
 \input{overview.tex}
 
-\section{Repeater and Countdown}
+\section{Ackermann, Hyperoperations, and Repeater}
 \label{sec: countdown-repeater}
 \input{hierarchy.tex}
+
+\section{Countdown}
+\label{sec:countdown}
+\input{countdown.tex}
 
 \section{Division, Log, Log* and Inverse Hyperoperations}
 \label{sec: inv-hyperop}
