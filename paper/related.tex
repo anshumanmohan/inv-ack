@@ -1,23 +1,46 @@
 \label{sec:related}
 
-\paragraph{Hyperoperations and their inverses.}
-
+\paragraph*{Hyperoperations and their inverses}
+% This creates an unnumbered paragraph. ie a smaller, less flashy, header
 Successor, Predecessor, Addition, Subtraction, Multiplication, Division, Algorisms.  Representations of numbers (Egyption fractions/Roman numerals/Decimal/Zero).  Exponentiation, Logarithm, Tetration, Log*, ...   Hyperoperations, Knuth Arrows.  Inverses as a separate notation?
 
 Mechanizations of the above?
 
-\paragraph{The Ackermann function and its inverse.}
+%\subsection*{The Ackermann function and its inverse.}
+% This creates an unnumbered subsection
 
-Several variations.  Original.  Peter.  Primitive recursive.  Hilbert?  Ackermann is used in CS.  Formalizations that use or define it.
+\paragraph*{The Ackermann function and its inverse}
+\marginpar{\tiny \color{blue} Several variations. Original. Peter. 
+Primitive recursive. Hilbert? Ackermann is used in CS. Formalizations that use or define it. The grit of sand. The bug.}
+% ref: https://projecteuclid.org/download/pdf_1/euclid.bams/1183512393
+%ref: https://www.cs.princeton.edu/~chazelle/pubs/mst.pdf
+{\color{magenta}A brief sentence explaining what a primitive recursive function is and 
+why total computable functions tend to be primitive recursive.}
+The orignal three-variable Ackermann function was discovered by 
+Wilhelm Ackermann as an example of a total computable function that 
+is not primitive recursive. It grows tremendously fast, but does not have the higher-order
+relation to repeated application and hyperoperation that we have been studying in
+this paper. Those properties emerged thanks to refinements by Rózsa Péter, and it is 
+her variant that computer scientists commonly care about.
 
-The grit of sand.  The bug.
+\marginpar{\tiny \color{blue}implemented with the heuristic 
+rules of \emph{path compression} and \emph{weighted union}}
+The Ackermann-Péter function is mostly a toy curiosity, but its inverse 
+occasionally features in the time bound analyses of algorithms. 
+Tarjan \cite{tarjan} showed that, in the disjoint-set data structure, 
+the time required $t(m,n)$ for a sequence of $m$ \textsc{\color{magenta}FIND}s
+intermixed with $n-1$ \textsc{\color{magenta}UNION}s (such that $m \geq n$) is bounded
+as: $k_{1}m\cdot\alpha(m,n) \leq t(m,n) \leq k_{2}m\cdot\alpha(m,n)$. 
+Chazelle \cite{chazelle} showed that the minimum spanning tree
+of a connected graph with $n$ vertices and $m$ edges 
+can be found in time $O(m\cdot\alpha(m,n))$.
 
 Cite: Ackermann, Peter, Tarjan, Chazelle, Pottier, ?  Anything in HOL?  Anything in SSReflect?
 
-\paragraph{Alternative strategies.}
+\paragraph*{Alternative strategies}
 
 Division by constant, etc. is simpler.
 
 Custom termination metrics.  Gas.  Mutual recursion.  Automata.  Alternative implementation strategy?  (Space, tail recursion, time?)
 
-\paragraph{Other?}
+\paragraph*{Other?}

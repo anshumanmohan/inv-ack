@@ -5,7 +5,7 @@ tree of a graph~\cite{chazelle}.  Unfortunately, both the Ackermann function and
 can be hard to understand, and the inverse in particular can be hard to define in a computationally-efficient manner in a theorem prover.  Let us consider why this
 is so.
 \begin{defn} \label{defn: ack}
-The Ackermann-P\'eter function~\cite{blah} (hereafter just ``the'' Ackermann function; see \S\ref{sec:related}) is a recursive two-variable function $\text{A} : \mathbb{N}^2 \to \mathbb{N}$ defined as follows.
+The \href{https://github.com/anshumanmohan/inv-ack/blob/fb8c1f625ccae7cf0c3012d926dbbf3972529d74/applications.v#L111-L120}{Ackermann-P\'eter function}~\cite{blah} (hereafter just ``the'' Ackermann function; see \S\ref{sec:related}) is a recursive two-variable function $\text{A} : \mathbb{N}^2 \to \mathbb{N}$ defined as follows.
 \begin{equation}
 \label{eq:ackermann}
 A(n, m) \triangleq \begin{cases}
@@ -64,7 +64,7 @@ n & \text{function} & \quad a [n] b \quad & \quad \Ack_n(b) \quad & \text{invers
 \label{table: hyperop-ack-inv}
 \end{table}
 
-The kludge has three parts.  First, the Ackermann hierarchy is related to the hyperoperation hierarchy when $a=2$; second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation (\textbf{not} the previous $\Ack_{n-1}$!) three extra times; lastly, $\Ack_n$ subtracts three\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not break this pattern since $2 + (b + 3) - 3 = 2 + b$ and $2 \cdot (b + 3) - 3 = 2b + 3$.}.
+The kludge has three parts.  First, the Ackermann hierarchy is related to the hyperoperation hierarchy when $a=2$; second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation (\textbf{not} the previous $\Ack_{n-1}$!) three extra times; lastly, $\Ack_n$ subtracts three.\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not break this pattern: $2 + (b + 3) - 3 = 2 + b$, and $2 \cdot (b + 3) - 3 = 2b + 3$.}
 It is worth studying and inverting the hyperoperations before handling the Ackermann function.
 
 %Our initial goal of inverting the Ackermann function can thus be broken
@@ -90,6 +90,29 @@ It is worth studying and inverting the hyperoperations before handling the Acker
 Defining increasing functions is often significantly simpler than defining their inverses.
 The Church numeral encodings of addition, multiplication, and even exponentiation
 are each simpler than their corresponding inverses of subtraction, division, and logarithm. Similarly, defining multiplication in Gallina is trivial, but defining division is unexpectedly painful.\\[5pt]
+
+\hide{
+\begin{minipage}[c]{0.4\textwidth}
+\begin{lstlisting}
+Fixpoint mult a b :=
+ match a with
+ | 0 => 0
+ | S a' => b + mult a' b
+ end.
+\end{lstlisting}
+\end{minipage}
+\vline
+\begin{minipage}[c]{0.4\textwidth}
+\begin{lstlisting}
+Fixpoint div a b :=
+ match a with
+ | 0 => 0
+ | _ => 1 + div (a - b) b
+ end.
+\end{lstlisting}
+\end{minipage}
+} % This is an alternate option that has its own aesthetic issues
+
 \begin{tabular}{@{}l@{~~~}|@{~~~}l}
 \begin{lstlisting}
 Fixpoint mult a b :=
@@ -113,8 +136,8 @@ it is the precise way multiplication is defined in the standard library.  The fu
 \emph{i.e.} $\li{div}~x~y \mapsto^{*} \lceil \frac{x}{y} \rceil$, but the definition
 is rejected by the termination checker.  Coq worries that
 \li{a - b} might not be structurally smaller than \li{a}, since
-subtraction is ``just another function,'' and is thus treated opaquely.  And indeed Coq
-is right to be nervous, since \li{div} will not in fact terminate
+subtraction is ``just another function,'' and is thus treated opaquely. Indeed, Coq
+is right to be nervous, since \li{div} will not terminate
 when $\li{a}>0$ and $\li{b}=0$.
 
 Of course, division \emph{can} be defined, but an elegant definition is a little
@@ -127,7 +150,7 @@ for our purposes: the first can be hard to generalize and the second requires a 
 ``canonical'' way, \emph{e.g.} at least $2^{2^{2^{65,536}}}$, is problematical for many reasons,
 not least because we cannot use the inverse Ackerman function in its own termination argument.
 %One method is to define a custom termination measure~\cite{Chlipala?}, but this is
-%both vaguely unsatisfying and not always easy to generalize.  
+%both vaguely unsatisfying and not always easy to generalize.
 Realizing this, the standard library employs
 a cleverer approach to define division, but {\color{red} we are not aware of any explanation of the technique used, and we also find it hard to extend that technique to other members of the hierarchy}.  One indication
 of this difficulty is that the Coq standard library does not include a $\mathsf{log}_b$ function\footnote{Coq's standard library \textbf{does} include a $\mathsf{log}_2$ function, but

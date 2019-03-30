@@ -34,8 +34,8 @@ where $f^{(k)}(u) ~ \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ 
 
 This insight will help us encode both the Ackermann function (equation~\ref{eq:ackermann}) and hyperoperations~\eqref{eq:hyper} in Coq.  Notice that the recursive case of hyperoperation---and
 indeed, the third case of the Ackermann function---is troublesome to encode in Coq due to
-the deep nested recursion.  In the outer recursive call, the first argument ($n$) is shrinking 
-but the second is expanding explosively; in the inner recursive call, the first argument is 
+the deep nested recursion.  In the outer recursive call, the first argument ($n$) is shrinking
+but the second is expanding explosively; in the inner recursive call, the first argument is
 constant but the second is shrinking. The elegant solution uses double recursion~\cite{someone?} as follows:
 \begin{lstlisting}
 Fixpoint ackermann_original (m n : nat) : nat :=
@@ -64,15 +64,15 @@ Fixpoint hyperop_original (a n b : nat) : nat :=
   end.
 \end{lstlisting}
 Coq is immediately satisfied since both recursive calls are structurally smaller.
-Moreover, having encoded both notions in this style, the structural similarities 
-are readily apparent.  In fact, the only essential difference is the initial values 
+Moreover, having encoded both notions in this style, the structural similarities
+are readily apparent.  In fact, the only essential difference is the initial values
 (the second case of both definitions): the Ackermann function uses $\Ack(n-1,1)$, whereas
 hyperoperations use the initial values given in~\eqref{eq:hyper}.
 
 Our realization that the deep recursion in both notions is expressing the same idea
-of repeated application leads to another useful idea.  We can express the relationship 
-between the $(\text{n+1})^{\text{th}}$- and $\text{n}^{\text{th}}$-levels in 
-a \emph{functional} way if we develop a higher-order function that transforms the latter 
+of repeated application leads to another useful idea.  We can express the relationship
+between the $(\text{n+1})^{\text{th}}$- and $\text{n}^{\text{th}}$-levels in
+a \emph{functional} way if we develop a higher-order function that transforms the latter
 to the former.  We call this idea a \emph{repeater}:
 \begin{defn}
 For all $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
@@ -118,7 +118,7 @@ Fixpoint ackermann n m :=
   | S n' => repeater_from (ackermann n' 1) (ackermann n') m
   end.
 \end{lstlisting}
-In the remainder of this paper we construct efficient inverses to these 
+In the remainder of this paper we construct efficient inverses to these
 functions.  Our key idea is an inverse to the higher-order repeater function; we call this inverse \emph{countdown}.
 
 % Aquinas' promise:

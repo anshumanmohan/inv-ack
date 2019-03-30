@@ -60,7 +60,14 @@
 %% Use package enumitem to align enumeration and itemization
 \usepackage{enumitem}
 \usepackage{listings}
+\usepackage{hieroglf}
 
+\hypersetup{ % play with these to change the look of hyperlinks
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
 
 
 %% NEW COMMANDS =============================================
@@ -114,7 +121,7 @@
 \newcommand{\wt}[1]{\ensuremath{\widetilde{#1}}}
 \newcommand{\IAR}{\ensuremath{\text{IAR}}}
 \newcommand{\IARH}{\ensuremath{\text{IARH}}}
-
+\newcommand\hide[1]{}
 
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}[section]
@@ -223,7 +230,7 @@ where we show that it runs in linear time.
 \label{sec: inv-hyperop}
 \input{inv-hyperop.tex}
 
-\section{The Inverse Ackermann Function}
+\section{Time Bound of the Inverse Ackermann Function}
 \label{sec: inv-ack}
 \input{inv-ack-improve.tex}
 
