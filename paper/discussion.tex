@@ -2,8 +2,42 @@
 \newcommand{\Tmul}{\runtime_{\li{mul}}}
 \newcommand{\Tleb}{\runtime_{\li{leb}}}
 \newcommand{\Tsucc}{\runtime_{\li{succ}}}
-\subsection{Two-variable inverse Ackermann function}
+\subsection{Two-parameter inverse Ackermann function}
+\begin{defn} \label{defn: 2para-alpha}
+	The \emph{two-parameter inverse Ackermann function} of $m$ and $n$ is
+	\begin{equation} \label{eq: tmp-2para-alpha}
+	\alpha(m, n) \triangleq \min\left\{i \ge 1 : \Ack\left(i, \left\lfloor \frac{m}{n} \right\rfloor \right)\ge \log_2n \right\}
+	\end{equation}
+	Note that $\alpha(n, n)$ and $\alpha(n)$ are neither equal nor directly related.
+\end{defn}
+This function arises from deep runtime analysis of the disjoint-set data structure. Tarjan \cite{tarjan} showed that, in the disjoint-set data structure, the time required $t(m,n)$ for a sequence of $m$ \textsc{\color{magenta}FIND}s intermixed with $n-1$ \textsc{\color{magenta}UNION}s (such that $m \geq n$) is bounded as: $k_{1}m\cdot\alpha(m,n) \leq t(m,n) \leq k_{2}m\cdot\alpha(m,n)$. In graph theory, Chazelle \cite{chazelle} showed that the minimum spanning tree of a connected graph with $n$ vertices and $m$ edges can be found in time $O(m\cdot\alpha(m,n))$. Computing this function is in fact easier than $\alpha(n)$, as when $m$ and $n$ are given, we are reduced to finding the minimum $i\ge 1$ such that $\Ack_i(s)\ge t$ for $s, t$ fixed, which can be done with the following variant of the \emph{inverse Ackermann worker}.
+\begin{defn} \label{defn: 2para-inv-ack-worker}
+	The \emph{two-parameter inverse Ackermann worker}  is a function $\W\alpha_2\ : (\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
+	\begin{equation} \label{eq: 2para-inv-ack-worker-recursion}
+	\W\alpha_2(f, n, k, b) = \begin{cases}
+	0 & \text{if } b = 0 \vee n\le k \\ 1 + \W\alpha_2\big(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k, b-1\big) & \text{if } b \ge 1 \wedge n \ge k+1
+	\end{cases}
+	\end{equation}
+\end{defn}
+Similar to the one-parameter version, the following theorem establishes the correct setting for $\W\alpha_2$ to compute $\alpha(m, n)$.
+\begin{thm}
+	For all $m, n$, $\displaystyle \alpha(m, n) = 1 + \W\alpha_2\left(\alpha_1, \alpha_1\big(\lceil\log_2n \rceil\big), \left\lfloor \frac{m}{n} \right\rfloor, \lceil\log_2n \rceil \right)$.
+\end{thm}
+\begin{proof}[Proof Sketch]
+	 It is easy to prove in a similar fashion to \cref{lem: inv-ack-worker-intermediate} that for all $n, b, k$ and $i$, if $\alpha_i(n) > k$ and $b > i$, then
+	\begin{equation*}
+	\W\alpha_2\big(\alpha_1, \alpha_1(b), k, b\big) = i + \W\alpha_2\big(\alpha_{i+1}, \alpha_{i+1}(n), k, b - i\big)
+	\end{equation*}
+	Now let $k \triangleq \lfloor m/n \rfloor$, $b \triangleq \lceil \log_2n \rceil$ and $l \triangleq \min\big\{i : \alpha_i(b)\le k\big\}$, which exists because $\Ack(i, \cdot)$ increases strictly with $i$. Then $\alpha(m, n) = \max{1, l}$. If $l = 0$, $\alpha_1(b) \le \alpha_0(b) \le k$, so $\W\alpha_2\big(\alpha_1, \alpha_1(b), k, b\big) = 0$, as desired. If $l \ge 1$,
+	\begin{equation*}
+	1 + \W\alpha_2\big(\alpha_1, \alpha_1(b), k, b\big)
+	= 1 + l - 1 + \W\alpha_2\big(\alpha_l, \alpha_l(b), k, b-l\big) = l
+	\end{equation*}
+	Here $b\ge l$ due to the fact that $\Ack(b, k)\ge b$, so $\alpha_b(b)\le k$. This completes the proof.
+\end{proof}
+
 \subsection{Lower inverse of hyperoperations and Ackermann function}
+{\color{red}TODO. I'm not sure if I have time to write about this one.}
 \subsection{A performance improvement with binary numbers}
 So far all of our Coq code segments have been using the Coq type \li{nat}, which is a unary system of natural numbers, where the length of each number's representation matches its value. In practice, most computers employ the binary system, where each number is represented with digits in $\{0, 1\}$. In both systems, addition and subtraction of two $n$-bit numbers takes $\Theta(n)$ time, while multiplication takes $\Theta \big(n^2\big)$ time. The binary system thus outperforms its counterpart since it represents a number $n$ with only $\lfloor \log_2n \rfloor + 1$ bits. Here we show that similar to basic arithmetic operations, representing numbers in binary helps speed up the computation of hyperoperations, Ackermann functions and their inverses. Coq has support for binary numbers with the type \li{N}, which consists of \li{0} and \li{positive}s:
 \begin{lstlisting}
@@ -14,7 +48,7 @@ Inductive positive : Set :=
 \end{lstlisting} 
 Here the value \li{xH} represents $1$, constructors \li{xO} and \li{xI} represent appending $0$ and $1$ to the tail, i.e. $x\to 2x$ and $x\to 2x+1$ respectively. All representations in \li{positive} start with $1$, and $0$ is added to form \li{N}. Note the separation of $0$ is needed to avoid strings like \li{00} and \li{000}, thus ensure each representation is unique.
 
-\paragraph{Exponentiation with Binary Numbers}
+\paragraph*{Exponentiation with Binary Numbers}
 Apart from speeding up addition and multiplication, the binary system does the same for their successor, namely exponentiation. We achieve this by \emph{repeated squaring}.
 \begin{lstlisting}
 Definition exp (x y : N) : N :=
@@ -44,7 +78,7 @@ To analyse the performance of this definition, let us denote the computation tim
 \end{equation*}
 Thus, $\Texp(a, b) \le 3\big(\log_2 a + 1\big)^2 \sum_{k=1}^{\infty} \frac{b^{2k}}{4^k} = \bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$. This a massive improvement over the bound $\Theta\left(a^b\right)$ of exponentiation in the unary system.
 
-\paragraph{Countdown with Binary Numbers}
+\paragraph*{Countdown with Binary Numbers}
 Although the definition of \emph{countdown} is independent of the system representing natural numbers, its Coq definition should be adjusted appropriately to account for the type \li{N}.
 \begin{lstlisting}
 Fixpoint countdown_worker (a : N) (f : N->N) (n : N) (b : nat) : N
@@ -78,9 +112,35 @@ Here $\Tleb(x, y)$ and $\Tsucc(u)$ respectively denote the running time of \li{x
 The above analysis leads to the following result about countdown with binary numbers.
 \begin{thm} \label{thm: cdt-runtime-bin}
 	If $n$ is represented in binary, we have
-	\begin{equation*}
+	\begin{equation} \label{eq: cdt-runtime-bin}
 	\runtime\big(\cdt{f}{a}\ , n\big) = \sum_{i=0}^{\cdt{f}{a}(n) - 1}
 	\runtime\left(f, f^{(i)}(n)\right) + \Theta\big((\log_2a + 1)(\cdt{f}{a}(n) + 1)\big)
-	\end{equation*}
+	\end{equation}
 \end{thm}
-
+\Cref{thm: cdt-runtime-bin} allows us to build a more efficient computation of the inverse Ackermann function. Note that from \eqref{eq: inv-ack-runtime-improved}, it is equivalent to a faster computation of each $\alpha_i$. Substituting $a=1$ into \eqref{eq: cdt-runtime-bin} shows that \Cref{lem: inv-ack-hier-runtime} still holds.
+Similar to \Cref{sect: hard-code-lvl2}, the use of binaries is not immediately effective since the first level. We delve deeper into the hierarchy by \emph{hard-coding the $4^{\text{th}}$ level} and starts from there. Now
+\begin{equation*}
+\forall n, n+2  < n+3 < 2(n+2) \iff \forall n,
+\lfloor \log_2(n+2) \rfloor < \lceil \log_2(n+3) \rceil \le \lfloor \log_2(n+2) \rfloor + 1
+\end{equation*}
+This shift from floor to ceiling enables a direct computation, since $\lceil \log_2(n+3) \rceil$ can now be seen as the size of $(n+2)$'s binary representation.
+\begin{lstlisting}
+Definition alpha3 (n: N) : N := N.size (n+2) - 3.
+\end{lstlisting}
+Let $n\ge 2$. The computation of \li{N.size(n)} takes time equal to itself, so the above definition gives $\runtime(\alpha_3, n) \le 2\log_2n$. Fix an $i\ge 3$ and suppose $\runtime(\alpha_i, n) \le C_i\log_2n$. By \Cref{lem: inv-ack-hier-runtime},
+\begin{equation*}
+\begin{aligned}
+\runtime\big(\alpha_{i+1}, n\big) & = \sum_{k=0}^{\alpha_{i+1}(n)} \runtime\left(\alpha_i, \alpha_i^{(k)}(n)\right) + \alpha_{i+1}(n)
+\le C_i\sum_{k=0}^{\alpha_{i+1}(n)}\log_2 \left(\alpha_i^{(k)}(n)\right) + \alpha_{i+1}(n)\\
+ & \le C_i\log_2n + C_i\sum_{k=1}^{\alpha_{i+1}(n)}\alpha_i^{(k)}(n) + \alpha_{i+1}(n)
+ \le (4C_i+1)\log_2n
+\end{aligned}
+\end{equation*}
+, where the last inequality follows from $\alpha_{i+1}(n)\le \log_2n$ and \Cref{lem: sum-alpha-repeat}. Picking $C_i = 4^{i-2} - 1$ gives $C_3 > 2$ and $C_{i+1} > 4C_i +1 \ \forall i$, so $\runtime\big(\alpha_i, n\big) \le C_i\log_2n \ \forall i\ge 3$ by induction. By \eqref{eq: inv-ack-runtime-improved}, for $n > 7 = \Ack(2, 2)$, $\runtime(\alpha, n) = \runtime\big(\alpha_{\alpha(n)}, n\big) = \bigO\big(4^{\alpha(n)}\log_2n\big)$. Note that this bound can potentially be improved by further tightening the above inequalities. Although we do not obtain an exact asymptotic runtime similar to \cref{thm: inv-ack-hier-runtime-improved}, since this bound of $4^{\alpha(n)}\log_2n$ is strictly larger than the lower bound of $\log_2n$, it is still extremely small and can be bounded by simpler expressions such as $(\log_2n)^2$. Our result is an improved version of the inverse Ackermann function which runs in time $\bigO\big(4^{\alpha(n)}\log_2n\big)$.
+\begin{equation*}
+\alpha(n) \triangleq \begin{cases}
+0 & \text{if } n\le 1\\ 1 & \text{if } 2\le n\le 3 \\ 2 & \text{if } 4\le n\le 7 \\
+\W\alpha\left(\alpha_3,
+\alpha_3(n), 3, n\right) & \text{if } n\ge 8
+\end{cases} \quad \text{ where } \alpha_3 \triangleq \lambda m. \big(\lfloor \log_2(m+2) \rfloor - 2\big)
+\end{equation*}

@@ -133,7 +133,7 @@ Their correctness have already been established in \eqref{eq: inv-ack-hier-deriv
 \end{thm}
 The following Coq-complied recursive function can compute $\alpha$ effectively.
 \begin{defn} \label{defn: inv-ack-worker}
-	The \emph{inverse Ackermann worker} of $f$ is a function $\W\alpha\ : \mathbb{N}^4\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
+	The \emph{inverse Ackermann worker} is a function $\W\alpha\ : (\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
 	\begin{equation} \label{eq: inv-ack-worker-recursion}
 	\W\alpha(f, n, k, b) = \begin{cases}
 	k & \text{if } b = 0 \vee n\le k \\ \W\alpha(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k+1, b-1) & \text{if } b \ge 1 \wedge n \ge k+1

@@ -60,17 +60,28 @@
 %% Use package enumitem to align enumeration and itemization
 \usepackage{enumitem}
 \usepackage{listings}
+\usepackage{hieroglf}
 
+\hypersetup{ % play with these to change the look of hyperlinks
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
 
 
 %% NEW COMMANDS =============================================
 
 \lstdefinestyle{myStyle}{
-	language=java,
+%	language=Coq,
+    keywords={Definition,Fixpoint,match,with,end,let,in,fix},
 	basicstyle=\fontsize{10}{11}\selectfont\ttfamily,
+    keywordstyle=\color{blue},
 	stepnumber=1,
-	numbersep=10pt,
 	tabsize=2,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=5pt,
 	showspaces=false,
 	showstringspaces=false
 }
@@ -86,7 +97,7 @@
 
 \newcommand{\cdt}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} \downarrow_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
 
-\newcommand{\rf}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} \uparrow_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
+\newcommand{\rf}[2]{{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{(*)}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}}
 
 \newcommand{\invhyper}{I}
 \renewcommand{\angle}[1]{\langle #1\rangle}
@@ -110,7 +121,7 @@
 \newcommand{\wt}[1]{\ensuremath{\widetilde{#1}}}
 \newcommand{\IAR}{\ensuremath{\text{IAR}}}
 \newcommand{\IARH}{\ensuremath{\text{IARH}}}
-
+\newcommand\hide[1]{}
 
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}[section]
@@ -207,21 +218,26 @@ where we show that it runs in linear time.
 \label{sec: overview}
 \input{overview.tex}
 
-\section{Repeater and Countdown}
+\section{Ackermann, Hyperoperations, and Repeater}
 \label{sec: countdown-repeater}
 \input{hierarchy.tex}
+
+\section{Countdown}
+\label{sec:countdown}
+\input{countdown.tex}
 
 \section{Division, Log, Log* and Inverse Hyperoperations}
 \label{sec: inv-hyperop}
 \input{inv-hyperop.tex}
 
-\section{The Inverse Ackermann Function}
+\section{Time Bound of the Inverse Ackermann Function}
 \label{sec: inv-ack}
 \input{inv-ack-improve.tex}
 
 \section{Further Discussion}
 \label{sec: discussion}
 \input{discussion.tex}
+\input{related.tex}
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections

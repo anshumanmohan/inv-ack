@@ -108,11 +108,30 @@ Qed.
 
 (* ****** 5.3. ACKERMANN FUNCS ********************************* *)
 
+Fixpoint ackermann_original (m n : nat) : nat :=
+  match m with
+   | 0 => 1 + n
+   | S m' => let fix ackermann' (n : nat) : nat :=
+             match n with
+              | 0 => ackermann_original m' 1
+              | S n' => ackermann_original m' (ackermann' n')
+             end
+             in ackermann' n
+  end.
+
 Fixpoint ackermann m n :=
   match m with
   | 0 => S n
   | S m' => repeater_from (ackermann m' 1) (ackermann m') n
   end.
+
+Theorem ackermann_correct :
+  forall n b, ackermann n b = ackermann_original n b.
+Proof.
+  intros n. induction n; trivial.
+  induction b. apply IHn.
+  simpl in *. rewrite IHb. trivial.
+Qed.
 
 Theorem ackermann_initial :
   forall m, ackermann (S m) 0 = ackermann m 1.
