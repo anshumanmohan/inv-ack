@@ -1,27 +1,43 @@
-\subsection{The Upper Inverse and Expansions}
+On $\mathbb{R}$, many functions are bijections and thus have an inverse in a normal sense.  Functions on $\mathbb{N}$ are often non-bijections and thus should be treated differently.
 
-Our goal is to find an inverse hierarchy to the hyperoperations, which should include division, logarithm and iterated logarithm as inverses to multiplication, exponentiation and tetration. The advent of repeater motivates an ``inverse repeater'' operation that takes us to the next level in the supposed ``inverse hyperoperation'' hierarchy. Before going into details, we clarify our setting, starting with the notion of ``inverse''.
-
-\paragraph{Inverse of increasing functions} On $\mathbb{Q}$ or $\mathbb{R}$, many functions are bijections and thus have an inverse in a normal sense. Functions on $\mathbb{N}$ are often non-bijections and thus should be treated differently.
+\subsection{Upper Inverses and Expansions}
+%; indeed, simply defining an inverse can be a little subtle.
 \begin{defn} \label{defn: inverse}
-	For all $F:\mathbb{N}\to \mathbb{N}$, $f:\mathbb{N}\to \mathbb{N}$ is the \emph{upper inverse} of $F$ if $f(n) = \min\{m : F(m)\ge n\} \ \forall n$, denoted by $F^{-1}_+$, and is the \emph{lower inverse} of $F$ if $f(n) = \max\{m : F(m)\le n\} \ \forall n$, denoted by $F^{-1}_-$.
+Define the \emph{upper inverse} of $F$, written $F^{-1}_{+}$ as $\min\{m : F(m)\ge n\}$.
+Notice that this is well-defined as long as $F$ is unbounded, \emph{i.e.} $\forall b.~\exists a.~ b \leq F(a)$.  However, as a notion of ``inverse,'' it really only makes sense if $F$ is strictly
+increasing, \emph{i.e.} $\forall n,m.~ n < m \Rightarrow F(n) < F(m)$, which is in some sense the analogue of injectivity in the discrete domain.
 \end{defn}
-To construct a useful notion of inverse for our purpose, observe that for $a\ge 2$, each $a[n]$ is strictly increasing and grows to infinity with its input, while not always reaches $0$, which ensures the existence of the upper but not the lower inverse, since $\{m : a[n]m \le 0 \} = \varnothing$ for $n\ge 3$. Thus we decide to go on with the upper inverse notion, and leave the other for discussion in \cref{sec: discussion}. Here after we shall refer to ``upper inverse'' as simply ``inverse'', unless otherwise stated. Furthermore, we can focus on strictly increasing functions $F$, which in fact gives a more meaningful, bidirectional relationship between $F$ and its inverse:
+We call this function the ``upper inverse'' because for strictly increasing functions like
+addition, multiplication, and exponentiation, the upper inverse is the ceiling of the 
+corresponding inverse functions on $\mathbb{R}$.  It is reasonable to wonder about the floor.
+\begin{defn} \label{defn: lower_inverse}
+The converse \emph{lower inverse}, written $F^{-1}_{-}$,
+is defined as $\max\{m : F(m)\le n\}$.
+\end{defn}
+Even if $F$ strictly increases, as $a[n]$ does for every $a\ge 2$, notice that the lower inverse will be undefined for $n < F(0)$, \emph{e.g.} $\{m : a[n]m \le 0 \} = \varnothing$ for $n\ge 3$.
+Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower inverses in \cref{sec: discussion}. Since we focus on strictly increasing functions, we can characterize inverses more meaningfully as follows:
 \begin{thm} \label{thm: upp-inverse-rel}
-	If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the inverse of $F$ if and only if $\ \forall n, m : f(n)\le m \iff n \le F(m)$.
+	If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m : f(n)\le m \iff n \le F(m)$.
 \end{thm}
 \begin{proof}
 Fix $n$, the sentence $n\le F(m) \iff f(n)\le m \ \forall m$ implies: (1) $f(n)$ is a lower bound to $\{m: F(m)\ge n \}$ and (2) $f(n)$ is in the set itself since plugging in $m := f(n)$ will yield $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we immediately have $n\le F(m)\implies f(n)\le m \ \forall m$. Now for all $m \ge f(n)$, $F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus complete the proof.
 \end{proof}
 
-\paragraph{Expansions} Another property $F$ needs to have is one that ensures strict increasing-ness is preserved through \emph{repeater}. Suppose for some $a$ and strictly increasing $F$, the function $\rf{F}{a}\ $ is strictly increasing, then the chain $a$, $F(a)$, $F^{(2)}(a)$, \ldots has to be strictly increasing, which leads to the notion of \emph{expansions} and \emph{strict expansions}.
+{\color{red}
+We will need to know that strict increasing-ness is preserved through \emph{repeater}. Suppose for some $a$ and strictly increasing $F$, the function $\rf{F}{a}\ $ is strictly increasing, then the chain $a$, $F(a)$, $F^{(2)}(a)$, \ldots has to be strictly increasing, which leads to the notion of \emph{expansions} and \emph{strict expansions}.
 \begin{defn}
-Given $a\in \mathbb{N}$, a function $F:\mathbb{N}\to\mathbb{N}$ is an \emph{expansion} if $F(n)\ge n \ \forall n$. An expansion $F$ is \emph{strict from} $a$ if $F(n)\ge n+1 \ \forall n\ge a$.
+Given $a\in \mathbb{N}$, a function $F:\mathbb{N}\to\mathbb{N}$ is an \emph{expansion} if $\forall n.~ F(n)\ge n$. An expansion $F$ is \emph{strict from} $a$ if $\forall n \ge a.~ F(n)\ge n+1$.
 \end{defn}
-Note that a strictly increasing function on $\mathbb{N}$ is already an expansion, though not necessarily strict. Conveniently, if $a\ge 1$ and $F$ is an expansion strict from $a$, $\rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$ $\forall n$, so $\rf{F}{a}\ $ is itself an expansion strict from $0$. Collectively, we can refer to strictly increasing $f$ as \emph{repeatable} from $a\ge 1$ if they are also strict expansions from $a$, so that repeatability is preserved through \emph{repeater from} $a$. We denote the set of functions repeatable from $a$ as $\repeatable_a$.
+Note that a strictly increasing function on $\mathbb{N}$ is already an expansion, though not necessarily strict. Conveniently, if $a\ge 1$ and $F$ is an expansion strict from $a$, $\rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$ $\forall n$, so $\rf{F}{a}\ $ is itself an expansion strict from $0$. Collectively, we can refer to strictly increasing $f$ as \emph{repeatable} from $a\ge 1$ if they are also strict expansions from $a$, so that repeatability is preserved through \emph{repeater from} $a$.
+
+
+\begin{defn}
+We denote the set of functions repeatable from $a$ as $\repeatable_a$.
+\end{defn}
 \begin{rem} \label{rem: repeatable-subset}
-	It is trivial to see that $\repeatable_s \subset \repeatable_t \ \forall s\le t $.
+	It is trivial to see that $\forall s, t.~ s \le t \Rightarrow \repeatable_s \subset \repeatable_t $.
 \end{rem}
+}
 
 \subsection{Contractions and the countdown operation}
 
