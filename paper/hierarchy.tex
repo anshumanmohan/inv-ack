@@ -9,6 +9,7 @@ there is a subtlety here: in the former case, we add $a$
 repeatedly to an initial value, \emph{which should be $0$}.
 In the latter case, we multiply $a$ repeatedly to an initial value,
 \emph{which should be $1$}. The formal definition for hyperoperation is:
+\marginpar{\tiny \color{blue} Should 2 just be under 1?}
 \begin{equation}
 \label{eq:hyper}
 \begin{array}{@{}l@{\qquad\quad}l}
@@ -30,9 +31,9 @@ a[n+1]b & ~ = ~ a[n]\big(a[n+1](b-1)\big) & ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big
  & ~ = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big) & ~ = ~ \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
 \end{array}
 \end{equation*}
-where $f^{(k)}(u) ~ \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ successive applications of a function $f$ to an input $u$, with $f^{(0)}(u) = u $ (applying $0$ times).
+where $f^{(k)}(u) ~ \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ successive applications of a function $f$ to an input $u$, with $f^{(0)}(u) = u $ (applying $0$ times). {\color{blue} Would you consider $f^k(u)$, $\big(a[n]\big)^b\big(a[n+1]0\big)$, etc?}
 
-This insight will help us encode both the Ackermann function (equation~\ref{eq:ackermann}) and hyperoperations~\eqref{eq:hyper} in Coq.  Notice that the recursive case of hyperoperation---and
+This insight will help us encode both the Ackermann function~(\eqref{eq:ackermann}) and hyperoperations~(\eqref{eq:hyper}) in Coq.  Notice that the recursive case of hyperoperation---and
 indeed, the third case of the Ackermann function---is troublesome to encode in Coq due to
 the deep nested recursion.  In the outer recursive call, the first argument ($n$) is shrinking
 but the second is expanding explosively; in the inner recursive call, the first argument is
@@ -43,7 +44,7 @@ Fixpoint ackermann_original (m n : nat) : nat :=
   | 0    => 1 + n
   | S m' => let fix ackermann' (n : nat) : nat :=
               match n with
-              | 0 => ackermann_original m' 1
+              | 0    => ackermann_original m' 1
               | S n' => ackermann_original m' (ackermann' n')
               end
             in ackermann' n
@@ -57,7 +58,7 @@ Fixpoint hyperop_original (a n b : nat) : nat :=
   | 0    => 1 + b
   | S n' => let fix hyperop' (b : nat) :=
               match b with
-              | 0 => hyperop_init a n'
+              | 0    => hyperop_init a n'
               | S b' => hyperop_original a n' (hyperop' b')
               end
             in hyperop' b
@@ -69,19 +70,19 @@ are readily apparent.  In fact, the only essential difference is the initial val
 (the second case of both definitions): the Ackermann function uses $\Ack(n-1,1)$, whereas
 hyperoperations use the initial values given in~\eqref{eq:hyper}.
 
-Our realization that the deep recursion in both notions is expressing the same idea
-of repeated application leads to another useful idea.  We can express the relationship
+Having noticed that the deep recursion in both notions is expressing the same idea
+of repeated application, we arrive at another useful idea. We can express the relationship
 between the $(\text{n+1})^{\text{th}}$- and $\text{n}^{\text{th}}$-levels in
-a \emph{functional} way if we develop a higher-order function that transforms the latter
+a \emph{functional} way if we develop a higher-order function that transforms the latter level
 to the former.  We call this idea a \emph{repeater}:
 \begin{defn}
 For all $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 \end{defn}
 The Gallina definition is modified to structurally decrease on $n$:
 \begin{lstlisting}
-Fixpoint repeater_from (f:nat->nat) (a:nat) (n : nat) : nat :=
+Fixpoint repeater_from (f : nat->nat) (a : nat) (n : nat) : nat :=
   match n with
-  | 0 => a
+  | 0    => a
   | S n' => f (repeater_from f a n')
   end.
 \end{lstlisting}
@@ -101,20 +102,20 @@ The Ackermann function is likewise expressed elegantly using repeater:
 \begin{equation*}
 \Ack(n,m) ~ \triangleq ~ \begin{cases}
 m + 1 & \text{when } n = 0 \\
-\rf{\Ack_{n-1}}{\Ack(n-1,1)}(m) & \text{otherwise}
+\rf{\Ack_{n-1}}{\color{magenta}\Ack(n-1,1)}(m) & \text{otherwise}
 \end{cases}
 \end{equation*}
 In Coq these two definitions are written as follows:
 \begin{lstlisting}
 Fixpoint hyperop (a n b : nat) : nat :=
   match n with
-  | 0 => 1 + b
+  | 0    => 1 + b
   | S n' => repeater_from (hyperop_init a n') (hyperop a n') b
   end.
 
-Fixpoint ackermann n m :=
+Fixpoint ackermann (n m : nat) : nat :=
   match n with
-  | 0 => S m
+  | 0    => S m
   | S n' => repeater_from (ackermann n' 1) (ackermann n') m
   end.
 \end{lstlisting}

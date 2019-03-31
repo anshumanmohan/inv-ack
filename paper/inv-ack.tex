@@ -60,12 +60,13 @@
 %% Use package enumitem to align enumeration and itemization
 \usepackage{enumitem}
 \usepackage{listings}
-\usepackage{hieroglf}
+\usepackage{courier}           % for the courier font (optional)
+
 
 \hypersetup{ % play with these to change the look of hyperlinks
     colorlinks=true,
     linkcolor=blue,
-    filecolor=magenta,      
+    filecolor=magenta,
     urlcolor=cyan,
 }
 
@@ -75,7 +76,7 @@
 \lstdefinestyle{myStyle}{
 %	language=Coq,
     keywords={Definition,Fixpoint,match,with,end,let,in,fix},
-	basicstyle=\fontsize{10}{11}\selectfont\ttfamily,
+	basicstyle=\normalfont\footnotesize\tt, 
     keywordstyle=\color{blue},
 	stepnumber=1,
 	tabsize=2,
@@ -85,8 +86,9 @@
 	showspaces=false,
 	showstringspaces=false
 }
-
-%\lstset{style=myStyle}
+%basicstyle=\fontsize{10}{11}\selectfont\ttfamily,
+    
+\lstset{style=myStyle}
 \makeatletter
 \newlength{\@mli}
 \newcommand{\mli}[1]{%
@@ -198,16 +200,13 @@
 %\address{}
 
 \begin{abstract}
-We build a hierarchy of functions that are an upper inverse
-of the usual Ackermann hierarchy, and then use this inverse
+We implement in Gallina a hierarchy of functions that are an upper inverse
+of the {\color{magenta}usual Ackermann hierarchy}, and then use our inverse
 hierarchy to compute the inverse of the diagonal Ackermann
-function $\Ack(n, n)$. We show that this computation is
-consistent with the usual definition of the inverse Ackermann
-function $\alpha(n)$. We implement this computation in Gallina,
-where we show that it runs in linear time.
+function $\Ack(n)$. We show that our computation runs in linear time, 
+and that it is consistent with the usual definition 
+of the inverse Ackermann function $\alpha(n)$. 
 \end{abstract}
-
-%An alternative definition for the Inverse Ackermann function, and a linear time computation in Gallina
 
 %\end{frontmatter}
 
@@ -222,7 +221,7 @@ where we show that it runs in linear time.
 \label{sec: countdown-repeater}
 \input{hierarchy.tex}
 
-\section{Countdown}
+\section{Inverses and Countdown}
 \label{sec:countdown}
 \input{countdown.tex}
 
@@ -250,7 +249,7 @@ where we show that it runs in linear time.
 %% bibitems, please use
 %%
 \bibliographystyle{plainurl}% the mandatory bibstyle
-%\bibliography{references.bib}
+\bibliography{inv-ack.bib}
 
 %% else use the following coding to input the bibitems directly in the
 %% TeX file.

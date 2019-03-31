@@ -2,9 +2,23 @@
 
 \paragraph*{Hyperoperations and their inverses}
 % This creates an unnumbered paragraph. ie a smaller, less flashy, header
-Successor, Predecessor, Addition, Subtraction, Multiplication, Division, Algorisms.  Representations of numbers (Egyption fractions/Roman numerals/Decimal/Zero).  Exponentiation, Logarithm, Tetration, Log*, ...   Hyperoperations, Knuth Arrows.  Inverses as a separate notation?
 
-Mechanizations of the above?
+\marginpar{\tiny \color{blue} Multiplication, Division, Algorisms. Representations of numbers (Egyption fractions/Roman numerals/Decimal/Zero). Exponentiation, Logarithm, Tetration, Log*, ...   Hyperoperations, Knuth Arrows.  Inverses as a separate notation? Mechanizations of the above?}
+The operations Successor, Predecessor, Addition, and Subtraction have
+been integral to counting since time immemorial. The ancient Egyptian 
+number system used symbols {\color{blue}(glyphs?)} denoting $1$, $10$, $100$, \emph{etc}, 
+and then expressed numbers using an additive combination of these.
+{\color{magenta}Their system was sophisticated, boasting negative numbers, fractions, 
+and  the concept of $0$.} The ancient Roman system 
+also used special symbols and combined using both addition and subtraction.
+{\color{magenta}It could not represent negative numbers or $0$.}
+The ancient Babylonian system was, just like the modern Indo-Arabic decimal system,
+an \emph{algorism}: the place value of a glyph determined how many times it would 
+be counted towards the number being represented. The Babylonians operated in 
+base $60$, and so \emph{e.g.} a three-gylph number $abc$ could be parsed as $a \times 3600 + b \times 60 + c$. {\color{magenta}Sadly they lacked a radix point, and so 
+$a \times 216000 + b \times 3600 + c \times 60$ and $a \times 60 + b + c \div 60$ were also
+reasonable interpretations.}
+
 
 %\subsection*{The Ackermann function and its inverse.}
 % This creates an unnumbered subsection
@@ -12,8 +26,8 @@ Mechanizations of the above?
 \paragraph*{The Ackermann function and its inverse}
 \marginpar{\tiny \color{blue} Several variations. Original. Peter. 
 Primitive recursive. Hilbert? Ackermann is used in CS. Formalizations that use or define it. The grit of sand. The bug.}
-% ref: https://projecteuclid.org/download/pdf_1/euclid.bams/1183512393
-%ref: https://www.cs.princeton.edu/~chazelle/pubs/mst.pdf
+% https://projecteuclid.org/download/pdf_1/euclid.bams/1183512393
+% https://www.cs.princeton.edu/~chazelle/pubs/mst.pdf
 {\color{magenta}A brief sentence explaining what a primitive recursive function is and 
 why total computable functions tend to be primitive recursive.}
 The orignal three-variable Ackermann function was discovered by 
@@ -27,20 +41,39 @@ her variant that computer scientists commonly care about.
 rules of \emph{path compression} and \emph{weighted union}}
 The Ackermann-Péter function is mostly a toy curiosity, but its inverse 
 occasionally features in the time bound analyses of algorithms. 
-Tarjan \cite{tarjan} showed that, in the disjoint-set data structure, 
-the time required $t(m,n)$ for a sequence of $m$ \textsc{\color{magenta}FIND}s
-intermixed with $n-1$ \textsc{\color{magenta}UNION}s (such that $m \geq n$) is bounded
-as: $k_{1}m\cdot\alpha(m,n) \leq t(m,n) \leq k_{2}m\cdot\alpha(m,n)$. 
+Tarjan \cite{tarjan} showed that the union-find data structure
+takes time $O(m\cdot\alpha(n))$ for a sequence of $m$ operations
+involving no more than $n$ elements. 
 Chazelle \cite{chazelle} showed that the minimum spanning tree
 of a connected graph with $n$ vertices and $m$ edges 
 can be found in time $O(m\cdot\alpha(m,n))$.
 
-Cite: Ackermann, Peter, Tarjan, Chazelle, Pottier, ?  Anything in HOL?  Anything in SSReflect?
+% http://gallium.inria.fr/~fpottier/publis/chargueraud-pottier-uf-sltc.pdf
+% http://gallium.inria.fr/~agueneau/publis/gueneau-chargueraud-pottier-coq-bigO.pdf
+% https://scholar.google.com.sg/scholar?start=0&hl=en&as_sdt=2005&sciodt=0,5&cites=6488308509111085774&scipsc=
+Moving on to mechanized verifications, Charguéraud and Pottier,
+\cite{charpott} later joined by Guéneau \cite{gueneauetal}, 
+extended Separation Logic with the notion of ``time credits'',
+formalized the~$O$ notation in Coq, 
+and gave a proof in Coq that simultaneously verifies the correctness
+and the time complexity of the union-find data structure. Several others 
+\cite{someoftheabove} have explored the idea of checking bounds on the resources
+used by programs formally in proof assistants such as Coq, Isabelle/HOL, and Why3.
+{\color{magenta}This is a direction
+we intend to explore to formally check the $O(n)$ bound
+of the inverse Ackermann function.}
+
+Cite: Ackermann, Peter, Tarjan, Chazelle, Pottier? Anything in HOL? Anything in SSReflect?
 
 \paragraph*{Alternative strategies}
 
-Division by constant, etc. is simpler.
-
-Custom termination metrics.  Gas.  Mutual recursion.  Automata.  Alternative implementation strategy?  (Space, tail recursion, time?)
+Other ways to skin the cat.
+- You can define division via mutual recursion (subtraction and division simultaenously).
+- The inverse ackerman-lite by Anshuman.  
+- The automata technique. 
+- Binary representations
+- Division by constant, etc. is simpler.
+- Custom termination metrics.  Gas. 
+- Space, tail recursion, time?
 
 \paragraph*{Other?}

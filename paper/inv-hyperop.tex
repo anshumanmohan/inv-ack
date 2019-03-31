@@ -1,36 +1,44 @@
-In this section, we apply the \emph{countdown} operation to build the inverse hyperoperation hierarchy, while also defining division, logarithm and iterated logarithm in terms of \emph{countdown}, before modifying the inverse hyperoperations to sketch an inverse Ackermann hierarchy.
+In this section, we use \emph{countdown} to define division, logarithm,
+iterated logarithm, and then the inverse hyperoperation hierarchy.
+We then modify the inverse hyperoperations to sketch an inverse 
+Ackermann hierarchy.
 
 \subsection{The Inverse Hyperoperations}
-In consistence with the in-use upper inverse notion, we aim at the ceiling of division and $\log$ on real numbers, $\left\lceil b/a \right\rceil$ and $\left\lceil \log_ab \right\rceil$. The iterated logarithm is formally defined as the number of times $\log$ needs to be applied to the input to for the result to be not above $1$, thus it is natural to define it using \emph{countdown}.
-Similar to how we discover \emph{repeater}, we treat $a$ as a parameter and consider $\lambda b.\left\lceil b/a \right\rceil$, $\lambda b.\left\lceil \log_ab \right\rceil$ and $\lambda b. \log^*_ab$ as functions of $b$. 
+With an eye to consistence with the upper-inverse notion, we have used thus far,
+we aim at the ceiling of division and $\log$ on real numbers, $\left\lceil b/a \right\rceil$ and $\left\lceil \log_ab \right\rceil$. The iterated logarithm is formally defined as the minimum number of times $\log$ needs to be iteratively 
+applied to the input for the result to become less than or equal to $1$. 
+Thus it is natural to define it using \emph{countdown}.
+
+Much like our discovery of \emph{repeater}, we treat $a$ as a parameter and consider $\lambda b.\left\lceil b/a \right\rceil$, $\lambda b.\left\lceil \log_ab \right\rceil$, and $\lambda b. \log^*_ab$ as functions of $b$. 
 \begin{defn} \label{defn: divc}
-	For all $a\ge 1$, define $\divc(a, b) \triangleq \cdt{\left(\lambda b. (b-a)\right)}{0}(b) \ \forall b$.
+	$\forall a \ge 1,~\divc(a, b) \triangleq \cdt{\left(\lambda b. (b-a)\right)}{0}(b)$.
 \begin{lstlisting}
 Definition divc a b := countdown_to 0 (fun n => n - a) b.
 \end{lstlisting}\vspace*{-0.5\baselineskip}
 \end{defn}
 \begin{defn} \label{defn: logc}
-	For all $a\ge 2$, define $\logc(a, b) = \cdt{\left(\lambda b. \divc(a, b)\right)}{1}(b) \ \forall b$.
+	$\forall a\ge 2,~\logc(a, b) = \cdt{\left(\lambda b. \divc(a, b)\right)}{1}(b)$.
 \begin{lstlisting}
 Definition logc a b := countdown_to 1 (divc a) b.
 \end{lstlisting}\vspace*{-0.5\baselineskip}
 \end{defn}
 \begin{defn} \label{defn: log*}
-	For all $a\ge 2$, define $\log^*(a, b) = \cdt{\left(\lambda b. \logc(a, b)\right)}{1}(b) \ \forall b$.
+	$\forall a\ge 2,~\log^*(a, b) = \cdt{\left(\lambda b. \logc(a, b)\right)}{1}(b)$.
 \begin{lstlisting}
 Definition logstar a b := countdown_to 1 (logc a) b.
 \end{lstlisting}\vspace*{-0.5\baselineskip}
 \end{defn}
-Note that the above Coq definitions are total functions and thus are defined even at $a = 0$ for both and $a = 1$ for logc and log*. However, their behaviors at these values are never used in practice, and thus not discussed in this paper. To prove these definitions are correct, it suffices to prove
-$\divc(a, b) = \left\lceil b/a \right\rceil \ \forall b\forall a\ge 1$ since it leads to $\logc$'s correctness, which in turn implies $\log^*$'s. We will prove it along with the whole hyperoperation hierarchy's correctness later.
+Note that the above Coq definitions are total functions and are thus defined even at $a = 0$ for all three, and $a = 1$ for logc and log*. However, their behaviors at these values are never used in practice, and are therefore not discussed in this paper. To prove these definitions are correct, it suffices to prove that
+$\forall a, b \ge 1.~\divc(a, b) = \left\lceil b/a \right\rceil$ since it leads to $\logc$'s correctness, which in turn implies $\log^*$'s. We will prove this in \cref{blah},
+together with the correctness of the entire hyperoperation hierarchy.
 \begin{defn} \label{defn: inv-hyperop}
-	The inverse hyperoperations are a series of two-variable functions, denoted by $\left\{a\angle{k}b : k\in \mathbb{N}\right\}$ where for all $a, b, n\in \mathbb{N}$:
+	The inverse hyperoperations are a series of two-variable functions, denoted by $a\angle{k}b : k\in \mathbb{N}$ where for all $a, b, n\in \mathbb{N}$:
 	\begin{equation}
 	a\angle{n}b = \begin{cases}
-	b - 1 & \hspace{-10pt}\text{ if } n = 0 \\
-	\cdt{a\angle{n-1}}{a_n}(b) & \hspace{-10pt}\text{ if } n \ge 1
+	b - 1 & \hspace{-10pt} \quad \text{ if } n = 0 \\
+	\cdt{a\angle{n-1}}{a_n}(b) & \hspace{-10pt} \quad \text{ if } n \ge 1
 	\end{cases}
-	\ \ \text{ where } \ a_n = \begin{cases}
+	\ \ \quad \text{ where } \ a_n = \begin{cases}
 	a & \hspace{-10pt}\text{ if } n = 1 \\
 	0 & \hspace{-10pt}\text{ if } n = 2 \\
 	1 & \hspace{-10pt}\text{ if } n \ge 3
@@ -38,7 +46,7 @@ $\divc(a, b) = \left\lceil b/a \right\rceil \ \forall b\forall a\ge 1$ since it 
 	\end{equation}
 	Here each $a\angle{n}$ is treated as a single variable function $\mathbb{N}\to \mathbb{N}$ with fixed $a$.
 \end{defn}
-We proceed to prove the hierarchy $\left\{a\angle{n}\right\}$ are inverses of $\left\{a[n]\right\}$, beginning with a few lemmas. Firstly, it should be trivial to see that $a\angle{0}\in \contract_0$ for all $a$. It allows us to compute the next level.
+We proceed to prove the $a\angle{n}$ hierarchy is an inverses of the $a[n]$ hierarchy, beginning with a few lemmas. Firstly, it should be trivial to see that $a\angle{0}\in \contract_0$ for all $a$. It allows us to compute the next level.
 
 \begin{lem}
 For all $a, b\in \mathbb{N}$, $a\angle{1}b = b - a$.
@@ -46,18 +54,19 @@ For all $a, b\in \mathbb{N}$, $a\angle{1}b = b - a$.
 \begin{proof}
 Since $a\angle{0} \in \contract_1 \subset \contract_{a}$, \cref{thm: cdt-recursion} applies.
 \begin{equation*}
-a\angle{1}b = \cdt{\left(a\angle{0}\right)}{a}(b) = \begin{cases}
-0 & \text{ if } b\le a \\ 1 + a\angle{1}(b - 1) & \text{ if } b\ge a+1
-\end{cases}
+\begin{split}
+a\angle{1}b \quad = \quad \cdt{\left(a\angle{0}\right)}{a}(b) \quad = \quad \begin{cases}
+0 & \text{ if } b\le a \\ 1 + a\angle{1}(b - 1) & \text{ if } b\ge a+1 \end{cases} \\
+\text{Then, a simple induction confirms that } a\angle{1}b = b - a.
+\end{split}
 \end{equation*}
-A simple induction will then confirms $a\angle{1}b = b - a \ \forall b$.
 \end{proof}
 \begin{col} \label{col: inv-hyperop-1-contr1}
-For all $a\ge 1$, $a\angle{1} \in \contract_1$.
+$\forall a \ge 1.~ a\angle{1} \in \contract_1$.
 \end{col}
-Using $\divc$'s and subsequently $\logc$'s and $\log^*$'s definitions, we can fit them into the inverse hyperoperations.
+Using the definitions of $\divc$ and subsequently $\logc$ and $\log^*$, we can fit them into the inverse hyperoperations hierarchy.
 \begin{col} \label{col: inv-hyperop-234}
-For all $a \in \mathbb{N}$:
+{\color{magenta}$\forall a \in \mathbb{N}$}:
 \begin{enumerate}
 	\item If $a\ge 1$, $a\angle{2}b = \divc(a, b) \ \forall b$.
 	\item If $a\ge 2$, $a\angle{3}b = \logc(a, b) \ \forall b$ and $a\angle{4}b = \logstarc(a, b) \ \forall b$.
@@ -65,7 +74,7 @@ For all $a \in \mathbb{N}$:
 \end{col}
 Now we are ready to prove the correctness of the inverse hyperoperations.
 \begin{thm} \label{thm: inv-hyperop-correct}
-For all $a\in \mathbb{N}$, $a\angle{n} = \left(a[n]\right)^{-1}_+$ holds for all $n\le 1$, for all $n \le 2$ if $a\ge 1$, and for all $n$ if $a\ge 2$.
+{\color{magenta}For all $a\in \mathbb{N}$, $a\angle{n} = \left(a[n]\right)^{-1}_+$ holds for all $n\le 1$, for all $n \le 2$ if $a\ge 1$, and for all $n$ if $a\ge 2$.}
 \end{thm}
 \begin{proof}
 Let $a_0 = a$, $a_1 = 0$, $a_n = 1 \ \forall n\ge 2$. Define
@@ -92,17 +101,17 @@ a[2]\in \repeatable_0 \iff (ab < ac \ \forall b < c) \wedge (ab \ge b+1 \ \foral
 \end{proof}
 With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^*$, as well as the whole inverse hyperoperation hierarchy.
 \begin{col}
-	For all $a \in\mathbb{N}$:
+	$\forall a \in \mathbb{N}$:
 	\begin{enumerate}
-		\item If $a\ge 1$, $\divc(a, b) = \left\lceil \frac{b}{a} \right\rceil \ \forall b$.
-		\item If $a\ge 2$, $\logc(a, b) = \left\lceil \log_ab \right\rceil \ \forall b$ and $\logstarc(a, b) = \log^*_ab \ \forall b$.
+		\item If $a\ge 1$, $\divc(a, b) = \left\lceil \frac{b}{a} \right\rceil$.
+		\item If $a\ge 2$, $\logc(a, b) = \left\lceil \log_ab \right\rceil $ and $\logstarc(a, b) = \log^*_ab$.
 	\end{enumerate}
 \end{col}
 \begin{proof}
-	The result follows directly from \cref{col: inv-hyperop-234}, \cref{thm: inv-hyperop-correct} and the facts $a[2]b = ab$, $a[3]b = a^b$ and $a[4]b = \ ^ba$ for all $a, b$.
+	The result follows from \eqref{col: inv-hyperop-234}, \eqref{thm: inv-hyperop-correct} and the facts $a[2]b = ab$, $a[3]b = a^b$ and {\color{magenta}$a[4]b = \ ^ba$}.
 \end{proof}
 \begin{rem}
-	By \cref{thm: cdt-recursion}, we also have useful recursive formulas for $\divc$, $\logc$ and $\logstarc$:
+	{\color{magenta}By \eqref{thm: cdt-recursion}, we also have useful recursive formulas for $\divc$, $\logc$ and $\logstarc$:}
 	\begin{align*}
 	\divc(a, b) & = 1 + \divc(a, b - a) &\hspace{-20pt} \text{ if } b > 0 &\text{ and } 0 \text{ otherwise}. \\
 	\logc(a, b) & = 1 + \logc\left(a, \left\lceil b/a \right\rceil\right) &\hspace{-20pt} \text{ if } b > 1 &\text{ and } 0 \text{ otherwise}. \\
@@ -113,7 +122,7 @@ With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^
 \subsection{The Inverse Ackermann hierarchy}
 
 % NEW METHOD FOR INVERSE ACKERMANN
-Using countdown, we can effectively build an inverse Ackermann hierarchy, where each level $\alpha_i$ is the inverse of $\Ack_i$. Since for each $n$, $\Ack_{i+1} = \rf{\Ack_i}{\Ack_i(1)}$, so it the recursive rule $\alpha_{i+1} \triangleq \cdt{\alpha_i}{\Ack_i(1)}$ seems tempting. However it stills depends on $\Ack_i$, rather than fully on $\alpha_i$, which makes it ineffective. Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\big)^{-1}_+$ and $\alpha_{i+1} = \big(A_{i+1}\big)^{-1}_+$. Then for all $n, m$, $A_{i+1}(m) = \big(A_i\big)^{(m)}\big(A_i(1)\big)$, so
+Using countdown, we can effectively build an inverse Ackermann hierarchy, where each level $\alpha_i$ is the inverse of the level $\Ack_i$. Since for each $n$, $\Ack_{i+1} = \rf{\Ack_i}{\Ack_i(1)}$, the recursive rule $\alpha_{i+1} \triangleq \cdt{\alpha_i}{\Ack_i(1)}$ seems tempting. However, that rule stills depends on $\Ack_i$, rather than only on $\alpha_i$, which makes it ineffective. Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\big)^{-1}_+$ and $\alpha_{i+1} = \big(A_{i+1}\big)^{-1}_+$. {\color{magenta}Then for all $n, m$}, $A_{i+1}(m) = \big(A_i\big)^{(m)}\big(A_i(1)\big)$, so
 \begin{equation} \label{eq: inv-ack-hier-derive}
 \alpha_{i+1}(n)\le m \iff n\le \big(A_i\big)^{(m+1)}(1) \iff \big(\alpha_i\big)^{(m+1)}(n) \le 1
 \end{equation}
@@ -129,7 +138,7 @@ This is equivalent to $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+
 Their correctness have already been established in \eqref{eq: inv-ack-hier-derive}. We can then provide another computation for the inverse Ackermann function.
 \begin{thm} \label{thm: inv-ack-hier-correct}
 	%For all $n, k$, $n\le \Ack(k, k) \!\!\iff \!\! \alpha_k(n)\le k$. Thus
-	For all $n$, $\alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}$.
+	$\alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}$.
 \end{thm}
 The following Coq-complied recursive function can compute $\alpha$ effectively.
 \begin{defn} \label{defn: inv-ack-worker}
@@ -140,11 +149,11 @@ The following Coq-complied recursive function can compute $\alpha$ effectively.
 	\end{cases}
 	\end{equation}
 \end{defn}
-The function $\W\alpha$ takes a function $f$ and pretends it was the first level of the inverse Ackermann hierarchy. It then keeps composing $\cdt{f}{1}\ $ to $f$, supposedly arrives at the $\text{m}^{\text{th}}$-level in the hierarchy after the $\text{m}^{\text{th}}$-recursive step, until the budget $b$ is exhausted or $n\le k$, and will output $k$. The following theorem provides the appropriate setting for $\W\alpha$ to work.
+{\color{magenta}The function $\W\alpha$ takes a function $f$ and pretends it was the first level of the inverse Ackermann hierarchy. It then keeps composing $\cdt{f}{1}\ $ to $f$, supposedly arrives at the $\text{m}^{\text{th}}$-level in the hierarchy after the $\text{m}^{\text{th}}$-recursive step, until the budget $b$ is exhausted or $n\le k$, and will output $k$.} The following theorem provides the appropriate setting for $\W\alpha$ to work.
 \begin{thm} \label{thm: inv-ack-worker-correct}
-	For all $n$, $\W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
+	$\W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{thm}
-Here, we give $\W\alpha$ a budget of $n$ and prove that it is sufficient for $\W\alpha$ to arrive at the correct value for $\alpha(n)$. We start by the following lemma.
+Here, we give $\W\alpha$ a budget of $n$ and prove that it is sufficient for $\W\alpha$ to arrive at the correct value for $\alpha(n)$. We start with the following lemma.
 \begin{lem} \label{lem: inv-ack-worker-intermediate}
 	For all $n, b, k$ such that $k+1\le \min\big\{b, \alpha_k(n)\big\}$, \begin{equation*}
 	\W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
