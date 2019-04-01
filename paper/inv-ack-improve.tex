@@ -2,8 +2,7 @@ In this section, we provide a time analysis for the
 inverse Ackermann function. First, we show that the 
 running time of the version defined in \cref{thm: inv-ack-hier-correct}
 is $O(n^2)$. We then provide a simple improvement that 
-cuts the running time to $O(n\cdot\alpha(n))$, and 
-a subsequent improvement that ultimately reduces it to $O(n)$.
+cuts the running time to $O(n)$.
 
 \subsection{Basic Time Analysis: $O(n^2)$}
 Let us momentarily forget about the axiom of extensionality and identify each 
@@ -86,9 +85,13 @@ This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i,
 %\end{col}
 %Intuitively, the function $2\angle{1} \equiv \lambda n.(n-2)$ is responsible for dragging the whole hierarchy's performance due to one silly weakness: its does not know it will always output $n-2$ before beginning its computation, hence needs to tediously subtract $1$ until it goes below $2$. This observation leads to the next improvement.
 
-\subsection{Hard-coding the second level: $O(n\cdot\alpha(n))$} \label{sect: hard-code-lvl2}
+\subsection{Hard-coding the second level: $O(n)$} \label{sect: hard-code-lvl2}
 
-Intuitively, the function $\alpha_2 \equiv \lambda n.(n-2)$ is responsible for dragging the whole hierarchy's performance due to one silly weakness: its does not know that it will always output $n-2$ before beginning its computation, and so it tediously subtracts $1$ until it goes below $2$. This observation leads to the next improvement.
+Intuitively, it is clear that the function $\alpha_2 \equiv \lambda n.(n-2)$ 
+slows down the entire hierarchy's performance due to one silly weakness: 
+it does not know that it will always output $n-2$ before beginning its computation, 
+and so it tediously subtracts $1$ until it goes below $2$. 
+This observation leads to the next improvement.
 
 We hard-code $\alpha_1$ as $\lambda n.(n-2)$. This reduces its running time 
 from $\Theta(n)$ to $\Theta(1)$.
@@ -117,7 +120,7 @@ We need two crucial technical lemmas to prove this theorem.
 	\runtime\big(\alpha_3, n\big) & =
 	\sum_{k=0}^{\alpha_{3}(n)}\runtime\left(\alpha_2, \left\lceil \frac{n+3}{2^k} \right\rceil - 3\right) + \alpha_{3}(n)  \\ 
 	& \le \sum_{k=0}^{\alpha_3(n)}\left(\frac{n+3}{2^k} + 1\right) - 3\big(\alpha_3(n) + 1\big) + \alpha_3(n) \\
-	& \le \sum_{k=0}^{\alpha_3(n)}\frac{n+3}{2^k} - \alpha_3(n) - 2 \le 2(n+3) - 2 = 2n + 4
+	& \le \sum_{k=0}^{\alpha_3(n)}\frac{n+3}{2^k} - \alpha_3(n) - 2 \quad \le \quad 2(n+3) - 2 \quad = \quad 2n + 4
 	\end{aligned}
 	\end{equation*}
 	The proof is complete.
@@ -128,9 +131,9 @@ We need two crucial technical lemmas to prove this theorem.
 \begin{proof}
 	Let the LHS be $S_i(n)$. Firstly, consider $i = 3$. Note that for $n\le 13$, $S_3(n) = 0$ and for $n\ge 14$, i.e. $\alpha_3(n)\ge 2$, $S_3(n) = \alpha_3(n) + S_3\big(\alpha_3(n)\big)$. The result thus holds for $n\le 13$. Suppose it holds for all $m < n$, where $n\ge 14$. Then
 	\begin{equation*}
-	S_3(n) \le \alpha_3(n) + 3\big\lceil \log_2(\alpha_3(n)) \big\rceil \le \big\lceil \log_2n \big\rceil + 3\big\lceil \log_2\log_2n \big\rceil
+	S_3(n) \quad \le \quad \alpha_3(n) + 3\big\lceil \log_2(\alpha_3(n)) \big\rceil \quad \le \quad \big\lceil \log_2n \big\rceil + 3\big\lceil \log_2\log_2n \big\rceil
 	\end{equation*}
-	It is easy to prove $2\big\lceil \log_2\log_2n \big\rceil \le \big\lceil \log_2n \big\rceil$ via induction on $\big\lceil \log_2n \big\rceil$. Thus $S_3(n)\le 3\big\lceil \log_2n \big\rceil$, as desired. Now for $i \ge 4$,
+	It is easy to prove $2\big\lceil \log_2\log_2n \big\rceil \le \big\lceil \log_2n \big\rceil$ by induction on $\big\lceil \log_2n \big\rceil$. Thus $S_3(n)~\le~3\big\lceil \log_2n \big\rceil$, as desired. Now for $i \ge 4$,
 	\begin{equation*}
 	S_i(n) \quad = \quad \sum_{k=1}^{\alpha_{i+1}(n)} \alpha_i^{(k)}(n) \quad \le \quad 
 	\sum_{k=1}^{\alpha_{i+1}(n)} \alpha_3^{(k)}(n) \quad \le \quad 
@@ -173,7 +176,7 @@ Thus $\tilde{\alpha}(n) = \alpha(n)$. Now at each recursive step, the transition
  \begin{enumerate}[label={(\arabic*)}]
 	\item $\cdt{\alpha_k}{1}(x)$ given $x\triangleq \alpha_k(n)$, which takes time $\runtime\big(\alpha_{k+1}, n\big) - \runtime\big(\alpha_k, n\big)$ by \cref{lem: compose-runtime}.
 	\item $\alpha_k(n) - k$, which takes time $\Theta(k)$.
-\end{enumerate}.
+\end{enumerate}
 The computation will terminate at $k = \alpha(n)$. Thus for all $n\ge 1$,
 \begin{equation} \label{eq: inv-ack-runtime-improved}
 \begin{aligned}
