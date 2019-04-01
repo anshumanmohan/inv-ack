@@ -9,15 +9,15 @@ increasing, \emph{i.e.} $\forall n,m.~ n < m \Rightarrow F(n) < F(m)$, which is 
 \end{defn}
 We call this function the ``upper inverse'' because for strictly increasing functions like
 addition, multiplication, and exponentiation, the upper inverse is the ceiling of the 
-corresponding inverse functions on $\mathbb{R}$.  {\color{red} It is reasonable to wonder about the floor.
+corresponding inverse functions on $\mathbb{R}$.  \hide{\color{red} It is reasonable to wonder about the floor.
 \begin{defn} \label{defn: lower_inverse}
 The converse \emph{lower inverse}, written $F^{-1}_{-}$,
 is defined as $\max\{m : F(m)\le n\}$.
 \end{defn}
 Even if $F$ strictly increases, as $a[n]$ does for every $a\ge 2$, notice that the lower inverse will be undefined for $n < F(0)$, \emph{e.g.} $\{m : a[n]m \le 0 \} = \varnothing$ for $n\ge 3$.
-Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower inverses in \cref{sec: discussion}. } Since we focus on strictly increasing functions, we can characterize inverses more meaningfully as follows:
+Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower inverses in \cref{sec: discussion}. } We can characterize inverses more meaningfully as follows:
 \begin{thm} \label{thm: upp-inverse-rel}
-	If $F:\mathbb{N}\to \mathbb{N}$ is {\color{red} strictly} increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
+	If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
 \end{thm}
 \begin{proof}
 Fix $n$, the sentence $\forall m.~ n\le F(m) \iff f(n)\le m$ implies: (1) $f(n)$ is a lower bound to $\{m: F(m)\ge n \}$ and (2) $f(n)$ is in the set itself since plugging in $m := f(n)$ will yield $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we immediately have $\forall m.~n\le F(m)\implies f(n)\le m$. Now for all $m \ge f(n)$, $F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus complete the proof.
@@ -45,7 +45,7 @@ We denote the set of functions repeatable from $a$ as $\repeatable_a$.
 \begin{rem} \label{rem: repeatable-subset}
 	It is trivial to see that $\forall s, t.~ s \le t \Rightarrow \repeatable_s \subseteq \repeatable_t $.
 \end{rem}
-{\color{red}
+\hide{\color{red}
 \begin{rem}
 Which hypers are in Rept?
 \end{rem}

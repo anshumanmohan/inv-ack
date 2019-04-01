@@ -1,25 +1,25 @@
-In this section, we provide a time analysis for the 
-inverse Ackermann function. First, we show that the 
+In this section, we provide a time analysis for the
+inverse Ackermann function. First, we show that the
 running time of the version defined in \cref{thm: inv-ack-hier-correct}
-is $O(n^2)$. We then provide a simple improvement that 
+is $O(n^2)$. We then provide a simple improvement that
 cuts the running time to $O(n)$.
 
+%\footnote{We will be careful not to conclude that functions
+%$f$ and $g$ are equal when they agree on all inputs but are computed with
+%different pieces of code.} 
+% momentarily forget about the axiom of extensionality and 
 \subsection{Basic Time Analysis: $O(n^2)$}
-Let us momentarily forget about the axiom of extensionality and identify each 
-function on $\mathbb{N}$ with its \emph{computation}, i.e. the program that 
-computes it in Coq.\footnote{We will be careful not to conclude that functions 
-$f$ and $g$ are equal when they agree on all inputs but are computed with 
-different pieces of code.} This allows us to formalize a definition of 
-running time of functions.
+To formalize the notion of running time, let us identify each function on 
+$\mathbb{N}$ with its \emph{computation}, \emph{i.e.} the program that computes 
+it in Coq under a call-by-value strategy.  Then briefly:
 \begin{defn}
-	{\color{red}cut for space?} Given a function $f:\mathbb{N}\to\mathbb{N}$ in Coq, the \emph{running time} of $f$ on input $n\in \mathbb{N}$, denoted by $\runtime(f, n)$ is the total number of computational steps it takes to compute $f(n)$.
+ Given a function $f:\mathbb{N}\to\mathbb{N}$ in Coq, the \emph{running time} of $f$ on input $n\in \mathbb{N}$, denoted by $\runtime(f, n)$ is the total number of computational steps it takes to compute $f(n)$.
 \end{defn}
-Below are several useful lemmas for our analysis, the first two of which are trivial.
 \begin{lem} \label{lem: sub-runtime}
-	{\color{red}cut for space?} $\forall a, n.~ \runtime(\lambda n.(n - a), n) = \Theta(\min\{a, n\})$ per the Coq definition of subtraction.
+	$\forall a, n.~ \runtime(\lambda n.(n - a), n) = \Theta(\min\{a, n\})$ per the Coq definition of subtraction.
 \end{lem}
 \begin{lem} \label{lem: compose-runtime}
-	{\color{red}cut for space?} $\forall f, g: \mathbb{N}\to \mathbb{N}.~\runtime(f\circ g, n) = \runtime(f, g(n)) + \runtime(g, n)$ per the Coq definition of functional composition. 
+	$\forall f, g: \mathbb{N}\to \mathbb{N}.~\runtime(f\circ g, n) = \runtime(f, g(n)) + \runtime(g, n)$ per the Coq definition of functional composition.
 \end{lem}
 \begin{lem} \label{lem: cdt-runtime}
 	Per \cref{defn: countdown}, $\forall a\ge 1, \forall n\le 1, \forall f\in \contract_{a}$.~$\runtime\big(\cdt{f}{a}\ , n\big) = 1$, and
@@ -28,7 +28,7 @@ Below are several useful lemmas for our analysis, the first two of which are tri
 	\end{equation*}
 \end{lem}
 \begin{proof}
-	Per \cref{defn: countdown-worker}, the computation makes $\cdt{f}{a}(n)$ recursive calls to $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, with $i\ge 0$, {\color{red}the value $n_i \triangleq f^{(i)}(n)$ is given for two computations to take place:} $n_i - a$, which takes $\Theta(a)$ time, and $f(n_i) = n_{i+1}$, which takes $\runtime\big(f, n_i\big)$ time. The total time is then
+	Per \cref{defn: countdown-worker}, the computation makes $\cdt{f}{a}(n)$ recursive calls to $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, two computations must take place: $n_i - a$, which takes $\Theta(a)$ time, and $f(n_i) = n_{i+1}$, where $n_i \triangleq f^{(i)}(n)$ has been already computed by the $i$th call, and is greater than $a$.  The total time is then
 	\begin{equation*}
 	\runtime\big(\cdt{f}{a}\ , n\big)
 	= \sum_{i=0}^{\cdt{f}{a}(n) - 1} \left[\runtime\left(f, f^{(i)}(n)\right) + \Theta(a)\right]
@@ -37,14 +37,14 @@ Below are several useful lemmas for our analysis, the first two of which are tri
 \end{proof}
 From \cref{lem: compose-runtime} and \cref{lem: cdt-runtime}, the following lemma follows easily.
 \begin{lem} \label{lem: inv-ack-hier-runtime}
-	Per \cref{defn: inv-ack-hier} and \cref{defn: countdown}, 
+	Per \cref{defn: inv-ack-hier} and \cref{defn: countdown},
 	\begin{equation*}
 	\forall i.~\runtime\big(\alpha_{i+1}, n\big) = \sum_{k=0}^{\alpha_{i+1}(n)}\runtime\left(\alpha_i, \alpha_i^{(k)}(n)\right) + \Theta\big(\alpha_{i+1}(n)\big)
 	\end{equation*}
 \end{lem}
 This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i, n\big)$. If there is some $i$ such that $\runtime\big(\alpha_i, n\big) = \Theta\big(n^2\big)$, each function in the hierarchy will take at least $\Omega\big(n^2\big)$ to compute {\color{red}from} $\alpha_i$, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}. The next lemma shows that $i = 2$ suffices.
 \begin{lem}
-	Per \cref{defn: inv-ack-hier}, $\runtime\big(\alpha_2, n\big) = \Theta\big(n^2\big)$ 
+	Per \cref{defn: inv-ack-hier}, $\runtime\big(\alpha_2, n\big) = \Theta\big(n^2\big)$
 \end{lem}
 \begin{proof}
 	$\alpha_1 = \big(\cdt{\lambda m.(m-1)}{1}\big)\circ \big(\lambda m.(m-1)\big) \equiv \lambda m.(m - 2)$. By \cref{lem: inv-ack-hier-runtime},
@@ -65,7 +65,7 @@ This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i,
 
 %This lemma implies $\runtime\big(\cdt{f}{a}\ , n\big) \ge \runtime(f, n)$. If for some $i$, $\runtime\big(2\angle{i}, n\big) = \Theta\big(n^2\big)$, the entire hierarchy will take at least $\Omega\big(n^2\big)$ from $2\angle{i}$, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}. The next lemma shows $i = 2$ suffices.
 %\begin{lem}
-%	Per \cref{defn: inv-hyperop}, $\runtime\big(2\angle{2}, n\big) = \Theta\big(n^2\big) \ \forall n$. 
+%	Per \cref{defn: inv-hyperop}, $\runtime\big(2\angle{2}, n\big) = \Theta\big(n^2\big) \ \forall n$.
 %\end{lem}
 %\begin{proof}
 %	Since $2\angle{1} = \cdt{\lambda m.(m-1)}{2}\ \equiv \lambda m.(m - 2)$, by \cref{lem: cdt-runtime},
@@ -84,24 +84,23 @@ This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i,
 
 \subsection{Hard-coding the second level: $O(n)$} \label{sect: hard-code-lvl2}
 
-Intuitively, it is clear that the function $\alpha_2 \equiv \lambda n.(n-2)$ 
-slows down the entire hierarchy's performance due to one silly weakness: 
-it does not know that it will always output $n-2$ before beginning its computation, 
-and so it tediously subtracts $1$ until it goes below $2$. 
-This observation leads to the next improvement.
+Intuitively, it is clear that the function $\alpha_2 \equiv \lambda n.(n-2)$
+slows down the entire hierarchy's performance due to one silly weakness:
+it does not know that it will always output $n-2$ before beginning its computation,
+and so it tediously subtracts $1$ until it goes below $2$.
+%This observation leads to the next improvement.
 
-We hard-code $\alpha_1$ as $\lambda n.(n-2)$. This reduces its running time 
+We can hard-code $\alpha_1$ as $\lambda n.(n-2)$ to reduce its running time
 from $\Theta(n)$ to $\Theta(1)$.
-{\color{red}cut for space?}
 \begin{lstlisting}
-Definition sub_2 (n : nat) : nat := 
+Definition sub_2 (n : nat) : nat :=
   match n with | 0 => 0 | 1 => 1 | S (S n') => n' end.
 \end{lstlisting}
 Without loss of generality, let us assume from now on that the constant factors in $\runtime(\alpha_1, n)$ and \cref{lem: inv-ack-hier-runtime} are both $1$. The running time for $\alpha_2$ is then
 \begin{equation*}
 \runtime\big(\alpha_2, n\big)
  = \sum_{i=0}^{\lceil (n-3)/2 \rceil} \runtime \big(\alpha_1, n-2i\big) + \left\lceil \frac{n-3}{2} \right\rceil =  2\left\lceil \frac{n-3}{2} \right\rceil
- < n 
+ < n
 \end{equation*}
 In fact, this fix allows every function in the hierarchy to be computed in linear time:
 \begin{thm} \label{thm: inv-ack-hier-runtime-improved}
@@ -112,14 +111,14 @@ We need two crucial technical lemmas to prove this theorem.
 	$\forall n.~\runtime\big(\alpha_3, n\big) \le 2n + 4$.
 \end{lem}
 \begin{proof}
-	It is easy to show that for all $k$, $\alpha_2^{(k)}(n) = \left\lceil \frac{n+3}{2^k} \right\rceil - 3$. Thus
+	It is easy to show that for all $k$, $\alpha_2^{(k)}(n) = \left\lceil \frac{n+3}{2^k} \right\rceil - 3$. Thus $\runtime\big(\alpha_3, n\big) = $
 	\begin{equation*}
-	\begin{aligned}
-	\runtime\big(\alpha_3, n\big) & =
-	\sum_{k=0}^{\alpha_{3}(n)}\runtime\left(\alpha_2, \left\lceil \frac{n+3}{2^k} \right\rceil - 3\right) + \alpha_{3}(n)  \\ 
-	& \le \sum_{k=0}^{\alpha_3(n)}\left(\frac{n+3}{2^k} + 1\right) - 3\big(\alpha_3(n) + 1\big) + \alpha_3(n) \\
-	& \le \sum_{k=0}^{\alpha_3(n)}\frac{n+3}{2^k} - \alpha_3(n) - 2 \quad \le \quad 2(n+3) - 2 \quad = \quad 2n + 4
-	\end{aligned}
+\begin{array}{@{}l@{}}
+	\sum_{k=0}^{\alpha_{3}(n)}\runtime\left(\alpha_2, \left\lceil \frac{n+3}{2^k} \right\rceil - 3\right) + \alpha_{3}(n)  \quad
+	\le \quad \sum_{k=0}^{\alpha_3(n)}\left(\frac{n+3}{2^k} + 1\right) - 3\big(\alpha_3(n) + 1\big) + \alpha_3(n) \\
+	\le \sum_{k=0}^{\alpha_3(n)}\frac{n+3}{2^k} - \alpha_3(n) - 2 \quad \le \quad 2(n+3) - 2 \quad = \quad 2n + 4 \\
+[-1.5em]
+\end{array}
 	\end{equation*}
 \end{proof}
 \begin{lem} \label{lem: sum-alpha-repeat}
@@ -132,28 +131,28 @@ We need two crucial technical lemmas to prove this theorem.
 	\end{equation*}
 	It is easy to prove $2\big\lceil \log_2\log_2n \big\rceil \le \big\lceil \log_2n \big\rceil$ by induction on $\big\lceil \log_2n \big\rceil$. Thus $S_3(n)~\le~3\big\lceil \log_2n \big\rceil$, as desired. Now for $i \ge 4$,
 	\begin{equation*}
-	S_i(n) \quad = \quad \sum_{k=1}^{\alpha_{i+1}(n)} \alpha_i^{(k)}(n) \quad \le \quad 
-	\sum_{k=1}^{\alpha_{i+1}(n)} \alpha_3^{(k)}(n) \quad \le \quad 
-	\sum_{k=1}^{\alpha_{4}(n)} \alpha_3^{(k)}(n) \quad \le \quad 
+	S_i(n) \quad = \quad \sum_{k=1}^{\alpha_{i+1}(n)} \alpha_i^{(k)}(n) \quad \le \quad
+	\sum_{k=1}^{\alpha_{i+1}(n)} \alpha_3^{(k)}(n) \quad \le \quad
+	\sum_{k=1}^{\alpha_{4}(n)} \alpha_3^{(k)}(n) \quad \le \quad
 	3\big\lceil \log_2n \big\rceil
 	\end{equation*}
 %	Let $P(n) \triangleq 2\big\lceil \log_2\log_2n \big\rceil \le \big\lceil \log_2n \big\rceil$. It suffices to prove $P(n) \ \forall n$. Observe that $P(n)$ holds for $n\ge 4$.
 \end{proof}
 \begin{proof}[Proof of \Cref{thm: inv-ack-hier-runtime-improved}]
-	We have proved the result for $i = 0, 1, 2$. Let us proceed with $i\ge 3$ by induction. The base case $i = 3$ has been covered by \cref{lem: inv-ack-3-runtime}. Now suppose the result holds for $i\ge 3$, let $M_i \triangleq 4^{i+1}-4$ for each $i$, we have
+	We have proved the result for $i = 0, 1, 2$. Let us proceed with $i\ge 3$ by induction. The base case $i = 3$ has been covered by \cref{lem: inv-ack-3-runtime}. Now suppose the result holds for $i\ge 3$, let $M_i \triangleq 4^{i+1}-4$ for each $i$, we have $\runtime\big(\alpha_{i+1}, n\big) = $
 	\begin{equation*}
-	\begin{aligned}
-	\runtime\big(\alpha_{i+1}, n\big) & = \sum_{k=0}^{\alpha_{i+1}(n)} \runtime\left(\alpha_i, \alpha_i^{(k)}(n)\right) + \alpha_{i+1}(n) \\
-	& \le \sum_{k=0}^{\alpha_{i+1}(n)}\left(2\alpha_i^{(k)}(n) + M_i\left\lceil\log_2\left(\alpha_i^{(k)}(n)\right)\right\rceil + 5 \right) + \alpha_{i+1}(n) \\
-	& \le 2n + M_i\left\lceil\log_2n\right\rceil + 5 + (M_i+2)\sum_{k=1}^{\alpha_{i+1}(n)}\alpha_i^{(k)}(n) + 6\alpha_{i+1}(n) \\
-	& \le 2n + M_i\left\lceil\log_2n\right\rceil + 5 +
-	3(M_i + 2)\left\lceil\log_2n\right\rceil + 6\left\lceil\log_2n\right\rceil \\
-	& = 2n + (4M_i + 12)\left\lceil\log_2n\right\rceil + 5 \\
-	& = 2n + M_{i+1}\left\lceil\log_2n\right\rceil + 5\text{, since $4M_i + 12 = 4^{i+2} - 16 + 12 = M_{i+1}$}.
-	\end{aligned}
-	\end{equation*} 
+	\begin{array}{@{}l@{}}
+	 \sum_{k=0}^{\alpha_{i+1}(n)} \runtime\left(\alpha_i, \alpha_i^{(k)}(n)\right) + \alpha_{i+1}(n) \\
+	\le \sum_{k=0}^{\alpha_{i+1}(n)}\left(2\alpha_i^{(k)}(n) + M_i\left\lceil\log_2\left(\alpha_i^{(k)}(n)\right)\right\rceil + 5 \right) + \alpha_{i+1}(n) \\
+	\le 2n + M_i\left\lceil\log_2n\right\rceil + 5 + (M_i+2)\sum_{k=1}^{\alpha_{i+1}(n)}\alpha_i^{(k)}(n) + 6\alpha_{i+1}(n) \\
+	\le 2n + M_i\left\lceil\log_2n\right\rceil + 5 +
+	3(M_i + 2)\left\lceil\log_2n\right\rceil + 6\left\lceil\log_2n\right\rceil ~~
+	= ~~ 2n + (4M_i + 12)\left\lceil\log_2n\right\rceil + 5 \\
+	= 2n + M_{i+1}\left\lceil\log_2n\right\rceil + 5\text{, since $4M_i + 12 = 4^{i+2} - 16 + 12 = M_{i+1}$}.
+	\end{array}
+	\end{equation*}
 \end{proof}
-{\color{red}cut for space?}Thus by hard-coding $\alpha_1$ as $\lambda m.(m-2)$, each level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 4^i\log n\big)$ time.
+By hard-coding $\alpha_1$ as $\lambda m.(m-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 4^i\log n\big)$ time, \emph{i.e.} linear time $\Theta(n)$ for fixed $i$.
 
 %\subsection{An improved inverse Ackermann computation: $O(n)$}
 %Building on the previous improvement, we can improve the running time of $\alpha(n)$ per \Cref{defn: inv-ack-hier} by hard-coding the output when $n\le 1 = \Ack(0, 0)$, and starting $\W\alpha$ with $f := \alpha_1$ and $n := \alpha_1(n)$. In other words,

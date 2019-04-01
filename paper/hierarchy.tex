@@ -9,7 +9,7 @@ there is a subtlety here: in the former case, we add $a$
 repeatedly to an initial value, \emph{which should be $0$}.
 In the latter case, we multiply $a$ repeatedly to an initial value,
 \emph{which should be $1$}. The formal definition for hyperoperation is:
-\marginpar{\tiny \color{blue} Should 2 just be under 1?}
+%\marginpar{\tiny \color{blue} Should 2 just be under 1?}
 \begin{equation}
 \label{eq:hyper}
 \begin{array}{@{}l@{\qquad\quad}l}
@@ -31,25 +31,14 @@ a[n+1]b & ~ = ~ a[n]\big(a[n+1](b-1)\big) & ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big
  & ~ = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big) & ~ = ~ \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
 \end{array}
 \end{equation*}
-where $f^{(k)}(u) ~ \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ successive applications of a function $f$ to an input $u$, with $f^{(0)}(u) = u $ (applying $0$ times). {\color{blue} Would you consider $f^k(u)$, $\big(a[n]\big)^b\big(a[n+1]0\big)$, etc?}
+where $f^{(k)}(u) ~ \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ successive applications of a function $f$ to an input $u$, with $f^{(0)}(u) = u $ (applying $0$ times). %{\color{blue} Would you consider $f^k(u)$, $\big(a[n]\big)^b\big(a[n+1]0\big)$, etc?}
 
-This insight will help us encode both the Ackermann function~(\eqref{eq:ackermann}) and hyperoperations~(\eqref{eq:hyper}) in Coq.  Notice that the recursive case of hyperoperation---and
+This insight will help us encode both hyperoperations~\eqref{eq:hyper} and the Ackermann function~\eqref{eq:ackermann} in Coq.  Notice that the recursive case of hyperoperation---and
 indeed, the third case of the Ackermann function---is troublesome to encode in Coq due to
 the deep nested recursion.  In the outer recursive call, the first argument ($n$) is shrinking
 but the second is expanding explosively; in the inner recursive call, the first argument is
-constant but the second is shrinking. The elegant solution uses double recursion~\cite{someone?} as follows:
+constant but the second is shrinking. The elegant solution uses double recursion~\cite{stackoverflow} as follows:
 \begin{lstlisting}
-Fixpoint ackermann_original (m n : nat) : nat :=
-  match m with
-  | 0    => 1 + n
-  | S m' => let fix ackermann' (n : nat) : nat :=
-              match n with
-              | 0    => ackermann_original m' 1
-              | S n' => ackermann_original m' (ackermann' n')
-              end
-            in ackermann' n
-  end.
-
 Definition hyperop_init (a n : nat) : nat :=
   match n with 0 => a | 1 => 0 | _ => 1 end.
 
@@ -63,8 +52,19 @@ Fixpoint hyperop_original (a n b : nat) : nat :=
               end
             in hyperop' b
   end.
+
+Fixpoint ackermann_original (m n : nat) : nat :=
+  match m with
+  | 0    => 1 + n
+  | S m' => let fix ackermann' (n : nat) : nat :=
+              match n with
+              | 0    => ackermann_original m' 1
+              | S n' => ackermann_original m' (ackermann' n')
+              end
+            in ackermann' n
+  end.
 \end{lstlisting}
-Coq is immediately satisfied since both recursive calls are structurally smaller.
+Coq is satisfied since both recursive calls are structurally smaller.
 Moreover, having encoded both notions in this style, the structural similarities
 are readily apparent.  In fact, the only essential difference is the initial values
 (the second case of both definitions): the Ackermann function uses $\Ack(n-1,1)$, whereas
@@ -90,20 +90,20 @@ The notation $\rf{f}{a}(b)$ does much better at separating the function, i.e. th
 \begin{equation*}
 a[n]b ~ \triangleq ~ \begin{cases}
 b + 1 & \text{when } n = 0 \\
-\rf{a[n-1]}{a_n}(b) & \text{otherwise}
+\rf{a[n-1]}{a_{n-1}}(b) & \text{otherwise}
 \end{cases}
-{\color{red}\qquad \qquad \text{ where } \ a_n ~ \triangleq ~ \begin{cases}
-a & \text{when } n = 1 \\
-0 & \text{when } n = 2 \\
+\qquad \qquad \text{ where } \ a_n ~ \triangleq ~ \begin{cases}
+a & \text{when } n = 0 \\
+0 & \text{when } n = 1 \\
 1 & \text{otherwise}
-\end{cases}}
+\end{cases}
 \end{equation*}
 Note we use $a[n-1]$ in a Curried style to denote the single-variable function $\lambda b.a[n-1]b$.
 The Ackermann function is likewise expressed elegantly using repeater:
 \begin{equation*}
 \Ack(n,m) ~ \triangleq ~ \begin{cases}
 m + 1 & \text{when } n = 0 \\
-\rf{\Ack_{n-1}}{\color{magenta}\Ack(n-1,1)}(m) & \text{otherwise}
+\rf{\Ack_{n-1}}{\Ack(n-1,1)}(m) & \text{otherwise}
 \end{cases}
 \end{equation*}
 In Coq these two definitions are written as follows:
