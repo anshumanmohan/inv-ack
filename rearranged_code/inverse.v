@@ -66,6 +66,18 @@ Proof.
   - simpl; rewrite <- HfF; rewrite IHk; trivial.
 Qed.
 
+(* The inverse of (repeater_from a F) is the minimum number of applications
+   of (inverse F) to the input to get a result less than or equal to a.
+   This serves as motivation to countdown (later on) and contractions. *)
+Lemma upp_inv_repeater : forall a f F f',
+    upp_inv_rel f F -> upp_inv_rel f' (repeater_from a F)
+    -> (forall n m, f' n <= m <-> repeat f m n <= a).
+Proof.
+  intros a f F f' HfF Hf'F n m.
+  rewrite (Hf'F m n). rewrite repeater_from_repeat.
+  symmetry. apply (upp_inv_repeat m f F HfF a n).
+Qed.
+
 (* ****** CONTRACTIONS ****************** *)
 
 (* Definition of non-strict contractions *)

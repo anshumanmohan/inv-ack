@@ -2,8 +2,9 @@ Require Import Omega.
 Require Import Program.Basics.
 Require Import prelims.
 Require Import repeater.
-Require Import countdown.
+Require Import increasing_expanding.
 Require Import inverse.
+Require Import countdown.
 Require Import applications.
 
 
@@ -43,6 +44,48 @@ Proof.
     rewrite <- (IHm1 1 x), repeat_S_comm.
     apply countdown_repeat. apply IHm0.
 Qed.
+
+
+(* *********** INVERTABILITY OF ACKERMANN FUNCTION ************ *)
+
+(* Repeatability *)
+Lemma ack_repeatable : forall i, repeatable_from 0 (ackermann i).
+Proof.
+  induction i; split; try split;
+  intro n; try intro m; simpl; try omega;
+  apply (repeatable_monotone 0 1 _) in IHi; try omega;
+  repeat rewrite repeater_from_repeat;
+  repeat rewrite <- repeat_S_comm;
+  repeat rewrite <- repeater_from_repeat;
+  apply repeater_repeatable in IHi; try omega;
+  destruct IHi as [IHi0 IHi1];
+  [intro; apply IHi0; omega | |];
+  apply (Nat.le_trans _ (S (S n)) _); try apply IHi1; omega.
+Qed.
+
+(* Ackermann at level 1 *)
+Lemma ack_1 : forall n, ackermann 1 n = (S (S n)).
+Proof.
+  induction n; [|rewrite ackermann_recursion; rewrite IHn]; trivial.
+Qed.
+
+(* Strict Increasing With Level *)
+Lemma ack_incr_by_lvl :
+    forall n, increasing (fun i => ackermann i n).
+Proof.
+  intro n. rewrite incr_S. intro i.
+  destruct n.
+  - simpl. apply ack_repeatable. omega.
+  - induction i.
+    + rewrite ack_1. simpl. omega.
+    + replace (ackermann (S (S i)) (S n)) with
+      (ackermann (S i) (ackermann (S (S i)) n)) by trivial.
+      apply ack_repeatable.
+
+(* Diagonal Strict Increasing *)
+Lemma diag_ack_incr : increasing (fun n => ackermann n n).
+Proof.
+
 
 
 (* *********** INVERSE ACKERMANN FUNCTION ******************** *)

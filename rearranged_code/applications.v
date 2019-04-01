@@ -1,9 +1,9 @@
 Require Import Omega.
 Require Import prelims.
 Require Import repeater.
-Require Import countdown.
+Require Import increasing_expanding.
 Require Import inverse.
-
+Require Import countdown.
 
 (* We use countdown to implement an inverse tower for the Hyperoperation.
    Interestingly, the 2nd, 3rd and 4th levels of this tower corresponds to division,
@@ -62,6 +62,7 @@ Proof.
   rewrite IHk, Heqf, inv_hyperop_1; omega.
 Qed.
 
+(* TODO: Change it to using expand_strict_from as premise TONIGHT *)
 Theorem inv_hyperop_correct :
   forall a n,
     2 <= a ->

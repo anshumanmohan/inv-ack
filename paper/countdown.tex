@@ -94,7 +94,7 @@ Inspired by \eqref{eq: rf-upp-inv}, we provide a neat, algebraically manipulable
 	$\forall a, \forall f\in \contract_{a}$, $\cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a \ \forall n, m$.
 \end{col}
 \begin{proof}
-	Fix $a$ and $n$. It suffices to prove the $(\!\!\implies\!\!)$ direction, since the other is trivial. Suppose $\cdt{f}{a}(n)\le m$, we get $f^{(m)}(n)\le f^{(\cdt{f}{a}(n))}(n)$ due to $f\in \contract$, and $f^{(\cdt{f}{a}(n))}(n)\le a$ due to \cref{thm: cdt-repeat}, which completes the proof.
+	Fix $a$ and $n$. It suffices to prove the $(\!\!\implies\!\!)$ direction, since the other is trivial. Suppose $\cdt{f}{a}(n)\le m$, we get $f^{(m)}(n)\le f^{(\cdt{f}{a}(n))}(n)$ due to $f\in \contract$, and $f^{(\cdt{f}{a}(n))}(n)\le a$ due to \eqref{eq: countdown}, which completes the proof.
 \end{proof}
 %\begin{thm} \label{thm: upp-inv-cdt-rf}
 %	For all $a\in \mathbb{N}$, if $f\in \contract_{a}$ is the upper inverse of $F: \mathbb{N}\to \mathbb{N}$, then $\cdt{f}{a}$ is the upper inverse of $\rf{F}{a}$.

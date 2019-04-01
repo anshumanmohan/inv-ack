@@ -103,12 +103,21 @@ Proof.
   - apply (increasing_expanding_strict f a H0 H1).
 Qed.
 
+(* Repeatability is monotonic *)
+Lemma repeatable_monotone :
+    forall a b f, (a < b) -> repeatable_from a f -> repeatable_from b f.
+Proof.
+  intros a b f Hab Haf. rewrite repeatable_simpl.
+  split; apply Haf. omega.
+Qed.
+
 (* Repeatability is preserved through repeater *)
 Lemma repeater_repeatable :
     forall a f, (1 <= a) -> repeatable_from a f -> repeatable_from 0 (repeater_from a f).
 Proof.
-  intros a f Ha Haf.
-  rewrite repeatable_simpl. simpl. split; try omega.
-  rewrite incr_S. intro. rewrite repeater_from_repeat.
-  destruct Haf as [Hf Haf].
-  Admitted.
+  intros a f Ha. repeat rewrite repeatable_simpl.
+  simpl. split; try omega.
+  destruct H as [Hf Haf].
+  rewrite incr_S. induction n;
+  [|simpl; rewrite <- (incr_twoways f _ _ Hf)]; assumption.
+Qed.

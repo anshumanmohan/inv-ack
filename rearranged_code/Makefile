@@ -17,10 +17,10 @@ inverse.vo: prelims.vo repeater.vo increasing_expanding.vo inverse.v
 countdown.vo: prelims.vo repeater.vo increasing_expanding.vo inverse.vo countdown.v
 	$(CC) countdown.v
 
-applications.vo: prelims.vo repeater.vo countdown.vo inverse.vo applications.v
+applications.vo: prelims.vo repeater.vo increasing_expanding.vo inverse.vo countdown.vo  applications.v
 	$(CC) applications.v
 	
-inv_ack.vo: prelims.vo repeater.vo countdown.vo inverse.vo applications.vo inv_ack.v
+inv_ack.vo: prelims.vo repeater.vo increasing_expanding.vo inverse.vo countdown.vo  applications.vo inv_ack.v
 	$(CC) inv_ack.v
 	
 .PHONY: paper
