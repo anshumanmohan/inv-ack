@@ -1,5 +1,6 @@
 Require Import Omega.
 Require Import Program.Basics.
+Require Import Logic.FunctionalExtensionality.
 Require Import prelims.
 Require Import repeater.
 Require Import increasing_expanding.
@@ -73,31 +74,44 @@ Qed.
 Lemma ack_incr_by_lvl :
     forall n, increasing (fun i => ackermann i n).
 Proof.
-  intro n. rewrite incr_S. intro i.
-  destruct n.
-  - simpl. apply ack_repeatable. omega.
-  - induction i.
-    + rewrite ack_1. simpl. omega.
-    + replace (ackermann (S (S i)) (S n)) with
-      (ackermann (S i) (ackermann (S (S i)) n)) by trivial.
-      apply ack_repeatable.
+  intro n. rewrite incr_S. intro i. generalize dependent n.
+  induction i; intro n.
+  - rewrite ack_1. simpl. omega.
+  - remember (S i) as p. destruct n.
+    + simpl. apply ack_repeatable. omega.
+    + rewrite ackermann_recursion. apply ack_repeatable.
+      assert (Hi := IHi).
+      rewrite Heqp in IHi. specialize (IHi (S n)).
+      rewrite ackermann_recursion in IHi.
+      rewrite <- incr_twoways in IHi by apply ack_repeatable.
+      apply (Nat.lt_trans _ (ackermann (S i) n) _); trivial.
+      clear IHi. induction n.
+      * simpl. apply Hi.
+      * repeat rewrite ackermann_recursion.
+        apply (Nat.lt_trans _ (ackermann i (ackermann (S p) n)) _).
+        apply ack_repeatable; assumption.
+        apply Hi.
+Qed.
 
 (* Diagonal Strict Increasing *)
 Lemma diag_ack_incr : increasing (fun n => ackermann n n).
 Proof.
-
+  intros n m Hnm. apply (Nat.lt_trans _ (ackermann n m) _);
+  [apply ack_repeatable| apply ack_incr_by_lvl]; assumption.
+Qed.
 
 
 (* *********** INVERSE ACKERMANN FUNCTION ******************** *)
 
 Fixpoint inv_ack_worker (f : nat -> nat) (n k bud : nat) : nat :=
   match bud with
-  | 0 => 0
+  | 0      => 0
   | S bud' =>
     match (n - k) with
-    | 0 => k
+    | 0   => k
     | S _ =>
-      let g := (countdown_to 1 f) in inv_ack_worker (compose g f) (g n) (S k) bud'
+      let g := (countdown_to 1 f) in
+      inv_ack_worker (compose g f) (g n) (S k) bud'
     end
   end.
 
@@ -106,19 +120,69 @@ Definition inv_ack n :=
 
 (* Intermediate lemma about inv_ack_worker *)
 Lemma inv_ack_worker_intermediate :
-    forall n b i, (i < alpha i n) -> (i < b) ->
+    forall i n b, (i < alpha i n) -> (i < b) ->
         (inv_ack_worker (alpha 0) (alpha 0 n) 0 b
          = inv_ack_worker (alpha (S i)) (alpha (S i) n) (S i) (b - (S i))).
-Admitted.
+    induction i.
+    - simpl. intros n b Hn Hb. unfold inv_ack_worker.
+      destruct b; try omega.
+      remember ((n - 1) - 0) as m. destruct m; try omega.
+      replace (S b - 1) with b by omega. trivial.
+    - intros n b Hn Hb. rewrite IHi.
+      + remember (S i) as p.
+        replace (alpha (S p)) with
+        (compose (countdown_to 1 (alpha p)) (alpha p)) by trivial.
+        unfold inv_ack_worker.
+        remember (alpha p n - p) as m. destruct m; try omega.
+        remember (b - p) as c. destruct c; try omega.
+        replace (b - S p) with c by omega.
+        rewrite <- Heqm. trivial.
+      + rewrite <- not_le. destruct (alpha_correct i) as [_ Halphai].
+        rewrite (Halphai i n). intro.
+        assert (n <= ackermann (S i) (S i)).
+        { apply (Nat.le_trans _ (ackermann i i) _); trivial.
+          apply Nat.lt_le_incl. apply diag_ack_incr. omega. }
+        destruct (alpha_correct (S i)) as [_ HalphaSi].
+        rewrite <- (HalphaSi (S i) n) in H0. omega.
+      + omega.
+Qed.
 
 (* Proof that inv_ack is correct *)
 Theorem inv_ack_correct :
-    forall n k, inv_ack n <= k <-> n <= ackermann k k.
+  upp_inv_rel inv_ack (fun k => ackermann k k).
 Proof.
-  intros n k. unfold inv_ack.
-  destruct (alpha_correct k) as [_ Hnk]. rewrite <- (Hnk k n).
-  split.
-  - intro. rewrite not_lt. intro. Admitted.
+  rewrite upp_inv_unique by apply diag_ack_incr.
+  assert (forall n N : nat,
+            upp_inv (fun k : nat => ackermann k k) N <= n
+            <-> alpha n N <= n) as H.
+  { intros n N.
+    rewrite (upp_inv_correct (fun k : nat => ackermann k k)
+           diag_ack_incr n N). destruct (alpha_correct n) as [_ Hm].
+    symmetry. apply Hm. }
+  apply functional_extensionality. intro n.
+  remember (upp_inv (fun k : nat => ackermann k k) n) as m.
+  unfold inv_ack. assert (H0 := H). destruct m.
+  - specialize (H 0 n). rewrite <- Heqm in H.
+    assert (n <= 1) as Hn. { simpl in H. omega. }
+    destruct n; simpl; trivial; destruct n; simpl; trivial; omega.
+  - specialize (H m n). rewrite <- Heqm in H.
+    assert (m < alpha m n) as Hn by omega.
+    assert (S m < n) as Hmn.
+    { destruct (alpha_correct m) as [_ Hm]. rewrite <- not_le in Hn.
+      rewrite (Hm m n) in Hn. rewrite <- not_le. intro.
+      assert (ackermann m m <= m) by omega.
+      destruct (ack_repeatable m) as [_ Hackm].
+      destruct Hackm as [_ Hackm]. specialize (Hackm m).
+      omega. }
+    rewrite (inv_ack_worker_intermediate m n n).
+    assert (alpha (S m) n - (S m) = 0).
+    { specialize (H0 (S m) n). rewrite <- Heqm in H0. omega. }
+    unfold inv_ack_worker.
+    remember (n - S m) as p. destruct p; try omega.
+    + rewrite H1. trivial.
+    + assumption.
+    + omega.
+Qed.
 
 
 (* *********** NAIVE INVERSE ACKERMANN FUNCTION ******************** *)

@@ -24,11 +24,10 @@ Require Import inverse.
    Output "min(k, min{l : repeat f l n <= a})" *)
 Fixpoint countdown_worker (a : nat) (f : nat -> nat) (n k : nat) : nat :=
   match k with
-  | 0  => 0
-  | S k' =>
-    match (n - a) with
-    | 0 => 0
-    | S _ => S (countdown_worker a f (f n) k') end
+  | 0    => 0
+  | S k' => match (n - a) with
+            | 0 => 0
+            | _ => S (countdown_worker a f (f n) k') end
   end.
 
 (* Actual defintion. We give the worker a budget of "n" steps, which

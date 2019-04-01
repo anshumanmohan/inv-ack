@@ -17,11 +17,11 @@ Require Import countdown.
 
 (* ****** INVERSE-HYPEROP TOWER ********************************* *)
 
-Fixpoint inv_hyperop n a b :=
+Fixpoint inv_hyperop a n b :=
   match n with
   | 0 => b - 1
   | S n' =>
-    countdown_to match n' with 0 => a | 1 => 0 | _ => 1 end (inv_hyperop n' a) b
+    countdown_to (hyperop_init a n') (inv_hyperop a n') b
   end.
 
 Theorem inv_hyperop_recursion :

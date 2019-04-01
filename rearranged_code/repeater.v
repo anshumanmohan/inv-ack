@@ -4,15 +4,15 @@ Require Import prelims.
 (* ****** REPEATER ********************************* *)
 
 (* Can be easily defined and computed, so we define it directly *)
-Fixpoint repeater_from (a : nat) (f : nat -> nat) (n : nat) : nat :=
+Fixpoint repeater_from (f : nat -> nat) (a : nat) (n : nat) : nat :=
   match n with
-  | 0 => a
-  | S n' => f (repeater_from a f n')
+  | 0    => a
+  | S n' => f (repeater_from f a n')
   end. 
 
 (* Repeater is a functional way to look at repeat *)
 Theorem repeater_from_repeat :
-  forall a f n, repeater_from a f n = repeat f n a.
+  forall a f n, repeater_from f a n = repeat f n a.
 Proof.
   intros a f n. induction n; trivial. simpl. rewrite IHn. trivial.
 Qed.
@@ -20,25 +20,28 @@ Qed.
 
 (* ****** HYPEROPS ********************************* *)
 
-Fixpoint hyperop_original (n a b : nat) : nat :=
+Definition hyperop_init (a n : nat) : nat :=
+  match n with 0 => a | 1 => 0 | _ => 1 end.
+
+Fixpoint hyperop_original (a n b : nat) : nat :=
   match n with
-  | 0    => S b
-  | S n' =>
-    let fix hyperop_n (b0 : nat) :=
-        match b0 with
-        | 0 => match n' with 0 => a | 1 => 0 | _ => 1 end
-        | S b0' => hyperop_original n' a (hyperop_n b0') end
-    in hyperop_n b
+  | 0    => 1 + b
+  | S n' => let fix hyperop' (b : nat) :=
+              match b with
+              | 0    => hyperop_init a n'
+              | S b' => hyperop_original a n' (hyperop' b')
+              end
+            in hyperop' b
   end.
 
-Fixpoint hyperop (n a b : nat) : nat :=
+Fixpoint hyperop (a n b : nat) : nat :=
   match n with
-  | 0 => S b
-  | S n' => repeater_from match n' with 0 => a | 1 => 0 | _ => 1 end (hyperop n' a) b
+  | 0    => 1 + b
+  | S n' => repeater_from (hyperop a n') (hyperop_init a n') b
   end.
 
 Theorem hyperop_correct :
-  forall n a b, hyperop n a b = hyperop_original n a b.
+  forall n a b, hyperop a n b = hyperop_original a n b.
 Proof.
   intros n a. induction n; trivial.
   induction b; trivial.
@@ -47,26 +50,26 @@ Qed.
 
 Theorem hyperop_recursion :
   forall n a b,
-    hyperop (S n) a (S b) = hyperop n a (hyperop (S n) a b).
+    hyperop a (S n) (S b) = hyperop a n (hyperop a (S n) b).
 Proof. trivial. Qed.
 
-Lemma hyperop_1 : forall a b, hyperop 1 a b = b + a.
+Lemma hyperop_1 : forall a b, hyperop a 1 b = b + a.
 Proof. intro a. induction b; [|rewrite hyperop_recursion, IHb]; trivial. Qed.
 
-Lemma hyperop_2 : forall a b, hyperop 2 a b = b * a.
+Lemma hyperop_2 : forall a b, hyperop a 2 b = b * a.
 Proof.
   intros a b. induction b; trivial.
   rewrite hyperop_recursion, IHb, hyperop_1. simpl; omega.
 Qed.
 
-Lemma hyperop_3 : forall a b, hyperop 3 a b = a ^ b.
+Lemma hyperop_3 : forall a b, hyperop a 3 b = a ^ b.
 Proof.
   intros a b. induction b; trivial.
   rewrite hyperop_recursion, IHb, hyperop_2.
   simpl. apply Nat.mul_comm.
 Qed.
 
-Theorem hyperop_n_1 : forall n a, 2 <= n -> hyperop n a 1 = a.
+Theorem hyperop_n_1 : forall n a, 2 <= n -> hyperop a n 1 = a.
 Proof.
   intros n a Hn. do 2 (destruct n; [omega|]).
   clear Hn. induction n; trivial.
@@ -85,10 +88,10 @@ Fixpoint ackermann_original (m n : nat) : nat :=
              in ackermann' n
   end.
 
-Fixpoint ackermann m n :=
-  match m with
-  | 0 => S n
-  | S m' => repeater_from (ackermann m' 1) (ackermann m') n
+Fixpoint ackermann (n m : nat) : nat :=
+  match n with
+  | 0    => S m
+  | S n' => repeater_from (ackermann n' 1) (ackermann n') m
   end.
 
 Theorem ackermann_correct :
