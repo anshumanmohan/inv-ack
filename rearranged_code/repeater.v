@@ -91,7 +91,7 @@ Fixpoint ackermann_original (m n : nat) : nat :=
 Fixpoint ackermann (n m : nat) : nat :=
   match n with
   | 0    => S m
-  | S n' => repeater_from (ackermann n' 1) (ackermann n') m
+  | S n' => repeater_from (ackermann n') (ackermann n' 1) m
   end.
 
 Theorem ackermann_correct :
@@ -111,7 +111,7 @@ Theorem ackermann_recursion :
 Proof. trivial. Qed.
 
 Theorem ack_hyperop : forall m n,
-    3 + ackermann m n = hyperop m 2 (3 + n).
+    3 + ackermann m n = hyperop 2 m (3 + n).
 Proof.
   induction m; trivial.
   induction n.
