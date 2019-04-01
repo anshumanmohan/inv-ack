@@ -62,11 +62,12 @@ a\angle{1}b \quad = \quad \cdt{\left(a\angle{0}\right)}{a}(b) \quad = \quad \beg
 \end{equation*}
 \end{proof}
 \begin{col} \label{col: inv-hyperop-1-contr1}
-$\forall a \ge 1.~ a\angle{1} \in \contract_1$.
+For all $a \ge 1.~ a\angle{1} \in \contract_1$.
 \end{col}
 Using the definitions of $\divc$ and subsequently $\logc$ and $\log^*$, we can fit them into the inverse hyperoperations hierarchy.
 \begin{col} \label{col: inv-hyperop-234}
 {\color{magenta}$\forall a \in \mathbb{N}$}:
+ {\color{blue} For all $a \in \mathbb{N}$},
 \begin{enumerate}
 	\item If $a\ge 1$, $a\angle{2}b = \divc(a, b) \ \forall b$.
 	\item If $a\ge 2$, $a\angle{3}b = \logc(a, b) \ \forall b$ and $a\angle{4}b = \logstarc(a, b) \ \forall b$.
@@ -75,6 +76,8 @@ Using the definitions of $\divc$ and subsequently $\logc$ and $\log^*$, we can f
 Now we are ready to prove the correctness of the inverse hyperoperations.
 \begin{thm} \label{thm: inv-hyperop-correct}
 {\color{magenta}For all $a\in \mathbb{N}$, $a\angle{n} = \left(a[n]\right)^{-1}_+$ holds for all $n\le 1$, for all $n \le 2$ if $a\ge 1$, and for all $n$ if $a\ge 2$.}
+
+{\color{blue} For all $n, a\in \mathbb{N}$ such that $a\ge 2$, $a\angle{n} = \left(a[n]\right)^{-1}_+$. If $a = 1$, this holds at $n = 0, 1, 2$ while at $a = 0$, it holds at $n = 0, 1$.}
 \end{thm}
 \begin{proof}
 Let $a_0 = a$, $a_1 = 0$, $a_n = 1 \ \forall n\ge 2$. Define
@@ -108,13 +111,15 @@ With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^
 	\end{enumerate}
 \end{col}
 \begin{proof}
-	The result follows from \eqref{col: inv-hyperop-234}, \eqref{thm: inv-hyperop-correct} and the facts $a[2]b = ab$, $a[3]b = a^b$ and {\color{magenta}$a[4]b = \ ^ba$}.
+	The result follows from \cref{col: inv-hyperop-234}, \cref{thm: inv-hyperop-correct} and the facts $a[2]b = ab$, $a[3]b = a^b$ and {\color{magenta}$a[4]b = \ ^ba$}.
 \end{proof}
 \begin{rem}
-	{\color{magenta}By \eqref{thm: cdt-recursion}, we also have useful recursive formulas for $\divc$, $\logc$ and $\logstarc$:}
+	{\color{magenta}By \ref{thm: cdt-recursion}, we also have useful recursive formulas for $\divc$, $\logc$ and $\logstarc$:}
+	
+	{\color{blue} \Cref{thm: cdt-recursion} leads to useful recursive formulas for $\divc$, $\logc$ and $\logstarc$:}
 	\begin{align*}
 	\divc(a, b) & = 1 + \divc(a, b - a) &\hspace{-20pt} \text{ if } b > 0 &\text{ and } 0 \text{ otherwise}. \\
-	\logc(a, b) & = 1 + \logc\left(a, \left\lceil b/a \right\rceil\right) &\hspace{-20pt} \text{ if } b > 1 &\text{ and } 0 \text{ otherwise}. \\
+	\logc(a, b) & = 1 + \logc\left(a, \left\lceil \frac{b}{a} \right\rceil\right) &\hspace{-20pt} \text{ if } b > 1 &\text{ and } 0 \text{ otherwise}. \\
 	\logstarc(a, b) & = 1 + \divc(a, \left\lceil \log_ab \right\rceil) &\hspace{-20pt} \text{ if } b > 1 &\text{ and } 0 \text{ otherwise}.
 	\end{align*}
 \end{rem}
@@ -149,7 +154,10 @@ The following Coq-complied recursive function can compute $\alpha$ effectively.
 	\end{cases}
 	\end{equation}
 \end{defn}
-{\color{magenta}The function $\W\alpha$ takes a function $f$ and pretends it was the first level of the inverse Ackermann hierarchy. It then keeps composing $\cdt{f}{1}\ $ to $f$, supposedly arrives at the $\text{m}^{\text{th}}$-level in the hierarchy after the $\text{m}^{\text{th}}$-recursive step, until the budget $b$ is exhausted or $n\le k$, and will output $k$.} The following theorem provides the appropriate setting for $\W\alpha$ to work.
+{\color{magenta}The function $\W\alpha$ takes a function $f$ and pretends it was the first level of the inverse Ackermann hierarchy. It then keeps composing $\cdt{f}{1}\ $ to $f$, supposedly arrives at the $\text{m}^{\text{th}}$-level in the hierarchy after the $\text{m}^{\text{th}}$-recursive step, until the budget $b$ is exhausted or $n\le k$, and will output $k$.}
+
+{\color{blue} Observe that when given the arguments $\big(\alpha_i, \alpha_i(n), i, b\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\W\alpha$ will take on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b-1\big)$ at the next recursive call. Thus if initial arguments involve $\alpha_0$, $\alpha_0(n)$, $0$ and a sufficient budget $b$, $\W\alpha$ will recursively move through the chain $\big\{\alpha_i(n)\big\}$ and terminate at a point $k$ where $\alpha_k(n)\le k$.}
+The following theorem formalizes a setting that for $\W\alpha$ to work.
 \begin{thm} \label{thm: inv-ack-worker-correct}
 	$\W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{thm}
