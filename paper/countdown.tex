@@ -23,7 +23,7 @@ Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower
 Fix $n$, the sentence $\forall m.~ n\le F(m) \iff f(n)\le m$ implies: (1) $f(n)$ is a lower bound to $\{m: F(m)\ge n \}$ and (2) $f(n)$ is in the set itself since plugging in $m := f(n)$ will yield $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we immediately have $\forall m.~n\le F(m)\implies f(n)\le m$. Now for all $m \ge f(n)$, $F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus complete the proof.
 \end{proof}
 \begin{col}
-If $F:\mathbb{N}\to \mathbb{N}$ is {\color{red} strictly} increasing, then $F^{-1}_{+} \circ F$ is
+If $F:\mathbb{N}\to \mathbb{N}$ is strictly increasing, then $F^{-1}_{+} \circ F$ is
 the identity function.
 \end{col}
 \begin{proof}
