@@ -158,8 +158,9 @@ We are ready to present the proof for \Cref{thm: inv-ack-hier-runtime-improved}.
 \end{proof}
 Thus by hard-coding $\alpha_1$ as $\lambda m.(m-2)$, each level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 4^i\log n\big)$ time.
 
-\subsection{An improved inverse Ackermann computation: $O(n)$}
-Building on the previous improvement, we can improve the running time of $\alpha(n)$ per \Cref{defn: inv-ack-hier} by hard-coding the output when $n\le 1 = \Ack(0, 0)$, and starting $\W\alpha$ with $f := \alpha_1$ and $n := \alpha_1(n)$. In other words,
+%\subsection{An improved inverse Ackermann computation: $O(n)$}
+%Building on the previous improvement, we can improve the running time of $\alpha(n)$ per \Cref{defn: inv-ack-hier} by hard-coding the output when $n\le 1 = \Ack(0, 0)$, and starting $\W\alpha$ with $f := \alpha_1$ and $n := \alpha_1(n)$. In other words,
+This also allows us to improve running time of $\alpha(n)$ per \Cref{defn: inv-ack-hier} by hard-coding the output when $n\le 1 = \Ack(0, 0)$, and starting $\W\alpha$ with $f := \alpha_1$ and $n := \alpha_1(n)$.
 \begin{equation*}
 \tilde{\alpha}(n) = \begin{cases}
 0 & \text{ if } n \le 1 \\ \W\alpha\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2
@@ -168,7 +169,12 @@ Building on the previous improvement, we can improve the running time of $\alpha
 For $n > 1$, we have $1\le \min\big\{n-1, \alpha_1(n)\big\}$, so $
 \W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) =
 \W\alpha\big(\alpha_1, \alpha_1(n), 1, n-1\big)$.
-Thus $\tilde{\alpha}(n) = \alpha(n)$. Now at each recursive step, the transition from $\W\alpha\big(\alpha_k, \alpha_k(n), k, n-k\big)$ to $\W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of two computations: (1) $\big(\cdt{\alpha_k}{1}\big)\big(\alpha_k(n)\big)$ given $\alpha_k(n)$, which takes time $\runtime\big(\alpha_{k+1}, n\big) - \runtime\big(\alpha_k, n\big)$ by \cref{lem: compose-runtime}; and (2) $\alpha_k(n) - k$ for time $\Theta(k)$. The computation will terminate at $k = \alpha(n)$. Thus for all $n\ge 1$,
+Thus $\tilde{\alpha}(n) = \alpha(n)$. Now at each recursive step, the transition from $\W\alpha\big(\alpha_k, \alpha_k(n), k, n-k\big)$ to $\W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of the following computations:
+ \begin{enumerate}[label={(\arabic*)}]
+	\item $\cdt{\alpha_k}{1}(x)$ given $x\triangleq \alpha_k(n)$, which takes time $\runtime\big(\alpha_{k+1}, n\big) - \runtime\big(\alpha_k, n\big)$ by \cref{lem: compose-runtime}.
+	\item $\alpha_k(n) - k$, which takes time $\Theta(k)$.
+\end{enumerate}.
+The computation will terminate at $k = \alpha(n)$. Thus for all $n\ge 1$,
 \begin{equation} \label{eq: inv-ack-runtime-improved}
 \begin{aligned}
 \runtime\big(\tilde{\alpha}, n\big) & = \runtime\big(\alpha_1, n\big) + \sum_{k=1}^{\alpha(n) - 1}
