@@ -227,7 +227,7 @@ Qed.
 (* TODO: Change it to using expand_strict_from as premise *)
 Theorem countdown_repeater_upp_inverse : forall a f F,
     contract_strict_above a f -> upp_inv_rel f F ->
-    upp_inv_rel (countdown_to a f) (repeater_from a F).
+    upp_inv_rel (countdown_to a f) (repeater_from F a).
 Proof.
   intros a f F Haf HfF n N.
   rewrite repeater_from_repeat.

@@ -113,7 +113,7 @@ Qed.
 
 (* Repeatability is preserved through repeater *)
 Lemma repeater_repeatable :
-    forall a f, (1 <= a) -> repeatable_from a f -> repeatable_from 0 (repeater_from a f).
+    forall a f, (1 <= a) -> repeatable_from a f -> repeatable_from 0 (repeater_from f a).
 Proof.
   intros a f Ha. repeat rewrite repeatable_simpl.
   simpl. split; try omega.

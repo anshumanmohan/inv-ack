@@ -70,7 +70,7 @@ Qed.
    of (inverse F) to the input to get a result less than or equal to a.
    This serves as motivation to countdown (later on) and contractions. *)
 Lemma upp_inv_repeater : forall a f F f',
-    upp_inv_rel f F -> upp_inv_rel f' (repeater_from a F)
+    upp_inv_rel f F -> upp_inv_rel f' (repeater_from F a)
     -> (forall n m, f' n <= m <-> repeat f m n <= a).
 Proof.
   intros a f F f' HfF Hf'F n m.
