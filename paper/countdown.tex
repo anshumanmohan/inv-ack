@@ -54,52 +54,49 @@ Which hypers are in Rept?
 \subsection{Contractions and the countdown operation}
 
 Suppose that $F \in \repeatable_a$ for any $a \ge 1$ and let $f$ be $F$'s inverse, \emph{i.e.} $F^{-1}_{+}$.  Our goal is to use $f$ to compute an inverse to $F$'s repeater $\rf{F}{a}$.  Notice that this inverse must exist since $F \in \repeatable_a$ implies $\rf{F}{a} \in \repeatable_0$.  
-For reasons that will be clear momentarily, we write $\rf{F}{a}$'s inverse as $\cdt{f}{a}$.  Now
-fix $n$ and observe that for all $m$ we have
+For reasons that will be clear momentarily, we write this inverse as $\cdt{f}{a}$.  Now
+fix $n$ and observe that for all $m$, $f^{(m)}(n)\le a \iff m \ge \cdt{f}{a}(n)$ since
 \begin{equation} \label{eq: rf-upp-inv}
 \begin{aligned}
 \cdt{f}{a}(n)\le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \iff f(n)\le F^{(m-1)}(a) \\
 & \iff f^{(2)}(n)\le F^{(m-2)}(a) \iff \ldots \iff f^{(m)}(n)\le a
 \end{aligned}
 \end{equation}
-Letting $m = f^*(n)$ to get $f^{(f^*(n))}\le a$ and combined with the above:
-\begin{equation*}
-\left(f^{(f^*(n))} \le a \right) \wedge \left( \forall m, f^{(m)}(n)\le a \implies m \ge f^*(n) \right)
-\end{equation*}
-This implies $f^*(n)$ is the minimum number of times $f$ needs to be compositionally applied to $n$ to yield a result below or equal to $a$. Before we can define $f^*(n)$ to be the minimum of $\{m: f^{(m)}(n)\le a \}$ and claim success, we need to make sure: (1) that set is non-empty, so that it has a minimum, and (2) we can reliably find that minimum within finitely many steps. The most ideal situation would be that the chain $n$, $f(n)$, $f^{(2)}(n)$, \ldots decreases strictly until reaching $a$, which leads to the notion of \emph{contractions}.
+Moreover, setting $m = \cdt{f}{a}(n)$, we realize that $f^{(\cdt{f}{a}(n))}\le a$.  
+\textbf{Together these imply that $\cdt{f}{a}(n)$ is the minimum number of times $f$ 
+needs to be compositionally applied to $n$ before equalling or passing $a$.} 
+In other words, count the length of the chain $\{n, f(n), f^{(2)}(n), \ldots\}$ that 
+terminates as soon as we reach/pass $a$.  For this process to work we need each chain link
+to be strictly less than the previous, \emph{i.e.} $f$ must be a \emph{contraction}.
 \begin{defn} \label{defn: contracting}
-	A function $f : \mathbb{N} \to \mathbb{N}$ is a \textit{contraction} if $f(n) \le n \ \forall n\in \mathbb{N}$. Given an $a \ge 1$, a contraction $f$ is \textit{strict above} $a$ if $n\ge f(n)+1 \ \forall n > a$. We further denote by $\contract$ the set of contractions and $\contract_a$ the set of contractions strict above $a$.
+	A function $f : \mathbb{N} \to \mathbb{N}$ is a \textit{contraction} if $\forall n.~ f(n) \le n$. Given an $a \ge 1$, a contraction $f$ is \textit{strict above} $a$ if $\forall n > a.~ n\ge f(n)+1$. We denote the set of contractions by $\contract$ and the set of contractions strict above $a$ by $\contract_a$.
 \end{defn}
 \begin{rem}
-	Similar to \cref{rem: repeatable-subset}, $\contract_s \subset \contract_t \ \forall s\le t$.
+	Similar to \cref{rem: repeatable-subset}, $\forall s\le t.~ \contract_s \subseteq \contract_t$.
 \end{rem}
-That leaves the question: what type of functions $F$ whose inverses are contractions? Wonderfully, we already have an answer:
+What kinds of functions have contractive inverses? Expansions, naturally:
 \begin{thm} \label{thm: expansion-inv-contraction}
-For all $a\in \mathbb{N}$, $F\in \repeatable_a \implies f\triangleq F^{-1}_+\in \contract_a$.
+For all $a\in \mathbb{N}$, $F\in \repeatable_a \implies F^{-1}_+ \in \contract_a$.
 \end{thm}
 \begin{proof}
-For all $n$, $F(n)\ge n \implies n \ge f(n)$, so $f$ is a contraction. If $n\ge a+1$, $n-1\ge a$, so $F(n-1)\ge n \implies n-1\ge f(n)$, so $f$ is strict above $a$.
+For all $n$, $F(n)\ge n \implies n \ge F^{-1}_+(n)$, so $F^{-1}_+$ is a contraction. If $n\ge a+1$, $n-1\ge a$, so $F(n-1)\ge n \implies n-1\ge F^{-1}_+(n)$, so $F^{-1}_+$ is strict above $a$.
 \end{proof}
 \Cref{thm: expansion-inv-contraction} shows a clear inverse relationship between expansions strict from some $a$ and contractions strict above that same $a$. It ensures that the inverse of an expansion's repeater not only exists but can be built from its own inverse, in a method formalized as \emph{countdown}.
-
-\begin{defn} \label{defn: informal-countdown}
-Let $f\in \contract_a$, the \textit{countdown to} $a$ of $f$, denoted by $\cdt{f}{a}(n)$, is the least number of times $f$ needs to be compositionally applied to $n$ to not stay above $a$.
-\begin{equation} \label{eq: countdown}
-\cdt{f}{a}( n ) \triangleq \min\{m: f^{(m)}(n)\le a \}
-\end{equation}
+\begin{defn} \label{defn: informal-countdown} \label{eq: countdown}
+Let $f\in \contract_a$, the \textit{countdown to} $a$ of $f$, denoted by $\cdt{f}{a}(n)$, is the minimum number of times $f$ needs to be applied to $n$ to reach/pass $a$: 
+$\min\{m: f^{(m)}(n)\le a \}$.
 \end{defn}
-
 Inspired by \eqref{eq: rf-upp-inv}, we provide a neat, algebraically manipulable logical sentence equivalent to \eqref{eq: countdown}, which is more useful later in our paper.
 \begin{col} \label{col: cdt-repeat}
-	$\forall a, \forall f\in \contract_{a}$, $\cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a \ \forall n, m$.
+Let $a \in \mathbb{N}$ and $f\in \contract_{a}$.  Then $\forall n, m.~ \cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a$.
 \end{col}
 \begin{proof}
-	Fix $a$ and $n$. It suffices to prove the $(\!\!\implies\!\!)$ direction, since the other is trivial. Suppose $\cdt{f}{a}(n)\le m$, we get $f^{(m)}(n)\le f^{(\cdt{f}{a}(n))}(n)$ due to $f\in \contract$, and $f^{(\cdt{f}{a}(n))}(n)\le a$ due to \cref{thm: cdt-repeat}, which completes the proof.
+	Fix $a$ and $n$. The interesting direction is $(\!\!\implies\!\!)$. Suppose $\cdt{f}{a}(n)\le m$, we get $f^{(m)}(n)\le f^{(\cdt{f}{a}(n))}(n)$ due to $f\in \contract$, and $f^{(\cdt{f}{a}(n))}(n)\le a$ due to \cref{eq: countdown}.
 \end{proof}
 %\begin{thm} \label{thm: upp-inv-cdt-rf}
 %	For all $a\in \mathbb{N}$, if $f\in \contract_{a}$ is the upper inverse of $F: \mathbb{N}\to \mathbb{N}$, then $\cdt{f}{a}$ is the upper inverse of $\rf{F}{a}$.
 %\end{thm}
-Another useful result it the recursive formula for \emph{countdown}.
+Another useful result is the recursive formula for \emph{countdown}.
 \begin{thm} \label{thm: cdt-recursion}
 	For all $a\in \mathbb{N}$ and $f\in \contract_{a}$, $\cdt{f}{a}$ satisfies:
 	\begin{equation*}
@@ -111,10 +108,8 @@ Another useful result it the recursive formula for \emph{countdown}.
 \begin{proof}
 By \cref{col: cdt-repeat}, $n\le a \iff f^{(0)}(n)\le a \iff \cdt{f}{a}(n)\le 0$, thus the case $n\le a$ is resolved. Suppose $n\ge a+1$ and let $\cdt{f}{a}(f(n)) = m$. We have $\cdt{f}{a}(n)\le 1+m \!\! \iff \!\! f^{(1+m)}(n) \le a$, which is equivalent to $f^{(m)}(f(n)) \le a$, which holds by $m$'s definition.
 
-Now since $n\ge a+1$, $\cdt{f}{a}(n)\ge 1$ by the above. Let $\cdt{f}{a}(n) = p+1$. It remains to prove $\cdt{f}{a}(f(n))\le p$, or $f^{(p)}(f(n))\le a$, or $f^{p+1}(n)\le a$, which holds by $p$'s definition.
+Now since $n\ge a+1$, $\cdt{f}{a}(n)\ge 1$ by the above. Let $p$ be \emph{s.t.} $\cdt{f}{a}(n) = p+1$. It remains to prove $\cdt{f}{a}(f(n))\le p$, or $f^{(p)}(f(n))\le a$, or $f^{(p+1)}(n)\le a$, which holds by $p$'s definition.
 \end{proof}
-
-While a repeater exists for all functions not necessarily repeatable, and hence can be written in Coq without much trouble, a \emph{countdown} only exists for certain functions, most conveniently contractions, hence proves a little more challenging for Coq. In the next section we give a formal computation using a \emph{countdown worker}, which terminates by Coq standards for all functions, while successfully produces the countdown when given a contraction.
 
 %\begin{thm} \label{thm: cdt-contr-0}
 %	For all $a\ge 1$, if $f\in \contract_{a}$, then $\cdt{f}{a}\ \in \contract_{c} \ \forall c$.
@@ -125,7 +120,10 @@ While a repeater exists for all functions not necessarily repeatable, and hence 
 %	Thus $f^{(n-1)}(n)\le 1 \le a$, a contradiction. The theorem then follows.
 %\end{proof}
 
-\subsection{Countdown Computation}
+\subsection{A Structurally Recursive Computation for Countdown}
+
+While a repeater exists for all functions not necessarily repeatable, and hence can be written in Coq without much trouble, a \emph{countdown} only exists for certain functions, most conveniently contractions, hence proves a little more challenging for Coq. In the next section we give a formal computation using a \emph{countdown worker}, which terminates by Coq standards for all functions, while successfully produces the countdown when given a contraction.
+
 
 \begin{defn} \label{defn: countdown-worker}
 For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown worker} to $a$ of $f$ is a function $\W\cdt{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
