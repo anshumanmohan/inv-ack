@@ -1,6 +1,7 @@
 Require Import Omega.
 Require Import prelims.
 Require Import repeater.
+Require Import increasing_expanding.
 Require Import inverse.
 
 
@@ -211,10 +212,12 @@ Qed.
    However I haven't cleaned that part in the old code yet *)
 
 Theorem countdown_repeater_upp_inverse : forall a f F,
-    contract_strict_above a f -> upp_inv_rel f F ->
+    expand_strict_from a F -> upp_inv_rel f F ->
     upp_inv_rel (countdown_to a f) (repeater_from a F).
 Proof.
   intros a f F Haf HfF n N.
+  apply (upp_inv_expand_contract_strict a f F) in Haf.
+  2: apply HfF.
   rewrite repeater_from_repeat.
   apply (upp_inv_repeat n _ _) in HfF.
   rewrite <- (HfF a N). apply countdown_repeat. apply Haf.

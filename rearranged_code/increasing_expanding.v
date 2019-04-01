@@ -1,5 +1,6 @@
 Require Import Omega.
 Require Import prelims.
+Require Import repeater.
 
 (* ****** INCREASING FUNCTIONS ****************** *)
 
@@ -86,3 +87,28 @@ Proof.
       [rewrite <- H | apply IHn in H0; apply (Nat.le_trans _ (S (f n)) _)];
       omega.
 Qed.
+
+(* ****** REPEATABLE FUNCTIONS ****************** *)
+
+Definition repeatable_from (a : nat) (f : nat -> nat) : Prop :=
+  increasing f /\ expand_strict_from a f.
+
+(* Simplified repeatable conditions *)
+Lemma repeatable_simpl :
+    forall a f, repeatable_from a f <-> (increasing f /\ a < f a).
+Proof.
+  intros a f. unfold repeatable_from.
+  split; intro; destruct H as [H0 H1]; split; try assumption.
+  - apply H1. trivial.
+  - apply (increasing_expanding_strict f a H0 H1).
+Qed.
+
+(* Repeatability is preserved through repeater *)
+Lemma repeater_repeatable :
+    forall a f, (1 <= a) -> repeatable_from a f -> repeatable_from 0 (repeater_from a f).
+Proof.
+  intros a f Ha Haf.
+  rewrite repeatable_simpl. simpl. split; try omega.
+  rewrite incr_S. intro. rewrite repeater_from_repeat.
+  destruct Haf as [Hf Haf].
+  Admitted.
