@@ -122,23 +122,22 @@ Now since $n\ge a+1$, $\cdt{f}{a}(n)\ge 1$ by the above. Let $p$ be \emph{s.t.} 
 
 \subsection{A Structurally Recursive Computation for Countdown}
 
-While a repeater exists for all functions not necessarily repeatable, and hence can be written in Coq without much trouble, a \emph{countdown} only exists for certain functions, most conveniently contractions, hence proves a little more challenging for Coq. In the next section we give a formal computation using a \emph{countdown worker}, which terminates by Coq standards for all functions, while successfully produces the countdown when given a contraction.
-
+The higher-order repeater function is well-defined for any input functions, even those not in $\repeatable_a$ (although for such functions it may not be useful), and so is easy to define
+in Coq as shown in \S\ref{sec: countdown-repeater}.  In contrast, a \emph{countdown} only exists 
+for certain functions, most conveniently contractions, which proves a little more challenging to
+encode into Coq. Our strategy is to define a \emph{countdown worker}, written with only
+structural recursion, and then prove that this worker computes the countdown when given a contraction.
 
 \begin{defn} \label{defn: countdown-worker}
-For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown worker} to $a$ of $f$ is a function $\W\cdt{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
+For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown worker} to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
 \begin{equation*}
-\W\cdt{f}{a}(n, b) = \begin{cases}
-0 & \text{if } b = 0 \vee n\le a \\ 1 +\W\cdt{f}{a}(f(n), b-1) & \text{if } b \ge 1 \wedge n > a
+\cdw{f}{a}(n, b) = \begin{cases}
+0 & \text{if } b = 0 \vee n\le a \\ 1 +\cdw{f}{a}(f(n), b-1) & \text{if } b \ge 1 \wedge n > a
 \end{cases}
 \end{equation*}
 \end{defn}
-
-Essentially, \emph{countdown worker} operates on two arguments, the \emph{true argument} $n$, which we wish to count down to $a$, and the \emph{budget} $b$,
-the maximum number of times we attempt to compositionally
-apply $f$ on the input before giving up. If the input goes below or equal $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n) \le a$, we return $k$ as the true countdown value. If the budget is exhausted, i.e. $b = 0$, while the result is still above $a$,
-we fail by returning the original budget. This defnition is somewhat clunky, but it can clearly be written as a Coq fixpoint, with the budget as the decreasing
-argument.
+Essentially, \emph{countdown worker} operates on two arguments, the \emph{true argument} $n$, which we wish to count down to $a$, and the \emph{budget} $b$, the maximum number of times we attempt 
+to compositionally apply $f$ on the input before giving up. If the input goes below or equal $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n) \le a$, we return the count $k$. If the budget is exhausted, i.e. $b = 0$, while the result is still above $a$, we fail by returning the original budget. This definition is workmanlike, but it can clearly be written as a Coq \li{Fixpoint}:
 \begin{lstlisting}
 Fixpoint countdown_worker a (f: nat->nat) n k :=
 match k with
@@ -148,9 +147,10 @@ match k with
           | _ => S (countdown_worker a f (f n) k') end
 end.
 \end{lstlisting}
-It is clear that with a sufficient budget, \emph{countdown worker} should compute the correct \emph{countdown} value when $f$ is a contraction strict from $a$. We will show that a budget of $n$ is sufficient, using several lemmas about \emph{countdown worker}. Let us use following Coq-compatible definition of \emph{countdown}, which is also used in our code base.
+When $f$ is a contraction strict from $a$, and given a sufficient budget, \emph{countdown worker} 
+will compute the correct \emph{countdown} value.  We will show that a budget of $n$ is sufficient, using several lemmas about \emph{countdown worker}, letting us define \emph{countdown} in Coq:
 \begin{defn} \label{defn: countdown}
-In this section, define  $\cdt{f}{a}(n) = \W\cdt{f}{a}(n, n) \ \forall n$.
+Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.
 \begin{lstlisting}
 Definition countdown_to a f n := countdown_worker a f n n.
 \end{lstlisting}
@@ -205,46 +205,42 @@ Definition countdown_to a f n := countdown_worker a f n n.
 %\end{proof}
 
 We start with a simple fact that \emph{countdown worker} returns $0$ when $n\le a$, which is intended for \emph{countdown}. It follows trivially from \cref{defn: countdown-worker}.
-
 \begin{lem} \label{lem: cdt-init}
-	For all $a, b\in \mathbb{N}$, $f : \mathbb{N}\to \mathbb{N}$ we have $\W\cdt{f}{a} (n, b) = 0 \ \forall n\le a$.
+	For all $a, b\in \mathbb{N}$, $f : \mathbb{N}\to \mathbb{N}$ we have $\forall n\le a.~\cdw{f}{a} (n, b) = 0$.
 \end{lem}
-
-The next lemma shows the internal working of \emph{countdown worker} at the $\text{i}^\text{th}$ recursive step, including the accumulated result $1+i$, the current input $f^{(1+i)}(n)$, and the current budget $b-i-1$.
-
+Next we show the internal working of \emph{countdown worker} at the $\text{i}^\text{th}$ recursive step, including the accumulated result $1+i$, the current input $f^{(1+i)}(n)$, and the current budget $b-i-1$.
 \begin{lem} \label{lem: cdt-intermediate}
 	For all $a, n, b, i\in \mathbb{N}$ and $f \in \contract$ such that $i < b$ and $a < f^{(i)}(n)$:
 	\begin{equation}  \label{eq: cdt-intermediate}
-	\W\cdt{f}{a}(n, b) = 1 + i + \W\cdt{f}{a}\left(f^{1+i}(n), b - i - 1\right)
+	\cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{1+i}(n), b - i - 1\right)
 	\end{equation}
 \end{lem}
 \begin{proof}
-	We proceed by induction on $i$. Define
+	Fix $a$. We proceed by induction on $i$. Define
 	\begin{equation*}
-	P(i) \triangleq \left(\W\cdt{f}{a}(n, b) = 1 + i + \W\cdt{f}{a}\left(f^{1+i}(n), b - i - 1\right) \ \forall b, n : b\ge i+1, f^{(i)}(n) > a\right)
+	P(i) ~~ \triangleq ~~ \forall b, n.~ b\ge i+1 \implies f^{(i)}(n) > a \implies \cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{1+i}(n), b - i - 1\right)
 	\end{equation*}
 	\begin{enumerate}[leftmargin=*]
 		\item \textit{Base case.} For $i = 0$, our goal $P(0)$ is:
-		$\W\cdt{f}{a}(n, b) = 1 + \W\cdt{f}{a}\left(f(n), b - 1\right)$
+		$\cdw{f}{a}(n, b) = 1 + \cdw{f}{a}\left(f(n), b - 1\right)$
 		where $b \ge 1, f(n)\ge a+1$, which is trivial.
-		\item \textit{Inductive step.} Suppose $P(i)$ has been proven. Then
+		\item \textit{Inductive step.} Suppose $P(i)$ has been proven. Then $P(i+1)$ is
 		\begin{equation*}
-		P(i+1) \triangleq \W\cdt{f}{a}(n, b) = 2 + i + \W\cdt{f}{a}\left( f^{2+i}(n), b - i - 2 \right)
+		\cdw{f}{a}(n, b) = 2 + i + \cdw{f}{a}\left( f^{2+i}(n), b - i - 2 \right)
 		\end{equation*}
 		for $b \ge i+2, f^{1+i}(n) \ge a+1$. This also implies $b\ge i+1$ and $\displaystyle f^{(i)}(n) \ge f^{1+i}(n)\ge a+1$ by $f\in \contract$, thus $P(i)$ holds. It suffices to prove:
 		\begin{equation*}
-		\W\cdt{f}{a}\left(f^{1+i}(n), b-i-1\right) = 1 + \W\cdt{f}{a}\left( f^{2+i}(n), b-i-2 \right)
+		\cdw{f}{a}\left(f^{1+i}(n), b-i-1\right) = 1 + \cdw{f}{a}\left( f^{2+i}(n), b-i-2 \right)
 		\end{equation*}
-		This is in fact $P(0)$ with $(b, n)$ substituted for $\left(b-i-1, f^{(1+i)}(n)\right)$. Since $f^{(1+i)}(n) \ge a+1$ and $b-i-1\ge 1$, the above holds and $P(i+1)$ follows. The proof is complete.\vspace*{-\baselineskip}
+		This is in fact $P(0)$ with $(b, n)$ substituted for $\left(b-i-1, f^{(1+i)}(n)\right)$. Since $f^{(1+i)}(n) \ge a+1$ and $b-i-1\ge 1$, the above holds and $P(i+1)$ follows. The proof is complete. \vspace*{-1.85em}
 	\end{enumerate}
 \end{proof}
-Now it is time to prove the correctness of \emph{countdown worker}.
-
+Now it is time to prove the correctness of \emph{countdown}, in other words that our computational \cref{defn: countdown} computes the value originally specified in \cref{defn: informal-countdown}.
 \begin{thm} \label{thm: cdt-repeat}
-	For all $a\in \mathbb{N}$ and $f\in \contract_{a}$, we have
-	\begin{equation} \label{eq: cdt-minimum}
-	\cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} \ \ \forall n
-	\end{equation}
+	For all $a\in \mathbb{N}$ and $f\in \contract_{a}$, we have 
+%	\begin{equation} \label{eq: cdt-minimum}
+$	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
+%	\end{equation}
 %	Or equivalently,
 %	\begin{equation} \label{eq: cdt-repeat}
 %	\cdt{f}{a}(n) \le k \iff f^{(k)}(n) \le a \ \ \forall n, k
@@ -257,18 +253,18 @@ Now it is time to prove the correctness of \emph{countdown worker}.
 %	$$ \cdt{f}{a}(n) \le l \implies f^{(l)}(n) \le a \ \ \forall l $$
 %	, which holds due to the fact $\displaystyle f^{(l)}(n) \le f^{(\cdt{f}{a}(n))}(n) \le a$ by $f\in \contract$. To prove $\eqref{eq: cdt-repeat}\implies \eqref{eq: cdt-minimum}$, it suffices to show $\displaystyle f^{(\cdt{f}{a}(n))}(n) \le a$
 %	, which in turn holds by substituting $k$ by $\cdt{f}{a}(n)$ in \eqref{eq: cdt-repeat}. Thus $\eqref{eq: cdt-minimum}\iff \eqref{eq: cdt-repeat}$ and we need only to prove \eqref{eq: cdt-minimum}.
-Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$ (we are also able prove its existence in Coq's baseline intuitionistic logic in our code base), then
+Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$ (we prove its existence in Coq's baseline intuitionistic logic in our code base), then
 	\begin{equation}
 	\left(f^{(m)}(n) \le a\right) \label{eq: cdt-repeat-tmp} \wedge
 	 \left(f^{(k)}(n)\le a \implies m \le k \ \ \forall k\right)
 	\end{equation}
-	It then suffices to prove $m = \cdt{f}{a}(n)$. Suppose firstly that $m = 0$. Then $n = f^{(0)}(n)\le a$, thus $\cdt{f}{a}(n) = \W\cdt{f}{a}(n, n) = 0 = m$ by \cref{lem: cdt-init}.
+	It then suffices to prove $m = \cdt{f}{a}(n)$. Suppose firstly that $m = 0$. Then $n = f^{(0)}(n)\le a$, thus $\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = 0 = m$ by \cref{lem: cdt-init}.
 	
 	Now consider $m > 0$. We would like to apply \cref{lem: cdt-intermediate} to get
 	\begin{equation*}
-	\cdt{f}{a}(n) = \W\cdt{f}{a}(n, n) = m + \W\cdt{f}{a}\left(f^{(m)}(n), n-m\right)
+	\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = m + \cdw{f}{a}\left(f^{(m)}(n), n-m\right),
 	\end{equation*}
-	, then use \cref{lem: cdt-init} over \eqref{eq: cdt-repeat-tmp}'s first conjunct to conclude that $\cdt{f}{a}(n) = m$. It then suffices to prove the premises of \cref{lem: cdt-intermediate}, namely $a < f^{(m-1)}(n)$ and $m-1 < n$.
+	then use \cref{lem: cdt-init} over \eqref{eq: cdt-repeat-tmp}'s first conjunct to conclude that $\cdt{f}{a}(n) = m$. It then suffices to prove the premises of \cref{lem: cdt-intermediate}, namely $a < f^{(m-1)}(n)$ and $m-1 < n$.
 	
 	The former follows by contradiction: if $f^{(m-1)}(n) \le a$, \eqref{eq: cdt-repeat-tmp}'s second conjunct implies $m\le m-1$, which is wrong for $m > 0$. The latter then easily follows by $f\in \contract_{a}$:
 	\begin{equation*}
@@ -276,7 +272,7 @@ Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, let $m = \min\big\{
 	\end{equation*}
 	Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
 \end{proof}
-Now, \eqref{eq: rf-upp-inv} and \cref{thm: cdt-repeat} are already enough to establish the correctness of the Coq definitions \emph{countdown} and \emph{countdown worker}. We thus unite \cref{defn: informal-countdown,defn: countdown} as they are equivalent. We wrap everything up in the following two theorems, one for $a\ge 1$ and one for $a = 0$.
+\cref{eq: rf-upp-inv} and \cref{thm: cdt-repeat} thus establish the correctness of the Coq definitions for \emph{countdown worker} and \emph{countdown}, justifying our unifying the equivalent \cref{defn: informal-countdown,defn: countdown}. We wrap everything together with the following theorem.
 \begin{thm} \label{thm: cdt-inv-rf}
 	For all $a$ and $F\in \repeatable_a$, $f\triangleq F^{-1}_+$ satisfies $f \in \contract_{a}$ and $\displaystyle \cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+$. Furthermore, if $a\ge 1$, $\rf{F}{a}\ \in \repeatable_0$ and $\cdt{f}{a}\ \in \contract_0$.
 \end{thm}
