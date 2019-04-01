@@ -160,11 +160,16 @@
 
 %\titlerunning{dummy short title}%optional, please use if title is longer than one line
 
-\author{John Q. Public}{Dummy University Computing Laboratory, Country}{}{}{}%TODO mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty. Please provide at least the name of the affiliation and the country. The full address is optional
+\author{Linh Tran}{National University of Singapore}{}{}{}%TODO mandatory, please use full name;
+\author{Anshuman Mohan}{National University of Singapore}{}{}{}%TODO mandatory, please use full name;
+\author{Aquinas Hobor}{National University of Singapore}{}{}{}
+%TODO mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty. Please provide at least the name of the affiliation and the country. The full address is optional
 
-\authorrunning{J.\,Q. Public}
+\ccsdesc{}
 
-\keywords{keyword1, keyword2, keyword3}%TODO mandatory; please add comma-separated list of keywords
+\authorrunning{L. Tran, A. Mohan, A. Hobor}
+
+\keywords{Ackermann, hyperoperations, Coq}%TODO mandatory; please add comma-separated list of keywords
 
 
 \begin{document}
@@ -238,6 +243,8 @@ of the inverse Ackermann function $\alpha(n)$.
 \section{Further Discussion}
 \label{sec: discussion}
 \input{discussion.tex}
+
+\subsection{Related Work}
 \input{related.tex}
 
 %% The Appendices part is started with the command \appendix;
@@ -250,8 +257,8 @@ of the inverse Ackermann function $\alpha(n)$.
 %% If you have bibdatabase file and want bibtex to generate the
 %% bibitems, please use
 %%
-\bibliographystyle{plainurl}% the mandatory bibstyle
-\bibliography{inv-ack.bib}
+%\bibliographystyle{plainurl}% the mandatory bibstyle
+\bibliography{inv-ack}
 
 %% else use the following coding to input the bibitems directly in the
 %% TeX file.
