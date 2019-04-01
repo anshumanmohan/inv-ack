@@ -53,10 +53,12 @@ Which hypers are in Rept?
 
 \subsection{Contractions and the countdown operation}
 
-This is the final step leading to the inverse hyperoperations, where we develop a way to compute the inverse of a function's repeater from its own inverse. Let $a\ge 1$ and $F\in \repeatable_a$ with inverse $f$, then $\rf{F}{a}\ \in \repeatable_0$ and has an inverse $f^*$. Fix $n$, for all $m$ we have
+Suppose that $F \in \repeatable_a$ for any $a \ge 1$ and let $f$ be $F$'s inverse, \emph{i.e.} $F^{-1}_{+}$.  Our goal is to use $f$ to compute an inverse to $F$'s repeater $\rf{F}{a}$.  Notice that this inverse must exist since $F \in \repeatable_a$ implies $\rf{F}{a} \in \repeatable_0$.  
+For reasons that will be clear momentarily, we write $\rf{F}{a}$'s inverse as $\cdt{f}{a}$.  Now
+fix $n$ and observe that for all $m$ we have
 \begin{equation} \label{eq: rf-upp-inv}
 \begin{aligned}
-f^*(n)\le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \iff f(n)\le F^{(m-1)}(a) \\
+\cdt{f}{a}(n)\le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \iff f(n)\le F^{(m-1)}(a) \\
 & \iff f^{(2)}(n)\le F^{(m-2)}(a) \iff \ldots \iff f^{(m)}(n)\le a
 \end{aligned}
 \end{equation}
