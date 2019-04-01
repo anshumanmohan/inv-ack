@@ -26,53 +26,56 @@ Require Import inverse.
 
 (* ****** 5.2. HYPEROPS ********************************* *)
 
-Fixpoint hyperop_original (n a b : nat) : nat :=
+Definition hyperop_init (a n : nat) : nat :=
+  match n with 0 => a | 1 => 0 | _ => 1 end.
+
+Fixpoint hyperop_original (a n b : nat) : nat :=
   match n with
-  | 0    => S b
-  | S n' =>
-    let fix hyperop_n (b0 : nat) :=
-        match b0 with
-        | 0 => match n' with 0 => a | 1 => 0 | _ => 1 end
-        | S b0' => hyperop_original n' a (hyperop_n b0') end
-    in hyperop_n b
+  | 0    => 1 + b
+  | S n' => let fix hyperop' (b : nat) :=
+            match b with
+            | 0 => hyperop_init a n'
+            | S b' => hyperop_original a n' (hyperop' b') 
+            end
+            in hyperop' b
   end.
 
-Fixpoint hyperop (n a b : nat) : nat :=
+Fixpoint hyperop (a n b : nat) : nat :=
   match n with
-  | 0 => S b
-  | S n' => repeater_from match n' with 0 => a | 1 => 0 | _ => 1 end (hyperop n' a) b
+  | 0 => 1 + b
+  | S n' => repeater_from (hyperop_init a n') (hyperop a n') b
   end.
 
 Theorem hyperop_correct :
   forall n a b, hyperop n a b = hyperop_original n a b.
 Proof.
-  intros n a. induction n; trivial.
+  intros a n. induction n; trivial.
   induction b; trivial.
   simpl in *. rewrite IHb. trivial.
 Qed.
 
 Theorem hyperop_recursion :
   forall n a b,
-    hyperop (S n) a (S b) = hyperop n a (hyperop (S n) a b).
+    hyperop a (S n) (S b) = hyperop a n (hyperop a (S n) b).
 Proof. trivial. Qed.
 
-Theorem hyperop_1 : forall a b, hyperop 1 a b = b + a.
+Theorem hyperop_1 : forall a b, hyperop a 1 b = b + a.
 Proof. intro a. induction b; [|rewrite hyperop_recursion, IHb]; trivial. Qed.
 
-Theorem hyperop_2 : forall a b, hyperop 2 a b = b * a.
+Theorem hyperop_2 : forall a b, hyperop a 2 b = b * a.
 Proof.
   intros a b. induction b; trivial.
   rewrite hyperop_recursion, IHb, hyperop_1. simpl; omega.
 Qed.
 
-Theorem hyperop_3 : forall a b, hyperop 3 a b = a ^ b.
+Theorem hyperop_3 : forall a b, hyperop a 3 b = a ^ b.
 Proof.
   intros a b. induction b; trivial.
   rewrite hyperop_recursion, IHb, hyperop_2.
   simpl. apply Nat.mul_comm.
 Qed.
 
-Theorem hyperop_n_1 : forall n a, 2 <= n -> hyperop n a 1 = a.
+Theorem hyperop_n_1 : forall n a, 2 <= n -> hyperop a n 1 = a.
 Proof.
   intros n a Hn. do 2 (destruct n; [omega|]).
   clear Hn. induction n; trivial.
@@ -96,7 +99,7 @@ Theorem knuth_arrow_recursion : forall n a b,
 Proof. trivial. Qed.
 
 Theorem knuth_arrow_hyperop : forall n a b,
-    knuth_arrow n a b = hyperop (S(S n)) a b.
+    knuth_arrow n a b = hyperop a (S(S n)) b.
 Proof.
   intros n a.
   induction n.
@@ -108,21 +111,21 @@ Qed.
 
 (* ****** 5.3. ACKERMANN FUNCS ********************************* *)
 
-Fixpoint ackermann_original (m n : nat) : nat :=
-  match m with
-   | 0 => 1 + n
-   | S m' => let fix ackermann' (n : nat) : nat :=
-             match n with
-              | 0 => ackermann_original m' 1
-              | S n' => ackermann_original m' (ackermann' n')
-             end
-             in ackermann' n
+Fixpoint ackermann_original (n m : nat) : nat :=
+  match n with
+  | 0    => 1 + m
+  | S n' => let fix ackermann' (m : nat) : nat :=
+              match m with
+              | 0 => ackermann_original n' 1
+              | S m' => ackermann_original n' (ackermann' m')
+              end
+            in ackermann' m
   end.
 
-Fixpoint ackermann m n :=
-  match m with
-  | 0 => S n
-  | S m' => repeater_from (ackermann m' 1) (ackermann m') n
+Fixpoint ackermann n m :=
+  match n with
+  | 0 => S m
+  | S n' => repeater_from (ackermann n' 1) (ackermann n') m
   end.
 
 Theorem ackermann_correct :
@@ -142,7 +145,7 @@ Theorem ackermann_recursion :
 Proof. trivial. Qed.
 
 Theorem ack_hyperop : forall m n,
-    3 + ackermann m n = hyperop m 2 (3 + n).
+    3 + ackermann m n = hyperop 2 m (3 + n).
 Proof.
   induction m; trivial.
   induction n.
@@ -208,7 +211,7 @@ Theorem inv_hyperop_correct :
   forall a n,
     2 <= a ->
     countdownable_to (match n with | 0 => a | 1 => 0 | _ => 1 end) (inv_hyperop n a) /\
-    upp_inv_rel (inv_hyperop n a) (hyperop n a).
+    upp_inv_rel (inv_hyperop n a) (hyperop a n).
 Proof.
   intros a n Ha.
   induction n.
@@ -219,8 +222,8 @@ Proof.
     - intros n N. rewrite inv_hyperop_1, hyperop_1. omega.
   }
   rewrite inv_hyperop_recursion.
-  replace (hyperop (S (S n)) a) with
-      (repeater_from (match n with | 0 => 0 | S _ => 1 end) (hyperop (S n) a))
+  replace (hyperop a (S (S n))) with
+      (repeater_from (match n with | 0 => 0 | S _ => 1 end) (hyperop a (S n)))
     by trivial.
   destruct IHn as [IHn0 IHn1].
   split; [|apply countdown_repeater_upp_inverse; trivial].
@@ -239,7 +242,7 @@ Proof.
 Qed.
 
 Corollary inv_hyperop_upp_inverse :
-  forall a n, (2 <= a) -> upp_inv_rel (inv_hyperop n a) (hyperop n a).
+  forall a n, (2 <= a) -> upp_inv_rel (inv_hyperop a n) (hyperop a n).
 Proof. apply inv_hyperop_correct. Qed.
 
 

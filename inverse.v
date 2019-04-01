@@ -20,6 +20,17 @@ Require Import countdown_repeater.
 Definition upp_inv_rel (f F : nat -> nat) : Prop :=
   forall n N, f N <= n <-> N <= F n.
 
+Lemma upp_inv_rel_fact: forall f F, upp_inv_rel f F ->
+  forall n, f (F n) = n.
+Proof.
+  intros.
+  assert (f (F n) <= n) by (now rewrite (H _ _)).
+  assert (F n <= F (f (F n))). {
+    rewrite <- (H _ _). trivial. }
+  assert (n <= f (F n) \/ n > f (F n)) by omega.
+  destruct H2. omega.
+  Admitted.
+
 (* f is the lower inverse of F: f N is the largest n such that F n <= N *)
 Definition low_inv_rel_from_a (a : nat) (f F : nat -> nat) : Prop :=
   forall n N, n <= f N <-> F n <= max a N.
