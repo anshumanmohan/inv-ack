@@ -76,7 +76,7 @@
 \lstdefinestyle{myStyle}{
 %	language=Coq,
     keywords={Definition,Fixpoint,match,with,end,let,in,fix},
-	basicstyle=\normalfont\footnotesize\tt, 
+	basicstyle=\normalfont\footnotesize\tt,
     keywordstyle=\color{blue},
 	stepnumber=1,
 	tabsize=2,
@@ -87,7 +87,7 @@
 	showstringspaces=false
 }
 %basicstyle=\fontsize{10}{11}\selectfont\ttfamily,
-    
+
 \lstset{style=myStyle}
 \makeatletter
 \newlength{\@mli}
@@ -97,9 +97,9 @@
 \makeatother
 \newcommand{\li}[1]{\ifmmode\mbox{\mli{#1}}\else\mbox{\lstinline/#1/}\fi}
 
-\newcommand{\cdt}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} \downarrow_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
+\newcommand{\cdt}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{C}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
 
-\newcommand{\rf}[2]{{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{(*)}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}}
+\newcommand{\rf}[2]{{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{R}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}}
 
 \newcommand{\invhyper}{I}
 \renewcommand{\angle}[1]{\langle #1\rangle}
@@ -203,9 +203,9 @@
 We implement in Gallina a hierarchy of functions that are an upper inverse
 of the {\color{magenta}usual Ackermann hierarchy}, and then use our inverse
 hierarchy to compute the inverse of the diagonal Ackermann
-function $\Ack(n)$. We show that our computation runs in linear time, 
-and that it is consistent with the usual definition 
-of the inverse Ackermann function $\alpha(n)$. 
+function $\Ack(n)$. We show that our computation runs in linear time,
+and that it is consistent with the usual definition
+of the inverse Ackermann function $\alpha(n)$.
 \end{abstract}
 
 %\end{frontmatter}
@@ -225,7 +225,7 @@ of the inverse Ackermann function $\alpha(n)$.
 \label{sec:countdown}
 \input{countdown.tex}
 
-\section{Division, Log, Log* and Inverse Hyperoperations}
+\section{Inverting the Hyperoperations and the Ackermann Function}
 \label{sec: inv-hyperop}
 \input{inv-hyperop.tex}
 

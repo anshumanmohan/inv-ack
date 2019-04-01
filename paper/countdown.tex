@@ -9,42 +9,56 @@ increasing, \emph{i.e.} $\forall n,m.~ n < m \Rightarrow F(n) < F(m)$, which is 
 \end{defn}
 We call this function the ``upper inverse'' because for strictly increasing functions like
 addition, multiplication, and exponentiation, the upper inverse is the ceiling of the 
-corresponding inverse functions on $\mathbb{R}$.  It is reasonable to wonder about the floor.
+corresponding inverse functions on $\mathbb{R}$.  {\color{red} It is reasonable to wonder about the floor.
 \begin{defn} \label{defn: lower_inverse}
 The converse \emph{lower inverse}, written $F^{-1}_{-}$,
 is defined as $\max\{m : F(m)\le n\}$.
 \end{defn}
 Even if $F$ strictly increases, as $a[n]$ does for every $a\ge 2$, notice that the lower inverse will be undefined for $n < F(0)$, \emph{e.g.} $\{m : a[n]m \le 0 \} = \varnothing$ for $n\ge 3$.
-Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower inverses in \cref{sec: discussion}. Since we focus on strictly increasing functions, we can characterize inverses more meaningfully as follows:
+Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower inverses in \cref{sec: discussion}. } Since we focus on strictly increasing functions, we can characterize inverses more meaningfully as follows:
 \begin{thm} \label{thm: upp-inverse-rel}
-	If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m : f(n)\le m \iff n \le F(m)$.
+	If $F:\mathbb{N}\to \mathbb{N}$ is {\color{red} strictly} increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
 \end{thm}
 \begin{proof}
-Fix $n$, the sentence $n\le F(m) \iff f(n)\le m \ \forall m$ implies: (1) $f(n)$ is a lower bound to $\{m: F(m)\ge n \}$ and (2) $f(n)$ is in the set itself since plugging in $m := f(n)$ will yield $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we immediately have $n\le F(m)\implies f(n)\le m \ \forall m$. Now for all $m \ge f(n)$, $F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus complete the proof.
+Fix $n$, the sentence $\forall m.~ n\le F(m) \iff f(n)\le m$ implies: (1) $f(n)$ is a lower bound to $\{m: F(m)\ge n \}$ and (2) $f(n)$ is in the set itself since plugging in $m := f(n)$ will yield $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we immediately have $\forall m.~n\le F(m)\implies f(n)\le m$. Now for all $m \ge f(n)$, $F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus complete the proof.
+\end{proof}
+\begin{col}
+If $F:\mathbb{N}\to \mathbb{N}$ is strictly increasing, then $F^{-1}_{+} \circ F$ is
+the identity function.
+\end{col}
+\begin{proof}
+By ($\Leftarrow$) of \ref{thm: upp-inverse-rel}, $F(n) \le F(n)$ implies 
+$(F^{-1}_{+} \circ F)(n) \le n$.  By ($\Rightarrow$), $(F^{-1}_{+} \circ F)(n) \le (F^{-1}_{+} \circ F)(n)$ implies $F(n) \le F \big((F^{-1}_{+} \circ F)(n)\big)$; $F$ is strictly increasing, so $n \le (F^{-1}_{+} \circ F)(n)$.
 \end{proof}
 
-{\color{red}
-We will need to know that strict increasing-ness is preserved through \emph{repeater}. Suppose for some $a$ and strictly increasing $F$, the function $\rf{F}{a}\ $ is strictly increasing, then the chain $a$, $F(a)$, $F^{(2)}(a)$, \ldots has to be strictly increasing, which leads to the notion of \emph{expansions} and \emph{strict expansions}.
+Our setup for inverse requires increasing functions, and our definitions for 
+hyperoperations/Ackermann use repeater.  Suppose $F$ is a strictly increasing function.
+For a given $a$, is $\rf{F}{a}$ strictly increasing?  No!  For example, the identity function
+$\mathsf{id}$ is strictly increasing, but $\rf{\mathsf{id}}{a}(n) = (\mathsf{id} \circ \ldots \circ \mathsf{id}) (a) = a$ is a constant function.  We need a little more.
 \begin{defn}
 Given $a\in \mathbb{N}$, a function $F:\mathbb{N}\to\mathbb{N}$ is an \emph{expansion} if $\forall n.~ F(n)\ge n$. An expansion $F$ is \emph{strict from} $a$ if $\forall n \ge a.~ F(n)\ge n+1$.
 \end{defn}
-Note that a strictly increasing function on $\mathbb{N}$ is already an expansion, though not necessarily strict. Conveniently, if $a\ge 1$ and $F$ is an expansion strict from $a$, $\rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$ $\forall n$, so $\rf{F}{a}\ $ is itself an expansion strict from $0$. Collectively, we can refer to strictly increasing $f$ as \emph{repeatable} from $a\ge 1$ if they are also strict expansions from $a$, so that repeatability is preserved through \emph{repeater from} $a$.
-
-
+If $a\ge 1$ and $F$ is an expansion strict from $a$, $\forall n.~ \rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$, so $\rf{F}{a} \ $ is itself an expansion strict from $0$. We refer to strictly increasing $f$ as \emph{repeatable} from $a\ge 1$ if they are also strict expansions from $a$, so that repeatability is preserved through $\rf{F}{a}$.
 \begin{defn}
 We denote the set of functions repeatable from $a$ as $\repeatable_a$.
 \end{defn}
 \begin{rem} \label{rem: repeatable-subset}
-	It is trivial to see that $\forall s, t.~ s \le t \Rightarrow \repeatable_s \subset \repeatable_t $.
+	It is trivial to see that $\forall s, t.~ s \le t \Rightarrow \repeatable_s \subseteq \repeatable_t $.
+\end{rem}
+{\color{red}
+\begin{rem}
+Which hypers are in Rept?
 \end{rem}
 }
 
 \subsection{Contractions and the countdown operation}
 
-This is the final step leading to the inverse hyperoperations, where we develop a way to compute the inverse of a function's repeater from its own inverse. Let $a\ge 1$ and $F\in \repeatable_a$ with inverse $f$, then $\rf{F}{a}\ \in \repeatable_0$ and has an inverse $f^*$. Fix $n$, for all $m$ we have
+Suppose that $F \in \repeatable_a$ for any $a \ge 1$ and let $f$ be $F$'s inverse, \emph{i.e.} $F^{-1}_{+}$.  Our goal is to use $f$ to compute an inverse to $F$'s repeater $\rf{F}{a}$.  Notice that this inverse must exist since $F \in \repeatable_a$ implies $\rf{F}{a} \in \repeatable_0$.  
+For reasons that will be clear momentarily, we write $\rf{F}{a}$'s inverse as $\cdt{f}{a}$.  Now
+fix $n$ and observe that for all $m$ we have
 \begin{equation} \label{eq: rf-upp-inv}
 \begin{aligned}
-f^*(n)\le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \iff f(n)\le F^{(m-1)}(a) \\
+\cdt{f}{a}(n)\le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \iff f(n)\le F^{(m-1)}(a) \\
 & \iff f^{(2)}(n)\le F^{(m-2)}(a) \iff \ldots \iff f^{(m)}(n)\le a
 \end{aligned}
 \end{equation}
