@@ -42,7 +42,7 @@ From \cref{lem: compose-runtime} and \cref{lem: cdt-runtime}, the following lemm
 	\forall i.~\runtime\big(\alpha_{i+1}, n\big) = \sum_{k=0}^{\alpha_{i+1}(n)}\runtime\left(\alpha_i, \alpha_i^{(k)}(n)\right) + \Theta\big(\alpha_{i+1}(n)\big)
 	\end{equation*}
 \end{lem}
-This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i, n\big)$. If there is some $i$ such that $\runtime\big(\alpha_i, n\big) = \Theta\big(n^2\big)$, each function in the hierarchy will take at least $\Omega\big(n^2\big)$ to compute {\color{red}from} $\alpha_i$, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}. The next lemma shows that $i = 2$ suffices.
+This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i, n\big)$. If there is some $i$ such that $\runtime\big(\alpha_i, n\big) = \Theta\big(n^2\big)$, each function in the hierarchy will take at least $\Omega\big(n^2\big)$ to compute from $\alpha_i$, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}. The next lemma shows that $i = 2$ suffices.
 \begin{lem}
 	Per \cref{defn: inv-ack-hier}, $\runtime\big(\alpha_2, n\big) = \Theta\big(n^2\big)$
 \end{lem}

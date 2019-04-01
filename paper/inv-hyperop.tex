@@ -255,6 +255,23 @@ We are at last ready for a strategy for computing the inverse Ackermann function
 	where the last equality follows from the recursive rule.
 \end{proof}
 
+The code to compute the inverse Ackermann function in Gallina follows.
+\begin{lstlisting}
+Fixpoint inv_ack_worker (f : nat -> nat) (n k bud : nat) : nat :=
+  match bud with
+  | 0 => 0
+  | S bud' =>
+    match (n - k) with
+    | 0 => k
+    | S _ =>
+      let g := (countdown_to 1 f) in 
+      inv_ack_worker (compose g f) (g n) (S k) bud'
+    end
+  end.
+  
+Definition inv_ack n :=
+  match (alpha 0) with f => inv_ack_worker f (f n) 0 n end.
+\end{lstlisting}
 
 % OLD METHOD FOR INVERSE ACKERMANN
 

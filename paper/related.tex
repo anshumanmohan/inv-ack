@@ -6,84 +6,105 @@
 \paragraph*{Historical notes}
 % This creates an unnumbered paragraph. ie a smaller, less flashy, header
 
-\marginpar{\tiny \color{blue} Multiplication, Division, Algorisms. Representations of numbers (Egyption fractions/Roman numerals/Decimal/Zero). Exponentiation, Logarithm, Tetration, Log*, ...   Hyperoperations, Knuth Arrows.  Inverses as a separate notation? Mechanizations of the above?}
+%\marginpar{\tiny \color{blue} Multiplication, Division, Algorisms. Representations of numbers (Egyption fractions/Roman numerals/Decimal/Zero). Exponentiation, Logarithm, Tetration, Log*, ...   Hyperoperations, Knuth Arrows.  Inverses as a separate notation? Mechanizations of the above?}
 The operations successor, predecessor, addition, and subtraction have
-been integral to counting since time immemorial. The ancient Egyptian 
-number system used glyphs denoting $1$, $10$, $100$, \emph{etc}, 
+been integral to counting forever. The ancient Egyptian
+number system used glyphs denoting $1$, $10$, $100$, \emph{etc},
 and then expressed numbers using additive combinations of these.
-The Roman system is similar, but  
-it combines glyphs using both addition and subtraction. This buys brevity, 
+The Roman system is similar, but
+it combines glyphs using both addition and subtraction. This buys brevity,
 since \emph{e.g.} $9_{\text{roman}}$ is two characters, ``one less than ten'',
-whereas $9_{\text{egyptian}}$ is nine characters, a series of nine $1$s. 
-The ancient Babylonian system was, just like the modern Hindu-Arabic decimal system,
-an \emph{algorism}: the place value of a glyph determined how many times it would 
-be counted towards the number being represented. 
-The Babylonians operated in 
-base $60$, and so \emph{e.g.} a three-gylph number $abc_{\text{babylonian}}$ could 
-be parsed as $a \times 3600 + b \times 60 + c$. {\color{magenta}Sadly they lacked 
-a radix point, and so 
-$a \times 216000 + b \times 3600 + c \times 60$ and $a \times 60 + b + c \div 60$ 
-were also reasonable interpretations.} In return for incorporating the operations
-multiplication and division, they enjoyed great brevity indeed: a number $n$ could 
+whereas $9_{\text{egyptian}}$ is nine characters, a series of nine $1$s.
+The ancient Babylonian system was similar to the modern Hindu-Arabic decimal system,
+an \emph{algorism}: the place value of a glyph determined how many times it would
+be counted towards the number being represented.
+The Babylonians operated in
+base $60$, and so \emph{e.g.} a three-gylph number $abc_{\text{babylonian}}$ could
+be parsed as $a \times 3600 + b \times 60 + c$. Sadly they lacked
+a radix point, and so
+$a \times 216000 + b \times 3600 + c \times 60$ and $a \times 60 + b + c \div 60$
+were also reasonable interpretations. In return for incorporating the operations
+multiplication and division, they enjoyed great brevity: a number $n$ could
 be represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
 
 %\subsection*{The Ackermann function and its inverse.}
 % This creates an unnumbered subsection
 
 \paragraph*{The Ackermann function and its inverse}
-\marginpar{\tiny \color{blue} Several variations. Original. Peter. 
-Primitive recursive. Hilbert? Ackermann is used in CS. Formalizations that use or define it. The grit of sand. The bug.}
+%\marginpar{\tiny \color{blue} Several variations. Original. Peter.
+%Primitive recursive. Hilbert? Ackermann is used in CS. Formalizations that use or define it. The grit of sand. The bug.}
 % https://projecteuclid.org/download/pdf_1/euclid.bams/1183512393
 % https://www.cs.princeton.edu/~chazelle/pubs/mst.pdf
-{\color{magenta}A brief sentence explaining what a primitive recursive function is and 
-why total computable functions tend to be primitive recursive.}
-The orignal three-variable Ackermann function was discovered by 
-Wilhelm Ackermann as an example of a total computable function that 
-is not primitive recursive \cite{ackermann}. 
+%{\color{magenta}A brief sentence explaining what a primitive recursive function is and
+%why total computable functions tend to be primitive recursive.}
+The original three-variable Ackermann function was discovered by
+Wilhelm Ackermann as an example of a total computable function that
+is not primitive recursive~\cite{ackermann}.
 It grows tremendously fast, but does not have the higher-order
 relation to repeated application and hyperoperation that we have been studying in
-this paper. Those properties emerged thanks to refinements by Rózsa Péter \cite{peter},
-and it is her variant that computer scientists commonly care about.
+this paper. Those properties emerged thanks to refinements by Rózsa Péter~\cite{peter},
+and it is her variant, usually called the Ackermann-Péter function, 
+that computer scientists commonly care about.
 
-\marginpar{\tiny \color{blue}implemented with the heuristic 
-rules of \emph{path compression} and \emph{weighted union}}
-The Ackermann-Péter function is mostly a toy curiosity, but its inverse 
-occasionally features in the time bound analyses of algorithms. 
+%\marginpar{\tiny \color{blue}implemented with }
+The inverse Ackermann
+features in the time bound analyses of several algorithms.
 Tarjan \cite{tarjan} showed that the union-find data structure
-takes time $O(m\cdot\alpha(n))$ for a sequence of $m$ operations
+takes time $O(m\cdot\alpha(m,n))$ for a sequence of $m$ operations
 involving no more than $n$ elements. 
+%Tarjan \cite{tarjan} showed that the union-find data structure
+%with the optimisations of \emph{path compression} and \emph{weighted union}
+%takes time $O(m\cdot\alpha(n))$ for a sequence of $m$ operations
+%involving no more than $n$ elements.
 Chazelle \cite{chazelle} showed that the minimum spanning tree
-of a connected graph with $n$ vertices and $m$ edges 
+of a connected graph with $n$ vertices and $m$ edges
 can be found in time $O(m\cdot\alpha(m,n))$.
 
 % http://gallium.inria.fr/~fpottier/publis/chargueraud-pottier-uf-sltc.pdf
 % http://gallium.inria.fr/~agueneau/publis/gueneau-chargueraud-pottier-coq-bigO.pdf
 % https://scholar.google.com.sg/scholar?start=0&hl=en&as_sdt=2005&sciodt=0,5&cites=6488308509111085774&scipsc=
 Moving on to mechanized verifications, Charguéraud and Pottier,
-\cite{charpott} later joined by Guéneau \cite{gueneauetal}, 
+\cite{charpott} later joined by Guéneau \cite{gueneauetal},
 extended Separation Logic with the notion of ``time credits'',
-formalized the~$O$ notation in Coq, 
+formalized the~$O$ notation in Coq,
 and gave a proof in Coq that simultaneously verifies the correctness
-and the time complexity of the union-find data structure. Several others 
-\cite{others2, others4, others3, others1} 
+and the time complexity of the union-find data structure. Several others
+\cite{others2, others4, others3, others1}
 have explored the idea of checking bounds on the resources
 used by programs formally in proof assistants such as Coq, Isabelle/HOL, and Why3.
-{\color{magenta}This is a direction
-we intend to explore to formally check the $O(n)$ bound
-of the inverse Ackermann function.}
 
-Cite: Ackermann, Peter, Tarjan, Chazelle, Pottier? Anything in HOL? Anything in SSReflect?
+Every pearl starts with a grain of sand.  We had the benefit of two: a website and slide deck 
+discussing the inverse Ackermann function by Nivasch~\cite{nivasch} and Seidel~\cite{seidel},
+respectively.  They proposed a definition of the inverse Ackermann essentially in terms of
+the inverse hyperoperations.  Unfortunately, their technique is unsound, since it diverges from
+the true Ackermann inverse when the inputs grow sufficiently large.  Our technique is verified in Coq.
 
-\paragraph*{Alternative strategies}
+\paragraph*{Conclusion}
+We have implemented a hierarchy of functions that calculate the upper inverses
+to the Ackermann/hyperoperation hierarchy and used these inverses
+to compute the inverse of the diagonal Ackermann function $\Ack(n)$.
+Our functions are structurally recursive, and thus immediately accepted by Coq,
+and we have shown that they run in linear time.
+%, and that it is consistent with
+%the usual definition of the inverse Ackermann function $\alpha(n)$.
+
+
+%{\color{magenta}This is a direction
+%we intend to explore to formally check the $O(n)$ bound
+%of the inverse Ackermann function.}
+
+%Cite: Ackermann, Peter, Tarjan, Chazelle, Pottier? Anything in HOL? Anything in SSReflect?
+
+%\paragraph*{Alternative strategies}
 
 
 % Other ways to skin the cat.
 % - You can define division via mutual recursion (subtraction and division simultaenously).
-% - The inverse ackerman-lite by Anshuman.  
-% - The automata technique. 
+% - The inverse ackerman-lite by Anshuman.
+% - The automata technique.
 % - Binary representations
 % - Division by constant, etc. is simpler.
-% - Custom termination metrics.  Gas. 
+% - Custom termination metrics.  Gas.
 % - Space, tail recursion, time?
 
-\paragraph*{Other?}
+%\paragraph*{Other?}
