@@ -1,6 +1,7 @@
-In this section, we use \emph{countdown} to define division, logarithm,
-iterated logarithm, and then the inverse hyperoperation hierarchy.
-We then modify the inverse hyperoperations to sketch an inverse 
+In this section, we use \emph{countdown} to define the inverse 
+hyperoperation hierarchy, which features elegant new definitions of
+division, $\log$, and $\log^{*}$. 
+We then modify the inverse hyperoperation hierarchy to arrive at the inverse 
 Ackermann hierarchy.
 
 \subsection{The Inverse Hyperoperations, including Division, Log, and Log*}
@@ -83,33 +84,43 @@ $\forall a \ge 1, a\angle{1} \in \contract_1$.
 \end{col}}%end hide
 %Now we are ready to prove the correctness of the inverse hyperoperations.
 Note that $a\angle{n}b$ is a total function, but that its behavior is not used in practice for $a = 0$ when $n \ge 2$ and for $a=1$ when $n \ge 3$.  For the values
-we do care about, we have:
+we do care about, we have our inverse:
 \begin{thm} \label{thm: inv-hyperop-correct}
 When $n\le 1$, $n \le 2 \wedge a\ge 1$, or $a\ge 2$, then 
 $a\angle{n} = \left(a[n]\right)^{-1}_+$.
 \end{thm}
 \begin{proof}
-Let $a_0 = a$, $a_1 = 0$, $a_n = 1 \ \forall n\ge 2$. Define
+$\forall n \ge 2.~$ let $a_0 = a, a_1 = 0, a_n = 1$. Define
 \begin{equation*}
 P(n) \triangleq  \left(a[n] \in \repeatable_{a_n}\right)\ \text{ and } \
 Q(n) \triangleq  \left(a\angle{n} = \left(a[n]\right)^{-1}_+ \right)
 \end{equation*}
-Our goals are $Q(0), Q(1) \ \forall a$, $Q(2) \ \forall a\ge 1$ and $Q(n) \ \forall n \ \forall a\ge 2$. Note that for all $n$, $a\angle{n+1} = \cdt{a\angle{n}}{a_n}$ and $a[n+1] = \rf{a[n]}{a_n}\ $. By \cref{thm: cdt-inv-rf},
-\begin{align}
-P(n) \to Q(n) \to Q(n+1) \ \forall n \ \forall a \label{eq: tmp-induction-1} \\
-(a_n\ge 1) \to P(n) \to P(n+1) \ \forall n \label{eq: tmp-induction-2}
-\end{align}
-For all $a$, $P(0) \equiv \left(\lambda b.(b+1)\in \repeatable_a \right)$ and
-\begin{equation*}
-Q(0) \equiv \left(a\angle{0} = \left(a[0]\right)^{-1}_+\right) \equiv \left(b-1\le c \iff b\le c+1 \ \forall b, c \right)
-\end{equation*}
-, which are both trivial. By \eqref{eq: tmp-induction-1}, $Q(1)$ also holds, which completes our first goal. Now suppose $a\ge 1$, $a_0 = a\ge 1$, so $P(1)$ holds by $P(0)$ and \eqref{eq: tmp-induction-2}. By $Q(1)$ and \eqref{eq: tmp-induction-1}, $Q(2)$ also holds, which completes the second goal.
+We have three goals:
+$\forall a.~ Q(0) \wedge Q(1)$, 
+$\forall a \ge 1.~ Q(2)$, and 
+$\forall a \ge 2.~ Q(n)$. 
+Note that $\forall n.~ a\angle{n+1} = \cdt{a\angle{n}}{a_n}$ and $a[n+1] = \rf{a[n]}{a_n}$. By \cref{thm: cdt-inv-rf},
 
-Suppose $a\ge 2$ and consider the third goal, by \eqref{eq: tmp-induction-1} and $Q(0)$, it suffices to show $P(n)$ for all $n$. By \eqref{eq: tmp-induction-2} and the fact $a_n\ge 1 \ \forall n\neq 1$, it remains to show $P(2)$, which is equivalent to
+\noindent\begin{minipage}{.4\linewidth}
+\begin{equation} 
+P(n) \Rightarrow Q(n) \Rightarrow Q(n+1) \label{eq: tmp-induction-1} 
+\end{equation} 
+\end{minipage}
+\begin{minipage}{.6\linewidth}
+\begin{equation} 
+\qquad a_{n} \ge 1 \Rightarrow P(n) \Rightarrow P(n+1) \label{eq: tmp-induction-2} 
+\end{equation}
+\end{minipage}
+For the first goal, $P(0) \iff \lambda b.(b+1)\in \repeatable_a$ and
+$Q(0) \iff a\angle{0} = \left(a[0]\right)^{-1}_{+} \iff (b-1\le c \iff b\le c+1)$. 
+These are both straightforward. Then, $Q(1)$ holds by \eqref{eq: tmp-induction-1}. In the second goal, we have $a \ge 1$. 
+$P(1)$ holds by $P(0)$ and \eqref{eq: tmp-induction-2}. 
+Then, $Q(2)$ holds by $Q(1)$ and \eqref{eq: tmp-induction-1}.
+In the third goal, we have $a\ge 2$, and, using \eqref{eq: tmp-induction-1} and $Q(0)$, the goal reduces to $P(n)$. Using \eqref{eq: tmp-induction-2} and the fact that $\forall n \neq 1.~a_n\ge 1$, the goal reduces to $P(2)$. This is equivalent to:
 \begin{equation*}
-a[2]\in \repeatable_0 \iff (ab < ac \ \forall b < c) \wedge (ab \ge b+1 \ \forall b\ge 1)
+a[2]\in \repeatable_0 \iff \forall b < c.~ab < ac \quad \wedge \quad \forall b \ge 1.~ab \ge b+1\text{,}
 \end{equation*}
-, which is trivial for $a\ge 2$. By induction, the third goal and the proof are complete.
+which is trivial for $a\ge 2$. Induction {\color{red} on blah} gives us the third goal and thus the proof.
 \end{proof}
 %With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^*$, as well as the whole inverse hyperoperation hierarchy.
 \begin{rem}
@@ -141,27 +152,32 @@ Note that the functions $\log_a b$, and $\log^*_a b$ are not in the Coq Standard
 \subsection{The Inverse Ackermann hierarchy}
 
 % NEW METHOD FOR INVERSE ACKERMANN
-Using countdown, we can effectively build an inverse Ackermann hierarchy, where each level $\alpha_i$ is the inverse of the level $\Ack_i$. Since for each $n$, $\Ack_{i+1} = \rf{\Ack_i}{\Ack_i(1)}$, the recursive rule $\alpha_{i+1} \triangleq \cdt{\alpha_i}{\Ack_i(1)}$ seems tempting. However, that rule stills depends on $\Ack_i$, rather than only on $\alpha_i$, which makes it ineffective. Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\big)^{-1}_+$ and $\alpha_{i+1} = \big(A_{i+1}\big)^{-1}_+$. {\color{magenta}Then for all $n, m$}, $A_{i+1}(m) = \big(A_i\big)^{(m)}\big(A_i(1)\big)$, so
+We can use \emph{countdown} to build the inverse Ackermann hierarchy, where each 
+level $\alpha_i$ is the inverse to the level $\Ack_i$. 
+Since we know that $\Ack_{i+1} = \rf{\Ack_i}{\Ack_i(1)}$, the recursive 
+rule $\alpha_{i+1} \triangleq \cdt{\alpha_i}{\Ack_i(1)}$ is tempting. 
+However, that appoach is inviable because it still depends on $\Ack_i$. 
+Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\big)^{-1}_+$ and $\alpha_{i+1} = \big(\Ack_{i+1}\big)^{-1}_+$. Then $\forall m.~\Ack_{i+1}(m) = \big(\Ack_{i}\big)^{(m)} \big(\Ack_{i}(1)\big)$. We then have:
 \begin{equation} \label{eq: inv-ack-hier-derive}
 \alpha_{i+1}(n)\le m \iff n\le \big(A_i\big)^{(m+1)}(1) \iff \big(\alpha_i\big)^{(m+1)}(n) \le 1
 \end{equation}
-This is equivalent to $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\big\}$, or $\alpha_{i+1}(n) = \cdt{\alpha_i}{1}\big(\alpha_i(n)\big)$. We can thus define the following inverse Ackermann hierarchy.
+This is equivalent to $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\big\}$, or $\alpha_{i+1}(n) = \cdt{\alpha_i}{1}\big(\alpha_i(n)\big)$. We can thus define the following inverse Ackermann hierarchy:
 \begin{defn} \label{defn: inv-ack-hier}
-	The \emph{inverse Ackermann hierarchy} $\{\alpha_i\}_{i=0}^{n}$ is a series of functions $\mathbb{N}\to \mathbb{N}$ such that
+	The inverse Ackermann hierarchy $\alpha_i$ is defined as:
 \begin{equation*}
-	\alpha_i = \begin{cases}
+	\alpha_i \triangleq \begin{cases}
 	\lambda n.(n - 1) & \text{if } i = 0
 	\\ \big(\cdt{\alpha_{i-1}}{1}\big)\circ \alpha_{i-1} & \text{if } i\ge 1 \end{cases}
 \end{equation*}
 \end{defn}
-Their correctness have already been established in \eqref{eq: inv-ack-hier-derive}. We can then provide another computation for the inverse Ackermann function.
+Its correctness has already been established in \eqref{eq: inv-ack-hier-derive}. We can then provide another computation for the inverse Ackermann function:
 \begin{thm} \label{thm: inv-ack-hier-correct}
 	%For all $n, k$, $n\le \Ack(k, k) \!\!\iff \!\! \alpha_k(n)\le k$. Thus
-	$\alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}$.
+	$\alpha(n) \triangleq \min\big\{k : \alpha_k(n)\le k \big\}$.
 \end{thm}
 The following Coq-complied recursive function can compute $\alpha$ effectively.
 \begin{defn} \label{defn: inv-ack-worker}
-	The \emph{inverse Ackermann worker} is a function $\W\alpha\ : (\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
+	The inverse Ackermann worker is a function $\W\alpha$: %(\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
 	\begin{equation} \label{eq: inv-ack-worker-recursion}
 	\W\alpha(f, n, k, b) = \begin{cases}
 	k & \text{if } b = 0 \vee n\le k \\ \W\alpha(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k+1, b-1) & \text{if } b \ge 1 \wedge n \ge k+1
@@ -171,16 +187,39 @@ The following Coq-complied recursive function can compute $\alpha$ effectively.
 {\color{magenta}The function $\W\alpha$ takes a function $f$ and pretends it was the first level of the inverse Ackermann hierarchy. It then keeps composing $\cdt{f}{1}\ $ to $f$, supposedly arrives at the $\text{m}^{\text{th}}$-level in the hierarchy after the $\text{m}^{\text{th}}$-recursive step, until the budget $b$ is exhausted or $n\le k$, and will output $k$.}
 
 {\color{blue} Observe that when given the arguments $\big(\alpha_i, \alpha_i(n), i, b\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\W\alpha$ will take on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b-1\big)$ at the next recursive call. Thus if initial arguments involve $\alpha_0$, $\alpha_0(n)$, $0$ and a sufficient budget $b$, $\W\alpha$ will recursively move through the chain $\big\{\alpha_i(n)\big\}$ and terminate at a point $k$ where $\alpha_k(n)\le k$.}
-The following theorem formalizes a setting that for $\W\alpha$ to work.
+The following theorem formalizes a setting for $\W\alpha$ to work.
 \begin{thm} \label{thm: inv-ack-worker-correct}
 	$\W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{thm}
-Here, we give $\W\alpha$ a budget of $n$ and prove that it is sufficient for $\W\alpha$ to arrive at the correct value for $\alpha(n)$. We start with the following lemma.
+We want to show that $\W\alpha$ can correctly compute $\alpha(n)$
+given a budget of $n$. 
+We start with the following lemma.
+
 \begin{lem} \label{lem: inv-ack-worker-intermediate}
 	For all $n, b, k$ such that $k+1\le \min\big\{b, \alpha_k(n)\big\}$, \begin{equation*}
 	\W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
 	\end{equation*}
 \end{lem}
+\begin{proof}
+	 We prove $\forall k.~P(k)$ by induction, where
+	 \begin{equation*}
+	 \begin{aligned}
+	 P(k) \quad \triangleq \quad & \alpha_k(n)\ge k+1 \Rightarrow b\ge k+1 \\ & \Rightarrow \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+	 \end{aligned}
+	 \end{equation*}
+	\begin{enumerate}[leftmargin=*]
+		\item \emph{Base case}. $ \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\cdt{\big(\alpha_0}{1}\big)\circ \alpha_0, \cdt{\alpha_0}{1}\big(\alpha_0(n)\big), 1, b - 1\big) $ by
+		\eqref{eq: inv-ack-worker-recursion} with $b\ge 1$ and $\alpha_0(n)\le 1$. Since $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$ per \cref{defn: inv-ack-hier}, $P(0)$ holds.
+		
+		\item \emph{Inductive step.} Suppose $\alpha_{k+1}(n)\ge k+2$ and $b\ge k+2$. Then $\alpha_k(n)\ge k+1$ and $b\ge k+1$, so $P(k)$ applies. It suffices to show
+		\begin{equation*}
+		\W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+		= \W\alpha\big(\alpha_{k+2}, \alpha_{k+2}(n), k+2, b-k-2\big)
+		\end{equation*}
+		Per \cref{defn: inv-ack-hier}, $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this is just \eqref{eq: inv-ack-worker-recursion} with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$, so $P(k+1)$ holds. The proof is complete by induction {\color{red} on blah}.\vspace*{-\baselineskip}
+	\end{enumerate}
+\end{proof}
+{\color{red}
 \begin{proof}
 	 We prove $P(k) \ \forall k$ by induction, where
 	 \begin{equation*}
@@ -199,7 +238,7 @@ Here, we give $\W\alpha$ a budget of $n$ and prove that it is sufficient for $\W
 		\end{equation*}
 		Per \cref{defn: inv-ack-hier}, $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this is just \eqref{eq: inv-ack-worker-recursion} with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$, so $P(k+1)$ holds. The proof is complete by induction.\vspace*{-\baselineskip}
 	\end{enumerate}
-\end{proof}
+\end{proof}}
 %Next, a lemma connecting the value of $\W\alpha(f, n, k , b)$ and $k$, which is important because the recursive rule alone does not tell how the value of $\W\alpha$ changes at each recursive step.
 %\begin{lem}
 %	For all $f, n, k, b$, $\W\alpha\big(f, n, k, b\big) \ge k$.
