@@ -5,7 +5,3 @@
 - Need to sync up listings' line numbers with line numbers in code
 - Need to add hyperlinks to GitHub permalinks using \href
 - Some of the numbering is funny. Definition 3.4 followed by Remark 3.4, Theorem 3.7 followed by Definition 3.6, etc. Go in and fix manually?
-- Immportant typo: in Definition 6.1, we mean ``α(n, n) and α(n) are not equal or related''. α(m, n) and α(n) have no reason to be equal. 
-- In Definition 6.2, need to clean up the \foralls. They can just be removed.
-- Ditto for Theorem 6.1
-- Some of the Bib items need to be {C}apitalised manually
