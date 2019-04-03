@@ -4,21 +4,90 @@ Require Import repeater.
 Require Import increasing_expanding.
 Require Import inverse.
 
+(*
+===================================================================================
+**** SECTION 3.2 INCREASING FUNCTIONS, UPPER INVERSE AND EXPANSIONS (2)************
+===================================================================================
+ *)
 
-(* This section contains the actual definition of countdown, as we previously
-   only work with its properties (i.e. what countdown should be, rather than
-   what it actually is.
-   I choose a different approach than my previous approach here, which is
-   actually simpler (very straighforward), but will require a longer proof of
-   correctness
-   What happened to the previous approach? I am trying to clean its code to
-   get rid of edge cases (e.g. check if (f n) is below 1 or not), not done yet
-   Also, this new approach is both simpler and faster. It takes o(n) time instead
-   of O(n) !
-   We also introduce the repeater and its relation to countdown *)
+(* In Section 3.2, we explore how to compute inverse of a function's repeater
+   solely from its own inverse, without directly computing the repeater itself.
+   The first lemma addresses this.
+   We base the definition of "contractions" and "countdown" on this observation
+   We also give a computation for countdown and prove several useful results about
+   it. *)
+
+(* The inverse of (repeater_from a F) is the minimum number of applications
+   of (inverse F) to the input to get a result less than or equal to a.
+   This serves as motivation to contractions and countdown *)
+Lemma upp_inv_repeater : forall a f F f',
+    upp_inv_rel f F -> upp_inv_rel f' (repeater_from F a)
+    -> (forall n m, f' n <= m <-> repeat f m n <= a).
+Proof.
+  intros a f F f' HfF Hf'F n m.
+  rewrite (Hf'F m n). rewrite repeater_from_repeat.
+  symmetry. apply (upp_inv_repeat m f F HfF a n).
+Qed.
+
+(* ****** CONTRACTIONS ****************** *)
+
+(* Definition of non-strict contractions *)
+Definition contracting (f : nat -> nat) : Prop :=
+  forall n, f n <= n.
+
+(* Definition of strict expansion *)
+Definition contract_strict_above (a : nat) (f : nat -> nat) : Prop :=
+  contracting f /\ (forall n, S a <= n -> S (f n) <= n).
+
+(* Upper inverse of expansions are contractions *)
+Theorem upp_inv_expand_contract :
+    forall f F, expanding F -> upp_inv_rel f F -> contracting f.
+Proof.
+  intros f F HF HfF n. rewrite (HfF n n). apply HF.
+Qed.
+
+(* Upper inverse of strict from a expansions contract above a *)
+Theorem upp_inv_expand_contract_strict :
+    forall a f F, expand_strict_from a F -> upp_inv_rel f F -> contract_strict_above a f.
+Proof.
+  intros a f F HF HfF. destruct HF as [HF HaF].
+  split.
+  - apply (upp_inv_expand_contract _ F); assumption.
+  - intro n. destruct n; [omega|]. repeat rewrite <- le_S_n_m.
+    rewrite (HfF n _). apply HaF.
+Qed.
+
+(* ****** PROPERTIES OF CONTRACTIONS ************ *)
+
+(* repeat of contractions make the result smaller *)
+Lemma repeat_contract :
+  forall f n k l,
+    contracting f -> k <= l -> repeat f l n <= repeat f k n.
+Proof.
+  intros f n k l Hf Hkl. induction l; inversion Hkl; trivial.
+  apply IHl in H0.
+  apply (Nat.le_trans _ (repeat f l n) _); [apply Hf | apply H0].
+Qed.
+
+(* strict version *)
+Lemma repeat_contract_strict :
+  forall a f n k,
+    contract_strict_above a f ->
+    S a <= repeat f k n -> (S k) + repeat f (S k) n <= n.
+Proof.
+  intros a f n k Hf Han. destruct Hf as [Hf Haf]. induction k.
+  1: simpl in Han; simpl; apply Haf in Han; omega. 
+  apply (Nat.le_trans _ (S k + repeat f (S k) n) _).
+  - apply Haf in Han. simpl. simpl in Han. omega.
+  - assert (S a <= repeat f k n) as Han0.
+    { apply (Nat.le_trans _ (repeat f (S k) n) _); [apply Han|].
+      apply Haf in Han. simpl. apply Hf. }
+    apply IHk in Han0. omega.
+Qed.
 
 
-(* ****** DEFINITION *************************************)
+
+(* ****** COUNTDOWN *************************************)
 
 (* Basically, repeats "f" "k" times or until we go below "a".
    Output "min(k, min{l : repeat f l n <= a})" *)
@@ -110,10 +179,7 @@ Proof.
 Qed.
 
 (* COUNTDOWN VS REPEAT THEOREM
-   This is the correctness theorem for this countdown defintion 
-   It asserts that this countdown function obeys the conditions
-   set up for countdown in "countdown_repeater.v" *)
-
+   Correctness theorem for this countdown defintion *)
 Theorem countdown_repeat : forall a f n k,
     contract_strict_above a f -> countdown_to a f n <= k <-> repeat f k n <= a.
 Proof.
@@ -206,31 +272,17 @@ Qed.
 
 (* This theorem is important. It says that the countdown and repeater will
    preserve the upper inverse relation on their respective results
-   This is needed to prove that the tower (n - 2), ceil(n/2), ceil(log_2(n)), ...
-   is the upper inverse of the tower (n + 2), 2n, 2^n, ...
-   However I haven't cleaned that part in the old code yet *)
+   This is needed to prove the correctness of inverse hypeoperations and
+   inverse Ackermann towers built with countdown later on *)
 
-(*
 Theorem countdown_repeater_upp_inverse : forall a f F,
     expand_strict_from a F -> upp_inv_rel f F ->
-    upp_inv_rel (countdown_to a f) (repeater_from a F).
-Proof.
-  intros a f F Haf HfF n N.
-  apply (upp_inv_expand_contract_strict a f F) in Haf.
-  2: apply HfF.
-  rewrite repeater_from_repeat.
-  apply (upp_inv_repeat n _ _) in HfF.
-  rewrite <- (HfF a N). apply countdown_repeat. apply Haf.
-Qed.
-*)
-
-(* TODO: Change it to using expand_strict_from as premise *)
-Theorem countdown_repeater_upp_inverse : forall a f F,
-    contract_strict_above a f -> upp_inv_rel f F ->
     upp_inv_rel (countdown_to a f) (repeater_from F a).
 Proof.
-  intros a f F Haf HfF n N.
+  intros a f F HaF HfF n N.
+  apply (upp_inv_expand_contract_strict a f F) in HaF.
   rewrite repeater_from_repeat.
   apply (upp_inv_repeat n _ _) in HfF.
-  rewrite <- (HfF a N). apply countdown_repeat. apply Haf.
+  rewrite <- (HfF a N). apply countdown_repeat.
+  1,2 : assumption.
 Qed.

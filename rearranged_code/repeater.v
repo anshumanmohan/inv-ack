@@ -1,16 +1,31 @@
 Require Import Omega.
 Require Import prelims.
 
+(*
+=============================================================================
+******* SECTION 2: HYPEROPS, ACKERMANN AND REPEATER *************************
+=============================================================================
+ *)
+
+(* We introduce "repeater" and how to use it to redefine the hyperoperations
+   and Ackermann function.
+   We also prove several results about the value of hypeopererations at small
+   numbers and levels, which are treated as known in the paper but need to be
+   rigourously proven here to be used in the proofs of theorems in the paper.
+   Several similar results for the Ackermann function are also provided.
+   Note that some results here may not be related to results in the paper, but
+   appear purely for aesthetics reasons. *)
+
 (* ****** REPEATER ********************************* *)
 
-(* Can be easily defined and computed, so we define it directly *)
 Fixpoint repeater_from (f : nat -> nat) (a : nat) (n : nat) : nat :=
   match n with
   | 0    => a
   | S n' => f (repeater_from f a n')
   end. 
 
-(* Repeater is a functional way to look at repeat *)
+(* Repeater is a functional way to look at repeat
+   See "repeat" in "prelims.v" *)
 Theorem repeater_from_repeat :
   forall a f n, repeater_from f a n = repeat f n a.
 Proof.
@@ -20,9 +35,11 @@ Qed.
 
 (* ****** HYPEROPS ********************************* *)
 
+(* A function to summarize the initial values of the hyperoperations *)
 Definition hyperop_init (a n : nat) : nat :=
   match n with 0 => a | 1 => 0 | _ => 1 end.
 
+(* Popular definition of the hyperops *)
 Fixpoint hyperop_original (a n b : nat) : nat :=
   match n with
   | 0    => 1 + b
@@ -34,12 +51,14 @@ Fixpoint hyperop_original (a n b : nat) : nat :=
             in hyperop' b
   end.
 
+(* Our definition for hyperops using repeater *)
 Fixpoint hyperop (a n b : nat) : nat :=
   match n with
   | 0    => 1 + b
   | S n' => repeater_from (hyperop a n') (hyperop_init a n') b
   end.
 
+(* Proof that the two hyperops are the same *)
 Theorem hyperop_correct :
   forall n a b, hyperop a n b = hyperop_original a n b.
 Proof.
@@ -48,10 +67,14 @@ Proof.
   simpl in *. rewrite IHb. trivial.
 Qed.
 
+(* A handy theorem to transform goals involving hyperops *)
 Theorem hyperop_recursion :
   forall n a b,
     hyperop a (S n) (S b) = hyperop a n (hyperop a (S n) b).
 Proof. trivial. Qed.
+
+(* The first few functions in the hyperops. Useful for pointing out
+   their inverse specifically *)
 
 Lemma hyperop_1 : forall a b, hyperop a 1 b = b + a.
 Proof. intro a. induction b; [|rewrite hyperop_recursion, IHb]; trivial. Qed.
@@ -69,14 +92,18 @@ Proof.
   simpl. apply Nat.mul_comm.
 Qed.
 
-Theorem hyperop_n_1 : forall n a, 2 <= n -> hyperop a n 1 = a.
+(* A beautiful result about hypeops value at b = 1.
+   Used in the proof of the theorem "ack_hyperop",
+   which is also just for aesthetics *)
+Lemma hyperop_n_1 : forall n a, 2 <= n -> hyperop a n 1 = a.
 Proof.
   intros n a Hn. do 2 (destruct n; [omega|]).
   clear Hn. induction n; trivial.
 Qed.
 
-(* ****** ACKERMANN FUNCS ********************************* *)
+(* ****** ACKERMANN FUNCTION ********************************* *)
 
+(* Popular definition of the Peter-Ackermann function *)
 Fixpoint ackermann_original (m n : nat) : nat :=
   match m with
    | 0 => 1 + n
@@ -88,12 +115,14 @@ Fixpoint ackermann_original (m n : nat) : nat :=
              in ackermann' n
   end.
 
+(* Our definition using repeater *)
 Fixpoint ackermann (n m : nat) : nat :=
   match n with
   | 0    => S m
   | S n' => repeater_from (ackermann n') (ackermann n' 1) m
   end.
 
+(* Proof that the above are the same *)
 Theorem ackermann_correct :
   forall n b, ackermann n b = ackermann_original n b.
 Proof.
@@ -102,14 +131,18 @@ Proof.
   simpl in *. rewrite IHb. trivial.
 Qed.
 
-Theorem ackermann_initial :
+(* Handy lemma to transform goals involving ackermann n 0 *)
+Lemma ackermann_initial :
   forall m, ackermann (S m) 0 = ackermann m 1.
 Proof. trivial. Qed.
 
-Theorem ackermann_recursion :
+(* Handy lemma to transform goals involving ackermann function *)
+Lemma ackermann_recursion :
   forall m n, ackermann (S m) (S n) = ackermann m (ackermann (S m) n).
 Proof. trivial. Qed.
 
+(* Just for aesthetics. Demonstrates the Ackermann kludge.
+   Proof is unexpectedly long *)
 Theorem ack_hyperop : forall m n,
     3 + ackermann m n = hyperop 2 m (3 + n).
 Proof.

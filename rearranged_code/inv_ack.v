@@ -8,22 +8,34 @@ Require Import inverse.
 Require Import countdown.
 Require Import applications.
 
+(*
+==========================================================================
+************** SECTION 4.2 THE INVERSE ACKERMANN FUNCTION ****************
+==========================================================================
+ *)
 
 (* This section contains the most important application of countdown,
    the Inverse Ackermann function.
    We first define an inverse tower for the Ackermann hierarchy, then
    write a theorem proving its correctness
    Then we define a structurally terminating definition for the inverse
-   Ackermann function, and prove its correctness using the above theorem *)
+   Ackermann function, and prove its correctness using the above theorem
+   We state and prove the correctness of the improvement, which runs in linear time
+   At the end, we also sketch a naive approach to the inverse Ackermann function,
+   which uses brute force search, and a massive improvement over it, but still slower
+   than our main method for inv_ack, although we do not prove it at the moment
+*)
 
 (* *********** INVERSE ACKERMANN HIERARCHY ******************* *)
 
+(* Definition *)
 Fixpoint alpha m x :=
   match m with
   | 0 => x - 1
   | S m' => countdown_to 1 (alpha m') (alpha m' x)
   end.
 
+(* Definition *)
 Theorem alpha_correct :
   forall m, contract_strict_above 1 (alpha m) /\
             upp_inv_rel (alpha m) (ackermann m).
@@ -58,17 +70,37 @@ Proof.
   repeat rewrite repeater_from_repeat;
   repeat rewrite <- repeat_S_comm;
   repeat rewrite <- repeater_from_repeat;
-  apply repeater_repeatable in IHi; try omega;
+  apply (repeater_repeatable _ 0 _) in IHi; try omega;
   destruct IHi as [IHi0 IHi1];
   [intro; apply IHi0; omega | |];
   apply (Nat.le_trans _ (S (S n)) _); try apply IHi1; omega.
 Qed.
 
-(* Ackermann at level 1 *)
+(* Ackermann at level 1. It is useful for 2 purposes:
+   (1) Compute alpha 1 below, which is used in hard-coding the second level
+   for linear runtime.
+   (2) Serves to prove base case for "ack_incr_by_lvl"  *)
 Lemma ack_1 : forall n, ackermann 1 n = (S (S n)).
 Proof.
   induction n; [|rewrite ackermann_recursion; rewrite IHn]; trivial.
 Qed.
+
+(* Alpha at level 1. Used in hard-coding the second level for linear runtime *)
+Lemma alpha_1 : alpha 1 = (fun n => n - 2).
+Proof.
+  assert (upp_inv_rel (alpha 1) (ackermann 1)) as H by apply alpha_correct.
+  assert (upp_inv_rel (fun n => n - 2) (ackermann 1)) as H'.
+  { intros n m. rewrite ack_1. omega. }
+  rewrite upp_inv_unique in H by
+   (intros n m; repeat rewrite ack_1; omega).
+  rewrite upp_inv_unique in H' by
+   (intros n m; repeat rewrite ack_1; omega).
+  rewrite H'. apply H.
+Qed.
+
+(* Below two results asserts that the diagonal Ackermann function is increasing,
+   hence has a proper upper inverse. We need them because we need to compute the inverse
+   value for the inv_ack correctness proof later *)
 
 (* Strict Increasing With Level *)
 Lemma ack_incr_by_lvl :
@@ -115,6 +147,7 @@ Fixpoint inv_ack_worker (f : nat -> nat) (n k bud : nat) : nat :=
     end
   end.
 
+(* Original defintion, runtime O(n^2) *)
 Definition inv_ack n :=
   match (alpha 0) with f => inv_ack_worker f (f n) 0 n end.
 
@@ -184,6 +217,26 @@ Proof.
     + omega.
 Qed.
 
+(* ****** INVERSE ACKERMANN BY HARD-CODING SECOND LEVEL ************* *)
+
+(* Definition by hard-coding the second alpha level, runtime O(n) *)
+Definition inv_ack' n :=
+  match n with
+  | 0 | 1 => 0
+  | _     => match (fun x => x - 2) with f
+             => inv_ack_worker f (f n) 1 (n - 1) end
+  end.
+
+(* Correctness proof *)
+Theorem inv_ack'_correct : inv_ack' = inv_ack.
+Proof.
+  apply functional_extensionality. intro n.
+  unfold inv_ack. unfold inv_ack'.
+  destruct n; try destruct n; trivial.
+  rewrite (inv_ack_worker_intermediate 0 _ _) by (simpl; omega).
+  rewrite alpha_1. trivial.
+Qed.
+
 
 (* *********** NAIVE INVERSE ACKERMANN FUNCTION ******************** *)
 
@@ -245,39 +298,4 @@ Fixpoint inv_ack_target (n : nat) (ans : nat) (bud : nat) : nat :=
 
 Definition inv_ack_target_outer n := inv_ack_target n 0 n.
 
-
-(* Compute inv_ack 7. *)
-(* Compute ackermann 2 2. *)
-(* Time Compute inv_ack 62. *)
-(* Time Compute inv_ack_naive_outer 65. *) (* too slow *)
-(* Time Compute inv_ack_target_outer 65. *)
-(* Time Compute inv_ack 1000. *)
-(* Time Compute inv_ack_target_outer 1000. *)
-
-(* *********** 6.3. TIME ANALYSIS ********************
-   TODO: Think whether I want to keep this section or not.
-   TODO: If yes, complete it WITHIN 1 WEEK after deadline *)
-
-(*
-Definition next_lvl f := compose (countdown_to 1 f) f.
-
-Fixpoint alpha i : nat -> nat :=
-match i with
-| 0 => (fun b => b - 2)
-| S i' => next_lvl (alpha i')
-end.
-
-Fixpoint compose_sum (t : nat -> nat) (f : nat -> nat) k n : nat :=
-match k with
-| 0 => t n
-| S k' => t n + compose_sum t f k' (f n)
-end.
-
-Fixpoint rtime i n : nat :=
-match i with
-| 0 => 1
-| S i' => compose_sum (rtime i') (alpha i') (countdown_to 1 (alpha i') n) n + (alpha i n)
-end.
-*)
-
-(* Compute rtime 2 13. *)
+Time Compute inv_ack' 4000.

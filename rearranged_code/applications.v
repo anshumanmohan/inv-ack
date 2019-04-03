@@ -5,15 +5,18 @@ Require Import increasing_expanding.
 Require Import inverse.
 Require Import countdown.
 
+(*
+===================================================================================
+************** SECTION 4.1 INVERSE HYPEROPS, DIVISION, LOG AND LOG* ***************
+===================================================================================
+ *)
+
 (* We use countdown to implement an inverse tower for the Hyperoperation.
    Interestingly, the 2nd, 3rd and 4th levels of this tower corresponds to division,
    log base b and log* base b, which are not defined in the Coq standard library. Our
    approach to them using countdown offers enough versatility and flexibility to
    substantiate easy and direct proof for a vast range of facts about these functions.
-   Lastly, we slightly modify this tower to get the inverse tower for the Peter-Ackermann
-   function, which is used to compute the Inverse Ackermann function, which is not
-   only an interesting application of countdown, but also an important one since it
-   computes the inverse Ackermann function in linear time. *)
+*)
 
 (* ****** INVERSE-HYPEROP TOWER ********************************* *)
 
@@ -24,12 +27,16 @@ Fixpoint inv_hyperop a n b :=
     countdown_to (hyperop_init a n') (inv_hyperop a n') b
   end.
 
+(* Handy results to transform goals in involving inv_hyperop *)
 Theorem inv_hyperop_recursion :
   forall n a,
     inv_hyperop a (S n) =
     countdown_to (hyperop_init a n)
                  (inv_hyperop a n).
 Proof. trivial. Qed.
+
+(* Several results about first few levels of inv_hyperop.
+   Used to prove correctness of division and log later on *)
 
 Theorem inv_hyperop_0_contract_strict :
   forall a k, contract_strict_above k (inv_hyperop a 0).
@@ -64,45 +71,29 @@ Proof.
   rewrite IHk, Heqf, inv_hyperop_1; omega.
 Qed.
 
-(* TODO: Change it to using expand_strict_from as premise TONIGHT *)
+(* Main theorem of this section. Establish the correctness of
+   the inverse hyperoperations' definition in inv_hyperop *)
 Theorem inv_hyperop_correct :
-  forall a n,
-    2 <= a ->
-    contract_strict_above (hyperop_init a n) (inv_hyperop a n) /\
-    upp_inv_rel (inv_hyperop a n) (hyperop a n).
+  forall a n, 2 <= a -> upp_inv_rel (inv_hyperop a n) (hyperop a n).
 Proof.
   intros a n Ha.
-  induction n.
-  1: split; [apply inv_hyperop_0_contract_strict | intros n N; simpl; omega].
-  destruct n.
-  { split.
-    - split; intro n; rewrite inv_hyperop_1; omega.
-    - intros n N. rewrite inv_hyperop_1, hyperop_1. omega.
+  assert (forall m, repeatable_from (hyperop_init a m) (hyperop a m)).
+  { induction m.
+    - rewrite repeatable_simpl; split; simpl;
+      try split; try intros u v; omega.
+    - destruct m; try destruct m.
+      1, 3: try replace (hyperop a (S (S (S m)))) with
+           (repeater_from (hyperop a (S (S m))) (hyperop_init a (S (S m)))) by trivial;
+           apply repeater_repeatable; simpl; try omega; assumption.
+      rewrite repeatable_simpl. split.
+      intros u v. repeat rewrite hyperop_2. intros.
+      apply (mult_lt_compat_r _ _ _ H). omega.
+      simpl. omega.
   }
-  rewrite inv_hyperop_recursion.
-  replace (hyperop a (S (S n))) with
-      (repeater_from (hyperop a (S n)) (match n with | 0 => 0 | S _ => 1 end))
-    by trivial.
-  destruct IHn as [IHn0 IHn1].
-  split; [|apply countdown_repeater_upp_inverse; trivial].
-  destruct n; [|apply countdown_contract_strict; trivial; apply IHn0].
-  split.
-  - intro n. rewrite countdown_repeat by apply IHn0.
-    rewrite inv_hyperop_1_repeat. assert (1 <= a) by omega.
-    apply (mult_le_compat_l 1 a n) in H. omega.
-  - intros n Hn.
-    destruct n; [omega|]. destruct n; [simpl in Hn; omega|]. 
-    rewrite <- le_S_n_m.
-    rewrite countdown_repeat by apply IHn0.
-    rewrite inv_hyperop_1_repeat. apply (Nat.le_sub_le_add_l).
-    apply (Nat.le_trans _ ((S n) * 2) _); [omega|].
-    apply (mult_le_compat_l 2 a (S n)) in Ha. omega.
+  induction n.
+  - simpl. intros u v. omega.
+  - destruct (H n) as [_ Hn]. apply countdown_repeater_upp_inverse; assumption.
 Qed.
-
-Corollary inv_hyperop_upp_inverse :
-  forall a n, 2 <= a -> upp_inv_rel (inv_hyperop a n) (hyperop a n).
-Proof. apply inv_hyperop_correct. Qed.
-
 
 (* ****** DIVISION AND LOGARITHM ********************************* *)
 
@@ -128,5 +119,8 @@ Theorem log_correct : forall a b m,
 Proof.
   intros a b m Ha.
   unfold log. rewrite <- hyperop_3.
-  apply inv_hyperop_upp_inverse; trivial.
+  apply inv_hyperop_correct; trivial.
 Qed.
+
+(* Computes log*_a(b). Its correctness is established in inv_hyperop_correct *)
+Definition logstar a b := inv_hyperop a 4 b.

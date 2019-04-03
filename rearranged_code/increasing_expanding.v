@@ -2,6 +2,23 @@ Require Import Omega.
 Require Import prelims.
 Require Import repeater.
 
+(*
+===================================================================================
+**** SECTION 3.1 INCREASING FUNCTIONS, UPPER INVERSE AND EXPANSIONS (1)************
+===================================================================================
+ *)
+
+(* In Section 3.1, we introduce the notion of "upper inverse" (upp_inv),
+   increasing functions and why we prefer to consider inverse of
+   increasing functions only.
+   We prove several use results about upper inverse and increasing functions
+   We introduce "expansions" and how they are connected to increasing functions
+   through repeater.
+   Increasing functions that are strict expansions serve as the target for us
+   to compute the upper inverse with "countdown" later on. *)
+
+(* In this PART 1 file, we deal with increasing functions and expansions *)
+
 (* ****** INCREASING FUNCTIONS ****************** *)
 
 (* Usual definition of increasing functions *)
@@ -105,17 +122,24 @@ Qed.
 
 (* Repeatability is monotonic *)
 Lemma repeatable_monotone :
-    forall a b f, (a < b) -> repeatable_from a f -> repeatable_from b f.
+    forall a b f, (a <= b) -> repeatable_from a f -> repeatable_from b f.
 Proof.
   intros a b f Hab Haf. rewrite repeatable_simpl.
   split; apply Haf. omega.
 Qed.
 
-(* Repeatability is preserved through repeater *)
+(* Important theorem, used to prove the repeatability of the hyperoperations when a >= 2.
+   It justifies the need for strict expansions. Since the identity function is
+   strictly increasing but non a strict expansions, its repeater is constant.
+   Repeatability combines increasing-ness and expansive-ness, which are all preserved
+   through repeater, as proved below *)
 Lemma repeater_repeatable :
-    forall a f, (1 <= a) -> repeatable_from a f -> repeatable_from 0 (repeater_from f a).
+    forall a b f, (1 <= a) -> repeatable_from a f -> repeatable_from b (repeater_from f a).
 Proof.
-  intros a f Ha. repeat rewrite repeatable_simpl.
+  intros a b f Ha. intro.
+  apply (repeatable_monotone 0 _ _). omega.
+  generalize H. clear H.
+  repeat rewrite repeatable_simpl.
   simpl. split; try omega.
   destruct H as [Hf Haf].
   rewrite incr_S. induction n;

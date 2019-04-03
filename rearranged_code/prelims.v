@@ -4,15 +4,15 @@ Require Import Setoid.
 
 (*
 =============================================================================
-****************** SECTION 0: PRELIMINARIES *********************************
+****************** SECTION 1: PRELIMINARIES *********************************
 =============================================================================
  *)
 
-(* This file contains everything not put in the paper but will be useful
-   for the Coq proofs later on *)
+(* This file contains recurrently useful results and definitions
+   that are used throughout the subsequent files *)
 
 
-(* ****** 0.1. USEFUL LEMMAS ABOUT NAT ********************** *)
+(* ****** USEFUL LEMMAS ABOUT NAT ********************** *)
 
 Lemma le_S_n_m : forall n m : nat, n <= m <-> S n <= S m.
   intros. omega. Qed.
