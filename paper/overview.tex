@@ -5,7 +5,7 @@ tree of a graph~\cite{chazelle}.  Unfortunately, both the Ackermann function and
 can be hard to understand, and the inverse in particular can be hard to define in a computationally-efficient manner in a theorem prover.  Let us consider why this
 is so.
 \begin{defn} \label{defn: ack} %\href{https://github.com/anshumanmohan/inv-ack/blob/fb8c1f625ccae7cf0c3012d926dbbf3972529d74/applications.v#L111-L120}{
-The Ackermann-P\'eter function~\cite{peter} (hereafter just ``the'' Ackermann function; see \cref{sec:related}) is a recursive two-variable function $\text{A} : \mathbb{N}^2 \to \mathbb{N}$ defined as follows:
+The Ackermann-P\'eter function~\cite{peter} (hereafter just ``the'' Ackermann function; see~\S\ref{sec:related}) is a recursive two-variable function $\text{A} : \mathbb{N}^2 \to \mathbb{N}$ defined as follows:
 \begin{equation}
 \label{eq:ackermann}
 A(n, m) \triangleq \begin{cases}
@@ -48,15 +48,16 @@ a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.\Ack(n,b)$, whe
 %follows from Hyperop.}
 The desire to clean up this kludge, and to generalize the natural sequence
 of functions ``addition,'' ``multiplication,'' ``exponentiation,'' \ldots,
-led to the development of the related idea of hyperoperations~\cite{goodstein},
-written $a [n] b$.\footnote{Knuth arrows~\cite{knuth}, written $a \uparrow^n b$,
+led to the development of the related idea of hyperoperations\footnote{Knuth arrows~\cite{knuth}, written $a \uparrow^n b$,
 are also in the same vein, but we will focus on hyperoperations
-since they are more general. In particular, $a \uparrow^n b = a[n+2]b$.}
+since they are more general. In particular, $a \uparrow^n b = a[n+2]b$.}~\cite{goodstein},
+written $a [n] b$.
 %Hereafter we will refer to this sequence of functions as ``the hierarchy'' when we mean the general pattern rather than \emph{e.g.} specifically ``the Ackermann hierarchy'' or ``the hyperoperation hierarchy''.
 \Cref{table: hyperop-ack-inv} illustrates this relation and the Ackermann kludge
-by showing the first 5 hyperoperations (indexed by $n$ and named),
+by showing the first five hyperoperations (indexed by $n$ and named),
 along with their relation to the $\Ack_n$ functions, and their inverses.
 \begin{table}[t]
+\centering
 	\[
 \begin{array}{c|cc|c|cc}
 n & \text{function} & \quad a [n] b \quad & \quad \Ack_n(b) \quad & \text{inverse} \\
@@ -200,7 +201,9 @@ time.  Finally, our techniques are extremely succinct: the code to invert the di
 	\item[\S\ref{sec: inv-ack}] We detail a specialized computation for the Inverse Ackermann function, improving over the sketch's running time of $\bigO\big(n^2\big)$ to $\bigO(n)$.
 	\item[\S\ref{sec: discussion}] We discuss the two-argument inverse Ackermann function and survey related work.
 \end{itemize}
-All of our techniques are mechanized in Coq and is available online~\cite{inv-ack}.
+All our techniques are mechanized in Coq and our code is available 
+online~\cite{inv-ack}. Further, definitions presented here 
+are {\color{cyan}hyperlinked} to appropriate points in our codebase.
 %, and
 %each theorem and definition is hyperlinked (in {\color{cyan}cyan}) to our Coq development for %browsing.
 

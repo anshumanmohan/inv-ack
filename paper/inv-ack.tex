@@ -24,7 +24,7 @@
 %% $Id: elsarticle-template-num.tex 64 2013-05-15 12:23:51Z rishi $
 %%
 %%
-\documentclass[a4paper,USenglish,cleveref, autoref]{lipics-v2019}
+\documentclass[a4paper,USenglish,cleveref,autoref]{lipics-v2019}
 % \documentclass[preprint,12pt]{elsarticle}
 
 %% Use the option review to obtain double line spacing
@@ -65,9 +65,10 @@
 
 \hypersetup{ % play with these to change the look of hyperlinks
     colorlinks=true,
-    linkcolor=blue,
+    linkcolor=black,
     filecolor=magenta,
     urlcolor=cyan,
+    citecolor=black
 }
 
 
@@ -106,7 +107,7 @@
 \newcommand{\invhyper}{I}
 \renewcommand{\angle}[1]{\langle #1\rangle}
 
-\newcommand{\W}{\text{W}}
+\newcommand{\W}{\mathcal{W}}
 \newcommand{\contract}{\text{\scshape{Contr}}}
 \newcommand{\repeatable}{\text{\scshape{Rept}}}
 
@@ -119,7 +120,7 @@
 
 \newcommand{\Ack}{\ensuremath{\text{A}}}
 \newcommand{\CA}{\ensuremath{\text{C}}}
-\renewcommand{\S}{\ensuremath{\text{S}}}
+%\renewcommand{\S}{\ensuremath{\text{S}}}
 \newcommand{\CR}{\ensuremath{\text{CR}}}
 \newcommand{\CRH}{\ensuremath{\text{CRH}}}
 \newcommand{\wt}[1]{\ensuremath{\widetilde{#1}}}
@@ -190,6 +191,9 @@
 \ccsdesc[300]{Theory of computation~Constructive mathematics}
 
 \authorrunning{L. Tran, A. Mohan, A. Hobor}
+
+\Copyright{Linh Tran, Anshuman Mohan, and Aquinas Hobor}%TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
 
 \keywords{Ackermann, hyperoperations, Coq}%TODO mandatory; please add comma-separated list of keywords
 
