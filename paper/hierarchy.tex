@@ -1,37 +1,38 @@
-Let us now consider hyperoperations more carefully
+Let us consider hyperoperations more carefully
 to clarify how they relate to the Ackermann function.
-The first hyperoperation (level 0) is simply successor, and after that,
-every hyperoperation is the repeated application of the previous.
+The first hyperoperation (level 0) is simply successor, and 
+every hyperoperation that follows is the repeated application of the previous.
 Addition is level 1, and $b$ repetitions of addition
-give multiplication, which is level 2. Next, $b$ repetitions of
-multiplication give exponentiation, which is level 3. However,
-there is a subtlety here: in the former case, we add $a$
-repeatedly to an initial value, \emph{which should be $0$}.
-In the latter case, we multiply $a$ repeatedly to an initial value,
-\emph{which should be $1$}. The formal definition for hyperoperation is:
+gives multiplication, which is level 2. Next, $b$ repetitions of
+multiplication gives exponentiation, which is level 3. 
+There is a subtlety here: in the former case, we add $a$
+repeatedly to an \emph{initial value}, which should be $0$.
+In the latter case, we multiply $a$ repeatedly to an initial value, which 
+which should now be $1$. The formal definition of hyperoperation is:
 %\marginpar{\tiny \color{blue} Should 2 just be under 1?}
 \begin{equation}
 \label{eq:hyper}
-\begin{array}{@{}l@{\qquad\quad}l}
+\begin{array}{@{}l@{\qquad}l}
 \textit{1. Initial level: } a[0]b ~ \triangleq ~ b + 1 &
 \textit{2. Initial values: } a[n+1]0 ~ \triangleq ~
-\begin{cases}
-a & \text{when } n = 0 \\
-0 & \text{when } n = 1 \\
-1 & \text{otherwise}
-\end{cases}
-\\
+  \begin{cases}
+    a & \text{when } n = 0 \\
+    0 & \text{when } n = 1 \\
+    1 & \text{otherwise}
+  \end{cases} \\
 \multicolumn{2}{@{}l}{\textit{3. Recursive rule: } a[n+1](b+1) ~ \triangleq ~ a[n]\big(a[n+1]b\big)}
 \end{array}
 \end{equation}
-The seemingly complicated recursive rule is in fact just \emph{repeated application} in disguise. By fixing $a$ and treating $a[n]b$ as a function of $b$, we can write
+The seemingly complicated recursive rule is actually just \emph{repeated application} in disguise. By fixing $a$ and treating $a[n]b$ as a function of $b$, we can write
 \begin{equation*}
 \begin{array}{lll}
 a[n+1]b & ~ = ~ a[n]\big(a[n+1](b-1)\big) & ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \\
  & ~ = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big) & ~ = ~ \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
 \end{array}
 \end{equation*}
-where $f^{(k)}(u) ~ \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ successive applications of a function $f$ to an input $u$, with $f^{(0)}(u) = u $ (applying $0$ times). %{\color{blue} Would you consider $f^k(u)$, $\big(a[n]\big)^b\big(a[n+1]0\big)$, etc?}
+where $f^{(k)}(u) ~ \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$, 
+\emph{i.e.} it denotes $k$ successive applications of a function~$f$ to an 
+input~$u$, with $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times). 
 
 This insight will help us encode both hyperoperations~\eqref{eq:hyper} and the Ackermann function~\eqref{eq:ackermann} in Coq.  Notice that the recursive case of hyperoperation---and
 indeed, the third case of the Ackermann function---is troublesome to encode in Coq due to
@@ -78,21 +79,21 @@ to the former.  We call this idea a \emph{repeater}:
 \begin{defn}
 For all $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 \end{defn}
-The Gallina definition is modified to structurally decrease on $n$:
+The Gallina definition is written to structurally decrease on $n$:
 \begin{lstlisting}
-Fixpoint repeater_from (f : nat->nat) (a : nat) (n : nat) : nat :=
+Fixpoint repeater_from (f : nat -> nat) (a : nat) (n : nat) : nat :=
   match n with
   | 0    => a
   | S n' => f (repeater_from f a n')
   end.
 \end{lstlisting}
-The notation $\rf{f}{a}(b)$ does much better at separating the function, i.e. the repeater of $f$, and the variable $n$ than $f^{(n)}(a)$, while making clear that $a$ is a parameter of \emph{repeater} itself. It allows a simple and function-oriented definition of hyperoperations:
+\note{The notation $\rf{f}{a}(b)$ does much better at separating the function, i.e. the repeater of $f$, and the variable $n$ than $f^{(n)}(a)$, while making clear that $a$ is a parameter of \emph{repeater} itself.} It allows a simple and function-oriented definition of hyperoperations:
 \begin{equation*}
 a[n]b ~ \triangleq ~ \begin{cases}
 b + 1 & \text{when } n = 0 \\
 \rf{a[n-1]}{a_{n-1}}(b) & \text{otherwise}
 \end{cases}
-\qquad \qquad \text{ where } \ a_n ~ \triangleq ~ \begin{cases}
+\qquad \text{ where } \ a_n ~ \triangleq ~ \begin{cases}
 a & \text{when } n = 0 \\
 0 & \text{when } n = 1 \\
 1 & \text{otherwise}

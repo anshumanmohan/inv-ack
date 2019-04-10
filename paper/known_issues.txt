@@ -5,3 +5,8 @@
 - Need to sync up listings' line numbers with line numbers in code
 - Need to add hyperlinks to GitHub permalinks using \href
 - Some of the numbering is funny. Definition 3.4 followed by Remark 3.4, Theorem 3.7 followed by Definition 3.6, etc. Go in and fix manually?
+- Anshuman would like to explain a little bit that "budget" is a lot like "gas", which is talked down in \S1.2. However, budget is better because we always take care to show that it can be calculated at reaonably low time cost.
+- Not in love with the REPT/CONTR notation
+- Need a more systematic notation for worker viz countdown worker
+
+Anshuman has added notes in pages 2, 5, 6, 7, 8, 9, 11, 12, 13
