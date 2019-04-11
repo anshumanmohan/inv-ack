@@ -3,7 +3,6 @@
 - Need to sync up listings' line numbers with line numbers in code 
 	Anshuman says: 
 		On further thought, I think this is unnecessary. They already link to the code. Besides, the line numbers will be a bit off anyway because we have made unified listings out of code that is actually in different parts of the same file.
-- Anshuman would like to explain a little bit that "budget" is a lot like "gas", which is talked down in \S1.2. However, budget is better because we always take care to show that it can be calculated at reaonably low time cost.
 - Not in love with the REPT/CONTR notation
 - Need a more systematic ligature/notation for worker viz countdown worker
 

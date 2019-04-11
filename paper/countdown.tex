@@ -144,7 +144,7 @@ For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown
 Essentially, \emph{countdown worker} operates on two arguments, the \emph{true argument} $n$, which we wish to count down to $a$, and the \emph{budget} $b$, the maximum number of times we attempt 
 to compositionally apply $f$ on the input before giving up. If the input goes below or equal $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n) \le a$, we return the count $k$. If the budget is exhausted, i.e. $b = 0$, while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but it can clearly be written as a Coq \li{Fixpoint}:
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint countdown\_worker}` (a : nat) (f : nat -> nat) (n k: nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint countdown\_worker}` (a : nat) (f : nat -> nat) (n k : nat) : nat :=
 match k with
  | 0    => 0
  | S k' => match (n - a) with
@@ -155,8 +155,14 @@ match k with
 \end{lstlisting}
 When $f$ is a contraction strict from $a$, and given a sufficient budget, \emph{countdown worker} 
 will compute the correct \emph{countdown} value.  
-Using several lemmas about \emph{countdown worker},
-we will show that a budget of $n$ is sufficient, thus letting us define \emph{countdown} in Coq:
+Careful readers may have noticed that \emph{budget} is similar to 
+\emph{gas}, which we discussed in ~\S\ref{sec:incfuncinv} 
+and dismissed for potentially 
+being too computationally expensive to calculate. 
+Budget is a refinement of gas because 
+we accompany its each use with a method to calculate it in constant time.
+In fact, we will soon show that a budget of $n$ is sufficient in this case. 
+This lets us define \emph{countdown} as below:
 \begin{defn} \label{defn: countdown}
 Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.
 \begin{lstlisting}
@@ -282,7 +288,7 @@ Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, let $m = \min\big\{
 	\end{equation*}
 	Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
 \end{proof}
-\cref{eq: rf-upp-inv} and \cref{thm: cdt-repeat} thus establish the correctness of the Coq definitions for \emph{countdown worker} and \emph{countdown}, \note{justifying our unifying the equivalent \cref{defn: informal-countdown,defn: countdown}.} We wrap everything together with the following theorem:
+\cref{eq: rf-upp-inv} and \cref{thm: cdt-repeat} establish the correctness of the Coq definitions of \emph{countdown worker} and \emph{countdown}, \note{thereby justifying our budget of $n$ and our unification of the equivalent \cref{defn: informal-countdown,defn: countdown}.} We wrap everything together with the following theorem:
 \begin{thm} \label{thm: cdt-inv-rf}
 	$\forall F\in \repeatable_a.~f\triangleq F^{-1}_+$ satisfies $f \in \contract_{a}$ and $\displaystyle \cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+$. Furthermore, if $a\ge 1$, then $\rf{F}{a}\ \in \repeatable_0$ and $\cdt{f}{a}\ \in \contract_0$.
 \end{thm}
