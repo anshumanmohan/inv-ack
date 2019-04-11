@@ -40,10 +40,10 @@ the deep nested recursion.  In the outer recursive call, the first argument ($n$
 but the second is expanding explosively; in the inner recursive call, the first argument is
 constant but the second is shrinking. The elegant solution uses double recursion~\cite{stackoverflow} as follows:
 \begin{lstlisting}
-Definition hyperop_init (a n : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L39-L40}{Definition hyperop\_init}` (a n : nat) : nat :=
   match n with 0 => a | 1 => 0 | _ => 1 end.
 
-Fixpoint hyperop_original (a n b : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L43-L52}{Fixpoint hyperop\_original}` (a n b : nat) : nat :=
   match n with
   | 0    => 1 + b
   | S n' => let fix hyperop' (b : nat) :=
@@ -54,7 +54,7 @@ Fixpoint hyperop_original (a n b : nat) : nat :=
             in hyperop' b
   end.
 
-Fixpoint ackermann_original (m n : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L107-L116}{Fixpoint ackermann\_original}` (m n : nat) : nat :=
   match m with
   | 0    => 1 + n
   | S m' => let fix ackermann' (n : nat) : nat :=
@@ -81,7 +81,7 @@ For all $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater 
 \end{defn}
 The Gallina definition is written to structurally decrease on $n$:
 \begin{lstlisting}
-Fixpoint repeater_from (f : nat -> nat) (a : nat) (n : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L21-L25}{Fixpoint repeater\_from}` (f : nat -> nat) (a n : nat) : nat :=
   match n with
   | 0    => a
   | S n' => f (repeater_from f a n')
@@ -109,16 +109,16 @@ m + 1 & \text{when } n = 0 \\
 \end{equation*}
 In Coq these two definitions are written as follows:
 \begin{lstlisting}
-Fixpoint hyperop (a n b : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L55-L59}{Fixpoint hyperop}` (a n b : nat) : nat :=
   match n with
   | 0    => 1 + b
-  | S n' => repeater_from (hyperop_init a n') (hyperop a n') b
+  | S n' => repeater_from (hyperop a n') (hyperop_init a n') b
   end.
 
-Fixpoint ackermann (n m : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L119-L123}{Fixpoint ackermann}` (n m : nat) : nat :=
   match n with
   | 0    => S m
-  | S n' => repeater_from (ackermann n' 1) (ackermann n') m
+  | S n' => repeater_from (ackermann n') (ackermann n' 1) m
   end.
 \end{lstlisting}
 In the remainder of this paper we construct efficient inverses to these

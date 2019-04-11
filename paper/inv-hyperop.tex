@@ -21,7 +21,7 @@ Ackermann hierarchy.
 	\end{equation}
 	Note that we use $a\angle{n{-}1}$ in a Curried style to denote the single-variable function $\lambda b.a\angle{n{-}1}b$.
 \begin{lstlisting}
-Fixpoint inv_hyperop (a : nat) (n : nat) (b : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/applications.v#L23-L28}{Fixpoint inv\_hyperop}` (a n b : nat) : nat :=
   match n with
   | 0 => b - 1
   | S n' => countdown_to (hyperop_init a n') (inv_hyperop a n') b
@@ -258,7 +258,7 @@ We are at last ready for a strategy for computing the inverse Ackermann function
 
 The code to compute the inverse Ackermann function in Gallina follows.
 \begin{lstlisting}
-Fixpoint inv_ack_worker (f : nat -> nat) (n k bud : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_worker}` (f : nat -> nat) (n k bud : nat) : nat :=
   match bud with
   | 0 => 0
   | S bud' =>
@@ -269,8 +269,14 @@ Fixpoint inv_ack_worker (f : nat -> nat) (n k bud : nat) : nat :=
       inv_ack_worker (compose g f) (g n) (S k) bud'
     end
   end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L32-L36}{Fixpoint alpha}` (m x : nat) : nat :=
+  match m with
+  | 0 => x - 1
+  | S m' => countdown_to 1 (alpha m') (alpha m' x)
+  end.
   
-Definition inv_ack n :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L151-L152}{Definition inv\_ack}` (n : nat) : nat :=
   match (alpha 0) with f => inv_ack_worker f (f n) 0 n end.
 \end{lstlisting}
 

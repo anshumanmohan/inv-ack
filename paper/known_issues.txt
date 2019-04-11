@@ -1,12 +1,11 @@
 
-- The order of the arguments for "repeater_from" changed, but this order-change didn't get piped down all the way to the definitions of ackermann and hyperop.
-- We didn't put in the Coq definition for "alpha", which is used (line 416) in the definition for inv_ack.
 - The historical note was a little off once we took out the binary stuff. Should have discussed multiplication, division, exponentiation, logs. Rather than numerical position systems. 
-- Need to sync up listings' line numbers with line numbers in code
-- Need to add hyperlinks to GitHub permalinks using \href
+- Need to sync up listings' line numbers with line numbers in code -- 
+	On further thought, I think this is unnecessary. They already link to the code.
+	Besides, the line numbers will be a bit off anyway because we have made unified listings out of code that is actually in different parts of the same file.
 - Some of the numbering is funny. Definition 3.4 followed by Remark 3.4, Theorem 3.7 followed by Definition 3.6, etc. Go in and fix manually?
 - Anshuman would like to explain a little bit that "budget" is a lot like "gas", which is talked down in \S1.2. However, budget is better because we always take care to show that it can be calculated at reaonably low time cost.
 - Not in love with the REPT/CONTR notation
-- Need a more systematic notation for worker viz countdown worker
+- Need a more systematic ligature/notation for worker viz countdown worker
 
 Anshuman has added notes in pages 2, 5, 6, 7, 8, 9, 11, 12, 13

@@ -63,6 +63,7 @@
 \usepackage{courier}           % for the courier font (optional)
 \usepackage{multicol}          % for two equations side by side
 \usepackage[justification=centering]{caption} 
+\usepackage{xcolor}
 
 \hypersetup{ % play with these to change the look of hyperlinks
     colorlinks=true,
@@ -72,6 +73,7 @@
     citecolor=black
 }
 
+\colorlet{red}{red!80!black}
 
 %% NEW COMMANDS =============================================
 
@@ -79,13 +81,14 @@
 %	language=Coq,
     keywords={Definition,Fixpoint,match,with,end,let,in,fix},
 	basicstyle=\normalfont\footnotesize\tt,
-    keywordstyle=\color{blue},
+    keywordstyle=\color{red}, % Blue clashes with the cyan links. Change if you want.
 	stepnumber=1,
 	tabsize=2,
     numbers=none,
     numberstyle=\tiny,
     numbersep=5pt,
 	showspaces=false,
+    escapechar=`,
 	showstringspaces=false
 }
 %basicstyle=\fontsize{10}{11}\selectfont\ttfamily,

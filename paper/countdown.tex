@@ -144,7 +144,7 @@ For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown
 Essentially, \emph{countdown worker} operates on two arguments, the \emph{true argument} $n$, which we wish to count down to $a$, and the \emph{budget} $b$, the maximum number of times we attempt 
 to compositionally apply $f$ on the input before giving up. If the input goes below or equal $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n) \le a$, we return the count $k$. If the budget is exhausted, i.e. $b = 0$, while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but it can clearly be written as a Coq \li{Fixpoint}:
 \begin{lstlisting}
-Fixpoint countdown_worker a (f : nat -> nat) (n: nat) (k: nat) :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint countdown\_worker}` (a : nat) (f : nat -> nat) (n k: nat) : nat :=
 match k with
  | 0    => 0
  | S k' => match (n - a) with
@@ -160,7 +160,7 @@ we will show that a budget of $n$ is sufficient, thus letting us define \emph{co
 \begin{defn} \label{defn: countdown}
 Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.
 \begin{lstlisting}
-Definition countdown_to a f n := countdown_worker a f n n.
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L104}{Definition countdown\_to}` a f n := countdown_worker a f n n.
 \end{lstlisting}
 \end{defn}
 %Before beginning, let us clarify that the definition of $\mathbb{N}$ and operations on $\mathbb{N}$ in Gallina follow the Presburger Arithmetic \cite{presburger}, which despite being weaker than Peano Arithmetic, is a decidable theory. The Coq standard library includes \texttt{Omega}, an extensive listing of provable facts about $\mathbb{N}$ in Presburger Arithmetic, including everything used in this paper, most notably the law of excluded middle for comparisons on $\mathbb{N}$:
@@ -216,7 +216,7 @@ Definition countdown_to a f n := countdown_worker a f n n.
 	$\forall n\le a.~\cdw{f}{a} (n, b) = 0$.
 \end{lem}
 \begin{proof}
-This simple fact that follows directly from \cref{defn: countdown-worker}.
+This simple fact follows directly from \cref{defn: countdown-worker}.
 \end{proof}
 Next, we show the internal working of \emph{countdown worker} at the $\text{i}^\text{th}$ recursive step, including the accumulated result $1+i$, the current input $f^{(1+i)}(n)$, and the current budget $b-i-1$.
 \begin{lem} \label{lem: cdt-intermediate}
