@@ -1,9 +1,11 @@
-On $\mathbb{R}$, many functions are bijections and thus have an inverse in a normal sense.  Functions on $\mathbb{N}$ are often non-bijections and thus should be treated differently.
+Many functions on $\mathbb{R}$ are bijections and thus have an inverse in a normal sense.  Functions on $\mathbb{N}$ are often non-bijections and should thus be treated differently.
 
 \subsection{Upper Inverses and Expansions}
 %; indeed, simply defining an inverse can be a little subtle.
 \begin{defn} \label{defn: inverse}
-Define the \emph{upper inverse} of $F$, written $F^{-1}_{+}$ as $\min\{m : F(m)\ge n\}$.
+Define the \emph{upper inverse} of $F$, written $F^{-1}_{+}$ 
+% {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$} 
+as $\min\{m : F(m)\ge n\}$.
 Notice that this is well-defined as long as $F$ is unbounded, \emph{i.e.} $\forall b.~\exists a.~ b \leq F(a)$.  However, as a notion of ``inverse,'' it really only makes sense if $F$ is strictly
 increasing, \emph{i.e.} $\forall n,m.~n < m \Rightarrow F(n) < F(m)$, which is, in some sense, the analogue of injectivity in the discrete domain.
 \end{defn}

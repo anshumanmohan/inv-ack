@@ -1,9 +1,17 @@
 
-- The historical note was a little off once we took out the binary stuff. Should have discussed multiplication, division, exponentiation, logs. Rather than numerical position systems. 
+- The historical note was a little off once we took out the binary stuff. Should have discussed multiplication, division, exponentiation, logs. Rather than numerical position systems.
+	Anshuman: Leaving to Aquinas, or leaving until a discussion with Aquinas 
 - Need to sync up listings' line numbers with line numbers in code 
-	Anshuman says: 
+	Anshuman: 
 		On further thought, I think this is unnecessary. They already link to the code. Besides, the line numbers will be a bit off anyway because we have made unified listings out of code that is actually in different parts of the same file.
 - Not in love with the REPT/CONTR notation
+	Anshuman:
+		Made a quick change that I like better, but still not the best.
 - Need a more systematic ligature/notation for worker viz countdown worker
+	Anshuman:
+		Made a proposal on the chat.
+- Notation of upper inverse is quite confusing with the -1 and the +. 
+	Anshuman:
+		How about just -1, or the subscript + replaced with an upward arrow?
 
-Anshuman has added notes in pages 2, 5, 6, 7, 8, 9, 11, 12, 13
+Anshuman has added notes on pages 2, 5, 6, 7, 9, 11, 12, 13
