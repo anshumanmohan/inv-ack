@@ -19,14 +19,10 @@ countdown.vo: prelims.vo repeater.vo increasing_expanding.vo inverse.vo countdow
 
 applications.vo: prelims.vo repeater.vo increasing_expanding.vo inverse.vo countdown.vo  applications.v
 	$(CC) applications.v
-	
+
 inv_ack.vo: prelims.vo repeater.vo increasing_expanding.vo inverse.vo countdown.vo  applications.vo inv_ack.v
 	$(CC) inv_ack.v
-	
-.PHONY: paper
-paper:
-	cd paper; pdflatex inv-ack.tex; cd -
-	
+
 .PHONY: clean
 clean:
-	rm -f *.vo *.glob paper/inv-ack.pdf paper/*.aux paper/*.log paper/*.out paper/*.spl
+	rm -f *.vo *.glob

@@ -28,30 +28,31 @@ it in Coq under a call-by-value strategy.  Then briefly:
 	\end{equation*}
 \end{lem}
 \begin{proof}
-	Per \cref{defn: countdown-worker}, the computation makes $\cdt{f}{a}(n)$ recursive calls to $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, two computations must take place: $n_i - a$, which takes $\Theta(a)$ time, and $f(n_i) = n_{i+1}$, where $n_i \triangleq f^{(i)}(n)$ has been already computed by the $i$th call, and is greater than $a$.  The total time is then
+	Per \cref{defn: countdown-worker}, the computation makes $\cdt{f}{a}(n)$ recursive calls to $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, two computations must take place: $n_i - a$, which takes $\Theta(a)$ time, and $f(n_i) = n_{i+1}$, where $n_i \triangleq f^{(i)}(n)$ has been already computed by the $i$th call, and is greater than $a$.  The total time is \note[can someone move the little triangle up? I can't figure this one out]{then}
 	\begin{equation*}
 	\runtime\big(\cdt{f}{a}\ , n\big)
 	= \sum_{i=0}^{\cdt{f}{a}(n) - 1} \left[\runtime\left(f, f^{(i)}(n)\right) + \Theta(a)\right]
 	= \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime\left(f, f^{(i)}(n)\right) + \Theta\big(a\cdot \cdt{f}{a}(n)\big)
 	\end{equation*}
 \end{proof}
-From \cref{lem: compose-runtime} and \cref{lem: cdt-runtime}, the following lemma follows easily.
+
+From \cref{lem: compose-runtime} and \cref{lem: cdt-runtime}, the following lemma follows easily:
 \begin{lem} \label{lem: inv-ack-hier-runtime}
 	Per \cref{defn: inv-ack-hier} and \cref{defn: countdown},
 	\begin{equation*}
-	\forall i.~\runtime\big(\alpha_{i+1}, n\big) = \sum_{k=0}^{\alpha_{i+1}(n)}\runtime\left(\alpha_i, \alpha_i^{(k)}(n)\right) + \Theta\big(\alpha_{i+1}(n)\big)
+	\runtime\big(\alpha_{i+1}, n\big) = \sum_{k=0}^{\alpha_{i+1}(n)}\runtime\left(\alpha_i, \alpha_i^{(k)}(n)\right) + \Theta\big(\alpha_{i+1}(n)\big)
 	\end{equation*}
 \end{lem}
-This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i, n\big)$. If there is some $i$ such that $\runtime\big(\alpha_i, n\big) = \Theta\big(n^2\big)$, each function in the hierarchy will take at least $\Omega\big(n^2\big)$ to compute from $\alpha_i$, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}. The next lemma shows that $i = 2$ suffices.
+This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i, n\big)$. If there is some $i$ such that $\runtime\big(\alpha_i, n\big) = \Theta\big(n^2\big)$, each function in the hierarchy will take at least $\Omega\big(n^2\big)$ to compute \note{from $\alpha_i$}, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}. The next lemma shows that $i = 2$ suffices.
 \begin{lem}
 	Per \cref{defn: inv-ack-hier}, $\runtime\big(\alpha_2, n\big) = \Theta\big(n^2\big)$
 \end{lem}
 \begin{proof}
-	$\alpha_1 = \big(\cdt{\lambda m.(m-1)}{1}\big)\circ \big(\lambda m.(m-1)\big) \equiv \lambda m.(m - 2)$. By \cref{lem: inv-ack-hier-runtime},
+	$\alpha_1 = \big(\cdt{\lambda m.(m-1)}{1}\big)\circ \big(\lambda m.(m-1)\big) {\color{red}\equiv} \lambda m.(m - 2)$. By \cref{lem: inv-ack-hier-runtime},
 	\begin{equation*}
 	\runtime\big(\alpha_1, n\big) = \sum_{i=0}^{n-1} \runtime\big(\lambda m.(m-1), n - i\big) + \Theta\big((n-2)\big) = \Theta(n)\text{,}
 	\end{equation*}
-	since $\forall k.~\runtime\big(\lambda m.(m-1), k\big) = 1$. Because $\alpha_2 = \big(\cdt{\alpha_1}{0}\big)\circ \alpha_1 $, again by \cref{lem: inv-ack-hier-runtime},
+	since $\runtime\big(\lambda m.(m-1), k\big) = 1$. Because $\alpha_2 = \big(\cdt{\alpha_1}{0}\big)\circ \alpha_1 $, again by \cref{lem: inv-ack-hier-runtime},
 	\begin{equation*}
 	\runtime\big(\alpha_2, n\big)
 	= \sum_{i=0}^{\lceil (n-3)/2 \rceil} \runtime \big(\alpha_1, n-2i\big) + \Theta\left(\frac{n}{2}\right)
@@ -87,7 +88,7 @@ This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i,
 Intuitively, it is clear that the function $\alpha_2 \equiv \lambda n.(n-2)$
 slows down the entire hierarchy's performance due to one silly weakness:
 it does not know that it will always output $n-2$ before beginning its computation,
-and so it tediously subtracts $1$ until it goes below $2$.
+and so it tediously subtracts $1$ until \note{it goes below $2$.}
 %This observation leads to the next improvement.
 
 We can hard-code $\alpha_1$ as $\lambda n.(n-2)$ to reduce its running time
@@ -104,20 +105,20 @@ Without loss of generality, let us assume from now on that the constant factors 
 \end{equation*}
 In fact, this fix allows every function in the hierarchy to be computed in linear time:
 \begin{thm} \label{thm: inv-ack-hier-runtime-improved}
-	$\forall i, n.~ \runtime\big(\alpha_i, n\big) \le 2n + (4^{i+1} - 4)\lceil \log_2n\rceil + 5$.
+	$\runtime\big(\alpha_i, n\big) \le 2n + (4^{i+1} - 4)\lceil \log_2n\rceil + 5$.
 \end{thm}
 We need two crucial technical lemmas to prove this theorem.
 \begin{lem} \label{lem: inv-ack-3-runtime}
-	$\forall n.~\runtime\big(\alpha_3, n\big) \le 2n + 4$.
+	$\runtime\big(\alpha_3, n\big) \le 2n + 4$.
 \end{lem}
 \begin{proof}
-	It is easy to show that for all $k$, $\alpha_2^{(k)}(n) = \left\lceil \frac{n+3}{2^k} \right\rceil - 3$. Thus $\runtime\big(\alpha_3, n\big) = $
+	It is easy to show that $\alpha_2^{(k)}(n) = \left\lceil \frac{n+3}{2^k} \right\rceil - 3$. Thus $\runtime\big(\alpha_3, n\big) = $
 	\begin{equation*}
 \begin{array}{@{}l@{}}
 	\sum_{k=0}^{\alpha_{3}(n)}\runtime\left(\alpha_2, \left\lceil \frac{n+3}{2^k} \right\rceil - 3\right) + \alpha_{3}(n)  \quad
 	\le \quad \sum_{k=0}^{\alpha_3(n)}\left(\frac{n+3}{2^k} + 1\right) - 3\big(\alpha_3(n) + 1\big) + \alpha_3(n) \\
 	\le \sum_{k=0}^{\alpha_3(n)}\frac{n+3}{2^k} - \alpha_3(n) - 2 \quad \le \quad 2(n+3) - 2 \quad = \quad 2n + 4 \\
-[-1.5em]
+[-3.2em]
 \end{array}
 	\end{equation*}
 \end{proof}
@@ -129,7 +130,7 @@ We need two crucial technical lemmas to prove this theorem.
 	\begin{equation*}
 	S_3(n) \quad \le \quad \alpha_3(n) + 3\big\lceil \log_2(\alpha_3(n)) \big\rceil \quad \le \quad \big\lceil \log_2n \big\rceil + 3\big\lceil \log_2\log_2n \big\rceil
 	\end{equation*}
-	It is easy to prove $2\big\lceil \log_2\log_2n \big\rceil \le \big\lceil \log_2n \big\rceil$ by induction on $\big\lceil \log_2n \big\rceil$. Thus $S_3(n)~\le~3\big\lceil \log_2n \big\rceil$, as desired. Now for $i \ge 4$,
+	It is easy to prove \, $2\big\lceil \log_2\log_2n \big\rceil \le \big\lceil \log_2n \big\rceil$ by induction on $\big\lceil \log_2n \big\rceil$. Thus $S_3(n)~\le~3\big\lceil \log_2n \big\rceil$, as desired. Now for $i \ge 4$,
 	\begin{equation*}
 	S_i(n) \quad = \quad \sum_{k=1}^{\alpha_{i+1}(n)} \alpha_i^{(k)}(n) \quad \le \quad
 	\sum_{k=1}^{\alpha_{i+1}(n)} \alpha_3^{(k)}(n) \quad \le \quad
@@ -156,7 +157,7 @@ By hard-coding $\alpha_1$ as $\lambda m.(m-2)$, the $i$th level of the inverse A
 
 %\subsection{An improved inverse Ackermann computation: $O(n)$}
 %Building on the previous improvement, we can improve the running time of $\alpha(n)$ per \Cref{defn: inv-ack-hier} by hard-coding the output when $n\le 1 = \Ack(0, 0)$, and starting $\W\alpha$ with $f := \alpha_1$ and $n := \alpha_1(n)$. In other words,
-This also allows us to improve running time of $\alpha(n)$ per \Cref{defn: inv-ack-hier} by hard-coding the output when $n\le 1 = \Ack(0, 0)$, and starting $\W\alpha$ with $f = \alpha_1$ and $n = \alpha_1(n)$.
+This also allows us to improve the running time of $\alpha(n)$ per \Cref{defn: inv-ack-hier} by hard-coding the output when $n\le 1 = \Ack(0, 0)$, and starting $\W\alpha$ with $f = \alpha_1$ and $n = \alpha_1(n)$:
 \begin{equation*}
 \tilde{\alpha}(n) = \begin{cases}
 0 & \text{ if } n \le 1 \\ \W\alpha\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2

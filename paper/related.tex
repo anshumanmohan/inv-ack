@@ -9,13 +9,13 @@
 %\marginpar{\tiny \color{blue} Multiplication, Division, Algorisms. Representations of numbers (Egyption fractions/Roman numerals/Decimal/Zero). Exponentiation, Logarithm, Tetration, Log*, ...   Hyperoperations, Knuth Arrows.  Inverses as a separate notation? Mechanizations of the above?}
 The operations successor, predecessor, addition, and subtraction have
 been integral to counting forever. The ancient Egyptian
-number system used glyphs denoting $1$, $10$, $100$, \emph{etc},
+number system used glyphs denoting $1$, $10$, $100$, \emph{etc.},
 and then expressed numbers using additive combinations of these.
 The Roman system is similar, but
 it combines glyphs using both addition and subtraction. This buys brevity,
 since \emph{e.g.} $9_{\text{roman}}$ is two characters, ``one less than ten'',
 whereas $9_{\text{egyptian}}$ is nine characters, a series of nine $1$s.
-The ancient Babylonian system was similar to the modern Hindu-Arabic decimal system,
+The ancient Babylonian system was, like the modern Hindu-Arabic decimal system,
 an \emph{algorism}: the place value of a glyph determined how many times it would
 be counted towards the number being represented.
 The Babylonians operated in
@@ -24,8 +24,7 @@ be parsed as $a \times 3600 + b \times 60 + c$. Sadly they lacked
 a radix point, and so
 $a \times 216000 + b \times 3600 + c \times 60$ and $a \times 60 + b + c \div 60$
 were also reasonable interpretations. In return for incorporating the operations
-multiplication and division, they enjoyed great brevity: a number $n$ could
-be represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
+multiplication and division, they enjoyed great brevity: a number $n$ was represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
 
 %\subsection*{The Ackermann function and its inverse.}
 % This creates an unnumbered subsection
@@ -63,8 +62,8 @@ can be found in time $O(m\cdot\alpha(m,n))$.
 % http://gallium.inria.fr/~fpottier/publis/chargueraud-pottier-uf-sltc.pdf
 % http://gallium.inria.fr/~agueneau/publis/gueneau-chargueraud-pottier-coq-bigO.pdf
 % https://scholar.google.com.sg/scholar?start=0&hl=en&as_sdt=2005&sciodt=0,5&cites=6488308509111085774&scipsc=
-Moving on to mechanized verifications, Charguéraud and Pottier,
-\cite{charpott} later joined by Guéneau \cite{gueneauetal},
+Moving on to mechanized verifications, Charguéraud and Pottier, 
+later joined by Guéneau \cite{charpott, gueneauetal},
 extended Separation Logic with the notion of ``time credits'',
 formalized the~$O$ notation in Coq,
 and gave a proof in Coq that simultaneously verifies the correctness
@@ -83,7 +82,7 @@ the true Ackermann inverse when the inputs grow sufficiently large.  Our techniq
 We have implemented a hierarchy of functions that calculate the upper inverses
 to the Ackermann/hyperoperation hierarchy and used these inverses
 to compute the inverse of the diagonal Ackermann function $\Ack(n)$.
-Our functions are structurally recursive, and thus immediately accepted by Coq,
+Our functions are structurally recursive, and are thus immediately accepted by Coq,
 and we have shown that they run in linear time.
 %, and that it is consistent with
 %the usual definition of the inverse Ackermann function $\alpha(n)$.

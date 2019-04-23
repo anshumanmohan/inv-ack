@@ -24,7 +24,7 @@
 %% $Id: elsarticle-template-num.tex 64 2013-05-15 12:23:51Z rishi $
 %%
 %%
-\documentclass[a4paper,USenglish,cleveref, autoref]{lipics-v2019}
+\documentclass[a4paper,USenglish,cleveref,autoref]{lipics-v2019}
 % \documentclass[preprint,12pt]{elsarticle}
 
 %% Use the option review to obtain double line spacing
@@ -62,14 +62,19 @@
 \usepackage{listings}
 \usepackage{courier}           % for the courier font (optional)
 \usepackage{multicol}          % for two equations side by side
+\usepackage[justification=centering]{caption} 
+\usepackage{xcolor}
+\usepackage{stmaryrd}
 
 \hypersetup{ % play with these to change the look of hyperlinks
     colorlinks=true,
-    linkcolor=blue,
+    linkcolor=black,
     filecolor=magenta,
     urlcolor=cyan,
+    citecolor=black
 }
 
+\colorlet{red}{red!80!black}
 
 %% NEW COMMANDS =============================================
 
@@ -77,13 +82,14 @@
 %	language=Coq,
     keywords={Definition,Fixpoint,match,with,end,let,in,fix},
 	basicstyle=\normalfont\footnotesize\tt,
-    keywordstyle=\color{blue},
+    keywordstyle=\color{red}, % Blue clashes with the cyan links. Change if you want.
 	stepnumber=1,
 	tabsize=2,
     numbers=none,
     numberstyle=\tiny,
     numbersep=5pt,
 	showspaces=false,
+    escapechar=`,
 	showstringspaces=false
 }
 %basicstyle=\fontsize{10}{11}\selectfont\ttfamily,
@@ -97,18 +103,18 @@
 \makeatother
 \newcommand{\li}[1]{\ifmmode\mbox{\mli{#1}}\else\mbox{\lstinline/#1/}\fi}
 
-\newcommand{\cdt}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{C}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
+\newcommand{\cdt}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{\mathcal{C}}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
 
-\newcommand{\cdw}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{\textit{CW}}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
+\newcommand{\cdw}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{\mathcal{CW}}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
 
-\newcommand{\rf}[2]{{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{R}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}}
+\newcommand{\rf}[2]{{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{\mathcal{R}}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}}
 
 \newcommand{\invhyper}{I}
 \renewcommand{\angle}[1]{\langle #1\rangle}
 
-\newcommand{\W}{\text{W}}
-\newcommand{\contract}{\text{\scshape{Contr}}}
-\newcommand{\repeatable}{\text{\scshape{Rept}}}
+\newcommand{\W}{\mathcal{W}}
+\newcommand{\contract}{\text{\scshape{cont}}}
+\newcommand{\repeatable}{\text{\scshape{rept}}}
 
 \newcommand{\divc}{\text{divc}}
 \newcommand{\logc}{\text{logc}}
@@ -119,13 +125,19 @@
 
 \newcommand{\Ack}{\ensuremath{\text{A}}}
 \newcommand{\CA}{\ensuremath{\text{C}}}
-\renewcommand{\S}{\ensuremath{\text{S}}}
+%\renewcommand{\S}{\ensuremath{\text{S}}}
 \newcommand{\CR}{\ensuremath{\text{CR}}}
 \newcommand{\CRH}{\ensuremath{\text{CRH}}}
 \newcommand{\wt}[1]{\ensuremath{\widetilde{#1}}}
 \newcommand{\IAR}{\ensuremath{\text{IAR}}}
 \newcommand{\IARH}{\ensuremath{\text{IARH}}}
 \newcommand\hide[1]{}
+\newenvironment{centermath}
+ {\begin{center}$\displaystyle}
+ {$\end{center}}
+\renewcommand{\note}[2][polish]{{\color{red} #2}{\marginpar{\tiny \color{blue} #1}}}
+\renewcommand{\implies}{\Rightarrow}
+\renewcommand{\iff}{\Leftrightarrow}
 
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}[section]
@@ -135,7 +147,7 @@
 \newtheorem{lem}[thm]{Lemma}
 \newtheorem*{hypo}{Hypothesis}
 \theoremstyle{definition}
-\newtheorem{defn}{Definition}[section]
+\newtheorem{defn}[thm]{Definition}
 \newtheorem{rem}[thm]{Remark}
 
 \crefname{thm}{theorem}{theorems}
@@ -156,9 +168,9 @@
 
 \bibliographystyle{plainurl}% the mandatory bibstyle
 
-\title{A Functional Proof Pearl: Inverting the Ackermann Hierarchy}
+\title{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy}
 
-%\titlerunning{dummy short title}%optional, please use if title is longer than one line
+\titlerunning{Inverting the Ackermann Hierarchy}%optional, please use if title is longer than one line
 
 \author{Linh Tran}{National University of Singapore}{}{}{}%TODO mandatory, please use full name;
 \author{Anshuman Mohan}{National University of Singapore}{}{}{}%TODO mandatory, please use full name;
@@ -190,6 +202,9 @@
 \ccsdesc[300]{Theory of computation~Constructive mathematics}
 
 \authorrunning{L. Tran, A. Mohan, A. Hobor}
+
+\Copyright{Linh Tran, Anshuman Mohan, and Aquinas Hobor}%TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
 
 \keywords{Ackermann, hyperoperations, Coq}%TODO mandatory; please add comma-separated list of keywords
 
