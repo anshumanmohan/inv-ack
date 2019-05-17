@@ -1,6 +1,6 @@
 CC=COQC
 .PHONY: all
-all: prelims.vo repeater.vo increasing_expanding.vo  inverse.vo countdown.vo applications.vo inv_ack.vo bin_prelims.vo bin_repeater.vo bin_countdown.vo bin_inv_ack.vo
+all: prelims.vo repeater.vo increasing_expanding.vo  inverse.vo countdown.vo applications.vo inv_ack.vo bin_prelims.vo bin_repeater.vo bin_countdown.vo bin_applications.vo bin_inv_ack.vo
 
 prelims.vo: prelims.v
 	$(CC) prelims.v
@@ -32,7 +32,13 @@ bin_repeater.vo: repeater.vo bin_prelims.vo bin_repeater.v
 bin_countdown.vo: countdown.vo bin_prelims.vo bin_repeater.vo bin_countdown.v
 	$(CC) bin_countdown.v
 
-bin_inv_ack.vo: inv_ack.vo bin_prelims.vo bin_repeater.vo bin_countdown.vo bin_inv_ack.v
+bin_inverse.vo: inverse.vo bin_prelims.vo bin_inverse.v
+	$(CC) bin_inverse.v
+
+bin_applications.vo: applications.vo bin_prelims.vo bin_inverse.vo bin_applications.v
+	$(CC) bin_applications.v
+
+bin_inv_ack.vo: inv_ack.vo bin_prelims.vo bin_repeater.vo bin_countdown.vo bin_inverse.vo bin_inv_ack.v
 	$(CC) bin_inv_ack.v
 
 .PHONY: paper

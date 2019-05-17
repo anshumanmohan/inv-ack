@@ -28,7 +28,8 @@ it is straightforward to modify our techniques to compute this function.
 \begin{thm}
 	$\displaystyle \alpha(m, n) = 1 + \W\alpha_2\left(\alpha_1, \alpha_1\big(\lceil\log_2n \rceil\big), \left\lfloor \frac{m}{n} \right\rfloor, \lceil\log_2n \rceil \right)$.
 \end{thm}
-\hide{\begin{proof}[Proof Sketch]
+\hide{
+	\begin{proof}[Proof Sketch]
 	 It is easy to prove in a similar fashion to \cref{lem: inv-ack-worker-intermediate} that for all $n, b, k$ and $i$, if $\alpha_i(n) > k$ and $b > i$, then
 	\begin{equation*}
 	\W\alpha_2\big(\alpha_1, \alpha_1(b), k, b\big) = i + \W\alpha_2\big(\alpha_{i+1}, \alpha_{i+1}(n), k, b - i\big)
@@ -41,115 +42,9 @@ it is straightforward to modify our techniques to compute this function.
 	Here $b\ge l$ due to the fact that $\Ack(b, k)\ge b$, so $\alpha_b(b)\le k$. This completes the proof.
 \end{proof}}%end hide
 
-\hide{\subsection{Lower inverse of hyperoperations and Ackermann function}
-{\color{red}TODO. I'm not sure if I have time to write about this one.}}
 \hide{
-\subsection{A performance improvement with binary numbers}
-So far all of our Coq code segments have been using the Coq type \li{nat}, which is a unary system of natural numbers, where the length of each number's representation matches its value. In practice, most computers employ the binary system, where each number is represented with digits in $\{0, 1\}$. In both systems, addition and subtraction of two $n$-bit numbers takes $\Theta(n)$ time, while multiplication takes $\Theta \big(n^2\big)$ time. The binary system thus outperforms its counterpart since it represents a number $n$ with only $\lfloor \log_2n \rfloor + 1$ bits. Here we show that similar to basic arithmetic operations, representing numbers in binary helps speed up the computation of hyperoperations, Ackermann functions and their inverses. Coq has support for binary numbers with the type \li{N}, which consists of \li{0} and \li{positive}s:
-\begin{lstlisting}
-Inductive positive : Set := 
-  | xI : positive -> positive | xO : positive -> positive | xH : positive.
-\end{lstlisting}
-Here the value \li{xH} represents $1$, constructors \li{xO} and \li{xI} represent appending $0$ and $1$ to the tail, i.e. $x\to 2x$ and $x\to 2x+1$ respectively. All representations in \li{positive} start with $1$, and $0$ is added to form \li{N}. Note the separation of $0$ is needed to avoid strings like \li{00} and \li{000}, thus ensure each representation is unique.
-}
-%\paragraph*{Exponentiation with Binary Numbers}
-%This a massive improvement over the bound $\Theta\left(a^b\right)$ of exponentiation in the unary system.
-
-
-\hide{
-\begin{lstlisting}
-Definition exp (x y : N) : N := match y with
-| 0 => 1 | Npos y'
-  => match x with
-     | 0 => 0 | _ => 
-     let fix expPos (p : positive) :=
-            match p with
-            | xH => x
-            | xI p' => let t := expPos p' in x * t * t
-            | xO p' => let t := expPos p' in t * t
-            end in expPos y'
-     end end.
-\end{lstlisting}
-To analyse the performance of this definition, let us denote the computation time for \li{exp a b} and \li{a * b} respectively by $\Texp (a, b)$ and $ \Tmul (a, b)$.Now
-\begin{equation*}
-\begin{aligned}
-\Texp(a, b)
-& \le \Texp\left(a, \left\lfloor \frac{b}{2} \right\rfloor\right)
-+ \Tmul\left(a^{\left\lfloor \frac{b}{2} \right\rfloor}, a^{\left\lfloor \frac{b}{2} \right\rfloor} \right) + \Tmul\left(a^{2\left\lfloor \frac{b}{2} \right\rfloor}, a\right) \\
-& \le \Texp\left(a, \left\lfloor \frac{b}{2} \right\rfloor\right) + \left\lfloor \frac{b}{2} \right\rfloor^2 \big(\log_2 a + 1\big)^2 + 2\left\lfloor \frac{b}{2} \right\rfloor \big(\log_2 a + 1\big)^2 \\
-& \le \Texp\left(a, \left\lfloor \frac{b}{2} \right\rfloor\right) + 3\left(\frac{b}{2}\right)^2 \big(\log_2 a + 1\big)^2
-\end{aligned}
-\end{equation*}
-Thus, $\Texp(a, b) \le 3\big(\log_2 a + 1\big)^2 \sum_{k=1}^{\infty} \frac{b^{2k}}{4^k} = \bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$. 
-This a massive improvement over the bound $\Theta\left(a^b\right)$ of exponentiation in the unary system.
+\subsection{Lower inverse of hyperoperations and Ackermann function}
+{\color{red}TODO. I'm not sure if I have time to write about this one.}
 }
 
-\hide{\paragraph*{Countdown with Binary Numbers}
-\hide{Apart from speeding up addition and multiplication, the binary system does the same for their successor, namely exponentiation. We achieve this by \emph{repeated squaring},
-which by standard techniques allows us to calculate $a^b$ in $\bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$.}
-
-Although the definition of \emph{countdown} is independent of the system representing natural numbers, its Coq definition should be adjusted appropriately to account for the type \li{N}.
-\begin{lstlisting}
-Fixpoint countdown_worker a f n b := match b with
-   | O => 0
-   | S b' => if (n <=? a) then 0 else N.succ (countdown_worker a f (f n) b')
-end.
-
-Definition countdown a f n := countdown_worker a f n (N.to_nat n).
-\end{lstlisting}
-Since the budget \li{b} decrements by $1$ at each step, we keep it at type \li{nat} to facilitate unary recursion over it. This Coq definition does exactly the same computations as the one on \li{nat}, thus its running time structure is the same, only differs by the component-wise values.
-\begin{equation} \label{eq: cdt-bin-runtime-struct}
-\runtime\big(\cdt{f}{a}\ , n\big) = \sum_{i=0}^{\cdt{f}{a}(n) - 1} \left[ \runtime\left(f, f^{(i)}(n)\right) + \Tsucc(i) \right] +
-\sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right)
-\end{equation}
-Here $\Tleb(x, y)$ and $\Tsucc(u)$ respectively denote the running time of \li{x <=? y} and \li{N.succ(u)} in \li{N}. Note that in the unary system, $\Tleb\left(f^{(i)}(n), a\right) = a + 1$ and $\Tsucc(i) = 1$, which accumulate into the component $\Theta\big((a + 1)(\cdt{f}{a}(n) + 1)\big)$ in \cref{lem: cdt-runtime}. In the binary system, $\Tleb(x, y) = \Theta(1 + \min\{\log_2x, \log_2y\})$ and $\Tsucc(u)$ is the number of consecutive \li{1} bits on the right of $u$. Since $f^{(i)}(n)\ge a$ for $i < \cdt{f}{a}(n)$, the sum on the right of \eqref{eq: cdt-bin-runtime-struct} is $\Theta\big((\log_2a + 1)(\cdt{f}{a}(n) + 1)\big)$. We will show that $\Tsucc(i)$ is amortized constant.
-\begin{lem}
-	For all $n\ge 1$, $S(n) = \displaystyle \sum_{i=0}^{n-1}\Tsucc(i) \le 2n + \log_2(n)$.
-\end{lem}
-\begin{proof}
-	For $n = 1$, $\Tsucc(0) = 1$, our goal is $1\le 2$, which is trivial. For $n > 1$, observe that for all $k$, $\Tsucc(k) = \Tsucc\left(\frac{k-1}{2}\right) + 1$ if $k$ is odd and $1$ if $k$ is even. Thus for odd $n$, $S(n) = S(n-1) + 1$; for even $n$, i.e. $n = 2m$ for $m\ge 1$,
-	\begin{equation*}
-	\begin{aligned}
-	S(n) & = \sum_{i=0}^{m}\Tsucc(2i) + \sum_{i=0}^{m-1}\Tsucc(2i+1)
-	= m+1 + \sum_{i=0}^{m-1}\left[\Tsucc(i) + 1\right] \\
-	& = m+1 + S(m) + m = S(m) + n + 1
-	\end{aligned}
-	\end{equation*}
-	From the above, it is easy to complete the proof via induction.
-\end{proof}
-The above analysis leads to the following result about countdown with binary numbers.
-\begin{thm} \label{thm: cdt-runtime-bin}
-	If $n$ is represented in binary, we have
-	\begin{equation} \label{eq: cdt-runtime-bin}
-	\runtime\big(\cdt{f}{a}\ , n\big) = \sum_{i=0}^{\cdt{f}{a}(n) - 1}
-	\runtime\left(f, f^{(i)}(n)\right) + \Theta\big((\log_2a + 1)(\cdt{f}{a}(n) + 1)\big)
-	\end{equation}
-\end{thm}
-\Cref{thm: cdt-runtime-bin} allows us to build a more efficient computation of the inverse Ackermann function. Note that from \eqref{eq: inv-ack-runtime-improved}, it is equivalent to a faster computation of each $\alpha_i$. Substituting $a=1$ into \eqref{eq: cdt-runtime-bin} shows that \Cref{lem: inv-ack-hier-runtime} still holds.
-Similar to \Cref{sect: hard-code-lvl2}, the use of binaries is not immediately effective since the first level. We delve deeper into the hierarchy by \emph{hard-coding the $4^{\text{th}}$ level} and starts from there. Now
-\begin{equation*}
-\forall n, n+2  < n+3 < 2(n+2) \iff \forall n,
-\lfloor \log_2(n+2) \rfloor < \lceil \log_2(n+3) \rceil \le \lfloor \log_2(n+2) \rfloor + 1
-\end{equation*}
-This shift from floor to ceiling enables a direct computation, since $\lceil \log_2(n+3) \rceil$ can now be seen as the size of $(n+2)$'s binary representation.
-\begin{lstlisting}
-Definition alpha3 (n: N) : N := N.size (n+2) - 3.
-\end{lstlisting}
-Let $n\ge 2$. The computation of \li{N.size(n)} takes time equal to itself, so the above definition gives $\runtime(\alpha_3, n) \le 2\log_2n$. Fix an $i\ge 3$ and suppose $\runtime(\alpha_i, n) \le C_i\log_2n$. By \Cref{lem: inv-ack-hier-runtime},
-\begin{equation*}
-\begin{aligned}
-\runtime\big(\alpha_{i+1}, n\big) & = \sum_{k=0}^{\alpha_{i+1}(n)} \runtime\left(\alpha_i, \alpha_i^{(k)}(n)\right) + \alpha_{i+1}(n)
-\le C_i\sum_{k=0}^{\alpha_{i+1}(n)}\log_2 \left(\alpha_i^{(k)}(n)\right) + \alpha_{i+1}(n)\\
- & \le C_i\log_2n + C_i\sum_{k=1}^{\alpha_{i+1}(n)}\alpha_i^{(k)}(n) + \alpha_{i+1}(n)
- \le (4C_i+1)\log_2n,
-\end{aligned}
-\end{equation*}
-where the last inequality follows from $\alpha_{i+1}(n)\le \log_2n$ and \Cref{lem: sum-alpha-repeat}. Picking $C_i = 4^{i-2} - 1$ gives $C_3 > 2$ and $C_{i+1} > 4C_i +1 \ \forall i$, so $\runtime\big(\alpha_i, n\big) \le C_i\log_2n \ \forall i\ge 3$ by induction. By \eqref{eq: inv-ack-runtime-improved}, for $n > 7 = \Ack(2, 2)$, $\runtime(\alpha, n) = \runtime\big(\alpha_{\alpha(n)}, n\big) = \bigO\big(4^{\alpha(n)}\log_2n\big)$. Note that this bound can potentially be improved by further tightening the above inequalities. Although we do not obtain an exact asymptotic runtime similar to \cref{thm: inv-ack-hier-runtime-improved}, since this bound of $4^{\alpha(n)}\log_2n$ is strictly larger than the lower bound of $\log_2n$, it is still extremely small and can be bounded by simpler expressions such as $(\log_2n)^2$. Our result is an improved version of the inverse Ackermann function which runs in time $\bigO\big(4^{\alpha(n)}\log_2n\big)$.
-\begin{equation*}
-\alpha(n) \triangleq \begin{cases}
-0 & \text{if } n\le 1\\ 1 & \text{if } 2\le n\le 3 \\ 2 & \text{if } 4\le n\le 7 \\
-\W\alpha\left(\alpha_3,
-\alpha_3(n), 3, n\right) & \text{if } n\ge 8
-\end{cases} \quad \text{ where } \alpha_3 \triangleq \lambda m. \big(\lfloor \log_2(m+2) \rfloor - 2\big)
-\end{equation*}
-}
+\input{binary.tex}

@@ -52,18 +52,10 @@ Proof.
   split; intro n; [ |intro Hbn]; unfold compose;
   rewrite countdown_repeat by assumption; rewrite <- repeat_S_comm;
   rewrite N.le_ngt; intro; apply (repeat_bin_contract_strict _ _ _ _ Haf0) in H.
-  - specialize (nat_size_contract (n - a)). rewrite N2Nat.inj_sub. omega.
-  - replace (nat_size (n - a)) with (S (nat_size ((n - a) / 2))) in H.
-    + specialize (nat_size_contract ((n - a) / 2)) as H0. simpl in H.
-      rewrite <- Nat.succ_le_mono in H. apply (Nat.le_trans _ _ _ H) in H0.
-      assert (S (N.to_nat (n/2)) <= N.to_nat (n/2))%nat as contra.
-      { apply (Nat.le_trans _ (S (N.to_nat ((n + b) / 2))) _);
-        [rewrite <- Nat.succ_le_mono|apply (Nat.le_trans _ (N.to_nat ((n - a) / 2)) _)].
-        1,3 : rewrite <- le_N_nat; apply N.div_le_mono; lia.
-        apply (Nat.le_trans _ (S (N.to_nat ((n + b) / 2) +
-               nat_size (f (f (repeat f (N.to_nat ((n + b) / 2)) n)) - a))) _);
-        omega. } omega.
-    + rewrite <- N.div2_div. destruct (n - a); [simpl in H; omega|induction p; trivial].
+  - specialize (nat_size_contract n). omega.
+  - replace (nat_size n) with (S (nat_size (N.div2 n))) in H.
+    + specialize (nat_size_contract (N.div2 n)). omega.
+    + destruct n; [contradict Hbn; lia|induction p; trivial].
 Qed.
 
 Lemma alpha_2_correct : forall n,
@@ -91,8 +83,11 @@ Theorem alpha_contract_strict_above_1 : forall m,
     (2 <= m)%nat -> bin_contract_strict_above 1 (alpha m).
 Proof.
   destruct m as [|[|m]]; try omega; intro; clear H. induction m.
-  - split; intro n; simpl; rewrite N.div2_div;
-    [apply N.div_le_upper_bound|intro; apply N.div_le_mono]; lia.
+  - split; intro n; simpl; rewrite le_N_nat; repeat rewrite N2Nat.inj_div2;
+    rewrite N2Nat.inj_sub; replace (N.to_nat 2) with 2%nat by trivial;
+    remember (N.to_nat n) as m; clear Heqm; [|intro; clear H n].
+    + apply Nat.div2_decr. omega.
+    + repeat rewrite Nat.div2_div. apply Nat.div_le_mono; omega.
   - rewrite alpha_recursion; [|omega]. apply (countdown_bin_contract _ _ _ IHm).
 Qed.
 

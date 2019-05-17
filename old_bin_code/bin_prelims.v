@@ -48,13 +48,6 @@ Proof.
   rewrite Nat2N.inj_compare. apply N.compare_lt_iff.
 Qed.
 
-Lemma le_div_mul : forall a b q : N, b <> 0 -> (q <= a / b) <-> (b * q <= a).
-Proof.
-  intros a b q Hb. split; intro H.
-  - rewrite N.le_ngt. intro contra. apply N.div_lt_upper_bound in contra; [lia|trivial].
-  - apply N.div_le_lower_bound; trivial.
-Qed.
-
 
 (* ****** REPEATED APPLICATION ************ *)
 
@@ -108,16 +101,16 @@ Qed.
 
 (* Binary contraction contracts size *)
 Lemma div2_nat_size :
-    forall m n, 0 < n -> m <= n / 2 -> (1 + nat_size m <= nat_size n)%nat.
+    forall m n, 0 < n -> m <= N.div2 n -> (1 + nat_size m <= nat_size n)%nat.
 Proof.
-  intros m n Hn Hmn. apply (Nat.le_trans _ (1 + nat_size (n / 2)) _).
+  intros m n Hn Hmn. apply (Nat.le_trans _ (1 + nat_size (N.div2 n)) _).
   - apply le_n_S. apply nat_size_incr. apply Hmn.
-  - destruct n; try lia. rewrite <- N.div2_div.
+  - destruct n; try lia.
     destruct p; trivial.
 Qed.
 
 Lemma div2_contr :
-    forall m n, 0 < n -> m <= n / 2 -> m < n.
+    forall m n, 0 < n -> m <= N.div2 n -> m < n.
 Proof.
   intros m n Hn Hmn. apply (div2_nat_size m n Hn) in Hmn.
   rewrite N.lt_nge. intro. apply nat_size_incr in H. omega.

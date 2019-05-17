@@ -16,8 +16,20 @@ Definition contracting (f : N -> N) : Prop :=
   forall n, f n <= n.
 
 Definition bin_contract_strict_above (a : N) (f : N -> N) : Prop :=
-  (contracting f) /\ (forall n, a < n -> f n <= (n + a) / 2).
+  (contracting f) /\ (forall n, a < n -> f n <= N.div2 n).
 
+(* TODO: CONVERT THIS TO BINARY
+(* Upper inverse of strict from a expansions contract above a *)
+Theorem upp_inv_expand_contract_strict :
+    forall a f F, expand_strict_from a F -> upp_inv_rel f F -> contract_strict_above a f.
+Proof.
+  intros a f F HF HfF. destruct HF as [HF HaF].
+  split.
+  - apply (upp_inv_expand_contract _ F); assumption.
+  - intro n. destruct n; [omega|]. repeat rewrite <- le_S_n_m.
+    rewrite (HfF n _). apply HaF.
+Qed.
+*)
 
 (* ****** PROPERTIES OF CONTRACTIONS ************ *)
 
@@ -33,16 +45,15 @@ Qed.
 
 (* strict binary contractions are strict contractions on nat *)
 Lemma bin_contract_strict_Nnat : forall a f,
-   bin_contract_strict_above a f ->
-    countdown.contract_strict_above (N.to_nat a) (to_nat_func f).
+   bin_contract_strict_above a f -> countdown.contract_strict_above (N.to_nat a) (to_nat_func f).
 Proof.
   intros a f [Hf Haf]. split.
   - rewrite <- contract_Nnat. apply Hf.
   - intros n. unfold to_nat_func. repeat rewrite le_nat_N.
     repeat rewrite Nat2N.inj_succ. repeat rewrite N2Nat.id.
-    intro Han. rewrite N.le_succ_l.
-    apply (N.le_lt_trans _ (((N.of_nat n) + a) / 2) _);
-    [apply Haf|apply N.div_lt_upper_bound]; lia.
+    intro Han. rewrite N.le_succ_l. apply (N.le_lt_trans _ (N.div2 (N.of_nat n)) _).
+    + apply Haf. lia.
+    + apply div2_contr; lia.
 Qed.
 
 (* repeat of contractions make the result smaller *)
@@ -60,20 +71,16 @@ Qed.
 Lemma repeat_bin_contract_strict :
   forall a f n k,
     bin_contract_strict_above a f ->
-    a < repeat f k n ->
-    ((S k) + nat_size (repeat f (S k) n - a) <= nat_size (n - a))%nat.
+    a < repeat f k n -> ((S k) + nat_size (repeat f (S k) n) <= nat_size n)%nat.
 Proof.
   intros a f n k [Hf Haf] Han. induction k.
-  - simpl in *. apply div2_nat_size; [lia|]. apply Haf in Han.
-    rewrite le_div_mul; [rewrite le_div_mul in Han|]; lia.
-  - apply (Nat.le_trans _ (S k + nat_size (repeat f (S k) n - a)) _).
-    + simpl in *. rewrite <- Nat.add_succ_r.
-      rewrite <- Nat.succ_le_mono, <- Nat.add_le_mono_l.
-      apply div2_nat_size; [lia|]. apply Haf in Han.
-      rewrite le_div_mul; [rewrite le_div_mul in Han|]; lia.
+  - simpl in Han. apply div2_nat_size; [lia| apply Haf; trivial]. 
+  - apply (Nat.le_trans _ (S k + nat_size (repeat f (S k) n)) _).
+    + simpl. simpl in Han. assert (H := Han). apply Haf in H.
+      apply div2_nat_size in H; lia.
     + assert (a < repeat f k n) as Han0.
-      * apply (N.lt_le_trans _ (repeat f (S k) n) _); [apply Han| apply Hf].
-      * apply (IHk Han0).
+    { apply (N.lt_le_trans _ (repeat f (S k) n) _); [apply Han| apply Hf]. }
+    apply (IHk Han0).
 Qed.
 
 
@@ -87,7 +94,7 @@ Fixpoint countdown_worker (f : N -> N) (a n : N) (b : nat) : N :=
   end.
 
 Definition countdown (f : N -> N) (a n : N) : N
-  := countdown_worker f a n (nat_size (n - a)).
+  := countdown_worker f a n (nat_size n).
 
 
 Lemma bin_contract_strict_threshold : forall a f n,
@@ -105,16 +112,15 @@ Proof.
     + intros. omega.
   - intros a Haf Hm. rewrite Nat2N.inj_succ in Hm.
     destruct (IHm (N.succ a)) as [x [Hax Haxn]];
-    [intros; apply (N.le_trans _ ((n0 + a)/2) _);
-       [apply Haf|apply N.div_le_mono]; lia| lia| ].
+    [intros; apply Haf; lia| lia| ].
     apply N.le_lteq in Hax. rewrite N.lt_succ_r in Hax.
     destruct Hax as [Hax | Hax]; [exists x| exists (S x)];
     split; try assumption.
     + intros k Hk. apply Haxn. lia.
     + rewrite <- N.lt_succ_r. simpl. rewrite Hax.
-      apply (N.le_lt_trans _ ((N.succ a + a) / 2) _).
+      apply (N.le_lt_trans _ (N.div2 (N.succ a)) _).
       * apply Haf. lia.
-      * rewrite N.lt_nge. rewrite le_div_mul; lia.
+      * apply div2_contr; lia.
     + intros k Hk. assert (repeat f k n <= N.succ a) as H by lia.
       apply Haxn in H. destruct H; [lia| omega].
 Qed.
@@ -171,7 +177,7 @@ Proof.
       apply repeat_contract. apply Hf. apply H. apply Ht0.
     + apply (Ht1 _ H).
     + apply Hf.
-    + apply (Nat.le_trans _ (S t + nat_size (repeat f (S t) n - a))%nat _).
+    + apply (Nat.le_trans _ (S t + nat_size (repeat f (S t) n))%nat _).
       omega. apply (repeat_bin_contract_strict a _ _ _ Hf Ht).
     + apply Ht.
 Qed.
