@@ -1,0 +1,50 @@
+\newcommand{\Texp}{\runtime_{\li{exp}}}
+\newcommand{\Tmul}{\runtime_{\li{mul}}}
+\newcommand{\Tleb}{\runtime_{\li{leb}}}
+\newcommand{\Tsucc}{\runtime_{\li{succ}}}
+\subsection{Two-parameter inverse Ackermann function}
+Some authors~\cite{tarjan,chazelle} prefer a two-parameter inverse Ackermann function.
+\begin{defn} \label{defn: 2para-alpha}
+	The two-parameter inverse Ackermann function is defined as:
+	\begin{equation} \label{eq: tmp-2para-alpha}
+	\alpha(m, n) \triangleq \min\left\{i \ge 1 : \Ack\left(i, \left\lfloor \frac{m}{n} \right\rfloor \right)\ge \log_2n \right\}
+	\end{equation}
+\end{defn}
+Note that $\alpha(n, n)$ and the single-parameter $\alpha(n)$ 
+are neither equal nor directly related, but
+it is straightforward to modify our techniques to compute this function.
+\hide{This function arises from deep runtime analysis of the disjoint-set data structure. Tarjan \cite{tarjan} showed that, in the disjoint-set data structure, the time required $t(m,n)$ for a sequence of $m$ \textsc{\color{magenta}FIND}s intermixed with $n-1$ \textsc{\color{magenta}UNION}s (such that $m \geq n$) is bounded as: $k_{1}m\cdot\alpha(m,n) \leq t(m,n) \leq k_{2}m\cdot\alpha(m,n)$. In graph theory, Chazelle \cite{chazelle} showed that the minimum spanning tree of a connected graph with $n$ vertices and $m$ edges can be found in time $O(m\cdot\alpha(m,n))$. Computing this function is in fact easier than $\alpha(n)$, as when $m$ and $n$ are given, we are reduced to finding the minimum $i\ge 1$ such that $\Ack_i(s)\ge t$ for $s, t$ fixed, which can be done with the following variant of the \emph{inverse Ackermann worker}.
+}
+\begin{defn} \label{defn: 2para-inv-ack-worker}
+	The two-parameter inverse Ackermann worker is a function $\W\alpha_2$: 
+	\hide{$(\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:}
+	\begin{equation} \label{eq: 2para-inv-ack-worker-recursion}
+	\W\alpha_2(f, n, k, b) = \begin{cases}
+	0 & \text{if } b = 0 \vee n\le k \\ 1 + \W\alpha_2\big(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k, b-1\big) & \text{if } b \ge 1 \wedge n \ge k+1
+	\end{cases}
+	\end{equation}
+\end{defn}
+%Similar to the one-parameter version, the following theorem establishes the correct setting for $\W\alpha_2$ to compute $\alpha(m, n)$.
+\begin{thm}
+	$\displaystyle \alpha(m, n) = 1 + \W\alpha_2\left(\alpha_1, \alpha_1\big(\lceil\log_2n \rceil\big), \left\lfloor \frac{m}{n} \right\rfloor, \lceil\log_2n \rceil \right)$.
+\end{thm}
+\hide{
+	\begin{proof}[Proof Sketch]
+	 It is easy to prove in a similar fashion to \cref{lem: inv-ack-worker-intermediate} that for all $n, b, k$ and $i$, if $\alpha_i(n) > k$ and $b > i$, then
+	\begin{equation*}
+	\W\alpha_2\big(\alpha_1, \alpha_1(b), k, b\big) = i + \W\alpha_2\big(\alpha_{i+1}, \alpha_{i+1}(n), k, b - i\big)
+	\end{equation*}
+	Now let $k \triangleq \lfloor m/n \rfloor$, $b \triangleq \lceil \log_2n \rceil$ and $l \triangleq \min\big\{i : \alpha_i(b)\le k\big\}$, which exists because $\Ack(i, \cdot)$ increases strictly with $i$. Then $\alpha(m, n) = \max{1, l}$. If $l = 0$, $\alpha_1(b) \le \alpha_0(b) \le k$, so $\W\alpha_2\big(\alpha_1, \alpha_1(b), k, b\big) = 0$, as desired. If $l \ge 1$,
+	\begin{equation*}
+	1 + \W\alpha_2\big(\alpha_1, \alpha_1(b), k, b\big)
+	= 1 + l - 1 + \W\alpha_2\big(\alpha_l, \alpha_l(b), k, b-l\big) = l
+	\end{equation*}
+	Here $b\ge l$ due to the fact that $\Ack(b, k)\ge b$, so $\alpha_b(b)\le k$. This completes the proof.
+\end{proof}}%end hide
+
+\hide{
+\subsection{Lower inverse of hyperoperations and Ackermann function}
+{\color{red}TODO. I'm not sure if I have time to write about this one.}
+}
+
+\input{binary.tex}

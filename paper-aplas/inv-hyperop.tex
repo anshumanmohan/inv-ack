@@ -1,0 +1,303 @@
+In this section, we use \emph{countdown} to define the inverse
+hyperoperation hierarchy, which features elegant new definitions of
+division, $\log$, and $\log^{*}$.
+We then modify the inverse hyperoperation hierarchy to arrive at the inverse
+Ackermann hierarchy.
+
+\subsection{The Inverse Hyperoperations, including Division, Log, and Log*}
+
+\begin{defn} \label{defn: inv-hyperop}
+	The inverse hyperoperations, written $a\angle{n}b$, are defined as follows:
+	\begin{equation}
+	a\angle{n}b \; \triangleq \; \begin{cases}
+	b - 1 & \hspace{-10pt} \quad \text{ if } n = 0 \\
+	\cdt{a\angle{n-1}}{a_n}(b) & \hspace{-10pt} \quad \text{ if } n \ge 1
+	\end{cases}
+	\ \ \quad \text{ where } \ a_n = \begin{cases}
+	a & \hspace{-10pt}\text{ if } n = 1 \\
+	0 & \hspace{-10pt}\text{ if } n = 2 \\
+	1 & \hspace{-10pt}\text{ if } n \ge 3
+	\end{cases}
+	\end{equation}
+	Note that we use $a\angle{n{-}1}$ in a Curried style to denote the single-variable function $\lambda b.a\angle{n{-}1}b$.
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/applications.v#L23-L28}{Fixpoint inv\_hyperop}` (a n b : nat) : nat :=
+  match n with
+  | 0 => b - 1
+  | S n' => countdown_to (hyperop_init a n') (inv_hyperop a n') b
+  end.
+\end{lstlisting}
+\end{defn}
+\hide{
+Continuing with the notion of upper-inverses we have used thus far,
+we aim for the \emph{ceiling} of division and $\log$ on real numbers, $\left\lceil b/a \right\rceil$ and $\left\lceil \log_ab \right\rceil$. The iterated logarithm is formally defined as the minimum number of times $\log$ needs to be iteratively
+applied to the input for the result to become less than or equal to $1$.
+Thus it is natural to define it using \emph{countdown}.
+
+\begin{defn} \label{defn: divc} \label{defn: logc} \label{defn: log*}
+\[
+\divc(a, b) \! \triangleq \! \cdt{\left(\lambda b. (b{-}a)\right)}{0}(b) \quad
+\logc(a, b) \! \triangleq \! \cdt{\left(\lambda b. \divc(a, b)\right)}{1}(b) \quad
+\log^*(a, b) \! \triangleq \! \cdt{\left(\lambda b. \logc(a, b)\right)}{1}(b)
+%\begin{array}{c}
+%\divc(a, b) \triangleq \cdt{\left(\lambda b. (b-a)\right)}{0}(b) \qquad
+%\logc(a, b) \triangleq \cdt{\left(\lambda b. \divc(a, b)\right)}{1}(b) \\
+%\log^*(a, b) \triangleq \cdt{\left(\lambda b. \logc(a, b)\right)}{1}(b)
+%\end{array}
+\]
+\begin{lstlisting}
+Definition divc a b := countdown_to 0 (fun n => n - a) b.
+Definition logc a b := countdown_to 1 (divc a) b.
+Definition logstar a b := countdown_to 1 (logc a) b.
+\end{lstlisting}\vspace*{-0.5\baselineskip}
+\end{defn}
+}%end hide
+\hide{Proving $\forall a, b \ge 1,~\divc(a, b) = \left\lceil b/a \right\rceil$ serves
+to prove that all three definitions are correct, since that statement implies
+the correctness of  $\logc$, which in turn implies the correctness of $\log^*$. We will prove this in \cref{blah},
+together with the correctness of the entire hyperoperation hierarchy.
+}
+
+We now prove that $a\angle{n}$ is the inverse to $a[n]$.  First, note that $a\angle{0}\in \contract_0$. Then:
+\begin{lem}
+$a\angle{1}b = b - a$.
+\end{lem}
+\begin{proof}
+Since $a\angle{0} \in \contract_0 \subseteq \contract_{a}$, \cref{thm: cdt-recursion} applies.
+\begin{equation*}
+a\angle{1}b \quad = \quad \cdt{\left(a\angle{0}\right)}{a}(b) \quad = \quad \begin{cases}
+0 & \text{ if } b\le a \\ 1 + a\angle{1}(b - 1) & \text{ if } b\ge a+1 \end{cases} \\
+\end{equation*}
+Then, $a\angle{1}b = b - a$ by induction on $b$.
+\end{proof}
+\begin{col} \label{col: inv-hyperop-1-contr1}
+$\forall a \ge 1, a\angle{1} \in \contract_1$.
+\end{col}
+\hide{\begin{col} \label{col: inv-hyperop-234}
+{\color{magenta}$\forall a \in \mathbb{N}$}:
+ {\color{blue} For all $a \in \mathbb{N}$},
+\begin{enumerate}
+	\item If $a\ge 1$, $a\angle{2}b = \divc(a, b) \ \forall b$.
+	\item If $a\ge 2$, $a\angle{3}b = \logc(a, b) \ \forall b$ and $a\angle{4}b = \logstarc(a, b) \ \forall b$.
+\end{enumerate}
+\end{col}}%end hide
+%Now we are ready to prove the correctness of the inverse hyperoperations.
+Note that $a\angle{n}b$ is a total function, but that its behavior is not used in practice for $a = 0$ when $n \ge 2$ or for $a=1$ when $n \ge 3$.  For the values
+we do care about, we have our inverse:
+\begin{thm} \label{thm: inv-hyperop-correct}
+When $n\le 1$, $n \le 2 \wedge a\ge 1$, or $a\ge 2$, then
+$a\angle{n} = \left(a[n]\right)^{-1}_+$.
+\end{thm}
+\begin{proof}
+$\forall n \ge 2,~$ let $a_0 = a, a_1 = 0, a_n = 1$. Define
+\begin{equation*}
+P(n) \triangleq  \left(a[n] \in \repeatable_{a_n}\right)\ \text{ and } \
+Q(n) \triangleq  \left(a\angle{n} = \left(a[n]\right)^{-1}_+ \right)
+\end{equation*}
+We have three goals:
+$\forall a.~ Q(0) \wedge Q(1)$,
+$\forall a \ge 1.~ Q(2)$, and
+$\forall a \ge 2.~ Q(n)$. \\
+Note \mbox{$\forall n.~ a\angle{n+1}$} $= \cdt{a\angle{n}}{a_n}$ and $a[n+1] = \rf{a[n]}{a_n}$. By \cref{thm: cdt-inv-rf},
+
+\vspace*{-1em}
+\noindent\begin{minipage}{.45\linewidth}
+\begin{equation}
+P(n) \Rightarrow Q(n) \Rightarrow Q(n+1) \label{eq: tmp-induction-1}
+\end{equation}
+\end{minipage}
+\begin{minipage}{.55\linewidth}
+\begin{equation}
+\qquad a_{n} \ge 1 \Rightarrow P(n) \Rightarrow P(n+1) \label{eq: tmp-induction-2}
+\end{equation}
+\end{minipage}
+For the first goal, $P(0) \iff \lambda b.(b+1)\in \repeatable_a$ and
+$Q(0) \iff a\angle{0} = \left(a[0]\right)^{-1}_{+} \iff (b-1\le c \iff b\le c+1)$.
+These are both straightforward. Then, $Q(1)$ holds by \eqref{eq: tmp-induction-1}. In the second goal, we have $a \ge 1$.
+$P(1)$ holds by $P(0)$ and \eqref{eq: tmp-induction-2}.
+Then, $Q(2)$ holds by $Q(1)$ and \eqref{eq: tmp-induction-1}.
+In the third goal, we have $a\ge 2$, and, using \eqref{eq: tmp-induction-1} and $Q(0)$, the goal reduces to $P(n)$. Using \eqref{eq: tmp-induction-2} and the fact that $\forall n \neq 1.~a_n\ge 1$, the goal reduces to $P(2)$. This is equivalent to:
+\begin{equation*}
+a[2]\in \repeatable_0 \iff \forall b < c.~ab < ac \quad \wedge \quad \forall b \ge 1.~ab \ge b+1\text{,}
+\end{equation*}
+which is straightforward for $a\ge 2$. Induction on n gives us the third goal.
+\end{proof}
+%With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^*$, as well as the whole inverse hyperoperation hierarchy.
+\begin{rem}
+Three early hyperoperations are $a[2]b = ab$, $a[3]b = a^b$ and $a[4]b = \! ^ba$, so by \cref{thm: inv-hyperop-correct}, we can define their inverses $\left\lceil b/a \right\rceil$, $\left\lceil \log_a b \right\rceil$, and $\log^*_a b$ as $a\angle{2}b$, $a\angle{3}b$, and $a\angle{4}b$.
+Note that the functions $\log_a b$, and $\log^*_a b$ are not in the Coq Standard Library.
+\end{rem}
+\hide{
+\begin{col}
+	$\forall a \in \mathbb{N}$:
+	\begin{enumerate}
+		\item If $a\ge 1$, $\divc(a, b) = \left\lceil \frac{b}{a} \right\rceil$.
+		\item If $a\ge 2$, $\logc(a, b) = \left\lceil \log_ab \right\rceil $ and $\logstarc(a, b) = \log^*_ab$.
+	\end{enumerate}
+\end{col}
+\begin{proof}
+	The result follows from \cref{col: inv-hyperop-234}, \cref{thm: inv-hyperop-correct} and the first few expansions of the hyperoperation hierarchy: $a[2]b = ab$, $a[3]b = a^b$ and $a[4]b = \ ^ba$.
+\end{proof}
+
+\begin{rem}
+	\Cref{thm: cdt-recursion} leads to useful recursive formulas for $\divc$, $\logc$ and $\logstarc$:
+	\begin{align*}
+	\divc(a, b) & = 1 + \divc(a, b - a) & \text{ if } b > 0 &\text{, and } 0 \text{ otherwise}. \\
+	\logc(a, b) & = 1 + \logc\left(a, \left\lceil b/a \right\rceil\right) & \text{ if } b > 1 &\text{, and } 0 \text{ otherwise}. \\
+	\logstarc(a, b) & = 1 + \divc(a, \left\lceil \log_ab \right\rceil) & \text{ if } b > 1 &\text{, and } 0 \text{ otherwise}.
+	\end{align*}
+\end{rem}
+}
+
+\subsection{The Inverse Ackermann hierarchy}
+
+% NEW METHOD FOR INVERSE ACKERMANN
+We can use \emph{countdown} to build the inverse Ackermann hierarchy, where each
+level $\alpha_i$ is the inverse to the level $\Ack_i$.
+Since we know that $\Ack_{i+1} = \rf{\Ack_i}{\Ack_i(1)}$, the recursive
+rule $\alpha_{i+1} \triangleq \cdt{\alpha_i}{\Ack_i(1)}$ is tempting.
+However, that approach is flawed because it still depends on $\Ack_i$.
+Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\big)^{-1}_+$ and $\alpha_{i+1} = \big(\Ack_{i+1}\big)^{-1}_+$. Then $\Ack_{i+1}(m) = \big(\Ack_{i}\big)^{(m)} \big(\Ack_{i}(1)\big)$. We then have:
+\begin{equation} \label{eq: inv-ack-hier-derive}
+\alpha_{i+1}(n)\le m \iff n\le \big(A_i\big)^{(m+1)}(1) \iff \big(\alpha_i\big)^{(m+1)}(n) \le 1
+\end{equation}
+This is equivalent to $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\big\}$, or $\alpha_{i+1}(n) = \cdt{\alpha_i}{1}\big(\alpha_i(n)\big)$. From equation \eqref{eq: inv-ack-hier-derive} we can thus define the following inverse Ackermann hierarchy:
+\begin{defn} \label{defn: inv-ack-hier}
+    Define the inverse Ackermann hierarchy as $
+	\alpha_i \triangleq \begin{cases}
+	\lambda n.(n - 1) & \text{if } i = 0
+	\\ \big(\cdt{\alpha_{i-1}}{1}\big)\circ \alpha_{i-1} & \text{if } i\ge 1 \end{cases}
+$
+\end{defn}
+We can redefine the inverse Ackermann function \emph{without directly referring to $\Ack(i)$} using $\alpha_i$:
+\begin{defn} \label{thm: inv-ack-hier-correct}
+	%For all $n, k$, $n\le \Ack(k, k) \!\!\iff \!\! \alpha_k(n)\le k$. Thus
+	$\alpha(n) \triangleq \min\big\{k : \alpha_k(n)\le k \big\}$.
+\end{defn}
+All that remains is to provide a structurally-recursive function that can compute $\alpha$ effectively.
+\begin{defn} \label{defn: inv-ack-worker}
+	The inverse Ackermann worker is a function $\W\alpha$: %(\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
+	\begin{equation} \label{eq: inv-ack-worker-recursion}
+	\W\alpha(f, n, k, b) = \begin{cases}
+	k & \text{if } b = 0 \vee n\le k \\ \W\alpha(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k+1, b-1) & \text{if } b \ge 1 \wedge n \ge k+1
+	\end{cases}
+	\end{equation}
+\end{defn}
+When given the arguments $\big(\alpha_i, \alpha_i(n), i, b\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\W\alpha$ will take on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b-1\big)$ at the next recursive call. Thus if $\W\alpha$ is given a sufficient budget $b$, the initial arguments $(\alpha_0, \alpha_0(n), 0, b)$ will recursively move through the chain \note[what's with the braces?]{$\big\{\alpha_i(n)\big\}$} and terminate at a point $k$ where $\alpha_k(n)\le k$.
+We now need to show that $\W\alpha$ can correctly compute $\alpha(n)$
+given a reasonable budget. We show that a budget of $n$ suffices.
+We start with the following lemma.
+\begin{lem} \label{lem: inv-ack-worker-intermediate}
+	$\forall n, b, k$ s.t. $k+1\le \min\big\{b, \alpha_k(n)\big\}$, 
+	\begin{equation*}
+	\W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+	\end{equation*}
+\end{lem}
+\begin{proof}
+	 We prove $P(k)$ by induction, where
+	 \begin{equation*}
+	 \begin{aligned}
+	 P(k) \quad \triangleq \quad & (\alpha_k(n)\ge k+1) \wedge (b\ge k+1) \implies \null \\ & \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+	 \end{aligned}
+	 \end{equation*}
+	\begin{enumerate}[leftmargin=*]
+		\item \emph{Base case}. $ \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\cdt{\big(\alpha_0}{1}\big)\circ \alpha_0, \cdt{\alpha_0}{1}\big(\alpha_0(n)\big), 1, b - 1\big) $ by
+		\eqref{eq: inv-ack-worker-recursion} with $b\ge 1$ and $\alpha_0(n)\le 1$. Since $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$ per \cref{defn: inv-ack-hier}, $P(0)$ holds.
+		
+		\item \emph{Inductive step.} Suppose $\alpha_{k+1}(n)\ge k+2$ and $b\ge k+2$. Then $\alpha_k(n)\ge k+1$ and $b\ge k+1$, so $P(k)$ applies. It suffices to show
+		\begin{equation*}
+		\W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+		= \W\alpha\big(\alpha_{k+2}, \alpha_{k+2}(n), k+2, b-k-2\big)
+		\end{equation*}
+		Per \cref{defn: inv-ack-hier}, $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this is \eqref{eq: inv-ack-worker-recursion} with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$. Thus $P(k+1)$ holds. Induction on $k$ completes the proof. %\vspace*{-\baselineskip}
+	\end{enumerate}
+	\vspace{-2.2em}
+\end{proof}
+\hide{\color{red}
+\begin{proof}
+	 We prove $P(k) \ \forall k$ by induction, where
+	 \begin{equation*}
+	 \begin{aligned}
+	 P(k) \triangleq \forall n, b \ \ & (\alpha_k(n)\ge k+1) \to (b\ge k+1)\\ & \to \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+	 \end{aligned}
+	 \end{equation*}
+	\begin{enumerate}[leftmargin=*]
+		\item \emph{Base case}. $ \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\cdt{\big(\alpha_0}{1}\big)\circ \alpha_0, \cdt{\alpha_0}{1}\big(\alpha_0(n)\big), 1, b - 1\big) $ by
+		\eqref{eq: inv-ack-worker-recursion} with $b\ge 1$ and $\alpha_0(n)\le 1$. Since $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$ per \cref{defn: inv-ack-hier}, $P(0)$ holds.
+		
+		\item \emph{Inductive step.} Suppose $\alpha_{k+1}(n)\ge k+2$ and $b\ge k+2$. Then $\alpha_k(n)\ge k+1$ and $b\ge k+1$, so $P(k)$ applies. It suffices to show
+		\begin{equation*}
+		\W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+		= \W\alpha\big(\alpha_{k+2}, \alpha_{k+2}(n), k+2, b-k-2\big)
+		\end{equation*}
+		Per \cref{defn: inv-ack-hier}, $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this is just \eqref{eq: inv-ack-worker-recursion} with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$, so $P(k+1)$ holds. The proof is complete by induction.\vspace*{-\baselineskip}
+	\end{enumerate}
+\end{proof}}
+
+We are at last ready for a strategy for computing the inverse Ackermann function.
+%formalizes a setting for $\W\alpha$ to work.
+\begin{thm} \label{thm: inv-ack-worker-correct}
+	$\W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
+\end{thm}
+
+
+
+%Next, a lemma connecting the value of $\W\alpha(f, n, k , b)$ and $k$, which is important because the recursive rule alone does not tell how the value of $\W\alpha$ changes at each recursive step.
+%\begin{lem}
+%	For all $f, n, k, b$, $\W\alpha\big(f, n, k, b\big) \ge k$.
+%\end{lem}
+%\begin{proof}
+%	Fix $n$, if $k \ge n$, equality occurs. Consider only $k\le n$, using backwards induction, suppose $\W\alpha\big(f, n, k, b\big) \ge k \ \forall f, b$ for some $1\le k\le n$. Now fix $f, b$ and consider $\W\alpha\big(f, n, k-1, b\big)$. If $b = 0$, equality occurs. Otherwise, $\W\alpha\big(f, n, k-1, b\big) = \W\alpha\big(f, n, k, b\big) \ge k \ge k-1$. The proof is complete.
+%\end{proof}
+\begin{proof} %[Proof of \Cref{thm: inv-ack-worker-correct}]
+	Since the sequence $\big\{\alpha_k(n)\big\}_{k=1}^{\infty}$ decreases while $\{k\}_{k=1}^{\infty}$ increases to infinity, there exists $m \triangleq \min\big\{k : \alpha_k(n) \le k \} = \alpha(n)$. Note that $m\le n$ since $\alpha_n(n)\le n$.
+	If $m = 0$, $\alpha_0(n)\le 0 \!\! \implies \!\! \alpha_0(n) = 0$. Thus $\W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) = 0 = m$. If $m \ge 1$, \cref{lem: inv-ack-worker-intermediate} implies:
+	$$ \W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) = \W\alpha\big(\alpha_m, \alpha_m(n), m, n - m\big) = m $$
+	where the last equality follows from the recursive rule.
+\end{proof}
+
+The code to compute the inverse Ackermann function in Gallina follows.
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_worker}` (f : nat -> nat) (n k bud : nat) : nat :=
+  match bud with
+  | 0 => 0
+  | S bud' =>
+    match (n - k) with
+    | 0 => k
+    | S _ =>
+      let g := (countdown_to 1 f) in 
+      inv_ack_worker (compose g f) (g n) (S k) bud'
+    end
+  end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L32-L36}{Fixpoint alpha}` (m x : nat) : nat :=
+  match m with
+  | 0 => x - 1
+  | S m' => countdown_to 1 (alpha m') (alpha m' x)
+  end.
+  
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L151-L152}{Definition inv\_ack}` (n : nat) : nat :=
+  match (alpha 0) with f => inv_ack_worker f (f n) 0 n end.
+\end{lstlisting}
+
+% OLD METHOD FOR INVERSE ACKERMANN
+
+%Using the Ackermann kludge from \cref{sec: overview}, we sketch a method to find the inverse Ackermann function from the inverse hyperoperations.
+%\begin{thm} \label{thm: inv-hyperop-inv-ack}
+%	For all $n, k$, $n\le \Ack(k, k) \iff 2\angle{k}(n+3)\le k+3$.
+%\end{thm}
+%\begin{proof}
+%	$n\le \Ack(k, k) \iff n\le 2[k](k+3) - 3$. Now $2[k]$ is an expansion by \cref{thm: inv-hyperop-correct}'s proof, so $2[k](k+3) \ge k+3\ge 3$, so  $n\le 2[k](k+3) - 3 \iff n+3 \le 2[k](k+3)\iff 2\angle{k}(n+3)\le k+3$, again by \cref{thm: inv-hyperop-correct}.
+%\end{proof}
+%\Cref{thm: inv-hyperop-inv-ack} allows a simple method to compute the Inverse Ackermann function, based on the \emph{budget} idea in \emph{countdown worker}.
+%\begin{defn} \label{defn: inv-ack-worker}
+%	The \emph{inverse Ackermann worker} of $f$ is a function $\W\alpha\ : \mathbb{N}^4\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
+%	$$ \W\alpha(f, n, k, b) = \begin{cases}
+%	k - 3 & \text{if } b = 0 \vee f(n)\le k+3 \\ \W\alpha(\cdt{f}{a_k}\ , n, k+1, b-1) & \text{if } b \ge 1 \wedge f(n) > k+3
+%	\end{cases} $$
+%	where $a_0 = 2$, $a_1 = 0$ and $a_k = 1 \ \forall k\ge 2$.
+%\end{defn}
+%The function $\W\alpha$ takes a function $f$ and pretends it was the first level of the inverse hyperoperation hierarchy. It then keeps applying countdown to $f$, supposedly arrives at the $\text{m}^{\text{th}}$-level at the $\text{m}^{\text{th}}$-recursive step, until the budget $b$ is exhausted or $f(n)\le k+3$, i.e. \emph{early stopping}, and will output $k$. If at the beginning $k=3$ and $f = 2\angle{0}$, the early stopping condition becomes $2\angle{k}n \le k+3$, which when replace $n$ by $n+3$ gives what we need in \cref{thm: inv-hyperop-inv-ack}.
+%The inverse Ackermann function can be defined as follows.
+%\begin{thm} For all $n$, we have $\alpha(n) = \W\alpha(\lambda m.(m - 1), n+3, 3, n)$.
+%\end{thm} 

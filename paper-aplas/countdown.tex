@@ -1,0 +1,301 @@
+Many functions on $\mathbb{R}$ are bijections and thus have an inverse in a normal sense.  Functions on $\mathbb{N}$ are often non-bijections and should thus be treated differently.
+
+\subsection{Upper Inverses and Expansions}
+%; indeed, simply defining an inverse can be a little subtle.
+\begin{defn} \label{defn: inverse}
+Define the \emph{upper inverse} of $F$, written $F^{-1}_{+}$ 
+% {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$} 
+as $\min\{m : F(m)\ge n\}$.
+Notice that this is well-defined as long as $F$ is unbounded, \emph{i.e.} $\forall b.~\exists a.~ b \leq F(a)$.  However, as a notion of ``inverse,'' it really only makes sense if $F$ is strictly
+increasing, \emph{i.e.} $\forall n,m.~n < m \Rightarrow F(n) < F(m)$, which is, in some sense, the analogue of injectivity in the discrete domain.
+\end{defn}
+We call this function the ``upper inverse'' because for strictly increasing functions like
+addition, multiplication, and exponentiation, the upper inverse is the ceiling of the 
+corresponding inverse functions on $\mathbb{R}$. We can characterize inverses more meaningfully as follows: 
+\hide{
+\color{red} It is reasonable to wonder about the floor.
+\begin{defn} \label{defn: lower_inverse}
+The converse \emph{lower inverse}, written $F^{-1}_{-}$,
+is defined as $\max\{m : F(m)\le n\}$.
+\end{defn}
+Even if $F$ strictly increases, as $a[n]$ does for every $a\ge 2$, notice that the lower inverse will be undefined for $n < F(0)$, \emph{e.g.} $\{m : a[n]m \le 0 \} = \varnothing$ for $n\ge 3$.
+Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower inverses in \cref{sec: discussion}. 
+}%end hide 
+\begin{thm} \label{thm: upp-inverse-rel}
+	If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
+\end{thm}
+\begin{proof}
+Fix $n$. The sentence $\forall m.~ n\le F(m) \iff f(n)\le m$ then implies: (1) $f(n)$ is a lower bound to $\{m: F(m)\ge n \}$ and (2) $f(n)$ is in the set itself since plugging in $m := f(n)$ will yield $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we immediately have $\forall m.~n\le F(m)\Rightarrow f(n)\le m$. Now for all $m \ge f(n)$, $F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus completing the proof.
+\end{proof}
+\begin{col}
+If $F:\mathbb{N}\to \mathbb{N}$ is strictly increasing, then $F^{-1}_{+} \circ F$ is
+the identity function.
+\end{col}
+\begin{proof}
+By ($\Leftarrow$) of \ref{thm: upp-inverse-rel}, $F(n) \le F(n)$ implies 
+$(F^{-1}_{+} \circ F)(n) \le n$.  By ($\Rightarrow$), $(F^{-1}_{+} \circ F)(n) \le (F^{-1}_{+} \circ F)(n)$ implies $F(n) \le F \big((F^{-1}_{+} \circ F)(n)\big)$; $F$ is strictly increasing, so $n \le (F^{-1}_{+} \circ F)(n)$.
+\end{proof}
+
+Our setup for inverse requires increasing functions, and our definitions for 
+hyperoperations/Ackermann use repeater.  Suppose $F$ is a strictly increasing function.
+For a given $a$, is $\rf{F}{a}$ strictly increasing?  No!  For example, the identity function
+$\li{id}$ is strictly increasing, but $\rf{\li{id}}{a}(n) = (\li{id} \circ \ldots \circ \li{id}) (a) = a$ is a constant function.  We need a little more.
+\begin{defn}
+Given $a\in \mathbb{N}$, a function $F:\mathbb{N}\to\mathbb{N}$ is an \emph{expansion} if $\forall n.~ F(n)\ge n$. An expansion $F$ is \emph{strict from} $a$ if $\forall n \ge a.~ F(n)\ge n+1$.
+\end{defn}
+If $a\ge 1$ and $F$ is an expansion strict from $a$, $\forall n.~ \rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$, so $\rf{F}{a} \ $ is itself an expansion strict from $0$. We refer to strictly increasing $f$ as \emph{repeatable} from $a\ge 1$ if they are also strict expansions from $a$, so that repeatability is preserved through $\rf{F}{a}$.
+\begin{defn}
+We denote the set of functions repeatable from $a$ as $\repeatable_a$.
+\end{defn}
+\begin{rem} \label{rem: repeatable-subset}
+	It is straightforward to see that $\forall s, t.~ s \le t \Rightarrow \repeatable_s \subseteq \repeatable_t $.
+\end{rem}
+\hide{\color{red}
+\begin{rem}
+Which hypers are in Rept?
+\end{rem}
+}
+
+\subsection{Contractions and the countdown operation}
+
+Suppose that $F \in \repeatable_a$ for any $a \ge 1$ and let $f$ be $F$'s inverse, \emph{i.e.} $F^{-1}_{+}$.  Our goal is to use $f$ to compute an inverse to $F$'s repeater $\rf{F}{a}$.  Notice that this inverse must exist since $F \in \repeatable_a$ implies $\rf{F}{a} \in \repeatable_0$.  
+For reasons that will be clear momentarily, we write this inverse as $\cdt{f}{a}$.  Now
+fix $n$ and observe that for all $m$, $f^{(m)}(n)\le a \iff m \ge \cdt{f}{a}(n)$ since
+\begin{equation} \label{eq: rf-upp-inv}
+\begin{aligned}
+\cdt{f}{a}(n)\le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \iff f(n)\le F^{(m-1)}(a) \\
+& \iff f^{(2)}(n)\le F^{(m-2)}(a) \iff \ldots \iff f^{(m)}(n)\le a
+\end{aligned}
+\end{equation}
+Moreover, setting $m = \cdt{f}{a}(n)$, we realize that $f^{(\cdt{f}{a}(n))}\le a$.  
+\textbf{Together these imply that $\cdt{f}{a}(n)$ is the minimum number of times $f$ 
+needs to be compositionally applied to $n$ before equalling or passing $a$.} 
+In other words, count the length of the chain $\{n, f(n), f^{(2)}(n), \ldots\}$ that 
+terminates as soon as we reach/pass $a$.  For this process to work, 
+we need each chain link
+to be strictly less than the previous, \emph{i.e.} $f$ must be a \emph{contraction}.
+\begin{defn} \label{defn: contracting}
+	A function $f : \mathbb{N} \to \mathbb{N}$ is a \textit{contraction} if $\forall n.~ f(n) \le n$. Given an $a \ge 1$, a contraction $f$ is \note[why not n > f(n) or f{n} < n]{\textit{strict above} $a$ if $\forall n > a.~n\ge f(n)+1$.} We denote the set of contractions by $\contract$ and the set of contractions strict above $a$ by $\contract_a$.
+\end{defn}
+\begin{rem}
+	Similar to \cref{rem: repeatable-subset}, $\forall s\le t.~ \contract_s \subseteq \contract_t$.
+\end{rem}
+What kinds of functions have contractive inverses? Expansions, naturally:
+\begin{thm} \label{thm: expansion-inv-contraction}
+For all $a\in \mathbb{N}$, $F\in \repeatable_a \Rightarrow F^{-1}_+ \in \contract_a$.
+\end{thm}
+\begin{proof}
+For all $n$, $F(n)\ge n \Rightarrow n \ge F^{-1}_+(n)$, so $F^{-1}_+$ is a contraction. If $n\ge a+1$, then $n-1\ge a$, so $F(n-1)\ge n \Rightarrow n-1\ge F^{-1}_+(n)$, so $F^{-1}_+$ is strict above $a$.
+\end{proof}
+\Cref{thm: expansion-inv-contraction} shows a clear inverse relationship between expansions strict from some $a$ and contractions strict above that same $a$. It ensures that the inverse of an expansion's repeater not only exists but can be built from its own inverse, in a method formalized as \emph{countdown}.
+\begin{defn} \label{defn: informal-countdown} \label{eq: countdown}
+Let $f\in \contract_a$. The \textit{countdown to} $a$ of $f$, denoted by $\cdt{f}{a}(n)$, is the minimum number of times $f$ needs to be applied to $n$ to reach/pass $a$: 
+$\min\{m: f^{(m)}(n)\le a \}$.
+\end{defn}
+Inspired by \eqref{eq: rf-upp-inv}, we provide a neat, algebraically manipulable logical sentence equivalent to \eqref{eq: countdown}, which is more useful later in our paper:
+\begin{col} \label{col: cdt-repeat}
+Let $a \in \mathbb{N}$ and $f\in \contract_{a}$.  Then $\forall n, m.~ \cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a$.
+\end{col}
+\begin{proof}
+	Fix $a$ and $n$. The interesting direction is $(\Rightarrow)$. Suppose $\cdt{f}{a}(n)\le m$, we get $f^{(m)}(n)\le f^{(\cdt{f}{a}(n))}(n)$ due to $f\in \contract$, and $f^{(\cdt{f}{a}(n))}(n)\le a$ due to \cref{eq: countdown}.
+\end{proof}
+%\begin{thm} \label{thm: upp-inv-cdt-rf}
+%	For all $a\in \mathbb{N}$, if $f\in \contract_{a}$ is the upper inverse of $F: \mathbb{N}\to \mathbb{N}$, then $\cdt{f}{a}$ is the upper inverse of $\rf{F}{a}$.
+%\end{thm}
+Another useful result is the recursive formula for \emph{countdown}:
+\begin{thm} \label{thm: cdt-recursion}
+	For all $a\in \mathbb{N}$ and $f\in \contract_{a}$, $\cdt{f}{a}$ satisfies:
+	\begin{equation*}
+	\cdt{f}{a}(n) = \begin{cases}
+	0 & \text{ if } n \le a \\ 1 + \cdt{f}{a}(f(n)) & \text{ if } n \ge a + 1
+	\end{cases}
+	\end{equation*}
+\end{thm}
+\begin{proof}
+By Corollary \ref{col: cdt-repeat}, $n\le a \iff f^{(0)}(n)\le a \iff \cdt{f}{a}(n)\le 0$, thus the case $n\le a$ is resolved. Suppose $n\ge a+1$ and let $\cdt{f}{a}(f(n)) = m$. We have $\cdt{f}{a}(n)\le 1+m \iff f^{(1+m)}(n) \le a$, which is equivalent to $f^{(m)}(f(n)) \le a$, which holds by \note{the definition of~$m$.}
+
+Now since $n\ge a+1$, $\cdt{f}{a}(n)\ge 1$ by the above. Set some $p$ so 
+$\cdt{f}{a}(n) = p+1$. It remains to show $\cdt{f}{a}(f(n))\le p \Rightarrow f^{(p)}(f(n))\le a \Rightarrow f^{(p+1)}(n)\le a$, which holds by $p$'s definition.
+\end{proof}
+
+%\begin{thm} \label{thm: cdt-contr-0}
+%	For all $a\ge 1$, if $f\in \contract_{a}$, then $\cdt{f}{a}\ \in \contract_{c} \ \forall c$.
+%\end{thm}
+%\begin{proof}
+%	Firstly we show that $\cdt{f}{a}$ is a contraction, namely showing $\cdt{f}{a}(n)\le n \ \forall n$, which has already been proved in the proof of \cref{thm: cdt-repeat}. To show $\cdt{f}{a}$ is strict from $1+c$, it suffices to show it is strict from $1$, equivalently $\cdt{f}{a}(n) \le n - 1 \ \forall n\ge 1$. By \cref{thm: cdt-repeat}, we need to show $f^{(n-1)}(n)\le a$. Assume the converse, then:
+%	$$ n \ge 1 + f(n)\ge 2 + f(f(n)) \ge \cdots \ge (n-1) + f^{(n-1)}(n) $$
+%	Thus $f^{(n-1)}(n)\le 1 \le a$, a contradiction. The theorem then follows.
+%\end{proof}
+
+\subsection{A Structurally Recursive Computation for Countdown}
+
+The higher-order repeater function is well-defined for any input functions, even those not in $\repeatable_a$ (although for such functions it may not be useful), and so is easy to define
+in Coq as shown in \S\ref{sec: countdown-repeater}. In contrast, a \emph{countdown} only exists 
+for certain functions, most conveniently contractions, which makes it a little harder to
+encode into Coq. Our strategy is to define a \emph{countdown worker}, written with only
+structural recursion, and then prove that this worker computes the countdown when given a contraction.
+
+\begin{defn} \label{defn: countdown-worker}
+For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown worker} to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
+\begin{equation*}
+\cdw{f}{a}(n, b) = \begin{cases}
+0 & \text{if } b = 0 \vee n\le a \\ 1 +\cdw{f}{a}(f(n), b-1) & \text{if } b \ge 1 \wedge n > a
+\end{cases}
+\end{equation*}
+\end{defn}
+Essentially, \emph{countdown worker} operates on two arguments, the \emph{true argument} $n$, which we wish to count down to $a$, and the \emph{budget} $b$, the maximum number of times we attempt 
+to compositionally apply $f$ on the input before giving up. If the input goes below or equal $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n) \le a$, we return the count $k$. If the budget is exhausted, i.e. $b = 0$, while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but it can clearly be written as a Coq \li{Fixpoint}:
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint countdown\_worker}` (a : nat) (f : nat -> nat) (n k : nat) : nat :=
+match k with
+ | 0    => 0
+ | S k' => match (n - a) with
+           | 0 => 0
+           | _ => S (countdown_worker a f (f n) k') 
+           end
+ end.
+\end{lstlisting}
+When $f$ is a contraction strict from $a$, and given a sufficient budget, \emph{countdown worker} 
+will compute the correct \emph{countdown} value.  
+Careful readers may have noticed that \emph{budget} is similar to 
+\emph{gas}, which we discussed in ~\S\ref{sec:incfuncinv} 
+and dismissed for potentially 
+being too computationally expensive to calculate. 
+Budget is a refinement of gas because 
+we accompany its each use with a method to calculate it in constant time.
+In fact, we will soon show that a budget of $n$ is sufficient in this case. 
+This lets us define \emph{countdown} as below:
+\begin{defn} \label{defn: countdown}
+Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L104}{Definition countdown\_to}` a f n := countdown_worker a f n n.
+\end{lstlisting}
+\end{defn}
+%Before beginning, let us clarify that the definition of $\mathbb{N}$ and operations on $\mathbb{N}$ in Gallina follow the Presburger Arithmetic \cite{presburger}, which despite being weaker than Peano Arithmetic, is a decidable theory. The Coq standard library includes \texttt{Omega}, an extensive listing of provable facts about $\mathbb{N}$ in Presburger Arithmetic, including everything used in this paper, most notably the law of excluded middle for comparisons on $\mathbb{N}$:
+%\begin{equation*}
+%(n \le m) \vee (m + 1 \le n) \ \ \forall n, m
+%\end{equation*}
+%, which is provable without the actual law of excluded middle in classical logic. This enables us to prove all results in this paper with Coq's baseline intuitionistic logic. Readers can refer to the \Cref{appendix} for Coq versions of the proofs.
+%in which the most operations agree with usual operations on $\mathbb{Z}$, except subtraction, which is defined as:
+%\begin{lstlisting}
+%Fixpoint sub (n m : nat) : nat :=
+%match n with
+%| 0 => n
+%| S k => match m with
+%| 0 => n
+%| S l => sub k l end
+%end.
+%\end{lstlisting}
+%Essentially $\li{sub} \ n \ m = \max\{n - m, 0\}$. We will use this subtraction for the rest of the paper.
+
+%Firstly, we begin with a lemma asserting the existence of the countdown value itself. Although its existence is guaranteed by the well-ordering principle of $\mathbb{N}$, we will achieve better by proving it in intuitionistic logic.
+%
+%\begin{lem} \label{lem: contract-repeat-threshold}
+%	For all $a, n\in\mathbb{N}$ and $f\in \contract_{a}$,
+%	\begin{equation}
+%	\exists m : \left(f^{(m)}(n) \le a \right) \wedge \left(f^{(l)}(n)\le a \Rightarrow m \le l \ \forall l \right)
+%	\end{equation}
+%\end{lem}
+%\begin{proof}
+%  Fix $n$ and observe that if $n\le a$, $m = 0$ is the desired choice since $ f^{(0)}(n) = n \le a \ \text{ and } \ 0 \le l \ \forall l $.
+%	Consider only when $a\le n$, we can define $c$ such that $n = a + c$. We prove the following statement by induction:
+%	\begin{equation*}
+%	P(c) \triangleq \exists m : \left(f^{(m)}(n) \le n - c \right) \wedge \left(f^{(l)}(n)\le n - c \Rightarrow m \le l \ \forall l \right)
+%	\end{equation*}
+%	under assumptions $f\in \contract_{n-c}$ and $c\le n$.
+%	\begin{enumerate}[leftmargin=*]
+%		\item \textit{Base case.} The case $c = 0$ implies $n = a$, which has been proven above.
+%		\item \textit{Inductive step.} Suppose $P(c)$ is proved with witness $m_c$. Note that the assumptions are now $f\in \contract_{n-c}$ and $c+1\le n$, there are two cases:
+%		\begin{itemize}[leftmargin=*, label={--}]
+%			\item $f^{\left(m_c\right)}(n) = n - c$. Then $f^{\left(m_c+1\right)}(n) \le n - c - 1$. Let $m_{c+1} = m_c + 1$, for all $l$:
+%			\begin{equation*}
+%			f^{(l)}(n)\le n - c - 1 < f^{\left(m_c\right)}(n) \Rightarrow l > m_c \Rightarrow l \ge m_{c+1}
+%			\end{equation*}
+%			\item $f^{\left(m_c\right)}(n) \le n - c - 1$. Let $m_{c+1} = m_c$, for all $l$:
+%			\begin{equation*}
+%			f^{(l)}(n)\le n - c - 1\le n - c \overset{P(c)}{\Rightarrow} l\ge m_{c} = m_{c+1}
+%			\end{equation*}
+%		\end{itemize}
+%		In any cases, we can find a witness $m_{c+1}$ for $P(c+1)$. Thus the proof is complete by induction.\vspace*{-\baselineskip}
+%	\end{enumerate}
+%\end{proof}
+
+\begin{lem} \label{lem: cdt-init}
+	$\forall n\le a.~\cdw{f}{a} (n, b) = 0$.
+\end{lem}
+\begin{proof}
+This simple fact follows directly from \cref{defn: countdown-worker}.
+\end{proof}
+Next, we show the internal working of \emph{countdown worker} at the $\text{i}^\text{th}$ recursive step, including the accumulated result $1+i$, the current input $f^{(1+i)}(n)$, and the current budget $b-i-1$.
+\begin{lem} \label{lem: cdt-intermediate}
+	$\forall a, n, b, i \in \mathbb{N}.~\forall f \in \contract$. s.t. $i < b$ and $a < f^{(i)}(n)$:~
+	\begin{equation}  \label{eq: cdt-intermediate}
+	\cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{1+i}(n), b - i - 1\right)
+	\end{equation}
+\end{lem}
+\begin{proof}
+	Fix $a$. We proceed by induction on $i$. Then define $P(i)$ as
+	\begin{equation*}
+	P(i) \triangleq \forall b, n.~ b\ge i+1 \Rightarrow f^{(i)}(n) > a \Rightarrow \cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{1+i}(n), b - i - 1\right)
+	\end{equation*}
+	\begin{enumerate}[leftmargin=*]
+		\item \textit{Base case.} For $i = 0$, our goal $P(0)$ is:
+		$\cdw{f}{a}(n, b) = 1 + \cdw{f}{a}\left(f(n), b - 1\right)$
+		where $b \ge 1, f(n)\ge a+1$. This is straightforward.
+		\item \textit{Inductive step.} Suppose $P(i)$ has been proven. Then $P(i+1)$ is
+		\begin{equation*}
+		\cdw{f}{a}(n, b) = 2 + i + \cdw{f}{a}\left( f^{2+i}(n), b - i - 2 \right)
+		\end{equation*}
+		for $b \ge i+2, f^{1+i}(n) \ge a+1$. This also implies $b\ge i+1$ and $\displaystyle f^{(i)}(n) \ge f^{1+i}(n)\ge a+1$ by $f\in \contract$, and so $P(i)$ holds. It suffices to prove:
+		\begin{equation*}
+		\cdw{f}{a}\left(f^{1+i}(n), b-i-1\right) = 1 + \cdw{f}{a}\left( f^{2+i}(n), b-i-2 \right)
+		\end{equation*}
+		This is in fact $P(0)$ with $(b, n)$ substituted for $\left(b-i-1, f^{(1+i)}(n)\right)$. Since $f^{(1+i)}(n) \ge a+1$ and $b-i-1\ge 1$, the above holds and $P(i+1)$ follows. The proof is complete. \vspace*{-2.2em}
+	\end{enumerate}
+\end{proof}
+Now it is time to prove the correctness of \emph{countdown}, \emph{i.e.} that our computational \cref{defn: countdown} computes the value originally specified in \cref{defn: informal-countdown}.
+\begin{thm} \label{thm: cdt-repeat}
+	$\forall a \in \mathbb{N}.~ \forall f\in \contract_{a}$, we have 
+%	\begin{equation} \label{eq: cdt-minimum}
+$	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
+%	\end{equation}
+%	Or equivalently,
+%	\begin{equation} \label{eq: cdt-repeat}
+%	\cdt{f}{a}(n) \le k \iff f^{(k)}(n) \le a \ \ \forall n, k
+%	\end{equation}
+\end{thm}
+\begin{proof}
+%	First, to see why \eqref{eq: cdt-minimum} and \eqref{eq: cdt-repeat} are equivalent, we rewrite \eqref{eq: cdt-minimum} in the following way:
+%	$$ \left(f^{(\cdt{f}{a}(n))}(n) \le a\right) \wedge \left(f^{(l)}(n) \le a \Rightarrow \cdt{f}{a}(n) \le l \ \ \forall l\right) \ \ \forall n$$
+%	To prove $\eqref{eq: cdt-minimum} \Rightarrow \eqref{eq: cdt-repeat}$, it suffices to show
+%	$$ \cdt{f}{a}(n) \le l \Rightarrow f^{(l)}(n) \le a \ \ \forall l $$
+%	, which holds due to the fact $\displaystyle f^{(l)}(n) \le f^{(\cdt{f}{a}(n))}(n) \le a$ by $f\in \contract$. To prove $\eqref{eq: cdt-repeat}\Rightarrow \eqref{eq: cdt-minimum}$, it suffices to show $\displaystyle f^{(\cdt{f}{a}(n))}(n) \le a$
+%	, which in turn holds by substituting $k$ by $\cdt{f}{a}(n)$ in \eqref{eq: cdt-repeat}. Thus $\eqref{eq: cdt-minimum}\iff \eqref{eq: cdt-repeat}$ and we need only to prove \eqref{eq: cdt-minimum}.
+Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$ \note{(we prove its existence in Coq's baseline intuitionistic logic in our code base)}, then
+	\begin{equation}
+	\left(f^{(m)}(n) \le a\right) \label{eq: cdt-repeat-tmp} \wedge
+	 \left(\forall k.~f^{(k)}(n)\le a \Rightarrow m \le k\right)
+	\end{equation}
+	It then suffices to prove $m = \cdt{f}{a}(n)$. First consider $m = 0$. Then $n = f^{(0)}(n)\le a$, thus $\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = 0 = m$ by \cref{lem: cdt-init}.
+	
+	Now consider $m > 0$. We would like to apply \cref{lem: cdt-intermediate} to get
+	\begin{equation*}
+	\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = m + \cdw{f}{a}\left(f^{(m)}(n), n-m\right),
+	\end{equation*}
+	then use \cref{lem: cdt-init} over \eqref{eq: cdt-repeat-tmp}'s first conjunct to conclude that $\cdt{f}{a}(n) = m$. It then suffices to prove the premises of \cref{lem: cdt-intermediate}, namely $a < f^{(m-1)}(n)$ and $m-1 < n$.
+	
+	The former follows by contradiction: if $f^{(m-1)}(n) \le a$, \eqref{eq: cdt-repeat-tmp}'s second conjunct implies $m\le m-1$, which is impossible for $m > 0$. The latter then easily follows by $f\in \contract_{a}$:
+	\begin{equation*}
+	n \ge 1 + f(n) \ge 2 + f(f(n)) \ge \cdots \ge m + f^{(m)}(n)
+	\end{equation*}
+	Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
+\end{proof}
+\cref{eq: rf-upp-inv} and \cref{thm: cdt-repeat} establish the correctness of the Coq definitions of \emph{countdown worker} and \emph{countdown}, \note{thereby justifying our budget of $n$ and our unification of the equivalent \cref{defn: informal-countdown,defn: countdown}.} We wrap everything together with the following theorem:
+\begin{thm} \label{thm: cdt-inv-rf}
+	$\forall F\in \repeatable_a.~f\triangleq F^{-1}_+$ satisfies $f \in \contract_{a}$ and $\displaystyle \cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+$. Furthermore, if $a\ge 1$, then $\rf{F}{a}\ \in \repeatable_0$ and $\cdt{f}{a}\ \in \contract_0$.
+\end{thm}
+\begin{proof}
+	By \cref{thm: expansion-inv-contraction}, $f\triangleq F^{-1}_+ \in \contract_a$, and $\cdt{f}{a}\ = \left(\rf{F}{a}\ \right)^{-1}_+$ follows from \eqref{eq: rf-upp-inv} and \cref{col: cdt-repeat}.
+	Now if $a\ge 1$, a simple induction shows that $F^{(n)}(a)\ge a + n\ge 1 + n$, so $\rf{F}{a}\ \in \repeatable_0$, hence $\cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+ \in \contract_0$ by \cref{thm: expansion-inv-contraction}.
+\end{proof}
+
