@@ -1,11 +1,30 @@
 
 \subsection{A performance improvement with binary numbers}
-So far all of our Coq code segments have been using the Coq type \li{nat}, which is a unary system of natural numbers, where the length of each number's representation matches its value. In practice, most computers employ the binary system, where each number is represented with digits in $\{0, 1\}$. In both systems, addition and subtraction of two $n$-bit numbers takes $\Theta(n)$ time, while multiplication takes $\Theta \big(n^2\big)$ time. The binary system thus outperforms its counterpart since it represents a number $n$ with only $\lfloor \log_2n \rfloor + 1$ bits. Here we show that similar to basic arithmetic operations, representing numbers in binary helps speed up the computation of hyperoperations, Ackermann functions and their inverses. Coq has support for binary numbers with the type \li{N}, which consists of \li{0} and \li{positive}s:
+Thus far we have used the Coq type \li{nat}, which is a unary system of 
+natural numbers no more sophisticated than tally marks: 
+a number~$n$ is represented in~$n$ bits. 
+The binary system, of course, represents numbers using $0$s and $1$s, thus 
+allowing~$n$ to be represented in $\lfloor \log_{2} n \rfloor + 1$ bits.
+In both systems, addition and subtraction of two $n$-bit numbers takes $\Theta(n)$ time, 
+while multiplication takes $\Theta \big(n^2\big)$ time. 
+The binary system thus easily outperforms its counterpart in basic arithmetic operations. 
+
+Here we show that this advantage carries forward to the computation of 
+hyperoperations, Ackermann functions, and their inverses. 
+Coq has support for binary numbers with the type \li{N}, which consists 
+of constructors \li{0} and \li{positive}:
 \begin{lstlisting}
 Inductive positive : Set := 
   | xI : positive -> positive | xO : positive -> positive | xH : positive.
 \end{lstlisting}
-Here the value \li{xH} represents $1$, constructors \li{xO} and \li{xI} represent appending $0$ and $1$ to the tail, i.e. $x\to 2x$ and $x\to 2x+1$ respectively. All representations in \li{positive} start with $1$, and $0$ is added to form \li{N}. Note the separation of $0$ is needed to avoid strings like \li{00} and \li{000}, thus ensure each representation is unique.
+Here the value \li{xH} represents $1$, and constructors \li{xO} and \li{xI} represent 
+appending $0$ and $1$ respectively, \emph{i.e.} $x\to 2x$ and $x\to 2x+1$ respectively. 
+This means that \li{positive} always starts with $1$ and cannot represent ~$0$, so
+the type \li{N} provides a separate constructor \li{0}. 
+This treatment avoids the common issue where different representations,  
+\emph{e.g.} \li{001} and \li{0001}, obviously represent the same number but pose
+an annoying technical challenge. 
+
 %\paragraph*{Exponentiation with Binary Numbers}
 %This a massive improvement over the bound $\Theta\left(a^b\right)$ of exponentiation in the unary system.
 
@@ -51,9 +70,16 @@ Fixpoint countdown_worker (f : N -> N) (a n : N) (b : nat) : N :=
              else 1 + countdown_worker f a (f n) b'
 end.
 \end{lstlisting}
-Determining the appropriate budget value for \emph{countdown} is trickier. If we naively set it to be the \li{nat} translation of \li{n}, i.e. \li{N.to_nat n}, the conversion to \li{nat} alone takes linear time in \li{n}, or exponential in its length of representation, which defeats the purpose of leveraging binary numbers to improve efficiency. Unfortunately, it is the best we can do if we want to compute countdowns of slow-contracting functions like $\lambda n.(n - 2)$ (which is among both inverse hyperoperations and inverse Ackermann hierarchy!).
+Determining the appropriate budget value for \emph{countdown} is trickier. 
+The naïve approach is to simply use the \li{nat} translation of \li{n}, 
+\emph{i.e.} \li{N.to_nat n}. However, the conversion to \li{nat} alone 
+takes linear time in \li{n}, or exponential in its length of representation, 
+which is obviously untenable as we try to leverage binary numbers 
+to improve efficiency. 
+\note[slow contracting has come out of nowhere]{Unfortunately, it is the best we can do if we 
+want to compute countdowns of slow-contracting functions like $\lambda n.(n - 2)$ (which is among both inverse hyperoperations and inverse Ackermann hierarchy!).}
 
-The key is to neglect these functions entirely and focus on functions that can bring their argument to below $1$ with compositional repetition in logarithm time. The following concept aims to describe a type of \emph{fast-contracting} functions.
+The key is to ignore these functions entirely and focus on functions that can bring their argument to below $1$ with compositional repetition in logarithm time. The following concept aims to describe a type of \emph{fast-contracting} functions.
 \begin{defn} \label{defn: bin-contraction}
 	A contraction $f$ is \emph{binary strict above} $a\in \mathbb{N}$ if $f(n) \le \lfloor \frac{n + a}{2} \rfloor$ for all $n > a$.
 \end{defn}
@@ -61,7 +87,7 @@ The key advantage of binary strict contractions is that if a contraction $f$ is 
 \begin{equation*}
 f(n) \le \left\lfloor \frac{n - a}{2^k} \right\rfloor + a
 \end{equation*}
-Therefore within $\lfloor \log_2 (n - a) \rfloor + 1$ compositional applications of $f$, any input $n$ will go below $a$, so we can choose this number as the budget for \emph{countdown worker} to successfully count the correct countdown value. Our last step is to compute this budget as a \li{nat} given the number $n$ of type \li{N}, which is done with the following function.
+Therefore within $\lfloor \log_2 (n - a) \rfloor + 1$ compositional applications of $f$, any input $n$ will go below $a$, so we can choose this number as the budget for \emph{countdown worker} to successfully count the correct countdown value. Our last step is to compute this budget as a \li{nat} given the number $n$ of type \li{N}, which is done with the following function:
 
 \begin{lstlisting}
 Definition nat_size (n : N) : nat :=
@@ -70,15 +96,16 @@ Definition nat_size (n : N) : nat :=
   | Npos p => let fix nat_pos_size (x : positive) : nat :=
                   match x with
                   | xH => 1%nat
-                  | xI y | xO y => S (nat_pos_size y) end
-                  in nat_pos_size p
-end.
+                  | xI y | xO y => S (nat_pos_size y) 
+                  end
+              in nat_pos_size p
+  end.
 \end{lstlisting}
-Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the size of its binary representation, thus equals to $\lfloor \log_2 m \rfloor + 1$. To sum up, we have the following Coq definition of countdown on \li{N}.
+Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the size of its binary representation, thus equals to $\lfloor \log_{2} m \rfloor + 1$. To sum up, we have the following Coq definition of countdown on \li{N}.
 
 \begin{lstlisting}
-Definition countdown (f : N -> N) (a n : N) : N
-  := countdown_worker f a n (nat_size (n - a)).
+Definition countdown (f : N -> N) (a n : N) : N := 
+  countdown_worker f a n (nat_size (n - a)).
 \end{lstlisting}
 
 \paragraph*{Time complexity of countdown on strict binary contractions}
@@ -148,7 +175,7 @@ Fixpoint alpha (m : nat) (x : N) : N :=
   | 1%nat => x - 2
   | 2%nat => N.div2 (x - 2)
   | S m'  => countdown (alpha m') 1 (alpha m' x)
-end.
+  end.
 \end{lstlisting}
 The first three levels are hard-coded, as we need to start the countdown from a binary strict contraction. Note that for all $x$,
 \begin{equation*}
@@ -162,7 +189,7 @@ Fixpoint inv_ack_worker (f : N -> N) (n k : N) (bud : nat) : N :=
   | S bud' => if n <=? k then k
               else let g := (countdown f 1) in
                    inv_ack_worker (compose g f) (g n) (N.succ k) bud'
-end.
+  end.
 \end{lstlisting}
 Note that the above Coq Fixpoint is the direct translation of the \li{inv_ack_worker} on \li{nat}, with only the budget remaining \li{nat} as it is the decreasing argument. Now the inverse Ackermann function can be computed by the following Coq definition:
 \begin{lstlisting}

@@ -14,4 +14,6 @@
 	Anshuman:
 		How about just -1, or the subscript + replaced with an upward arrow?
 
+- For binary rep, please edit the names of functions etc. Add something like "_bin" to all names, in the code and the paper. 
+
 Anshuman has added notes on pages 2, 5, 6, 7, 9, 11, 12, 13
