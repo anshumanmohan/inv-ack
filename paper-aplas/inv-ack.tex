@@ -1,56 +1,10 @@
-%%
-%% Copyright 2007-2018 Elsevier Ltd
-%%
-%% This file is part of the 'Elsarticle Bundle'.
-%% ---------------------------------------------
-%%
-%% It may be distributed under the conditions of the LaTeX Project Public
-%% License, either version 1.2 of this license or (at your option) any
-%% later version.  The latest version of this license is in
-%%    http://www.latex-project.org/lppl.txt
-%% and version 1.2 or later is part of all distributions of LaTeX
-%% version 1999/12/01 or later.
-%%
-%% The list of all files belonging to the 'Elsarticle Bundle' is
-%% given in the file `manifest.txt'.
-%%
+\documentclass[runningheads]{llncs}
 
-%% Template article for Elsevier's document class `elsarticle'
-%% with numbered style bibliographic references
-%% SP 2008/03/01
-%%
-%%
-%%
-%% $Id: elsarticle-template-num.tex 64 2013-05-15 12:23:51Z rishi $
-%%
-%%
-\documentclass[a4paper,USenglish,cleveref,autoref]{lipics-v2019}
-% \documentclass[preprint,12pt]{elsarticle}
-
-%% Use the option review to obtain double line spacing
-%% \documentclass[authoryear,preprint,review,12pt]{elsarticle}
-
-%% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; or 5p,twocolumn
-%% for a journal layout:
-%% \documentclass[final,1p,times]{elsarticle}
-%% \documentclass[final,1p,times,twocolumn]{elsarticle}
-%% \documentclass[final,3p,times]{elsarticle}
-%% \documentclass[final,3p,times,twocolumn]{elsarticle}
-%% \documentclass[final,5p,times]{elsarticle}
-%% \documentclass[final,5p,times,twocolumn]{elsarticle}
-
-%% For including figures, graphicx.sty has been loaded in
-%% elsarticle.cls. If you prefer to use the old commands
-%% please give \usepackage{epsfig}
-
-%% The amssymb package provides various useful mathematical symbols
 \usepackage{amssymb}
 \usepackage{amsmath}
 %% The amsthm package provides extended theorem environments
-\usepackage{amsthm}
-
-%\usepackage[colorlinks=True, citecolor=red, linkcolor=blue]{hyperref}
-%\usepackage{cleveref}
+%\usepackage{amsthm}
+% AM commented out because it clashes with proof, etc
 
 %% The lineno packages adds line numbers. Start line numbering with
 %% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
@@ -65,6 +19,7 @@
 \usepackage[justification=centering]{caption} 
 \usepackage{xcolor}
 \usepackage{stmaryrd}
+\usepackage{hyperref}
 
 \hypersetup{ % play with these to change the look of hyperlinks
     colorlinks=true,
@@ -74,6 +29,8 @@
     citecolor=black
 }
 
+% required by LNCS
+\renewcommand\UrlFont{\color{blue}\rmfamily}
 \colorlet{red}{red!80!black}
 
 %% NEW COMMANDS =============================================
@@ -139,30 +96,30 @@
 \renewcommand{\implies}{\Rightarrow}
 \renewcommand{\iff}{\Leftrightarrow}
 
-\theoremstyle{plain}
+%\theoremstyle{plain}
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{ex}[thm]{Example}
 \newtheorem{prop}[thm]{Proposition}
 \newtheorem{col}[thm]{Corollary}
 \newtheorem{lem}[thm]{Lemma}
-\newtheorem*{hypo}{Hypothesis}
-\theoremstyle{definition}
+\newtheorem{hypo}{Hypothesis}
+%\theoremstyle{definition}
 \newtheorem{defn}[thm]{Definition}
 \newtheorem{rem}[thm]{Remark}
 
-\crefname{thm}{theorem}{theorems}
-\crefname{defn}{definition}{definitions}
-\crefname{lem}{lemma}{lemmas}
-\crefname{col}{corollary}{corollaries}
-\crefname{ex}{example}{examples}
-\crefname{prop}{proposition}{propositions}
+%\crefname{thm}{theorem}{theorems}
+%\crefname{defn}{definition}{definitions}
+%\crefname{lem}{lemma}{lemmas}
+%\crefname{col}{corollary}{corollaries}
+%\crefname{ex}{example}{examples}
+%\crefname{prop}{proposition}{propositions}
 
-\Crefname{thm}{Theorem}{Theorems}
-\Crefname{defn}{Definition}{Definitions}
-\Crefname{lem}{Lemma}{Lemmas}
-\Crefname{col}{Corollary}{Corollaries}
-\Crefname{ex}{Example}{Examples}
-\Crefname{prop}{Proposition}{Propositions}
+%\Crefname{thm}{Theorem}{Theorems}
+%\Crefname{defn}{Definition}{Definitions}
+%\Crefname{lem}{Lemma}{Lemmas}
+%\Crefname{col}{Corollary}{Corollaries}
+%\Crefname{ex}{Example}{Examples}
+%\Crefname{prop}{Proposition}{Propositions}
 
 %% DOCUMENT =================================================
 
@@ -172,44 +129,18 @@
 
 \titlerunning{Inverting the Ackermann Hierarchy}%optional, please use if title is longer than one line
 
-\author{Linh Tran}{National University of Singapore}{}{}{}%TODO mandatory, please use full name;
-\author{Anshuman Mohan}{National University of Singapore}{}{}{}%TODO mandatory, please use full name;
-\author{Aquinas Hobor}{National University of Singapore}{}{}{}
-%TODO mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty. Please provide at least the name of the affiliation and the country. The full address is optional
-
-\begin{CCSXML}
-<ccs2012>
-<concept>
-<concept_id>10003752.10003777</concept_id>
-<concept_desc>Theory of computation~Computational complexity and cryptography</concept_desc>
-<concept_significance>300</concept_significance>
-</concept>
-<concept>
-<concept_id>10003752.10003790.10002990</concept_id>
-<concept_desc>Theory of computation~Logic and verification</concept_desc>
-<concept_significance>300</concept_significance>
-</concept>
-<concept>
-<concept_id>10003752.10003790.10003796</concept_id>
-<concept_desc>Theory of computation~Constructive mathematics</concept_desc>
-<concept_significance>300</concept_significance>
-</concept>
-</ccs2012>
-\end{CCSXML}
-
-\ccsdesc[300]{Theory of computation~Computational complexity and cryptography}
-\ccsdesc[300]{Theory of computation~Logic and verification}
-\ccsdesc[300]{Theory of computation~Constructive mathematics}
-
-\authorrunning{L. Tran, A. Mohan, A. Hobor}
-
-\Copyright{Linh Tran, Anshuman Mohan, and Aquinas Hobor}%TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
-
-
-\keywords{Ackermann, hyperoperations, Coq}%TODO mandatory; please add comma-separated list of keywords
-
-
 \begin{document}
+
+
+\author{Linh Tran \and Anshuman Mohan \and Aquinas Hobor}
+%
+\authorrunning{L. Tran, A. Mohan, A. Hobor}
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{National University of Singapore \\
+\email{\{tran,mohan,hobor\}@comp.nus.edu.sg}}
+
 
 \maketitle
 %\begin{frontmatter}
@@ -251,15 +182,19 @@ We show that our computation runs in linear time, and that it is consistent with
 the usual definition of the inverse Ackermann function $\alpha(n)$.
 \end{abstract}
 
+\keywords{Ackermann, hyperoperations, Coq}%TODO mandatory; please add comma-separated list of keywords
+
+
 %\end{frontmatter}
 
 %% \linenumbers
 
 %% main text
+\hide{
 \section{Overview}
 \label{sec: overview}
 \input{overview.tex}
-
+}
 \section{Hyperoperations, Ackermann, and Repeater}
 \label{sec: countdown-repeater}
 \input{hierarchy.tex}
@@ -294,6 +229,8 @@ the usual definition of the inverse Ackermann function $\alpha(n)$.
 %% bibitems, please use
 %%
 %\bibliographystyle{plainurl}% the mandatory bibstyle
+
+\bibliographystyle{splncs04}
 \bibliography{inv-ack}
 
 %% else use the following coding to input the bibitems directly in the
