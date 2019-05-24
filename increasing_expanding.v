@@ -81,7 +81,7 @@ Definition expanding (f : nat -> nat) : Prop :=
 
 (* Definition of strict expansion *)
 Definition expand_strict_from (a : nat) (f : nat -> nat) : Prop :=
-  expanding f /\ (forall n, a <= n -> S n <= f n).
+  expanding f /\ (forall n, a <= n -> n < f n).
 
 (* Increasing functions are expansions *)
 Lemma increasing_expanding :
@@ -134,7 +134,7 @@ Qed.
    Repeatability combines increasing-ness and expansive-ness, which are all preserved
    through repeater, as proved below *)
 Lemma repeater_repeatable :
-    forall a b f, (1 <= a) -> repeatable_from a f -> repeatable_from b (repeater_from f a).
+    forall a b f, (0 < a) -> repeatable_from a f -> repeatable_from b (repeater_from f a).
 Proof.
   intros a b f Ha. intro.
   apply (repeatable_monotone 0 _ _). omega.

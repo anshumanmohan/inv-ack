@@ -12,18 +12,18 @@ Open Scope N_scope.
 
 (* ****** CONTRACTIONS ****************** *)
 
-Definition contracting (f : N -> N) : Prop :=
+Definition bin_contracting (f : N -> N) : Prop :=
   forall n, f n <= n.
 
 Definition bin_contract_strict_above (a : N) (f : N -> N) : Prop :=
-  (contracting f) /\ (forall n, a < n -> f n <= (n + a) / 2).
+  (bin_contracting f) /\ (forall n, a < n -> f n <= (n + a) / 2).
 
 
 (* ****** PROPERTIES OF CONTRACTIONS ************ *)
 
 (* Correct counterpart of contractions on nat *)
 Lemma contract_Nnat : forall f,
-    contracting f <-> countdown.contracting (to_nat_func f).
+    bin_contracting f <-> countdown.contracting (to_nat_func f).
 Proof.
   intro f. unfold to_nat_func. split; intros H n.
   - rewrite le_nat_N. rewrite N2Nat.id. apply H.
@@ -38,9 +38,8 @@ Lemma bin_contract_strict_Nnat : forall a f,
 Proof.
   intros a f [Hf Haf]. split.
   - rewrite <- contract_Nnat. apply Hf.
-  - intros n. unfold to_nat_func. repeat rewrite le_nat_N.
-    repeat rewrite Nat2N.inj_succ. repeat rewrite N2Nat.id.
-    intro Han. rewrite N.le_succ_l.
+  - intros n. unfold to_nat_func. repeat rewrite lt_nat_N.
+    repeat rewrite N2Nat.id. intro Han.
     apply (N.le_lt_trans _ (((N.of_nat n) + a) / 2) _);
     [apply Haf|apply N.div_lt_upper_bound]; lia.
 Qed.
@@ -48,7 +47,7 @@ Qed.
 (* repeat of contractions make the result smaller *)
 Lemma repeat_contract :
   forall f n k l,
-    contracting f -> (k <= l)%nat -> repeat f l n <= repeat f k n.
+    bin_contracting f -> (k <= l)%nat -> repeat f l n <= repeat f k n.
 Proof.
   intros f n k l Hf Hkl.
   induction l; inversion Hkl; [lia |lia |].
@@ -79,15 +78,15 @@ Qed.
 
 (* ****** COUNTDOWN *************************************)
 
-Fixpoint countdown_worker (f : N -> N) (a n : N) (b : nat) : N :=
+Fixpoint bin_countdown_worker (f : N -> N) (a n : N) (b : nat) : N :=
   match b with
   | O    => 0
   | S b' => if (n <=? a) then 0
-             else 1 + countdown_worker f a (f n) b'
+             else 1 + bin_countdown_worker f a (f n) b'
   end.
 
-Definition countdown (f : N -> N) (a n : N) : N
-  := countdown_worker f a n (nat_size (n - a)).
+Definition bin_countdown_to (f : N -> N) (a n : N) : N
+  := bin_countdown_worker f a n (nat_size (n - a)).
 
 
 Lemma bin_contract_strict_threshold : forall a f n,
@@ -120,26 +119,26 @@ Proof.
 Qed.
 
 
-Lemma countdown_base : forall f a n b,
-    n <= a -> countdown_worker f a n b = 0.
+Lemma bin_countdown_base : forall f a n b,
+    n <= a -> bin_countdown_worker f a n b = 0.
 Proof.
   intros f a n b Han. destruct b; trivial.
   rewrite <- N.leb_le in Han. simpl. rewrite Han. trivial.
 Qed.
 
-Lemma countdown_intermediate : forall f a n b i,
-    contracting f -> ((S i) <= b)%nat -> (a < repeat f i n)
-    -> countdown_worker f a n b =
-       N.of_nat (S i) + countdown_worker f a (repeat f (S i) n) (b - (S i)).
+Lemma bin_countdown_intermediate : forall f a n b i,
+    bin_contracting f -> ((S i) <= b)%nat -> (a < repeat f i n)
+    -> bin_countdown_worker f a n b =
+       N.of_nat (S i) + bin_countdown_worker f a (repeat f (S i) n) (b - (S i)).
 Proof.
   intros f a n b i Hf.
   generalize dependent b. generalize dependent n.
   induction i; intros n b Hib Han; rewrite <- N.leb_gt in Han.
   - destruct b. inversion Hib. replace (S b - 1)%nat with b by omega.
-    unfold countdown_worker. simpl in Han. rewrite Han. trivial.
+    unfold bin_countdown_worker. simpl in Han. rewrite Han. trivial.
   - rewrite IHi.
     + replace (b - S i)%nat with (S (b - S(S i))) by omega.
-      unfold countdown_worker. rewrite Han.
+      unfold bin_countdown_worker. rewrite Han.
       replace (N.of_nat (S(S i))) with (N.of_nat (S i) + 1).
       apply N.add_assoc. rewrite N.add_1_r.
       repeat rewrite Nat2N.inj_succ. trivial.
@@ -149,20 +148,20 @@ Proof.
       apply Han. apply Hf.
 Qed.
 
-Theorem countdown_repeat : forall f a n m,
+Theorem bin_countdown_repeat : forall f a n m,
     bin_contract_strict_above a f ->
-    countdown f a n <= m <-> repeat f (N.to_nat m) n <= a.
+    bin_countdown_to f a n <= m <-> repeat f (N.to_nat m) n <= a.
 Proof.
-  intros f a n m Hf. unfold countdown.
+  intros f a n m Hf. unfold bin_countdown_to.
   destruct (bin_contract_strict_threshold a f n Hf) as [t [Ht0 Ht1]].
   destruct t.
-  - simpl in Ht0. rewrite (countdown_base _ _ _ _ Ht0).
+  - simpl in Ht0. rewrite (bin_countdown_base _ _ _ _ Ht0).
     split; intro; try lia. apply (N.le_trans _ (repeat f 0 n) _).
     apply repeat_contract. apply Hf. omega. apply Ht0.
   - assert (a < repeat f t n) as Ht.
     { rewrite N.lt_nge. intro. apply Ht1 in H. omega. }
-    rewrite (countdown_intermediate _ _ _ _ t).
-    rewrite (countdown_base _ _ _ _ Ht0). rewrite N.add_0_r.
+    rewrite (bin_countdown_intermediate _ _ _ _ t).
+    rewrite (bin_countdown_base _ _ _ _ Ht0). rewrite N.add_0_r.
     replace m with (N.of_nat (N.to_nat m)) at 1 by apply N2Nat.id.
     unfold N.le at 1. rewrite <- Nat2N.inj_compare.
     rewrite Nat.compare_le_iff.
@@ -176,22 +175,22 @@ Proof.
     + apply Ht.
 Qed.
 
-(* This countdown definition is consistent with its nat counterpart for
+(* This bin_countdown_to definition is consistent with its nat counterpart for
    strict binary contractions *)
-Theorem countdown_correct : forall f a,
+Theorem bin_countdown_correct : forall f a,
     bin_contract_strict_above a f ->
-     countdown f a = to_N_func (countdown.countdown_to (N.to_nat a) (to_nat_func f)).
+     bin_countdown_to f a = to_N_func (countdown.countdown_to (to_nat_func f) (N.to_nat a)).
 Proof.
   intros f a Haf. apply functional_extensionality. intro n.
   assert (countdown.contract_strict_above (N.to_nat a) (to_nat_func f))
   as Haf0 by apply (bin_contract_strict_Nnat a f Haf).
   unfold to_N_func. apply le_antisym.
-  - rewrite countdown_repeat by apply Haf. rewrite Nat2N.id.
+  - rewrite bin_countdown_repeat by apply Haf. rewrite Nat2N.id.
     rewrite le_N_nat. rewrite to_N_func_repeat. unfold to_N_func.
     rewrite Nat2N.id. rewrite <- countdown.countdown_repeat; trivial.
   - rewrite le_N_nat. rewrite Nat2N.id.
     rewrite countdown.countdown_repeat by apply Haf0.
     rewrite to_nat_func_repeat. rewrite <- N_nat_func_id.
     unfold to_nat_func. rewrite N2Nat.id. rewrite <- le_N_nat.
-    rewrite <- countdown_repeat. lia. trivial.
+    rewrite <- bin_countdown_repeat. lia. trivial.
 Qed.

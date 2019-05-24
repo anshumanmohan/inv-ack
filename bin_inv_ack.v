@@ -33,12 +33,12 @@ Fixpoint alpha (m : nat) (x : N) : N :=
   | 0%nat => x - 1
   | 1%nat => x - 2
   | 2%nat => N.div2 (x - 2)
-  | S m'  => countdown (alpha m') 1 (alpha m' x)
+  | S m'  => bin_countdown_to (alpha m') 1 (alpha m' x)
   end.
 
 (* Recursion *)
 Theorem alpha_recursion : forall m, (2 <= m)%nat ->
-    alpha (S m) = compose (countdown (alpha m) 1) (alpha m).
+    alpha (S m) = compose (bin_countdown_to (alpha m) 1) (alpha m).
 Proof. destruct m as [|[|m]]; [omega|omega|trivial]. Qed.
 
 
@@ -46,11 +46,11 @@ Proof. destruct m as [|[|m]]; [omega|omega|trivial]. Qed.
 
 (* Countdown composed with self preserves binary contractiveness *)
 Theorem countdown_bin_contract : forall f a b,
-    bin_contract_strict_above a f -> bin_contract_strict_above b (compose (countdown f a) f).
+    bin_contract_strict_above a f -> bin_contract_strict_above b (compose (bin_countdown_to f a) f).
 Proof.
   intros f a b Haf0. assert (H:=Haf0). destruct H as [Hf Haf].
   split; intro n; [ |intro Hbn]; unfold compose;
-  rewrite countdown_repeat by assumption; rewrite <- repeat_S_comm;
+  rewrite bin_countdown_repeat by assumption; rewrite <- repeat_S_comm;
   rewrite N.le_ngt; intro; apply (repeat_bin_contract_strict _ _ _ _ Haf0) in H.
   - specialize (nat_size_contract (n - a)). rewrite N2Nat.inj_sub. omega.
   - replace (nat_size (n - a)) with (S (nat_size ((n - a) / 2))) in H.
@@ -73,10 +73,10 @@ Proof.
   replace (n - 2) with (N.of_nat (m - 2)) by lia.
   rewrite <- Nat2N.inj_div2. f_equal. clear Heqm. clear n.
   replace (inv_ack.alpha 2 m) with
-   (countdown.countdown_to 1 (inv_ack.alpha 1) (inv_ack.alpha 1 m)) by trivial.
+   (countdown.countdown_to (inv_ack.alpha 1) 1 (inv_ack.alpha 1 m)) by trivial.
   rewrite inv_ack.alpha_1. generalize (m - 2)%nat. clear m. intro n.
-  assert (Nat.div2 n = countdown.countdown_to 1 (fun n0 : nat => (n0 - 2)%nat) n
-   /\ Nat.div2 (S n) = countdown.countdown_to 1 (fun n0 : nat => (n0 - 2)%nat) (S n)).
+  assert (Nat.div2 n = countdown.countdown_to (fun n0 : nat => (n0 - 2)%nat) 1 n
+   /\ Nat.div2 (S n) = countdown.countdown_to (fun n0 : nat => (n0 - 2)%nat) 1 (S n)).
   { induction n; split; trivial. apply IHn.
     destruct (countdown.countdown_recursion 1 (fun n0 => (n0-2)%nat) (S(S n))) as [_ H].
     - split; intro m; omega.
@@ -86,7 +86,7 @@ Proof.
 Qed.
 
 (* Every alpha level starting from 2 is strictly binary contracting above 1,
-   so countdown to 1 works properly for them *)
+   so bin_countdown_to to 1 works properly for them *)
 Theorem alpha_contract_strict_above_1 : forall m,
     (2 <= m)%nat -> bin_contract_strict_above 1 (alpha m).
 Proof.
@@ -103,7 +103,7 @@ Proof.
   intro n; unfold to_N_func. 2: rewrite inv_ack.alpha_1.
   1,2: simpl; lia. 1: apply alpha_2_correct.
   rewrite alpha_recursion by omega. unfold compose.
-  rewrite countdown_correct by (apply alpha_contract_strict_above_1; omega).
+  rewrite bin_countdown_correct by (apply alpha_contract_strict_above_1; omega).
   rewrite IHm. rewrite <- nat_N_func_id.
   replace (N.to_nat 1) with 1%nat by trivial.
   unfold to_N_func. f_equal. rewrite Nat2N.id. trivial.
@@ -125,7 +125,7 @@ Fixpoint inv_ack_worker (f : N -> N) (n k : N) (bud : nat) : N :=
   | 0%nat  => k
   | S bud' =>
     if n <=? k then k
-      else let g := (countdown f 1) in
+      else let g := (bin_countdown_to f 1) in
       inv_ack_worker (compose g f) (g n) (N.succ k) bud'
   end.
 

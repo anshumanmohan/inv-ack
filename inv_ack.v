@@ -32,7 +32,7 @@ Require Import applications.
 Fixpoint alpha m x :=
   match m with
   | 0 => x - 1
-  | S m' => countdown_to 1 (alpha m') (alpha m' x)
+  | S m' => countdown_to (alpha m') 1 (alpha m' x)
   end.
 
 (* Definition *)
@@ -142,7 +142,7 @@ Fixpoint inv_ack_worker (f : nat -> nat) (n k bud : nat) : nat :=
     match (n - k) with
     | 0   => k
     | S _ =>
-      let g := (countdown_to 1 f) in
+      let g := (countdown_to f 1) in
       inv_ack_worker (compose g f) (g n) (S k) bud'
     end
   end.
@@ -164,7 +164,7 @@ Lemma inv_ack_worker_intermediate :
     - intros n b Hn Hb. rewrite IHi.
       + remember (S i) as p.
         replace (alpha (S p)) with
-        (compose (countdown_to 1 (alpha p)) (alpha p)) by trivial.
+        (compose (countdown_to (alpha p) 1) (alpha p)) by trivial.
         unfold inv_ack_worker.
         remember (alpha p n - p) as m. destruct m; try omega.
         remember (b - p) as c. destruct c; try omega.

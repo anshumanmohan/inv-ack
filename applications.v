@@ -24,15 +24,14 @@ Fixpoint inv_hyperop a n b :=
   match n with
   | 0 => b - 1
   | S n' =>
-    countdown_to (hyperop_init a n') (inv_hyperop a n') b
+    countdown_to (inv_hyperop a n') (hyperop_init a n') b
   end.
 
 (* Handy results to transform goals in involving inv_hyperop *)
 Theorem inv_hyperop_recursion :
   forall n a,
     inv_hyperop a (S n) =
-    countdown_to (hyperop_init a n)
-                 (inv_hyperop a n).
+    countdown_to (inv_hyperop a n) (hyperop_init a n).
 Proof. trivial. Qed.
 
 (* Several results about first few levels of inv_hyperop.
