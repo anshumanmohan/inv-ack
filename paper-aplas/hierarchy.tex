@@ -2,7 +2,7 @@ Let us consider hyperoperations more carefully
 to clarify how they relate to the Ackermann function.
 The first hyperoperation (level 0) is simply successor, and 
 every hyperoperation that follows is the repeated application of the previous.
-Addition is level 1, and $b$ repetitions of addition
+Level 1 is addition, and $b$ repetitions of addition
 gives multiplication, which is level 2. Next, $b$ repetitions of
 multiplication gives exponentiation, which is level 3. 
 There is a subtlety here: in the former case, we add $a$
@@ -24,10 +24,16 @@ which should now be $1$. The formal definition of hyperoperation is:
 \end{array}
 \end{equation}
 The seemingly complicated recursive rule is actually just \emph{repeated application} in disguise. By fixing $a$ and treating $a[n]b$ as a function of $b$, we can write
+% \begin{equation*}
+% \begin{array}{lll}
+% a[n+1]b & ~ = ~ a[n]\big(a[n+1](b-1)\big) & ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \\
+%  & ~ = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big) & ~ = ~ \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
+% \end{array}
+% \end{equation*}
 \begin{equation*}
 \begin{array}{lll}
-a[n+1]b & ~ = ~ a[n]\big(a[n+1](b-1)\big) & ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \\
- & ~ = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big) & ~ = ~ \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
+a[n+1]b & = ~ a[n]\big(a[n+1](b-1)\big) ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \\
+& = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
 \end{array}
 \end{equation*}
 where $f^{(k)}(u) ~ \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$, 
@@ -65,15 +71,15 @@ constant but the second is shrinking. The elegant solution uses double recursion
             in ackermann' n
   end.
 \end{lstlisting}
-Coq is satisfied since both recursive calls are structurally smaller.
-Moreover, having encoded both notions in this style, the structural similarities
-are readily apparent.  In fact, the only essential difference is the initial values
+Coq is satisfied since both recursive calls are on structurally smaller arguments.
+Moreover, our encoding makes the structural similarities
+ readily apparent.  In fact, the only essential difference is the initial values
 (the second case of both definitions): the Ackermann function uses $\Ack(n-1,1)$, whereas
 hyperoperations use the initial values given in~\eqref{eq:hyper}.
 
 Having noticed that the deep recursion in both notions is expressing the same idea
 of repeated application, we arrive at another useful idea. We can express the relationship
-between the $(\text{n+1})^{\text{th}}$- and $\text{n}^{\text{th}}$-levels in
+between the $(\text{n+1})^{\text{th}}$ and $\text{n}^{\text{th}}$ levels in
 a \emph{functional} way if we develop a higher-order function that transforms the latter level
 to the former.  We call this idea a \emph{repeater}:
 \begin{defn}

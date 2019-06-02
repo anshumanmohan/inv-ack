@@ -1,7 +1,9 @@
-The inverse to the
-explosively-growing Ackermann function features in several key algorithmic asymptotic
-bounds, such as the union-find data structure~\cite{tarjan} and computing a minimum spanning
-tree of a graph~\cite{chazelle}.  Unfortunately, both the Ackermann function and its inverse
+The inverse to the explosively-growing Ackermann function 
+features in several key algorithmic asymptotic
+bounds, such as the union-find data structure~\cite{tarjan} and 
+the computation of a minimum spanning
+tree of a graph~\cite{chazelle}.  Unfortunately, both the Ackermann 
+function and its inverse
 can be hard to understand, and the inverse in particular can be hard to define in a computationally-efficient manner in a theorem prover.  Let us consider why this
 is so.
 \begin{defn} \label{defn: ack} 
@@ -26,7 +28,7 @@ The diagonal Ackermann function grows explosively: starting from $\Ack(0)$, the 
 %This explosive behavior is problematical when we turn our attention to the canonical definition of
 %the inverse Ackermann function\cite{blah}.
 This explosive behavior becomes problematical when we consider
-the inverse Ackermann function\cite{chazelle, tarjan}.
+the inverse Ackermann function~\cite{chazelle, tarjan}.
 \begin{defn} \label{defn: inv_ack}
 The inverse Ackermann function $\alpha(n)$ is defined as the minimum $k$ for which $n \le \Ack(k)$, \emph{i.e.} $\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}$.
 \end{defn}
@@ -176,10 +178,10 @@ time.  Finally, our techniques are extremely succinct: the code to invert the di
 %\end{itemize}
 \begin{itemize}
 	\item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, explain how to encode hyperoperations and the Ackermann function in Coq, and discuss our concept of \emph{repeater}.
-	\item[\S\ref{sec:countdown}] We define a notion of upper inverses and show how to invert repeater with \emph{countdown}.
+	\item[\S\ref{sec: countdown}] We define a notion of upper inverses and show how to invert repeater with \emph{countdown}.
 	\item[\S\ref{sec: inv-hyperop}] We show how to use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base; and sketch a method to find the Inverse Ackermann function.
-	\item[\S\ref{sec: inv-ack}] We detail a specialized computation for the Inverse Ackermann function, improving over the sketch's running time of $\bigO\big(n^2\big)$ to $\bigO(n)$.
-	\item[\S\ref{sec: discussion}] We discuss the two-argument inverse Ackermann function and survey related work.
+	\item[\S\ref{sec: inv-ack}] We give a specialized computation for the Inverse Ackermann function in $\bigO(n)$ time.
+	\item[\S\ref{sec: discussion}] We discuss the two-argument inverse Ackermann function, \note{other derivative functions such as foo bar doo dah,} and survey related work.
 \end{itemize}
 All our techniques are mechanized in Coq and our code is available 
 online~\cite{inv-ack}. Further, definitions presented here 
