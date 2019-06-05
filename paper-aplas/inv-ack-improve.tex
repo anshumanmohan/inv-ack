@@ -1,34 +1,34 @@
-In this section, we provide a time analysis for the
+We provide a runtime analysis for the
 inverse Ackermann function. First, we show that the
-running time of the version defined in \cref{thm: inv-ack-hier-correct}
+runtime of the version defined in Definition~\ref{thm: inv-ack-hier-correct}
 is $O(n^2)$. We then provide a simple improvement that
-cuts the running time to $O(n)$.
+cuts the runtime to $O(n)$.
 
 %\footnote{We will be careful not to conclude that functions
 %$f$ and $g$ are equal when they agree on all inputs but are computed with
 %different pieces of code.} 
 % momentarily forget about the axiom of extensionality and 
 \subsection{Basic Time Analysis: $O(n^2)$}
-To formalize the notion of running time, let us identify each function on 
+To formalize the notion of runtime, we identify each function on 
 $\mathbb{N}$ with its \emph{computation}, \emph{i.e.} the program that computes 
-it in Coq under a call-by-value strategy.  Then briefly:
+it in Coq \note{under a call-by-value strategy}.
 \begin{defn}
- Given a function $f:\mathbb{N}\to\mathbb{N}$ in Coq, the \emph{running time} of $f$ on input $n\in \mathbb{N}$, denoted by $\runtime(f, n)$ is the total number of computational steps it takes to compute $f(n)$.
+ Given a function $f:\mathbb{N}\to\mathbb{N}$, the \emph{runtime} of $f$ on input $n\in \mathbb{N}$, denoted by $\runtime(f, n)$ is the number of computational steps it takes to compute~$f(n)$.
 \end{defn}
 \begin{lem} \label{lem: sub-runtime}
-	$\forall a, n.~ \runtime(\lambda n.(n - a), n) = \Theta(\min\{a, n\})$ per the Coq definition of subtraction.
+	$\runtime(\lambda n.(n - a), n) = \Theta(\min\{a, n\})$, per Coq's definition of~subtraction.
 \end{lem}
 \begin{lem} \label{lem: compose-runtime}
-	$\forall f, g: \mathbb{N}\to \mathbb{N}.~\runtime(f\circ g, n) = \runtime(f, g(n)) + \runtime(g, n)$ per the Coq definition of functional composition.
+	$\forall f, g: \mathbb{N}\to \mathbb{N}.~\runtime(f\circ g, n) = \runtime(f, g(n)) + \runtime(g, n)$ per Coq's definition of functional composition.
 \end{lem}
 \begin{lem} \label{lem: cdt-runtime}
-	Per \cref{defn: countdown}, $\forall a\ge 1, \forall n\le 1, \forall f\in \contract_{a}$.~$\runtime\big(\cdt{f}{a}\ , n\big) = 1$, and
+	Per Definition~\ref{defn: countdown}, $\forall a\ge 1, \forall n\le 1, \forall f\in \contract_{a}$.~$\runtime\big(\cdt{f}{a}\ , n\big) = 1$, and
 	\begin{equation*}
 	\forall n\ge 2.~\runtime\big(\cdt{f}{a}\ , n\big) = \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime\left(f, f^{(i)}(n)\right) + \Theta\big((a + 1)\cdt{f}{a}(n)\big)
 	\end{equation*}
 \end{lem}
 \begin{proof}
-	Per \cref{defn: countdown-worker}, the computation makes $\cdt{f}{a}(n)$ recursive calls to $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, two computations must take place: $n_i - a$, which takes $\Theta(a + 1)$ time, and $f(n_i) = n_{i+1}$, where $n_i \triangleq f^{(i)}(n)$ has been already computed by the $i$th call, and is greater than $a$.  The total time is \note[can someone move the little triangle up? I can't figure this one out]{then}
+	Per Definition~\ref{defn: countdown-worker}, the computation makes $\cdt{f}{a}(n)$ recursive calls to $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, two computations must take place: $n_i - a$, which takes $\Theta(a + 1)$ time, and $f(n_i) = n_{i+1}$, where $n_i \triangleq f^{(i)}(n)$ has been  computed by the $i$th call, and is greater than $a$.  The total time is then
 	\begin{equation*}
 	\runtime\big(\cdt{f}{a}\ , n\big)
 	= \sum_{i=0}^{\cdt{f}{a}(n) - 1} \left[\runtime\left(f, f^{(i)}(n)\right) + \Theta(a)\right]
@@ -36,23 +36,23 @@ it in Coq under a call-by-value strategy.  Then briefly:
 	\end{equation*}
 \end{proof}
 
-From \cref{lem: compose-runtime} and \cref{lem: cdt-runtime}, the following lemma follows easily:
+From Lemma~\ref{lem: compose-runtime} and Lemma~\ref{lem: cdt-runtime}, the following lemma follows easily:
 \begin{lem} \label{lem: inv-ack-hier-runtime}
-	Per \cref{defn: inv-ack-hier} and \cref{defn: countdown},
+	Per Definition~\ref{defn: inv-ack-hier} and Definition~\ref{defn: countdown},
 	\begin{equation*}
 	\runtime\big(\alpha_{i+1}, n\big) = \sum_{k=0}^{\alpha_{i+1}(n)}\runtime\left(\alpha_i, \alpha_i^{(k)}(n)\right) + \Theta\big(\alpha_{i+1}(n)\big)
 	\end{equation*}
 \end{lem}
-This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i, n\big)$. If there is some $i$ such that $\runtime\big(\alpha_i, n\big) = \Theta\big(n^2\big)$, each function in the hierarchy will take at least $\Omega\big(n^2\big)$ to compute \note{from $\alpha_i$}, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}. The next lemma shows that $i = 2$ suffices.
+This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i, n\big)$. If there is some $i$ such that $\runtime\big(\alpha_i, n\big) = \Theta\big(n^2\big)$, each function in the hierarchy will take at least $\Omega\big(n^2\big)$ to compute \note{from $\alpha_i$}, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per Definition~\ref{defn: inv-ack-worker}. The next lemma shows that $i = 2$ suffices.
 \begin{lem}
-	Per \cref{defn: inv-ack-hier}, $\runtime\big(\alpha_2, n\big) = \Theta\big(n^2\big)$
+	Per Definition~\ref{defn: inv-ack-hier}, $\runtime\big(\alpha_2, n\big) = \Theta\big(n^2\big)$
 \end{lem}
 \begin{proof}
-	$\alpha_1 = \big(\cdt{\lambda m.(m-1)}{1}\big)\circ \big(\lambda m.(m-1)\big) {\color{red}\equiv} \lambda m.(m - 2)$. By \cref{lem: inv-ack-hier-runtime},
+	$\alpha_1 = \big(\cdt{\lambda m.(m-1)}{1}\big)\circ \big(\lambda m.(m-1)\big) {\color{red}\equiv} \lambda m.(m - 2)$. By Lemma~\ref{lem: inv-ack-hier-runtime},
 	\begin{equation*}
 	\runtime\big(\alpha_1, n\big) = \sum_{i=0}^{n-1} \runtime\big(\lambda m.(m-1), n - i\big) + \Theta\big((n-2)\big) = \Theta(n)\text{,}
 	\end{equation*}
-	since $\runtime\big(\lambda m.(m-1), k\big) = 1$. Because $\alpha_2 = \big(\cdt{\alpha_1}{0}\big)\circ \alpha_1 $, again by \cref{lem: inv-ack-hier-runtime},
+	since $\runtime\big(\lambda m.(m-1), k\big) = 1$. Because $\alpha_2 = \big(\cdt{\alpha_1}{0}\big)\circ \alpha_1 $, again by Lemma~\ref{lem: inv-ack-hier-runtime},
 	\begin{equation*}
 	\runtime\big(\alpha_2, n\big)
 	= \sum_{i=0}^{\lceil (n-3)/2 \rceil} \runtime \big(\alpha_1, n-2i\big) + \Theta\left(\frac{n}{2}\right)
@@ -61,7 +61,7 @@ This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i,
 	\end{equation*}
 \end{proof}
 \begin{col}
-	$\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}.
+	$\runtime(\alpha, n) = \Omega\big(n^2\big)$ per Definition~\ref{defn: inv-ack-worker}.
 \end{col}
 
 %This lemma implies $\runtime\big(\cdt{f}{a}\ , n\big) \ge \runtime(f, n)$. If for some $i$, $\runtime\big(2\angle{i}, n\big) = \Theta\big(n^2\big)$, the entire hierarchy will take at least $\Omega\big(n^2\big)$ from $2\angle{i}$, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}. The next lemma shows $i = 2$ suffices.
@@ -83,7 +83,7 @@ This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i,
 %\end{col}
 %Intuitively, the function $2\angle{1} \equiv \lambda n.(n-2)$ is responsible for dragging the whole hierarchy's performance due to one silly weakness: its does not know it will always output $n-2$ before beginning its computation, hence needs to tediously subtract $1$ until it goes below $2$. This observation leads to the next improvement.
 
-\subsection{Hard-coding the second level: $O(n)$} \label{sect: hard-code-lvl2}
+\subsection{Hard-coding the second level: $O(n)$} \label{sect: hardcode-lvl2}
 
 Intuitively, it is clear that the function $\alpha_2 \equiv \lambda n.(n-2)$
 slows down the entire hierarchy's performance due to one silly weakness:
@@ -91,19 +91,19 @@ it does not know that it will always output $n-2$ before beginning its computati
 and so it tediously subtracts $1$ until \note{it goes below $2$.}
 %This observation leads to the next improvement.
 
-We can hard-code $\alpha_1$ as $\lambda n.(n-2)$ to reduce its running time
+We can hardcode $\alpha_1$ as $\lambda n.(n-2)$ to reduce its runtime
 from $\Theta(n)$ to $\Theta(1)$.
 \begin{lstlisting}
 Definition sub_2 (n : nat) : nat :=
   match n with | 0 => 0 | 1 => 1 | S (S n') => n' end.
 \end{lstlisting}
-Without loss of generality, let us henceforth assume that the constant factors in $\runtime(\alpha_1, n)$ and \cref{lem: inv-ack-hier-runtime} are both $1$. The running time for $\alpha_2$ is then
+Without loss of generality, let us henceforth assume that the constant factors in $\runtime(\alpha_1, n)$ and Lemma~\ref{lem: inv-ack-hier-runtime} are both $1$. The runtime for $\alpha_2$ is then
 \begin{equation*}
 \runtime\big(\alpha_2, n\big)
  = \sum_{i=0}^{\lceil (n-3)/2 \rceil} \runtime \big(\alpha_1, n-2i\big) + \left\lceil \frac{n-3}{2} \right\rceil =  2\left\lceil \frac{n-3}{2} \right\rceil
  < n
 \end{equation*}
-In fact, this fix allows every function in the hierarchy to be computed in linear time:
+In fact, this allows every function in the hierarchy to be computed in linear time:
 \begin{thm} \label{thm: inv-ack-hier-runtime-improved}
 	$\runtime\big(\alpha_i, n\big) \le 2n + (4^{i+1} - 4)\lceil \log_2n\rceil + 5$.
 \end{thm}
@@ -118,7 +118,6 @@ We need two crucial technical lemmas to prove this theorem.
 	\sum_{k=0}^{\alpha_{3}(n)}\runtime\left(\alpha_2, \left\lceil \frac{n+3}{2^k} \right\rceil - 3\right) + \alpha_{3}(n)  \quad
 	\le \quad \sum_{k=0}^{\alpha_3(n)}\left(\frac{n+3}{2^k} + 1\right) - 3\big(\alpha_3(n) + 1\big) + \alpha_3(n) \\
 	\le \sum_{k=0}^{\alpha_3(n)}\frac{n+3}{2^k} - \alpha_3(n) - 2 \quad \le \quad 2(n+3) - 2 \quad = \quad 2n + 4 \\
-[-3.2em]
 \end{array}
 	\end{equation*}
 \end{proof}
@@ -139,8 +138,8 @@ We need two crucial technical lemmas to prove this theorem.
 	\end{equation*}
 %	Let $P(n) \triangleq 2\big\lceil \log_2\log_2n \big\rceil \le \big\lceil \log_2n \big\rceil$. It suffices to prove $P(n) \ \forall n$. Observe that $P(n)$ holds for $n\ge 4$.
 \end{proof}
-\begin{proof}[Proof of \Cref{thm: inv-ack-hier-runtime-improved}]
-	We have proved the result for $i = 0, 1, 2$. Let us proceed with $i\ge 3$ by induction. The base case $i = 3$ has been covered by \cref{lem: inv-ack-3-runtime}. Now suppose the result holds for $i\ge 3$, let $M_i \triangleq 4^{i+1}-4$ for each $i$, we have
+\begin{proof}[of Theorem~\ref{thm: inv-ack-hier-runtime-improved}]
+	We have proved the result for $i = 0, 1, 2$. Let us proceed with $i\ge 3$ by induction. The base case $i = 3$ has been covered by Lemma~\ref{lem: inv-ack-3-runtime}. Now suppose the result holds for $i\ge 3$, let $M_i \triangleq 4^{i+1}-4$ for each $i$, we have
 	\begin{equation*}
 	\begin{array}{@{}l@{}}
 	 \runtime\big(\alpha_{i+1}, n\big) = \sum_{k=0}^{\alpha_{i+1}(n)} \runtime\left(\alpha_i, \alpha_i^{(k)}(n)\right) + \alpha_{i+1}(n) \\
@@ -153,22 +152,22 @@ We need two crucial technical lemmas to prove this theorem.
 	\end{array}
 	\end{equation*}
 \end{proof}
-By hard-coding $\alpha_1$ as $\lambda m.(m-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 4^i\log n\big)$ time, \emph{i.e.} linear time $\Theta(n)$ for fixed $i$.
+By hardcoding $\alpha_1$ as $\lambda m.(m-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 4^i\log n\big)$ time, \emph{i.e.} linear time $\Theta(n)$ for fixed $i$.
 
 %\subsection{An improved inverse Ackermann computation: $O(n)$}
 %Building on the previous improvement, we can improve the running time of $\alpha(n)$ per \Cref{defn: inv-ack-hier} by hard-coding the output when $n\le 1 = \Ack(0, 0)$, and starting $\W\alpha$ with $f := \alpha_1$ and $n := \alpha_1(n)$. In other words,
-This also allows us to improve the running time of $\alpha(n)$ per \Cref{defn: inv-ack-hier} by hard-coding the output when $n\le 1 = \Ack(0, 0)$, and starting $\W\alpha$ with $f = \alpha_1$ and $n = \alpha_1(n)$:
+This also allows us to improve the runtime of $\alpha(n)$ per Definition~\ref{defn: inv-ack-hier} by hardcoding the output when $n\le 1 = \Ack(0, 0)$, and starting $\alpha^{\mathcal{W}}$ with $f = \alpha_1$ and $n = \alpha_1(n)$:
 \begin{equation*}
 \tilde{\alpha}(n) = \begin{cases}
-0 & \text{ if } n \le 1 \\ \W\alpha\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2
+0 & \text{ if } n \le 1 \\ \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2
 \end{cases}
 \end{equation*}
-For $n > 1$, we have $1\le \min\big\{n-1, \alpha_1(n)\big\}$, so $
-\W\alpha\big(\alpha_0, \alpha_0(n), 0, n\big) =
-\W\alpha\big(\alpha_1, \alpha_1(n), 1, n-1\big)$.
-Thus $\tilde{\alpha}(n) = \alpha(n)$. Now at each recursive step, the transition from $\W\alpha\big(\alpha_k, \alpha_k(n), k, n-k\big)$ to $\W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of the following computations:
+For $n > 1$, $1\le \min\big\{n-1, \alpha_1(n)\big\}$. So
+$\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big) =
+\alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-~1\big)$.
+Thus $\tilde{\alpha}(n) = \alpha(n)$. At each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of the following computations:
  \begin{enumerate}[label={(\arabic*)}]
-	\item $\cdt{\alpha_k}{1}(x)$ given $x\triangleq \alpha_k(n)$, which takes time $\runtime\big(\alpha_{k+1}, n\big) - \runtime\big(\alpha_k, n\big)$ by \cref{lem: compose-runtime}.
+	\item $\cdt{\alpha_k}{1}(x)$ given $x\triangleq \alpha_k(n)$, which takes time $\runtime\big(\alpha_{k+1}, n\big) - \runtime\big(\alpha_k, n\big)$ by Lemma~\ref{lem: compose-runtime}.
 	\item $\alpha_k(n) - k$, which takes time $\Theta(k)$.
 \end{enumerate}
 The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,

@@ -32,19 +32,19 @@ The seemingly complicated recursive rule is actually just \emph{repeated applica
 % \end{equation*}
 \begin{equation*}
 \begin{array}{lll}
-a[n+1]b & = ~ a[n]\big(a[n+1](b-1)\big) ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \\
+a[n+1]b ~& = ~ a[n]\big(a[n+1](b-1)\big) ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \\
 & = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
 \end{array}
 \end{equation*}
-where $f^{(k)}(u) ~ \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$, 
+where $f^{(k)}(u) ~ \triangleq ~ \overbrace{(f\circ f\circ \cdots \circ f)}^{k \text{ times}} (u)$, 
 \emph{i.e.} it denotes $k$ successive applications of a function~$f$ to an 
 input~$u$, with $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times). 
 
-This insight will help us encode both hyperoperations~\eqref{eq:hyper} and the Ackermann function~\eqref{eq:ackermann} in Coq.  Notice that the recursive case of hyperoperation---and
+This insight will help us encode hyperoperations~(\ref{eq:hyper}) and the Ackermann function~(\ref{eq:ackermann}) in Coq.  Notice that the recursive case of hyperoperation---and
 indeed, the third case of the Ackermann function---is troublesome to encode in Coq due to
 the deep nested recursion.  In the outer recursive call, the first argument ($n$) is shrinking
 but the second is expanding explosively; in the inner recursive call, the first argument is
-constant but the second is shrinking. The elegant solution uses double recursion~\cite{stackoverflow} as follows:
+constant but the second is shrinking. The elegant solution uses double recursion~\cite{bertotcast} as follows:
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L39-L40}{Definition hyperop\_init}` (a n : nat) : nat :=
   match n with 0 => a | 1 => 0 | _ => 1 end.
@@ -75,7 +75,7 @@ Coq is satisfied since both recursive calls are on structurally smaller argument
 Moreover, our encoding makes the structural similarities
  readily apparent.  In fact, the only essential difference is the initial values
 (the second case of both definitions): the Ackermann function uses $\Ack(n-1,1)$, whereas
-hyperoperations use the initial values given in~\eqref{eq:hyper}.
+hyperoperations use the initial values given in~(\ref{eq:hyper}).
 
 Having noticed that the deep recursion in both notions is expressing the same idea
 of repeated application, we arrive at another useful idea. We can express the relationship
@@ -127,8 +127,8 @@ In Coq these two definitions are written as follows:
   | S n' => repeater_from (ackermann n') (ackermann n' 1) m
   end.
 \end{lstlisting}
-In the remainder of this paper we construct efficient inverses to these
-functions.  Our key idea is an inverse to the higher-order repeater function; we call this inverse \emph{countdown}.
+In the rest of this paper we construct efficient inverses to these
+functions.  Our key idea is an inverse to the higher-order repeater function, which we call \emph{countdown}.
 
 % Aquinas' promise:
 % We explain our core techniques of repeaters and countdowns that allow us to define each level of the Ackermann hierarchy—and their upper inverses—in a straightforward and uniform manner. We show how countdowns, in particular, can be written structurally recursively.

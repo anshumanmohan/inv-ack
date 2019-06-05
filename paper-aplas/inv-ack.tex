@@ -3,6 +3,7 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 %% The amsthm package provides extended theorem environments
+
 %\usepackage{amsthm}
 % AM commented out because it clashes with proof, etc
 
@@ -20,7 +21,7 @@
 \usepackage{xcolor}
 \usepackage{stmaryrd}
 \usepackage{hyperref}
-\usepackage{cleveref}
+%\usepackage{cleveref}
 
 \hypersetup{ % play with these to change the look of hyperlinks
     colorlinks=true,
@@ -97,16 +98,16 @@
 \renewcommand{\implies}{\Rightarrow}
 \renewcommand{\iff}{\Leftrightarrow}
 
-%\theoremstyle{plain}
-\newtheorem{thm}{Theorem}[section]
-\newtheorem{ex}[thm]{Example}
-\newtheorem{prop}[thm]{Proposition}
-\newtheorem{col}[thm]{Corollary}
-\newtheorem{lem}[thm]{Lemma}
+% %\theoremstyle{plain}
+\newtheorem{defn}{Definition}
+\newtheorem{ex}{Example}
+\newtheorem{prop}{Proposition}
+\newtheorem{col}[defn]{Corollary}
+\newtheorem{lem}[defn]{Lemma}
 \newtheorem{hypo}{Hypothesis}
-%\theoremstyle{definition}
-\newtheorem{defn}[thm]{Definition}
-\newtheorem{rem}[thm]{Remark}
+% %\theoremstyle{definition}
+\newtheorem{thm}[defn]{Theorem}
+\newtheorem{rem}[defn]{Remark}
 
 %\crefname{thm}{theorem}{theorems}
 %\crefname{defn}{definition}{definitions}
@@ -124,7 +125,7 @@
 
 %% DOCUMENT =================================================
 
-\bibliographystyle{plainurl}% the mandatory bibstyle
+%\bibliographystyle{plainurl}% the mandatory bibstyle
 
 \title{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy}
 
@@ -132,15 +133,16 @@
 
 \begin{document}
 
+\author{Anonymous Author(s)}
+\authorrunning{Anon.}
 
-\author{Linh Tran \and Anshuman Mohan \and Aquinas Hobor}
-%
-\authorrunning{L. Tran, A. Mohan, A. Hobor}
+%\author{Linh Tran \and Anshuman Mohan \and Aquinas Hobor}
+%\authorrunning{L. Tran, A. Mohan, A. Hobor}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
-\institute{National University of Singapore \\
-\email{\{tran,mohan,hobor\}@comp.nus.edu.sg}}
+%\institute{National University of Singapore \\
+%\email{\{tran,mohan,hobor\}@comp.nus.edu.sg}}
 
 
 \maketitle
@@ -181,10 +183,9 @@ to the Ackermann/hyperoperation hierarchy, and then use our inverses
 to compute the inverse of the diagonal Ackermann function $\Ack(n)$. 
 We show that our computation runs in linear time, and that it is consistent with 
 the usual definition of the inverse Ackermann function $\alpha(n)$.
+
+\keywords{Ackermann  \and hyperoperations \and Coq}
 \end{abstract}
-
-\keywords{Ackermann, hyperoperations, Coq}%TODO mandatory; please add comma-separated list of keywords
-
 
 %\end{frontmatter}
 

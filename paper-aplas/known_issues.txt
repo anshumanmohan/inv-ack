@@ -17,3 +17,11 @@
 - For binary rep, please edit the names of functions etc. Add something like "_bin" to all names, in the code and the paper. 
 
 Anshuman has added notes on pages 2, 5, 6, 7, 9, 11, 12, 13
+
+Some noncontroversial TODOs after seeing the reviews:
+5. Test Makefile 
+7. acknowledge Charguéraud and Pottier's repeater
+9. disclaimer that the practical hardcoded solution is obvious, we are trying to win in theory-land
+11. I think A(m, n) should have a different notation than the diagonal A(n). Proposed an example in Definition 1 but not yet piped through everywhere.
+14. Shall we remove the pedantic sub_2 from Section 5.2?
+15. There are many broken \refs to {defn: inv-ack-hier} in file inv-hyperop.tex and inv-ack-improve.tex

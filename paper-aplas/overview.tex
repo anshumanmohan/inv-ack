@@ -7,13 +7,14 @@ function and its inverse
 can be hard to understand, and the inverse in particular can be hard to define in a computationally-efficient manner in a theorem prover.  Let us consider why this
 is so.
 \begin{defn} \label{defn: ack} 
-The Ackermann-P\'eter function~\cite{peter} (hereafter just ``the'' Ackermann function; see~\S\ref{sec:related}) is a recursive two-variable function $\text{A} : \mathbb{N}^2 \to \mathbb{N}$ defined as follows:
+The Ackermann-P\'eter function~\cite{peter} (hereafter just ``the'' Ackermann function; see~\S\ref{sec:related}) is
+written $\mathcal{A} : \mathbb{N}^2 \to \mathbb{N}$ and defined as follows:
 \begin{equation}
 \label{eq:ackermann}
-A(n, m) \triangleq \begin{cases}
+\mathcal{A}(n, m) \triangleq \begin{cases}
 m + 1 & \text{ when } n = 0 \\
-A(n-1, 1) & \text{ when } n > 0, m = 0 \\
-A\big(n-1, A(n, m-1)\big) & \text{ otherwise}
+\mathcal{A}(n-1, 1) & \text{ when } n > 0, m = 0 \\
+\mathcal{A}\big(n-1, \mathcal{A}(n, m-1)\big) & \text{ otherwise}
 \end{cases}
 %A(m, n) \triangleq \begin{cases}
 %n + 1 & \text{ if } m = 0 \\
@@ -23,12 +24,12 @@ A\big(n-1, A(n, m-1)\big) & \text{ otherwise}
 \end{equation}
 \end{defn}
 
-The one-variable \emph{diagonal} Ackermann function $\Ack : \mathbb{N} \to \mathbb{N}$ is defined as $\Ack(n)~\triangleq~\Ack(n, n)$.	
+The one-variable \emph{diagonal} Ackermann function $\Ack : \mathbb{N} \to \mathbb{N}$ is defined as $\Ack(n)~\triangleq~\mathcal{A}(n, n)$.	
 The diagonal Ackermann function grows explosively: starting from $\Ack(0)$, the first four terms are $1, 3, 7, 61$.  The fifth term is $2^{2^{2^{65536}}}-3$, and the sixth dwarfs the fifth.
 %This explosive behavior is problematical when we turn our attention to the canonical definition of
 %the inverse Ackermann function\cite{blah}.
 This explosive behavior becomes problematical when we consider
-the inverse Ackermann function~\cite{chazelle, tarjan}.
+the inverse Ackermann function~\cite{chazelle,tarjan}.
 \begin{defn} \label{defn: inv_ack}
 The inverse Ackermann function $\alpha(n)$ is defined as the minimum $k$ for which $n \le \Ack(k)$, \emph{i.e.} $\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}$.
 \end{defn}
@@ -36,26 +37,26 @@ In a sense this definition is computational: starting with $k=0$, calculate $\Ac
 it to $n$, and then increment $k$ until $n \le \Ack(k)$.
 Unfortunately, the running time of this algorithm is $\Omega(\Ack(\alpha(n)))$,
 so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ in this way requires
-$\Ack(4) = 2^{2^{2^{65,536}}}$ steps!
+$\Ack(4) = 2^{2^{2^{65536}}}$ steps!
 
 \subsection{The hyperoperation/Ackermann hierarchy}
 
 %\marginpar{\tiny \color{blue}cite the grit?}
-The Ackermann function is relatively straightforward to define, but a little hard to
-understand.  We think of it as
+The Ackermann function is relatively easy to define, but hard to
+understand.  We see it as
 a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.\Ack(n,b)$, where for each $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times, with a \emph{kludge}.
 
 %\marginpar{\tiny \color{blue}Moved Knuth to a footnote because we
 %don't discuss it much anymore. It's clear to see that Knuth
 %follows from Hyperop.}
 The desire to clean up this kludge, and to generalize the natural sequence
-of functions ``addition,'' ``multiplication,'' ``exponentiation,'' \emph{etc.},
+of functions (\emph{i.e.} addition, multiplication, exponentiation, \emph{etc.}),
 led to the development of the related idea of hyperoperations\footnote{Knuth arrows~\cite{knuth}, written $a \uparrow^n b$,
 are also in the same vein, but we will focus on hyperoperations
 since they are more general. In particular, $a \uparrow^n b = a[n+2]b$.}~\cite{goodstein},
 written $a [n] b$.
 %Hereafter we will refer to this sequence of functions as ``the hierarchy'' when we mean the general pattern rather than \emph{e.g.} specifically ``the Ackermann hierarchy'' or ``the hyperoperation hierarchy''.
-\Cref{table: hyperop-ack-inv} illustrates this relation and the Ackermann kludge
+Table~\ref{table: hyperop-ack-inv} illustrates this relation and the Ackermann kludge
 by showing the first five hyperoperations (indexed by $n$ and named),
 along with their relation to the $\Ack_n$ functions, and their inverses.
 
@@ -77,7 +78,7 @@ n & \text{function} & a [n] b & \Ack_n(b) & \text{inverse} & \text{\color{red}a 
 \end{table}
 
 The kludge has three parts. First, the Ackermann hierarchy is related
-to the hyperoperation hierarchy with $a$ set to $2$, ie $2[n]b$;
+to the hyperoperation hierarchy with $a$ set to $2$, \emph{i.e.} $2[n]b$;
 second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation $2[n-1]b$
 %{\color{magenta}(\textbf{not} the previous $\Ack_{n-1}$!)} 
 three extra times;
@@ -110,7 +111,7 @@ The Church numeral encodings of addition, multiplication, and even exponentiatio
 are each simpler than their corresponding inverses, \emph{i.e.} subtraction, division, and logarithm. Similarly, defining multiplication in Gallina~\cite{coq} is trivial, but defining division is unexpectedly painful.\\[5pt]
 
 \begin{minipage}[c]{0.4\textwidth}
-\begin{tabular}{@{}l@{\qquad \qquad}@{\qquad \qquad}l}
+\begin{tabular}{@{}l@{}@{\qquad \qquad}l}
 \begin{lstlisting}
 Fixpoint mult a b :=
  match a with
@@ -146,7 +147,7 @@ and to define a straightforward function augmented with an
 extra \li{nat} parameter that denotes a ``gas'' value that decreases at each recursive
 call~\cite{gasperson}.  Both techniques are vaguely unsatisfying and neither is ideal
 for our purposes: the first can be hard to generalize and the second requires a method to calculate the appropriate amount of gas.  For instance, calculating the amount of gas to compute $\alpha(100)$ the
-``canonical'' way, \emph{e.g.} at least $2^{2^{2^{65,536}}}$, is problematic for many reasons,
+``canonical'' way, \emph{e.g.} at least $2^{2^{2^{65536}}}$, is problematic for many reasons,
 not least because we cannot use the inverse Ackerman function in its own termination argument.
 %One method is to define a custom termination measure~\cite{Chlipala?}, but this is
 %both vaguely unsatisfying and not always easy to generalize.
@@ -177,15 +178,17 @@ time.  Finally, our techniques are extremely succinct: the code to invert the di
 %\item[\S\ref{blah}] We discuss related work and give some closing thoughts.
 %\end{itemize}
 \begin{itemize}
-	\item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, explain how to encode hyperoperations and the Ackermann function in Coq, and discuss our concept of \emph{repeater}.
-	\item[\S\ref{sec: countdown}] We define a notion of upper inverses and show how to invert repeater with \emph{countdown}.
-	\item[\S\ref{sec: inv-hyperop}] We show how to use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base; and sketch a method to find the Inverse Ackermann function.
-	\item[\S\ref{sec: inv-ack}] We give a specialized computation for the Inverse Ackermann function in $\bigO(n)$ time.
+	\item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, explain how to encode hyperoperations and the Ackermann function in Coq, \note{and discuss our concept of \emph{repeater}}.
+	\item[\S\ref{sec: countdown}] We discuss upper inverses and show how to invert repeater with \emph{countdown}.
+	\item[\S\ref{sec: inv-hyperop}] We use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base. We then sketch a method to find the Inverse Ackermann function.
+	\item[\S\ref{sec: inv-ack}] We give a computation for the Inverse Ackermann function in $\bigO(n)$ time.
 	\item[\S\ref{sec: discussion}] We discuss the two-argument inverse Ackermann function, \note{other derivative functions such as foo bar doo dah,} and survey related work.
 \end{itemize}
 All our techniques are mechanized in Coq and our code is available 
-online~\cite{inv-ack}. Further, definitions presented here 
-are \href{https://github.com/inv-ack/inv-ack}{hyperlinked} to appropriate points in our codebase to allow readers to explore correctness proofs and associated lemmas that were elided in this paper.
+online~\cite{inv-ack}. Further, definitions and theorems 
+presented in this paper are \href{https://github.com/inv-ack/inv-ack}{hyperlinked} 
+to appropriate points in our codebase. Interested readers are invited to alsoe
+explore the correctness proofs and associated lemmas that were elided in this paper.
 %, and
 %each theorem and definition is hyperlinked (in {\color{cyan}cyan}) to our Coq development for %browsing.
 
