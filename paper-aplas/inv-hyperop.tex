@@ -161,8 +161,8 @@ Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\
 \alpha_{i+1}(n)\le m \iff n\le \big(A_i\big)^{(m+1)}(1) \iff \big(\alpha_i\big)^{(m+1)}(n) \le 1
 \end{equation}
 This is equivalent to $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\big\}$, or $\alpha_{i+1}(n) = \cdt{\alpha_i}{1}\big(\alpha_i(n)\big)$. From Equation \ref{eq: inv-ack-hier-derive} we can thus define the inverse Ackermann hierarchy, given by $\alpha_i$:
-\begin{defn} $
-	\alpha_i \triangleq \begin{cases}
+\begin{defn} \label{defn: inv-ack-hier}
+	$ \alpha_i \triangleq \begin{cases}
 	\lambda n.(n - 1) & \text{if } i = 0
 	\\ \big(\cdt{\alpha_{i-1}}{1}\big)\circ \alpha_{i-1} & \text{if } i\ge 1 \end{cases}
 $
@@ -182,7 +182,8 @@ All that remains is to provide a structurally-recursive function that can comput
 	\end{cases}
 	\end{equation}
 \end{defn}
-Given the arguments $\big(\alpha_i, \alpha_i(n), i, b\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b-1\big)$ at the next recursive call. Thus if $\alpha^{\W}$ is given a sufficient budget $b$, the initial arguments $(\alpha_0, \alpha_0(n), 0, b)$ will recursively move through the chain \note[what's with the braces?]{$\big\{\alpha_i(n)\big\}$} and terminate at a point $k$ where $\alpha_k(n)\le k$.
+%Given the arguments $\big(\alpha_i, \alpha_i(n), i, b\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b-1\big)$ at the next recursive call. Thus if $\alpha^{\W}$ is given a sufficient budget $b$, the initial arguments $(\alpha_0, \alpha_0(n), 0, b)$ will recursively move through the chain \note[what's with the braces?]{$\big\{\alpha_i(n)\big\}$} and terminate at a point $k$ where $\alpha_k(n)\le k$.
+Given the arguments $\big(\alpha_i, \alpha_i(n), i, b - i\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$ at the next recursive call. Thus if $\alpha^{\W}$ is given a sufficient budget $b$, it will recursively transform the tuple $(\alpha_k, \alpha_k(n), k, b - k)$ until a point $k$ where $\alpha_k(n)\le k$, at which $k$ is returned.
 We now need to show that $\alpha^{\W}$ can correctly compute $\alpha(n)$
 given a reasonable budget. We show that a budget of $n$ suffices.
 We start with the following lemma.
