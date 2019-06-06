@@ -112,11 +112,11 @@ which by standard techniques allows us to calculate $a^b$ in $\bigO\left(b^2\big
 
 Although the definition of \emph{countdown} is independent of the system representing natural numbers, its Coq definition should be adjusted appropriately to account for the type \li{N}. The first step is to translate the arguments of \emph{countdown worker} from \li{nat} to \li{N}. While the type of the budget \li{k} should remain \li{nat} as it must decrease by $1$ on every recursive step, all other \li{nat} arguments should be changed to \li{N}, and functions on \li{nat} to functions on \li{N}.
 \begin{lstlisting}
-Fixpoint countdown_worker (f : N -> N) (a n : N) (b : nat) : N :=
+Fixpoint bin_countdown_worker (f : N -> N) (a n : N) (b : nat) : N :=
   match b with
   | O    => 0
   | S b' => if (n <=? a) then 0
-             else 1 + countdown_worker f a (f n) b'
+             else 1 + bin_countdown_worker f a (f n) b'
 end.
 \end{lstlisting}
 Determining the appropriate budget value for \emph{countdown} is trickier. 
@@ -153,8 +153,8 @@ Definition nat_size (n : N) : nat :=
 Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the size of its binary representation, thus equals to $\lfloor \log_{2} m \rfloor + 1$. To sum up, we have the following Coq definition of countdown on \li{N}.
 
 \begin{lstlisting}
-Definition countdown (f : N -> N) (a n : N) : N := 
-  countdown_worker f a n (nat_size (n - a)).
+Definition bin_countdown (f : N -> N) (a n : N) : N := 
+  bin_countdown_worker f a n (nat_size (n - a)).
 \end{lstlisting}
 
 \paragraph*{Time complexity of countdown on strict binary contractions}
