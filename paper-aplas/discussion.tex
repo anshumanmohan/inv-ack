@@ -112,11 +112,11 @@ which by standard techniques allows us to calculate $a^b$ in $\bigO\left(b^2\big
 
 Although the definition of \emph{countdown} is independent of the system representing natural numbers, its Coq definition should be adjusted appropriately to account for the type \li{N}. The first step is to translate the arguments of \emph{countdown worker} from \li{nat} to \li{N}. While the type of the budget \li{k} should remain \li{nat} as it must decrease by $1$ on every recursive step, all other \li{nat} arguments should be changed to \li{N}, and functions on \li{nat} to functions on \li{N}.
 \begin{lstlisting}
-Fixpoint countdown_worker (f : N -> N) (a n : N) (b : nat) : N :=
+Fixpoint bin_countdown_worker (f : N -> N) (a n : N) (b : nat) : N :=
   match b with
   | O    => 0
   | S b' => if (n <=? a) then 0
-             else 1 + countdown_worker f a (f n) b'
+             else 1 + bin_countdown_worker f a (f n) b'
 end.
 \end{lstlisting}
 Determining the appropriate budget value for \emph{countdown} is trickier. 
@@ -125,10 +125,12 @@ The naïve approach is to simply use the \li{nat} translation of \li{n},
 takes linear time in \li{n}, or exponential in its length of representation, 
 which is obviously untenable as we try to leverage binary numbers 
 to improve efficiency. 
-\note[slow contracting has come out of nowhere]{Unfortunately, it is the best we can do if we 
-want to compute countdowns of slow-contracting functions like $\lambda n.(n - 2)$ (which is among both inverse hyperoperations and inverse Ackermann hierarchy!).}
+\note[slow contracting has come out of nowhere - \textcolor{magenta}{Please check the rewritten version I wrote below}]{Unfortunately, it is the best we can do if we want to compute countdowns of slow-contracting functions like $\lambda n.(n - 2)$ (which is among both inverse hyperoperations and inverse Ackermann hierarchy!).}
+\textcolor{blue}{
+Unfortunately, a linear-sized budget is necessary to compute countdowns of functions like $\lambda n.(n-2)$, which is among both inverse hyperoperations and inverse Ackermann hierarchies.
+}
 
-The key is to ignore these functions entirely and focus on functions that can bring their argument to below $1$ with compositional repetition in logarithm time. The following concept aims to describe a type of \emph{fast-contracting} functions.
+The key is to ignore these functions entirely and focus on functions that can bring their argument to below any threshold with repeated applications in logarithm time, which allows a logarithm-sized budget for countdown worker. The following concept aims to describe a type of \emph{fast-contracting} functions.
 \begin{defn} \label{defn: bin-contraction}
 	A contraction $f$ is \emph{binary strict above} $a\in \mathbb{N}$ if $f(n) \le \lfloor \frac{n + a}{2} \rfloor$ for all $n > a$.
 \end{defn}
@@ -153,8 +155,8 @@ Definition nat_size (n : N) : nat :=
 Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the size of its binary representation, thus equals to $\lfloor \log_{2} m \rfloor + 1$. To sum up, we have the following Coq definition of countdown on \li{N}.
 
 \begin{lstlisting}
-Definition countdown (f : N -> N) (a n : N) : N := 
-  countdown_worker f a n (nat_size (n - a)).
+Definition bin_countdown (f : N -> N) (a n : N) : N := 
+  bin_countdown_worker f a n (nat_size (n - a)).
 \end{lstlisting}
 
 \paragraph*{Time complexity of countdown on strict binary contractions}
@@ -218,12 +220,12 @@ The above analysis leads to the following result about countdown with binary num
 \paragraph*{An inverse Ackermann computation in $\bigO\left(4^{\alpha(n)}\log_2 n\right)$ time}
 Our new Coq definition is able to compute the correct countdown value, but only for strict binary contractions. Fortunately, the inverse hyperoperations $a\angle{n}b$ are all strict binary contractions when $a\ge 2$ starting from $n = 3$, so are the inverse Ackermann hierarchy $\alpha_n$ starting from $n = 2$. We can hard-code their few initial levels. We focus on the latter in this paper, but the former's definition can also be found in our Github repository.
 \begin{lstlisting}
-Fixpoint alpha (m : nat) (x : N) : N :=
+Fixpoint bin_alpha (m : nat) (x : N) : N :=
   match m with
   | 0%nat => x - 1
   | 1%nat => x - 2
   | 2%nat => N.div2 (x - 2)
-  | S m'  => countdown (alpha m') 1 (alpha m' x)
+  | S m'  => countdown (bin_alpha m') 1 (bin_alpha m' x)
   end.
 \end{lstlisting}
 The first three levels are hard-coded, as we need to start the countdown from a binary strict contraction. Note that for all $x$,
@@ -232,20 +234,21 @@ The first three levels are hard-coded, as we need to start the countdown from a 
 \end{equation*}
 so the third level is correct and also a binary strict contraction above $1$. Next, we define the \emph{inverse Ackermann worker}.
 \begin{lstlisting}
-Fixpoint inv_ack_worker (f : N -> N) (n k : N) (bud : nat) : N :=
+Fixpoint bin_inv_ack_worker (f : N -> N) (n k : N) (bud : nat) : N :=
   match bud with
   | 0%nat  => k
   | S bud' => if n <=? k then k
-              else let g := (countdown f 1) in
-                   inv_ack_worker (compose g f) (g n) (N.succ k) bud'
+              else let g := (bin_countdown f 1) in
+                   bin_inv_ack_worker (compose g f) (g n) (N.succ k) bud'
   end.
 \end{lstlisting}
 Note that the above Coq Fixpoint is the direct translation of the \li{inv_ack_worker} on \li{nat}, with only the budget remaining \li{nat} as it is the decreasing argument. Now the inverse Ackermann function can be computed by the following Coq definition:
 \begin{lstlisting}
-Definition inv_ack (n : N) : N :=
-  if (n <=? 1) then 0
+Definition bin_inv_ack (n : N) : N :=
+       if (n <=? 1) then 0
   else if (n <=? 3) then 1
-  else let f := (alpha 2) in inv_ack_worker f (f n) 2 (nat_size n).
+  else let f := (bin_alpha 2) in
+       bin_inv_ack_worker f (f n) 2 (nat_size n).
 \end{lstlisting}
 Similar to the inverse Ackermann hierarchy, we hard code the result for $n = 0,1,2,3$. This ensures the correct output for small $n$, while for larger $n$ we can use \li{inv_ack_worker} with $\alpha_2$, which is the first binary strictly contractive level, as the starting function. Here the budget is \li{nat_size n}, or $\lfloor \log_2n \rfloor + 1$, which is enough for $n\ge 4$. The full proof of correctness can be found in our Github repository.
 
