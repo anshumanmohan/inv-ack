@@ -30,9 +30,11 @@ it in Coq \note{under a call-by-value strategy}.
 \begin{proof}
 	Per Definition~\ref{defn: countdown-worker}, the computation makes $\cdt{f}{a}(n)$ recursive calls to $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, two computations must take place: $n_i - a$, which takes $\Theta(a + 1)$ time, and $f(n_i) = n_{i+1}$, where $n_i \triangleq f^{(i)}(n)$ has been  computed by the $i$th call, and is greater than $a$.  The total time is then
 	\begin{equation*}
+	\begin{aligned}
 	\runtime\big(\cdt{f}{a}\ , n\big)
-	= \sum_{i=0}^{\cdt{f}{a}(n) - 1} \left[\runtime\left(f, f^{(i)}(n)\right) + \Theta(a)\right]
-	= \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime\left(f, f^{(i)}(n)\right) + \Theta\big((a + 1)\cdt{f}{a}(n)\big)
+	& = \sum_{i=0}^{\cdt{f}{a}(n) - 1} \left[\runtime\left(f, f^{(i)}(n)\right) + \Theta(a + 1)\right] \\
+	& = \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime\left(f, f^{(i)}(n)\right) + \Theta\big((a + 1)\cdt{f}{a}(n)\big)
+	\end{aligned}
 	\end{equation*}
 \end{proof}
 
@@ -48,7 +50,7 @@ This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i,
 	Per Definition~\ref{defn: inv-ack-hier}, $\runtime\big(\alpha_2, n\big) = \Theta\big(n^2\big)$
 \end{lem}
 \begin{proof}
-	$\alpha_1 = \big(\cdt{\lambda m.(m-1)}{1}\big)\circ \big(\lambda m.(m-1)\big) {\color{red}\equiv} \lambda m.(m - 2)$. By Lemma~\ref{lem: inv-ack-hier-runtime},
+	$\alpha_1 = \big(\cdt{\lambda m.(m-1)}{1}\big)\circ \big(\lambda m.(m-1)\big) = \lambda m.(m - 2)$. By Lemma~\ref{lem: inv-ack-hier-runtime},
 	\begin{equation*}
 	\runtime\big(\alpha_1, n\big) = \sum_{i=0}^{n-1} \runtime\big(\lambda m.(m-1), n - i\big) + \Theta\big((n-2)\big) = \Theta(n)\text{,}
 	\end{equation*}
