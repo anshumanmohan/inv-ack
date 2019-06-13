@@ -94,9 +94,8 @@ Qed.
 Fixpoint countdown_worker (f : nat -> nat) (a : nat)  (n k : nat) : nat :=
   match k with
   | 0    => 0
-  | S k' => match (n - a) with
-            | 0 => 0
-            | _ => S (countdown_worker f a (f n) k') end
+  | S k' => if (n <=? a) then 0 else
+             S (countdown_worker f a (f n) k')
   end.
 
 (* Actual defintion. We give the worker a budget of "n" steps, which
@@ -111,10 +110,8 @@ Definition countdown_to f a n := countdown_worker f a n n.
 Theorem countdown_init : forall a f n k,
     n <= a -> countdown_worker f a n k = 0.
 Proof.
-  intros a f n k Hna.
-  unfold countdown_worker.
-  destruct k; trivial.
-  replace (n - a) with 0 by omega; trivial.
+  intros a f n k Hna. unfold countdown_worker. destruct k; trivial.
+  rewrite <- Nat.leb_le in Hna. rewrite Hna. trivial.
 Qed.
 
 
@@ -159,19 +156,16 @@ Theorem countdown_intermediate : forall a f n k i,
     (S i) + countdown_worker f a (repeat f (S i) n) (k - (S i)).
 Proof.
   assert (forall a f n k,
-             contracting f -> 1 <= k -> S a <= n ->
+             contracting f -> 1 <= k -> a < n ->
              countdown_worker f a n k =
              1 + countdown_worker f a (f n) (k - 1) ) as case_0.
-  { simpl. intros a f n k Hf Hk Ha.
-    destruct k; [omega|]. 
-    replace (S k - 1) with k by omega.
-    unfold countdown_worker.
-    replace (n - a) with (S (n - S a)) by omega. trivial.
+  { simpl. intros a f n k Hf Hk Ha. destruct k; [omega|].
+    replace (S k - 1) with k by omega. unfold countdown_worker.
+    rewrite Nat.lt_nge, <- Nat.leb_nle in Ha. rewrite Ha. trivial.
   }
   intros a f n k i Hf Hik Hai.
   induction i; [simpl; apply case_0; trivial|]. rewrite IHi; [|omega|].
-  - simpl. remember (f (repeat f i n)) as m.
-    remember (k - S i) as l.
+  - simpl. remember (f (repeat f i n)) as m. remember (k - S i) as l.
     replace (k - S(S i)) with (l - 1) by omega.
     rewrite case_0; [omega | trivial | omega|].
     simpl in Hai. rewrite Heqm. trivial.
@@ -252,13 +246,10 @@ Theorem countdown_contract_strict : forall a f t,
     contract_strict_above t (countdown_to f a).
 Proof.
   intros a f t Ha Haf. split.
-  - intro n. rewrite countdown_repeat by apply Haf.
-    rewrite not_lt. intro.
+  - intro n. rewrite countdown_repeat by apply Haf. rewrite not_lt. intro.
     apply repeat_contract_strict in H; [omega | apply Haf..].
-  - intros n Hn. destruct n; [omega|].
-    rewrite <- lt_S_le.
-    rewrite countdown_repeat by apply Haf.
-    destruct n;  trivial.
+  - intros n Hn. destruct n; [omega|]. rewrite <- lt_S_le.
+    rewrite countdown_repeat by apply Haf. destruct n;  trivial.
     remember (repeat f n (S (S n)) - a) as m. destruct m.
     1: apply (Nat.le_trans _ (repeat f n (S (S n))) _); [apply Haf | omega]. 
     assert (S n + repeat f (S n) (S (S n)) <= (S n) + a).
@@ -279,10 +270,7 @@ Theorem countdown_repeater_upp_inverse : forall a f F,
     expand_strict_from a F -> upp_inv_rel f F ->
     upp_inv_rel (countdown_to f a) (repeater_from F a).
 Proof.
-  intros a f F HaF HfF n N.
-  apply (upp_inv_expand_contract_strict a f F) in HaF.
-  rewrite repeater_from_repeat.
-  apply (upp_inv_repeat n _ _) in HfF.
-  rewrite <- (HfF a N). apply countdown_repeat.
-  1,2 : assumption.
+  intros a f F HaF HfF n N. apply (upp_inv_expand_contract_strict a f F) in HaF.
+  rewrite repeater_from_repeat. apply (upp_inv_repeat n _ _) in HfF.
+  rewrite <- (HfF a N). apply countdown_repeat. 1,2 : assumption.
 Qed.

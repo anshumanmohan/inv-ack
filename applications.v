@@ -46,19 +46,13 @@ Qed.
 Theorem inv_hyperop_1 :
   forall a b, inv_hyperop a 1 b = b - a.
 Proof.
-  intros a b.
-  rewrite inv_hyperop_recursion.
-  remember (b - a) as m.
+  intros a b. rewrite inv_hyperop_recursion. remember (b - a) as m.
   generalize dependent b. induction m.
-  - intros b Hb.
-    apply countdown_recursion.
-    apply inv_hyperop_0_contract_strict.
-    unfold hyperop_init. omega.
-  - intros b Hb. remember (m + a) as n.
-    rewrite <- (IHm n) by omega.
+  - intros b Hb. apply countdown_recursion.
+    apply inv_hyperop_0_contract_strict. unfold hyperop_init. omega.
+  - intros b Hb. remember (m + a) as n. rewrite <- (IHm n) by omega.
     replace n with (inv_hyperop a 0 b) by (simpl; unfold hyperop_init; omega).
-    apply countdown_recursion.
-    apply inv_hyperop_0_contract_strict.
+    apply countdown_recursion. apply inv_hyperop_0_contract_strict.
     unfold hyperop_init. omega.
 Qed.
 
@@ -102,10 +96,8 @@ Definition div a b := inv_hyperop a 2 b.
 Theorem div_correct : forall a b m,
     1 <= a -> div a b <= m <-> b <= m * a.
 Proof.
-  intros a b m Ha.
-  destruct a; [omega|]. 
-  unfold div.
-  rewrite inv_hyperop_recursion.
+  intros a b m Ha. destruct a; [omega|].
+  unfold div. rewrite inv_hyperop_recursion.
   rewrite countdown_repeat by (split; intro n; rewrite inv_hyperop_1; omega).
   rewrite inv_hyperop_1_repeat. unfold hyperop_init. omega.
 Qed.

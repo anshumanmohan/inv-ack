@@ -1,7 +1,3 @@
-\newcommand{\Texp}{\runtime_{\li{exp}}}
-\newcommand{\Tmul}{\runtime_{\li{mul}}}
-\newcommand{\Tleb}{\runtime_{\li{leb}}}
-\newcommand{\Tsucc}{\runtime_{\li{succ}}}
 \subsection{Two-parameter inverse Ackermann function}
 Some authors~\cite{tarjan,chazelle} prefer a two-parameter inverse Ackermann function.
 \begin{defn} \label{defn: 2para-alpha}
@@ -163,14 +159,16 @@ Definition bin_countdown (f : N -> N) (a n : N) : N :=
 
 On strict binary contractions, the binary version of countdown does exactly the same computations as the original one on \li{nat}, thus its computation time structure is the same. The only difference is the computation time of each component in the sum. We examine a more detailed breakdown of the time components below.
 \begin{equation} \label{eq: cdt-bin-runtime-struct}
-\runtime\big(\cdt{f}{a}\ , n\big) =
-\hspace{5pt} \left(\begin{aligned}
-& \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime\left(f, f^{(i)}(n)\right) + \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i)
-+ \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right) \\
-& \hspace{5pt} + \runtime_{\li{nat_size}}(n - a) + \runtime_{\li{sub}}(n, a)
-\end{aligned}\right)
+	\runtime_{\cdt{f}{a}}(n) =
+\hspace{5pt}
+\begin{aligned} 
+& \textstyle \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
+&+& \textstyle ~ \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right) \\
+& \textstyle +~ \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i)
+&+& ~ \runtime_{\li{sub}}(n, a)
+\end{aligned},
 \end{equation}
-Where
+where
 \begin{itemize}
 	\item $\Tleb(x, y)$ denotes the computation time of \li{x <=? y}.
 	\item $\Tsucc(u)$ denotes the computation time of \li{N.succ(u)}.
