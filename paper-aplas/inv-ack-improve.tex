@@ -13,27 +13,56 @@ To formalize the notion of runtime, we identify each function on
 $\mathbb{N}$ with its \emph{computation}, \emph{i.e.} the program that computes 
 it in Coq \note{under a call-by-value strategy}.
 \begin{defn}
- Given a function $f:\mathbb{N}\to\mathbb{N}$, the \emph{runtime} of $f$ on input $n\in \mathbb{N}$, denoted by $\runtime(f, n)$ is the number of computational steps it takes to compute~$f(n)$.
+ For a function on $k$ variables, $f:\mathbb{N}^k\to\mathbb{N}$, the \emph{runtime} of $f$ on input $\big(n_1, n_2, \ldots, n_k\big)$, denoted by $\runtime_f\big(n_1, n_2, \ldots, n_k\big)$, is the number of basic computational steps it takes to compute $f(n_1, n_2, \ldots, n_k)$.
 \end{defn}
+The following two lemmas are properties of Coq functions with trivial proofs.
 \begin{lem} \label{lem: sub-runtime}
-	$\runtime(\lambda n.(n - a), n) = \Theta(\min\{a, n\})$, per Coq's definition of~subtraction.
+	Let $\li{leb}(x, y)$ returns \li{true} if $x\le y$ and \li{false} otherwise. Then in the unary encoding system, \emph{i.e.} Coq type \li{nat}, $\runtime_{\li{leb}}(n, a) = \min\{a, n\} + 1$, and in the binary encoding system, \emph{i.e.} Coq type \li{N}, $\runtime_{\li{leb}}(n, a) \le \log_{2}\min\{a, n\} + 1$ per Coq's definitions of \li{leb} on these types.
 \end{lem}
 \begin{lem} \label{lem: compose-runtime}
-	$\forall f, g: \mathbb{N}\to \mathbb{N}.~\runtime(f\circ g, n) = \runtime(f, g(n)) + \runtime(g, n)$ per Coq's definition of functional composition.
+	In all encoding systems, $\runtime_{f\circ g}(n) = \runtime_f(g(n)) + \runtime_g(n)$ per Coq's definition of functional composition.
 \end{lem}
+The next lemma establishes the general running time structure of countdown.
+\begin{lem} \label{lem: cdt-runtime-general}
+	For all $a\in \mathbb{N}$ and $f\in \contract_{a}$,
+	\begin{equation} \label{eq: cdt-runtime-struct}
+		\runtime_{\cdt{f}{a}}(n) =
+		\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
+		+ \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right)
+		+ \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i),
+	\end{equation}
+	where $\li{succ}(x) = x+1$.
+\end{lem}
+\begin{proof}
+	Since $f\in \contract_{a}$, $\cdt{f}{a}\ $ is the minimum $k$ such that $f^{(k)}(n) \le a$. The execution of $\cdw{f}{a}\big(n, n\big)$ then takes $k+1$ recursive calls, where the $i^{th}$ call for $0\le i \le k$ takes the arguments $i, a$ and $n_i \triangleq f^{(i)}(n)$ from the previous call (or the initial argument when $i = 0$), and performs the following computations:
+	\begin{enumerate}
+		\item Compute $\li{leb}\left(n_i, a\right)$ for $\Tleb\left(f^{(i)}(n), a\right)$ steps.
+		\item If $\li{leb}\left(n_i, a\right) = \li{true}$, return $0$. Else proceed to next step.
+		\item Compute $n_{i+1} \triangleq f(n_i) = f^{(i+1)}(n)$ for $T_f\left(f^{(i)}(n)\right)$ steps.
+		\item Pass $n_{i+1}, i+1, a$ to the next recursive call and waits for it to return $k - i - 1$.
+		\item Add $1$ to the result for $\Tsucc(k-i-1)$ steps and returns $k - i$.
+	\end{enumerate}
+    Summing up the time of each call, we get the desired expression for $\runtime_{\cdt{f}{a}}(n)$.
+\end{proof}
+
 \begin{lem} \label{lem: cdt-runtime}
-	Per Definition~\ref{defn: countdown}, $\forall a\ge 1, \forall n\le 1, \forall f\in \contract_{a}$.~$\runtime\big(\cdt{f}{a}\ , n\big) = 1$, and
+	Per Definition~\ref{defn: countdown} of countdown, in the unary encoding system, \emph{i.e.} the type \li{nat} in Coq, $\forall a\ge 1, \forall n, \forall f\in \contract_{a}$ we have
 	\begin{equation*}
-	\forall n\ge 2.~\runtime\big(\cdt{f}{a}\ , n\big) = \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime\left(f, f^{(i)}(n)\right) + \Theta\big((a + 1)\cdt{f}{a}(n)\big)
+	\runtime_{\cdt{f}{a}}(n) \le
+	\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
+	+ (a + 1)\left(\cdt{f}{a}(n) + 1\right) + \cdt{f}{a}(n).
 	\end{equation*}
 \end{lem}
 \begin{proof}
-	Per Definition~\ref{defn: countdown-worker}, the computation makes $\cdt{f}{a}(n)$ recursive calls to $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, two computations must take place: $n_i - a$, which takes $\Theta(a + 1)$ time, and $f(n_i) = n_{i+1}$, where $n_i \triangleq f^{(i)}(n)$ has been  computed by the $i$th call, and is greater than $a$.  The total time is then
-	\begin{equation*}
-	\runtime\big(\cdt{f}{a}\ , n\big)
-	= \sum_{i=0}^{\cdt{f}{a}(n) - 1} \left[\runtime\left(f, f^{(i)}(n)\right) + \Theta(a)\right]
-	= \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime\left(f, f^{(i)}(n)\right) + \Theta\big((a + 1)\cdt{f}{a}(n)\big)
-	\end{equation*}
+	Consider the expression in \eqref{eq: cdt-runtime-struct}. In the unary system, $\Tleb(x, y) \le y + 1$ and $\Tsucc(x) = 1$, therefore the second summand can be upper-bounded by $(a + 1)\left(\cdt{f}{a}(n) + 1\right)$ and the third summand is equal to $\cdt{f}{a}(n)$, thus completing the proof.
+%	Per Definition~\ref{defn: countdown-worker}, the computation makes $\cdt{f}{a}(n)$ recursive calls to $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, two computations must take place: $n_i - a$, which takes $\Theta(a + 1)$ time, and $f(n_i) = n_{i+1}$, where $n_i \triangleq f^{(i)}(n)$ has been  computed by the $i$th call, and is greater than $a$.  The total time is then
+%	\begin{equation*}
+%	\begin{aligned}
+%	\runtime\big(\cdt{f}{a}\ , n\big)
+%	& = \sum_{i=0}^{\cdt{f}{a}(n) - 1} \left[\runtime\left(f, f^{(i)}(n)\right) + \Theta(a + 1)\right] \\
+%	& = \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime\left(f, f^{(i)}(n)\right) + \Theta\big((a + 1)\cdt{f}{a}(n)\big)
+%	\end{aligned}
+%	\end{equation*}
 \end{proof}
 
 From Lemma~\ref{lem: compose-runtime} and Lemma~\ref{lem: cdt-runtime}, the following lemma follows easily:
@@ -48,7 +77,7 @@ This lemma implies $\runtime\big(\alpha_{i+1}, n\big) \ge \runtime\big(\alpha_i,
 	Per Definition~\ref{defn: inv-ack-hier}, $\runtime\big(\alpha_2, n\big) = \Theta\big(n^2\big)$
 \end{lem}
 \begin{proof}
-	$\alpha_1 = \big(\cdt{\lambda m.(m-1)}{1}\big)\circ \big(\lambda m.(m-1)\big) {\color{red}\equiv} \lambda m.(m - 2)$. By Lemma~\ref{lem: inv-ack-hier-runtime},
+	$\alpha_1 = \big(\cdt{\lambda m.(m-1)}{1}\big)\circ \big(\lambda m.(m-1)\big) = \lambda m.(m - 2)$. By Lemma~\ref{lem: inv-ack-hier-runtime},
 	\begin{equation*}
 	\runtime\big(\alpha_1, n\big) = \sum_{i=0}^{n-1} \runtime\big(\lambda m.(m-1), n - i\big) + \Theta\big((n-2)\big) = \Theta(n)\text{,}
 	\end{equation*}
