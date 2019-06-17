@@ -7,7 +7,8 @@ function and its inverse
 can be hard to understand, and the inverse in particular can be hard to define in a computationally-efficient manner in a theorem prover.  Let us consider why this
 is so.
 \begin{defn} \label{defn: ack} 
-The Ackermann-P\'eter function~\cite{peter} (hereafter just ``the'' Ackermann function; see~\S\ref{sec:related}) is
+The Ackermann-P\'eter function~\cite{peter} (hereafter just 
+``the'' \linebreak[4] Ackermann function; see~\S\ref{sec:related}) is
 written $\mathcal{A} : \mathbb{N}^2 \to \mathbb{N}$ and defined as follows:
 \begin{equation}
 \label{eq:ackermann}
@@ -31,9 +32,9 @@ The diagonal Ackermann function grows explosively: starting from $\Ack(0)$, the 
 This explosive behavior becomes problematical when we consider
 the inverse Ackermann function~\cite{chazelle,tarjan}.
 \begin{defn} \label{defn: inv_ack}
-The inverse Ackermann function $\alpha(n)$ is defined as the minimum $k$ for which $n \le \Ack(k)$, \emph{i.e.} $\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}$.
+The inverse Ackermann function $\alpha(n)$ is defined as the minimum~$k$ for which $n \le \Ack(k)$, \emph{i.e.} $\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}$.
 \end{defn}
-In a sense this definition is computational: starting with $k=0$, calculate $\Ack(k)$, compare
+In a sense, this definition is computational: starting with $k=0$, calculate $\Ack(k)$, compare
 it to $n$, and then increment $k$ until $n \le \Ack(k)$.
 Unfortunately, the running time of this algorithm is $\Omega(\Ack(\alpha(n)))$,
 so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ in this way requires
@@ -58,7 +59,7 @@ written $a [n] b$.
 %Hereafter we will refer to this sequence of functions as ``the hierarchy'' when we mean the general pattern rather than \emph{e.g.} specifically ``the Ackermann hierarchy'' or ``the hyperoperation hierarchy''.
 Table~\ref{table: hyperop-ack-inv} illustrates this relation and the Ackermann kludge
 by showing the first five hyperoperations (indexed by $n$ and named),
-along with their relation to the $\Ack_n$ functions, and their inverses.
+along with their relation to the $\Ack_n$ functions and their inverses.
 
 \begin{table}[t]
 \begin{centermath}
@@ -78,11 +79,12 @@ n & \text{function} & a [n] b & \Ack_n(b) & \text{inverse} & \text{\color{red}a 
 \end{table}
 
 The kludge has three parts. First, the Ackermann hierarchy is related
-to the hyperoperation hierarchy with $a$ set to $2$, \emph{i.e.} $2[n]b$;
-second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation $2[n-1]b$
+to the hyperoperation hierarchy with the value of $a$ fixed as $2$, 
+\emph{i.e.} $2[n]b$;
+second, \linebreak for $n>0$, $\Ack_n$ repeats the previous hyperoperation $2[n-1]b$
 %{\color{magenta}(\textbf{not} the previous $\Ack_{n-1}$!)} 
 three extra times;
-lastly, $\Ack_n$ subtracts three\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not break this pattern: $2 + (b + 3) - 3 = 2 + b$, and $2 \cdot (b + 3) - 3 = 2b + 3$.}.
+lastly,~$\Ack_n$ subtracts three\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not break this pattern: $2 + (b + 3) - 3 = 2 + b$, and $2 \cdot (b + 3) - 3 = 2b + 3$.}.
 It is worth studying and inverting the hyperoperations before handling the Ackermann function.
 
 %Our initial goal of inverting the Ackermann function can thus be broken
@@ -185,10 +187,10 @@ time.  Finally, our techniques are extremely succinct: the code to invert the di
 	\item[\S\ref{sec: discussion}] We discuss the two-argument inverse Ackermann function, \note{other derivative functions such as foo bar doo dah,} and survey related work.
 \end{itemize}
 All our techniques are mechanized in Coq and our code is available 
-online~\cite{inv-ack}. Further, definitions and theorems 
-presented in this paper are \href{https://github.com/inv-ack/inv-ack}{hyperlinked} 
-to appropriate points in our codebase. Interested readers are invited to alsoe
-explore the correctness proofs and associated lemmas that were elided in this paper.
+online~\cite{inv-ack}. Further, definitions and theorems presented 
+in this paper are \href{https://github.com/inv-ack/inv-ack}{hyperlinked} 
+to appropriate points in our codebase. Interested readers are invited to also
+explore the equivalence proofs and associated lemmas that were elided in this paper.
 %, and
 %each theorem and definition is hyperlinked (in {\color{cyan}cyan}) to our Coq development for %browsing.
 

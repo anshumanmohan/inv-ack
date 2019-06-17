@@ -2,8 +2,8 @@ Let us consider hyperoperations more carefully
 to clarify how they relate to the Ackermann function.
 The first hyperoperation (level 0) is simply successor, and 
 every hyperoperation that follows is the repeated application of the previous.
-Level 1 is addition, and $b$ repetitions of addition
-gives multiplication, which is level 2. Next, $b$ repetitions of
+Level 1 is thus addition, and $b$ repetitions of addition
+gives level 2: multiplication. Next, $b$ repetitions of
 multiplication gives exponentiation, which is level 3. 
 There is a subtlety here: in the former case, we add $a$
 repeatedly to an \emph{initial value}, which should be $0$.
@@ -13,7 +13,7 @@ which should now be $1$. The formal definition of hyperoperation is:
 \begin{equation}
 \label{eq:hyper}
 \begin{array}{@{}l@{\qquad}l}
-\textit{1. Initial level: } a[0]b ~ \triangleq ~ b + 1 &
+\textit{1. 0$^{\textit{th}}$ level: } a[0]b ~ \triangleq ~ b + 1 &
 \textit{2. Initial values: } a[n+1]0 ~ \triangleq ~
   \begin{cases}
     a & \text{when } n = 0 \\
@@ -105,7 +105,8 @@ a & \text{when } n = 0 \\
 1 & \text{otherwise}
 \end{cases}
 \end{equation*}
-Note we use $a[n-1]$ in a Curried style to denote the single-variable function $\lambda b.a[n-1]b$.
+Note that the Curried $a[n-1]$ denotes the single-variable 
+function $\lambda b.a[n-1]b$.
 The Ackermann function is likewise expressed elegantly using repeater:
 \begin{equation*}
 \Ack(n,m) ~ \triangleq ~ \begin{cases}
