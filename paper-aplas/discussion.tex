@@ -60,7 +60,8 @@ Coq has support for binary numbers with the type \li{N}, which consists
 of constructors \li{0} and \li{positive}:
 \begin{lstlisting}
 Inductive positive : Set := 
-  | xI : positive -> positive | xO : positive -> positive | xH : positive.
+  | xI : positive -> positive | xO : positive -> positive
+  | xH : positive.
 \end{lstlisting}
 Constructor \li{xH} represents $1$, and constructors \li{xO} and \li{xI} represent 
 appending $0$ and $1$ respectively. 
