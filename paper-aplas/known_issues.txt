@@ -55,7 +55,7 @@ while making clear that $a$ is a parameter of \emph{repeater} itself." from Hier
 
 22. When there is a discussion of the time bound of each summand in a list, there isn't enough space to make a list every time. Try to crunch into a paragraph. Also, why is the order often flipped? Consider just saying it in order. I have shown this in Page 21 after "We consider only n >= 4".
 
-
+23. Add hyperlink to ack_hyperop in repeater.v when discussing kludge.
 
 
 
