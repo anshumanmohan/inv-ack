@@ -148,7 +148,7 @@ It remains to show $\cdt{f}{a}(f(n))\le p \Rightarrow f^{(p)}(f(n))\le a \Righta
 
 \subsection{A Structurally Recursive Computation for Countdown}
 
-The higher-order repeater function is well-defined for any input functions, 
+The higher-order repeater function is well-defined for all input functions, 
 even those not in $\repeatable_a$ (although for such functions it may not 
 be useful), and so is easy to define
 in Coq as shown in \S\ref{sec: countdown-repeater}. In contrast, a 
@@ -171,7 +171,7 @@ the \emph{true argument} $n$, for which we want to simulate
 \emph{countdown to} $a$, 
 and the \emph{budget} $b$, the maximum number of times we shall attempt 
 to compositionally apply $f$ on the input before giving up. 
-If the input goes below or equal $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n) \le a$, we return the count $k$. If the budget is exhausted (\emph{i.e.} $b = 0$) while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but it can clearly be written as a Coq \li{Fixpoint}:
+If the input goes below or equals $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n) \le a$, we return the count $k$. If the budget is exhausted (\emph{i.e.} $b = 0$) while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but it can clearly be written as a Coq \li{Fixpoint}:
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint countdown\_worker}` (a : nat) (f : nat -> nat) (n k : nat) : nat :=
 match k with
