@@ -39,7 +39,7 @@ The next lemma establishes the general running time structure of countdown.
 	\begin{enumerate}
 		\item Compute $\li{leb}\left(n_i, a\right)$ for $\Tleb\left(f^{(i)}(n), a\right)$ steps
 		\item If $\li{leb}\left(n_i, a\right) = \li{true}$, return $0$. Else proceed to the next step
-		\item Compute $n_{i+1} \triangleq f(n_i) = f^{(i+1)}(n)$ for $T_f\left(f^{(i)}(n)\right)$ steps
+		\item Compute $n_{i+1} \triangleq f(n_i) = f^{(i+1)}(n)$ for $\runtime_f\left(f^{(i)}(n)\right)$ steps
 		\item Pass $n_{i+1}, i+1, a$ to the next recursive call and wait for it to return $k - i - 1$
 		\item Add $1$ to the result for $\Tsucc(k-i-1)$ steps and return $k - i$
 	\end{enumerate}
@@ -51,12 +51,13 @@ The next lemma establishes the general running time structure of countdown.
 	\begin{equation*}
 	\runtime_{\cdt{f}{a}}(n) =
 	\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
-	+ (a + 2)\cdt{f}{a}(n) + f^{\left(\cdt{f}{a}(n)\right)}(a) + 1.
+	+ (a + 2)\cdt{f}{a}(n) + f^{\left(\cdt{f}{a}(n)\right)}(a) + 1
 	\end{equation*}
 \end{lem}
 \begin{proof}
-	By definitions of \li{leb} and \li{succ} on \li{nat} and countdown, we have for all $i$ and $n$,
- $\Tleb\left(f^{(i)}(n), a\right) = a + 1$ if $i < \cdt{f}{a}(n)$ and $f^{(i)}(n) + 1$ otherwise, and $\Tsucc(i) = 1$. Therefore the third summand is equal to $\cdt{f}{a}(n)$ and the second summand in \eqref{eq: cdt-runtime-struct} is equal to $(a + 1)\cdt{f}{a}(n) + f^{\left(\cdt{f}{a}(n)\right)}(a) + 1$, thus forming the desired formula.
+	By definitions of \li{leb} and \li{succ} on \li{nat} and countdown, we have 
+	\linebreak $\forall i, n.~\Tleb\left(f^{(i)}(n), a\right) = a + 1$ if $i < \cdt{f}{a}(n)$ and $f^{(i)}(n) + 1$ otherwise, and $\Tsucc(i) = 1$. So, 
+	in \eqref{eq: cdt-runtime-struct}, the third summand equals $\cdt{f}{a}(n)$ and the second summand is $(a + 1)\cdt{f}{a}(n) + f^{\left(\cdt{f}{a}(n)\right)}(a) + 1$, thus forming the desired formula.
 %	Per Definition~\ref{defn: countdown-worker}, the computation makes $\cdt{f}{a}(n)$ recursive calls to $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, two computations must take place: $n_i - a$, which takes $\Theta(a + 1)$ time, and $f(n_i) = n_{i+1}$, where $n_i \triangleq f^{(i)}(n)$ has been  computed by the $i$th call, and is greater than $a$.  The total time is then
 %	\begin{equation*}
 %	\begin{aligned}
@@ -116,12 +117,11 @@ This lemma implies $\runtime_{\alpha_{i+1}}(n) \ge \runtime_{\alpha_i}(n)$. Prov
 
 \subsection{Hard-coding the second level: $O(n)$} \label{sect: hardcode-lvl2}
 
-Intuitively, it is clear that the function $\alpha_2 \equiv \lambda n.(n-2)$
-slows down the entire hierarchy's performance due to one silly weakness:
-it does not know that it will always output $n-2$ before beginning its computation,
-and so it tediously subtracts $1$ until \note{it goes below $2$.}
-%This observation leads to the next improvement.
-
+The function $\alpha_2 \equiv \lambda n.(n-2)$
+slows the entire hierarchy down because
+it does not know that it will always output $n-2$ before beginning its 
+computation.
+It tediously subtracts $1$ until \note{it goes below $2$.}
 We can hardcode $\alpha_1$ as $\lambda n.(n-2)$ to reduce its runtime
 from $\Theta(n)$ to $\Theta(1)$.
 \begin{lstlisting}
@@ -168,9 +168,9 @@ We need three crucial technical lemmas to prove this theorem.
 \begin{proof}
 	Define $S: \mathbb{R}_{\ge 0}\to \mathbb{R}_{\ge 0}$ where $S(x) \triangleq \sum_{k = 0}^{\log_2^*(x) - 1}\log_2^{(k)}x$. Clearly $S$ is strictly increasing and $\forall x>1, S(x) = n + S(\log_2 x)$. Using the fact $\log_2^*(x)\in \mathbb{N}$, we prove by induction the statement $P(k) \triangleq$ $\forall x: \log_2^*(x) = k$, $S(x)\le 2x$.
 	\begin{itemize}
-		\item \emph{Base case.} $P(0)$, $P(1)$ hold trivially and $P(2) = \forall x: 2 < x \le 4$, $x + \log_2x \le 2x$, which is equivalent to $\log_2x \le x$, which holds for all $x > 2$.
+		\item \emph{Base case.} $P(0)$, $P(1)$ hold trivially and $P(2) = \forall x: 2 < x \le 4$, \linebreak $x + \log_2x \le 2x$, which is equivalent to $\log_2x \le x$, which holds for all $x > 2$.
 		
-		\item \emph{Inductive case.} Assume $P(k-1)$ holds where $k\ge 3$. Fix any $x$ such that $\log_2^*(x)=k$, then $x > 4$. The function $\lambda x.\frac{x}{\log_2x}$ is increasing on $[4, +\infty)$, so $\frac{4}{\log_24} \le \frac{x}{\log_2x}$ or $2\log_2x \le x$. Since $\log_2^*(x) = k$, we have $\log_2^*(\log_2x) = k-1$. By $P(k-1)$, $S(x) = x + S(\log_2x) \le x + 2\log_2x \le 2x$, which completes the proof.
+		\item \emph{Inductive case.} Assume $P(k-1)$ where $k\ge 3$. Fix any $x$ such that $\log_2^*(x)=~k$, then $x > 4$. The function $\lambda x.\frac{x}{\log_2x}$ is increasing on $[4, +\infty)$, so $\frac{4}{\log_24} \le \frac{x}{\log_2x}$ or $2\log_2x \le x$. Since $\log_2^*(x) = k$, we have $\log_2^*(\log_2x) = k-1$. By $P(k-1)$, $S(x) = x + S(\log_2x) \le x + 2\log_2x \le 2x$, which completes the proof.
 	\end{itemize}
 \end{proof}
 \begin{lem} \label{lem: sum-alpha-repeat}
@@ -193,7 +193,7 @@ We need three crucial technical lemmas to prove this theorem.
 %	Let $P(n) \triangleq 2\big\lceil \log_2\log_2n \big\rceil \le \big\lceil \log_2n \big\rceil$. It suffices to prove $P(n) \ \forall n$. Observe that $P(n)$ holds for $n\ge 4$.
 \end{proof}
 \begin{proof}[of Theorem~\ref{thm: inv-ack-hier-runtime-improved}]
-	We have proved the result for $i = 0, 1, 2$. Let us proceed with $i\ge 3$ by induction. The case $i = 3$ has been covered by Lemma~\ref{lem: inv-ack-3-runtime}. Let $M_i \triangleq 2^{i-3}19 - 2i - 13$ for each $i$ and suppose the result holds for $i\ge 3$, we have
+	We have proved the result for $i = 0, 1, 2$. Let us proceed with $i\ge 3$ by induction. The case $i = 3$ has been covered by Lemma~\ref{lem: inv-ack-3-runtime}. Let $M_i \triangleq 2^{i-3}19 - 2i - 13$ for each $i$ and suppose the result holds for $i\ge 3$. We have
 	\begin{equation*}
 	\begin{array}{@{}l@{}}
 	 \runtime_{\alpha_{i+1}}(n) \le \sum_{k=0}^{\alpha_{i+1}(n)} \runtime_{\alpha_i}\big(\alpha_i^{(k)}(n)\big) + 3\alpha_{i+1}(n) + 2 \\[3pt]
@@ -210,7 +210,7 @@ We need three crucial technical lemmas to prove this theorem.
 	\end{array}
 	\end{equation*}
 \end{proof}
-By hardcoding $\alpha_1$ as $\lambda m.(m-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time $\Theta(n)$ for fixed $i$.
+By hardcoding $\alpha_1$ as $\lambda n.(ng-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time $\Theta(n)$ for fixed $i$.
 This also allows us to improve the runtime of $\alpha(n)$ per Definition~\ref{defn: inv-ack-hier} by hardcoding the output when $n\le 1 = \Ack(0, 0)$, and starting $\alpha^{\mathcal{W}}$ with $f = \alpha_1$ and $n = \alpha_1(n)$:
 \begin{equation*}
 \tilde{\alpha}(n) = \begin{cases}
@@ -221,9 +221,9 @@ For $n > 1$, $1\le \min\big\{n-1, \alpha_1(n)\big\}$. So
 $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big) =
 \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-~1\big)$.
 Thus $\tilde{\alpha}(n) = \alpha(n)$. At each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of the following computations:
- \begin{enumerate}[label={(\arabic*)}]
+ \begin{enumerate} % [label={(\arabic*)}]
 	\item $\cdt{\big(\alpha_k\big)}{1}(x)$ given $x\triangleq \alpha_k(n)$, taking time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ by Lemma~\ref{lem: compose-runtime}.
-	\item $\alpha_k(n) - k$, taking time $\Theta(k)$.
+	\item $\alpha_k(n) - k$, taking time $\Theta(k)$
 \end{enumerate}
 The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 \begin{equation} \label{eq: inv-ack-runtime-improved}

@@ -51,7 +51,9 @@ while making clear that $a$ is a parameter of \emph{repeater} itself." from Hier
 
 20. It is confusing to refer to the 4th and 5th summands of (15), especially as they are typeset a little confusingly. I guess no need to change too urgently because this section needs cutting and reorganisation anyway.
 
-21. Page 17, there is suddenly A(0,0). Is this a typo? Do you really meant the two-arg function again?
+21. Page 17, there is suddenly A(0,0), A(1,1), etc. Do you really meant the two-arg function again? If so, could you please use the new \mathcal{A} to represent it, as shown in Definition 1?
+
+22. When there is a discussion of the time bound of each summand in a list, there isn't enough space to make a list every time. Try to crunch into a paragraph. Also, why is the order often flipped? Consider just saying it in order. I have shown this in Page 21 after "We consider only n >= 4".
 
 
 
@@ -59,34 +61,34 @@ while making clear that $a$ is a parameter of \emph{repeater} itself." from Hier
 
 The comments below are from the reviewers:
 
-22. A number of definitions omit the "\lambda n", e.g. def 3.1 and 3.5,
+R1. A number of definitions omit the "\lambda n", e.g. def 3.1 and 3.5,
    it would be better imo to include it.
 
-23. The key idea is about hyperoperations, a beautiful generalization of what the Ackermann function is trying to do, and IMO the "right way" to do it. Why don't you start with hyperoperations in the introduction?
+R2. The key idea is about hyperoperations, a beautiful generalization of what the Ackermann function is trying to do, and IMO the "right way" to do it. Why don't you start with hyperoperations in the introduction?
 
-24. Section 2: "Let us now consider hyperoperations more carefully" - we haven't really considered them so far, only seen some examples, so this was really confusing to me.
+R3. Section 2: "Let us now consider hyperoperations more carefully" - we haven't really considered them so far, only seen some examples, so this was really confusing to me.
 
-25. Base cases: These feel rather ad-hoc and arbitrary (they have to be a, 0, 1 for n = 0, 1, 2, but for n >= 3, it is not so clear. Can you give a more compelling argument for why these are the right choices?).
+R4. Base cases: These feel rather ad-hoc and arbitrary (they have to be a, 0, 1 for n = 0, 1, 2, but for n >= 3, it is not so clear. Can you give a more compelling argument for why these are the right choices?).
 
-26: Don't cramp the three cases of the formal defn of hyperoperations into one line. It is too important.
+R5: Don't cramp the three cases of the formal defn of hyperoperations into one line. It is too important.
 
-27. Section 3.1, about inverses, I would like to see some kind of graph, to understand what is going on. Or/and perhaps an example of an inverse to start with before seeing the definition (to complement lines 183 and 184).
+R6. Section 3.1, about inverses, I would like to see some kind of graph, to understand what is going on. Or/and perhaps an example of an inverse to start with before seeing the definition (to complement lines 183 and 184).
 
-28. Theorem 3.1. (If F : N → N is increasing, then f is the upper inverse of F if and only if ∀n, m. f(n) ≤ m ⇐⇒ n ≤ F(m).) This is a Galois connection, perhaps you can say that in the text? (And maybe derive some more insights?)
+R7. Theorem 3.1. (If F : N → N is increasing, then f is the upper inverse of F if and only if ∀n, m. f(n) ≤ m ⇐⇒ n ≤ F(m).) This is a Galois connection, perhaps you can say that in the text? (And maybe derive some more insights?)
 
-29. Section 3.1 seems a strange collection of definitions/lemmas that are all quite different in nature. Add more structure?
+R8. Section 3.1 seems a strange collection of definitions/lemmas that are all quite different in nature. Add more structure?
 
-30. Question I would like to see answered in the paper: The paper gives an alternative definition for div and log (than what's used in the standard library in Coq). Do proofs involving these functions become easier or harder in Coq? I would expect easier? Perhaps you could show an example?
+R9. Question I would like to see answered in the paper: The paper gives an alternative definition for div and log (than what's used in the standard library in Coq). Do proofs involving these functions become easier or harder in Coq? I would expect easier? Perhaps you could show an example?
 
-31. p3, footnote 3, "change-of-base does not work on nat": This is obvious. Plus, it is not related to the 'nat' data structure, but on discrete logarithms in general: there is a confusion here between the mathematical object and its representation.
+R10. p3, footnote 3, "change-of-base does not work on nat": This is obvious. Plus, it is not related to the 'nat' data structure, but on discrete logarithms in general: there is a confusion here between the mathematical object and its representation.
 
-32. l.54 "defining division is unexpectedly painful". Is this really
+R11. l.54 "defining division is unexpectedly painful". Is this really
   unexpected? Division and Euclid algorithm are indeed more involved,
   even on paper, than multiplication. Termination issues in Coq make
   the situation worse, but I am not sure about what you consider
   "unexpected" here.
 
-33. 
+R12. 
 	I think that the example and solution presented for defining
   	division is quite incomplete. For example, consider the following
   	Coq code, which depends only on Coq's standard prelude library:
@@ -107,7 +109,7 @@ The comments below are from the reviewers:
 	the solutions listed l.63-75 are less relevant, and thus less
 	informative.
 
-34. 
+R13. 
 	The fact that Coq's standard library does not include the definition
 	of logarithm function is not a sufficient information I would
 	say. What about other standard libraries? For instance, I am aware of
