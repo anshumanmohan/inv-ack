@@ -37,3 +37,9 @@ Ok, let's just add a sentance or two somewhere.
 19. Change Countdown Worker's budget argument to "b" everywhere (code and tex)
 20. We can delete Lemma 16, it's a little irritating how obvious it is. Maybe the place that uses it can handle it with some careful writing?
 21. Theorem 19: Instead of "a simple induction", say "induction on <blah>". When there is time, do this in all lemmas and theorems.
+22. In countdown.tex, we promise that we have proved the existence of a minimum in our code base. Can you link me to the Line of Code? I would like to link it.
+23. Widow on Page 4 that causes a bad code-based widow on Page 5. I am not fixing because Aquinas needs to add in the new table and the edited text that comes just after the table.
+24. I have cut "\note[Can just cut?]{The notation $\rf{f}{a}(b)$ does much better at separating 
+the function, i.e. the repeater of $f$, and the variable $n$ than $f^{(n)}(a)$, 
+while making clear that $a$ is a parameter of \emph{repeater} itself.} 
+",  from Hierarchy.tex, please add back if you want

@@ -32,13 +32,14 @@ The diagonal Ackermann function grows explosively: starting from $\Ack(0)$, the 
 This explosive behavior becomes problematical when we consider
 the inverse Ackermann function~\cite{chazelle,tarjan}.
 \begin{defn} \label{defn: inv_ack}
-The inverse Ackermann function $\alpha(n)$ is defined as the minimum~$k$ for which $n \le \Ack(k)$, \emph{i.e.} $\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}$.
+The inverse Ackermann function $\alpha(n)$ is the smallest~$k$ for 
+\linebreak which $n \le \Ack(k)$, \emph{i.e.} $\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}$.
 \end{defn}
-In a sense, this definition is computational: starting with $k=0$, calculate $\Ack(k)$, compare
-it to $n$, and then increment $k$ until $n \le \Ack(k)$.
-Unfortunately, the running time of this algorithm is $\Omega(\Ack(\alpha(n)))$,
-so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ in this way requires
-$\Ack(4) = 2^{2^{2^{65536}}}$ steps!
+This definition is computational: start at $k=0$, calculate $\Ack(k)$, 
+compare~it~to~$n$, and increment $k$ until $n \le \Ack(k)$. 
+The runtime of this algorithm is $\Omega(\Ack(\alpha(n)))$,
+so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ in this way requires 
+$\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 
 \subsection{The hyperoperation/Ackermann hierarchy}
 
@@ -51,7 +52,7 @@ a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.\Ack(n,b)$, whe
 %don't discuss it much anymore. It's clear to see that Knuth
 %follows from Hyperop.}
 The desire to clean up this kludge, and to generalize the natural sequence
-of functions (\emph{i.e.} addition, multiplication, exponentiation, \emph{etc.}),
+of functions (addition, multiplication, exponentiation, \emph{etc.}),
 led to the development of the related idea of hyperoperations\footnote{Knuth arrows~\cite{knuth}, written $a \uparrow^n b$,
 are also in the same vein, but we will focus on hyperoperations
 since they are more general. In particular, $a \uparrow^n b = a[n+2]b$.}~\cite{goodstein},
@@ -132,8 +133,8 @@ Fixpoint div a b :=
 \end{tabular} \\[5pt]
 \end{minipage}
 
-\noindent The definition of \li{mult} is of course accepted by Coq; indeed this
-is precisely how multiplication is defined in the standard library.  The function
+\noindent Coq accepts the definition of \li{mult}; indeed this
+is how multiplication is defined in the standard library.  The function
 \li{div} should calculate multiplication's upper inverse,
 \emph{i.e.} $\li{div}~x~y \mapsto^{*} \lceil \frac{x}{y} \rceil$, but the definition
 is rejected by Coq's termination checker.  Coq worries that
@@ -180,7 +181,7 @@ time.  Finally, our techniques are extremely succinct: the code to invert the di
 %\item[\S\ref{blah}] We discuss related work and give some closing thoughts.
 %\end{itemize}
 \begin{itemize}
-	\item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, explain how to encode hyperoperations and the Ackermann function in Coq, \note{and discuss our concept of \emph{repeater}}.
+	\item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, present Coq encodings for hyperoperations and the Ackermann function, \note{and discuss \emph{repeater}}.
 	\item[\S\ref{sec: countdown}] We discuss upper inverses and show how to invert repeater with \emph{countdown}.
 	\item[\S\ref{sec: inv-hyperop}] We use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base. We then sketch a method to find the Inverse Ackermann function.
 	\item[\S\ref{sec: inv-ack}] We give a computation for the Inverse Ackermann function in $\bigO(n)$ time.

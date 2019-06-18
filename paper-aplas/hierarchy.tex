@@ -40,9 +40,10 @@ where $f^{(k)}(u) ~ \triangleq ~ \overbrace{(f\circ f\circ \cdots \circ f)}^{k \
 \emph{i.e.} it denotes $k$ successive applications of a function~$f$ to an 
 input~$u$, with $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times). 
 
-This insight will help us encode hyperoperations~(\ref{eq:hyper}) and the Ackermann function~(\ref{eq:ackermann}) in Coq.  Notice that the recursive case of hyperoperation---and
-indeed, the third case of the Ackermann function---is troublesome to encode in Coq due to
-the deep nested recursion.  In the outer recursive call, the first argument ($n$) is shrinking
+This insight helps us encode hyperoperations~(\ref{eq:hyper}) and 
+Ackermann~(\ref{eq:ackermann}) in Coq.  Notice that the recursive case of hyperoperations--and
+indeed, the third case of Ackermann--is troublesome to encode in Coq due to
+deep nested recursion.  In the outer recursive call, the first argument is shrinking
 but the second is expanding explosively; in the inner recursive call, the first argument is
 constant but the second is shrinking. The elegant solution uses double recursion~\cite{bertotcast} as follows:
 \begin{lstlisting}
@@ -75,7 +76,7 @@ Coq is satisfied since both recursive calls are on structurally smaller argument
 Moreover, our encoding makes the structural similarities
  readily apparent.  In fact, the only essential difference is the initial values
 (the second case of both definitions): the Ackermann function uses $\Ack(n-1,1)$, whereas
-hyperoperations use the initial values given in~(\ref{eq:hyper}).
+hyperoperations use the initial values given in Equation~\ref{eq:hyper}.
 
 Having noticed that the deep recursion in both notions is expressing the same idea
 of repeated application, we arrive at another useful idea. We can express the relationship
@@ -83,9 +84,7 @@ between the $(\text{n+1})^{\text{th}}$ and $\text{n}^{\text{th}}$ levels in
 a \emph{functional} way if we develop a higher-order function that transforms the latter level
 to the former.  We call this idea a \emph{repeater}:
 \begin{defn}
-For all $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
-\end{defn}
-The Gallina definition is written to structurally decrease on $n$:
+$\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L21-L25}{Fixpoint repeater\_from}` (f : nat -> nat) (a n : nat) : nat :=
   match n with
@@ -93,7 +92,10 @@ The Gallina definition is written to structurally decrease on $n$:
   | S n' => f (repeater_from f a n')
   end.
 \end{lstlisting}
-\note{The notation $\rf{f}{a}(b)$ does much better at separating the function, i.e. the repeater of $f$, and the variable $n$ than $f^{(n)}(a)$, while making clear that $a$ is a parameter of \emph{repeater} itself.} It allows a simple and function-oriented definition of hyperoperations:
+\end{defn}
+This allows simple and function-oriented definitions of hyperoperations and the 
+Ackermann function that we give below. Note that the Curried $a[n-1]$ denotes 
+the single-variable function $\lambda b.a[n-1]b$.
 \begin{equation*}
 a[n]b ~ \triangleq ~ \begin{cases}
 b + 1 & \text{when } n = 0 \\
@@ -105,23 +107,20 @@ a & \text{when } n = 0 \\
 1 & \text{otherwise}
 \end{cases}
 \end{equation*}
-Note that the Curried $a[n-1]$ denotes the single-variable 
-function $\lambda b.a[n-1]b$.
-The Ackermann function is likewise expressed elegantly using repeater:
-\begin{equation*}
-\Ack(n,m) ~ \triangleq ~ \begin{cases}
-m + 1 & \text{when } n = 0 \\
-\rf{\Ack_{n-1}}{\Ack(n-1,1)}(m) & \text{otherwise}
-\end{cases}
-\end{equation*}
-In Coq these two definitions are written as follows:
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L55-L59}{Fixpoint hyperop}` (a n b : nat) : nat :=
   match n with
   | 0    => 1 + b
   | S n' => repeater_from (hyperop a n') (hyperop_init a n') b
   end.
-
+\end{lstlisting}
+\begin{equation*}
+\Ack(n,m) ~ \triangleq ~ \begin{cases}
+m + 1 & \text{when } n = 0 \\
+\rf{\Ack_{n-1}}{\Ack(n-1,1)}(m) & \text{otherwise}
+\end{cases}
+\end{equation*}
+\begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L119-L123}{Fixpoint ackermann}` (n m : nat) : nat :=
   match n with
   | 0    => S m

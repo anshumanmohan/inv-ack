@@ -269,12 +269,12 @@ Next, we show the internal working of \emph{countdown worker} at the $\text{i}^\
 	\begin{enumerate}[leftmargin=*]
 		\item \textit{Base case.} For $i = 0$, our goal $P(0)$ is:
 		$\cdw{f}{a}(n, b) = 1 + \cdw{f}{a}\left(f(n), b - 1\right)$
-		where $b \ge 1, f(n)\ge a+1$. This is straightforward.
-		\item \textit{Inductive step.} Suppose $P(i)$ has been proven. Then $P(i+1)$ is
+		where $b \ge 1$ and $f(n)\ge a+1$. This is straightforward.
+		\item \textit{Inductive step.} Assume $P(i)$ has been proved. Then $P(i+1)$ is
 		\begin{equation*}
 		\cdw{f}{a}(n, b) = 2 + i + \cdw{f}{a}\left( f^{2+i}(n), b - i - 2 \right)
 		\end{equation*}
-		for $b \ge i+2, f^{1+i}(n) \ge a+1$. This also implies $b\ge i+1$ and $\displaystyle f^{(i)}(n) \ge f^{1+i}(n)\ge a+1$ by $f\in \contract$, and so $P(i)$ holds. It suffices to prove:
+		where $b \ge i+2$ and $f^{1+i}(n) \ge a+1$. This also implies $b\ge i+1$ and $\displaystyle f^{(i)}(n) \ge f^{1+i}(n)\ge a+1$ by $f\in \contract$, and so $P(i)$ holds. It suffices to prove:
 		\begin{equation*}
 		\cdw{f}{a}\left(f^{1+i}(n), b-i-1\right) = 1 + \cdw{f}{a}\left( f^{2+i}(n), b-i-2 \right)
 		\end{equation*}
@@ -299,25 +299,26 @@ $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 %	$$ \cdt{f}{a}(n) \le l \Rightarrow f^{(l)}(n) \le a \ \ \forall l $$
 %	, which holds due to the fact $\displaystyle f^{(l)}(n) \le f^{(\cdt{f}{a}(n))}(n) \le a$ by $f\in \contract$. To prove $\eqref{eq: cdt-repeat}\Rightarrow \eqref{eq: cdt-minimum}$, it suffices to show $\displaystyle f^{(\cdt{f}{a}(n))}(n) \le a$
 %	, which in turn holds by substituting $k$ by $\cdt{f}{a}(n)$ in \eqref{eq: cdt-repeat}. Thus $\eqref{eq: cdt-minimum}\iff \eqref{eq: cdt-repeat}$ and we need only to prove \eqref{eq: cdt-minimum}.
-Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$ \note{(we prove its existence in Coq's baseline intuitionistic logic in our code base)}, then
+Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, 
+let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$. Our goal becomes 
+$\cdt{f}{a}(n) = m$. Note that this setup gives us: 
 	\begin{equation}
 	\left(f^{(m)}(n) \le a\right) \label{eq: cdt-repeat-tmp} \wedge
 	 \left(\forall k.~f^{(k)}(n)\le a \Rightarrow m \le k\right)
 	\end{equation}
-	It then suffices to prove $m = \cdt{f}{a}(n)$. First consider $m = 0$. Then $n = f^{(0)}(n)\le a$, thus $\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = 0 = m$ by Lemma~\ref{lem: cdt-init}.
-	
-	Now consider $m > 0$. We would like to apply Lemma~\ref{lem: cdt-intermediate} to get
+If $m = 0$, then $n = f^{(0)}(n)\le a$. So $\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = 0 = m$ by Lemma~\ref{lem: cdt-init}.
+When $m > 0$, our plan is to apply Lemma~\ref{lem: cdt-intermediate} to get
 	\begin{equation*}
 	\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = m + \cdw{f}{a}\left(f^{(m)}(n), n-m\right),
 	\end{equation*}
-	then use Lemma~\ref{lem: cdt-init} over Equation~\ref{eq: cdt-repeat-tmp}'s first conjunct to conclude that $\cdt{f}{a}(n) = m$. It suffices to prove the premises of Lemma~\ref{lem: cdt-intermediate}: $a < f^{(m-1)}(n)$ and $m-1 < n$.
+and then use Lemma~\ref{lem: cdt-init} over (\ref{eq: cdt-repeat-tmp})'s first conjunct to conclude $\cdt{f}{a}(n) = m$. It suffices to prove the premises of Lemma~\ref{lem: cdt-intermediate}: $a < f^{(m-1)}(n)$ and $m-1 < n$.
 	
-	The former follows by contradiction: if $f^{(m-1)}(n) \le a$, (\ref{eq: cdt-repeat-tmp})'s second conjunct implies $m\le m-1$, which is impossible for $m > 0$. The latter then easily follows by $f\in \contract_{a}$: 
+	The former follows by contradiction: if $f^{(m-1)}(n) \le a$, (\ref{eq: cdt-repeat-tmp})'s second conjunct implies $m\le m-1$, which is impossible for $m > 0$. The latter then easily follows by $f\in \contract_{a}$, since
 	$n \ge 1 + f(n) \ge 2 + f(f(n)) \ge \cdots \ge m + f^{(m)}(n)$.
-	Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
+	\linebreak Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
 \end{proof}
-Equation~\ref{eq: rf-upp-inv} and Theorem~\ref{thm: cdt-repeat} establish the correctness of the Coq definitions of \emph{countdown worker} and \emph{countdown}, thereby justifying our budget of $n$ and our unification of the 
-equivalent Definitions \ref{defn: informal-countdown} and \ref{defn: countdown}. We wrap everything together with the following theorem:
+Theorem~\ref{thm: cdt-repeat} and (\ref{eq: rf-upp-inv}) establish the correctness of the Coq definitions of \emph{countdown worker} and \emph{countdown}, thereby justifying our budget of $n$ and our unification of 
+Definitions \ref{defn: informal-countdown} and \ref{defn: countdown}. We wrap everything together with the following theorem:
 \begin{thm} \label{thm: cdt-inv-rf}
 	$\forall F\in \repeatable_a.~f\triangleq F^{-1}_+$ satisfies $f \in \contract_{a}$ and $\displaystyle \cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+$. Furthermore, if $a\ge 1$, then $\rf{F}{a}\ \in \repeatable_0$ and $\cdt{f}{a}\ \in \contract_0$.
 \end{thm}
