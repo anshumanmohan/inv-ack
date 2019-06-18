@@ -9,40 +9,41 @@ cuts the runtime to $O(n)$.
 %different pieces of code.} 
 % momentarily forget about the axiom of extensionality and 
 \subsection{Basic Time Analysis: $O(n^2)$}
-To formalize the notion of runtime, we identify each function on 
-$\mathbb{N}$ with its \emph{computation}, \emph{i.e.} the program that computes 
+To formalize the notion of runtime, we tag each function on 
+$\mathbb{N}$ to its \emph{computation}, \emph{i.e.} the program that computes 
 it in Coq \note{under a call-by-value strategy}.
 \begin{defn}
  For a function on $k$ variables, $f:\mathbb{N}^k\to\mathbb{N}$, the \emph{runtime} of $f$ on input $\big(n_1, n_2, \ldots, n_k\big)$, denoted by $\runtime_f\big(n_1, n_2, \ldots, n_k\big)$, is the number of basic computational steps it takes to compute $f(n_1, n_2, \ldots, n_k)$.
 \end{defn}
-The following two lemmas are properties of Coq functions with trivial proofs.
+The following two lemmas are straightforward properties of Coq functions:
 \begin{lem} \label{lem: sub-runtime}
-	Let $\li{leb}(x, y)$ returns \li{true} if $x\le y$ and \li{false} otherwise. Then in the unary encoding system, \emph{i.e.} Coq type \li{nat}, $\runtime_{\li{leb}}(n, a) = \min\{a, n\} + 1$, and in the binary encoding system, \emph{i.e.} Coq type \li{N}, $\runtime_{\li{leb}}(n, a) = \lfloor \log_{2}\min\{a, n\} \rfloor + 1$ per Coq's definitions of \li{leb} on these types.
+	The standard $\li{leb}(x, y)$ function returns \li{true} if $x\le y$ and \li{false} otherwise. When the inputs are encoded in the unary, \emph{i.e.} Coq type \li{nat}, $\runtime_{\li{leb}}(n, a) = \min\{a, n\} + 1$. In binary, \emph{i.e.} Coq type \li{N}, $\runtime_{\li{leb}}(n, a) = \lfloor \log_{2}\min\{a, n\} \rfloor+~1$. 
+	% per Coq's definitions of \li{leb} on these types.
 \end{lem}
 \begin{lem} \label{lem: compose-runtime}
-	In all encoding systems, $\runtime_{f\circ g}(n) = \runtime_f(g(n)) + \runtime_g(n)$ per Coq's definition of functional composition.
+	In all encoding systems, $\runtime_{f\circ g}(n) = \runtime_f(g(n)) + \runtime_g(n)$.
+	 % per Coq's definition of functional composition.
 \end{lem}
 The next lemma establishes the general running time structure of countdown.
 \begin{lem} \label{lem: cdt-runtime-general}
-	For all $a\in \mathbb{N}$ and $f\in \contract_{a}$,
+	$\forall a\in \mathbb{N}, f\in \contract_{a}$, where $\li{succ}(x) = x+1$,
 	\begin{equation} \label{eq: cdt-runtime-struct}
 		\runtime_{\cdt{f}{a}}(n) =
 		\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
 		+ \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right)
-		+ \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i),
+		+ \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i)
 	\end{equation}
-	where $\li{succ}(x) = x+1$.
 \end{lem}
 \begin{proof}
 	Since $f\in \contract_{a}$, $\cdt{f}{a}\ $ is the minimum $k$ such that $f^{(k)}(n) \le a$. The execution of $\cdw{f}{a}\big(n, n\big)$ then takes $k+1$ recursive calls, where the $i^{th}$ call for $0\le i \le k$ takes the arguments $i, a$ and $n_i \triangleq f^{(i)}(n)$ from the previous call (or the initial argument when $i = 0$), and performs the following computations:
 	\begin{enumerate}
-		\item Compute $\li{leb}\left(n_i, a\right)$ for $\Tleb\left(f^{(i)}(n), a\right)$ steps.
-		\item If $\li{leb}\left(n_i, a\right) = \li{true}$, return $0$. Else proceed to next step.
-		\item Compute $n_{i+1} \triangleq f(n_i) = f^{(i+1)}(n)$ for $T_f\left(f^{(i)}(n)\right)$ steps.
-		\item Pass $n_{i+1}, i+1, a$ to the next recursive call and waits for it to return $k - i - 1$.
-		\item Add $1$ to the result for $\Tsucc(k-i-1)$ steps and returns $k - i$.
+		\item Compute $\li{leb}\left(n_i, a\right)$ for $\Tleb\left(f^{(i)}(n), a\right)$ steps
+		\item If $\li{leb}\left(n_i, a\right) = \li{true}$, return $0$. Else proceed to the next step
+		\item Compute $n_{i+1} \triangleq f(n_i) = f^{(i+1)}(n)$ for $T_f\left(f^{(i)}(n)\right)$ steps
+		\item Pass $n_{i+1}, i+1, a$ to the next recursive call and wait for it to return $k - i - 1$
+		\item Add $1$ to the result for $\Tsucc(k-i-1)$ steps and return $k - i$
 	\end{enumerate}
-    Summing up the time of each call, we get the desired expression for $\runtime_{\cdt{f}{a}}(n)$.
+    Summing up the time of each call gives the desired expression for $\runtime_{\cdt{f}{a}}(n)$.
 \end{proof}
 
 \begin{lem} \label{lem: cdt-runtime}
@@ -66,7 +67,7 @@ The next lemma establishes the general running time structure of countdown.
 %	\end{equation*}
 \end{proof}
 
-From Lemma~\ref{lem: compose-runtime} and Lemma~\ref{lem: cdt-runtime}, the following lemma follows easily:
+\noindent From Lemmas~\ref{lem: compose-runtime} and~\ref{lem: cdt-runtime}, the following lemma follows easily:
 \begin{lem} \label{lem: inv-ack-hier-runtime}
 	Per Definition~\ref{defn: inv-ack-hier} and Definition~\ref{defn: countdown},
 	\begin{equation*}
@@ -74,7 +75,7 @@ From Lemma~\ref{lem: compose-runtime} and Lemma~\ref{lem: cdt-runtime}, the foll
 	\end{equation*}
 	where $C_i(n) \triangleq \alpha_i^{(\alpha_{i+1}(n) + 1)}(n) + 1 \in \{1, 2\}$ for all $i$ and $n$.
 \end{lem}
-This lemma implies $\runtime_{\alpha_{i+1}}(n) \ge \runtime_{\alpha_i}(n)$. If there is some $i$ such that $\runtime_{\alpha_i}(n) = \Theta\big(n^2\big)$, each function after $\alpha_i$ in the hierarchy will take at least $\Omega\big(n^2\big)$ to compute, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per Definition~\ref{defn: inv-ack-worker}. The next lemma shows that $i = 2$ suffices.
+This lemma implies $\runtime_{\alpha_{i+1}}(n) \ge \runtime_{\alpha_i}(n)$. Provided some $i$ \emph{s.t.} $\runtime_{\alpha_i}(n) = \Theta\big(n^2\big)$, each function after $\alpha_i$ in the hierarchy will take at least $\Omega\big(n^2\big)$, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per Definition~\ref{defn: inv-ack-worker}. The next lemma shows that $i = 2$ suffices.
 \begin{lem}
 	Per Definition~\ref{defn: inv-ack-hier}, $\runtime_{\alpha_2}(n) = \Theta\big(n^2\big)$
 \end{lem}
@@ -210,9 +211,6 @@ We need three crucial technical lemmas to prove this theorem.
 	\end{equation*}
 \end{proof}
 By hardcoding $\alpha_1$ as $\lambda m.(m-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time $\Theta(n)$ for fixed $i$.
-
-%\subsection{An improved inverse Ackermann computation: $O(n)$}
-%Building on the previous improvement, we can improve the running time of $\alpha(n)$ per \Cref{defn: inv-ack-hier} by hard-coding the output when $n\le 1 = \Ack(0, 0)$, and starting $\W\alpha$ with $f := \alpha_1$ and $n := \alpha_1(n)$. In other words,
 This also allows us to improve the runtime of $\alpha(n)$ per Definition~\ref{defn: inv-ack-hier} by hardcoding the output when $n\le 1 = \Ack(0, 0)$, and starting $\alpha^{\mathcal{W}}$ with $f = \alpha_1$ and $n = \alpha_1(n)$:
 \begin{equation*}
 \tilde{\alpha}(n) = \begin{cases}

@@ -1,28 +1,30 @@
+\newcommand{\ackt}{\ensuremath{\underline{\alpha}}}
+
 \subsection{Two-parameter inverse Ackermann function}
-Some authors~\cite{tarjan,chazelle} prefer a two-parameter inverse Ackermann function.
+Some authors~\cite{chazelle,tarjan} prefer a two-parameter inverse Ackermann function.
 \begin{defn} \label{defn: 2para-alpha}
 	The two-parameter inverse Ackermann function is defined as:
 	\begin{equation} \label{eq: tmp-2para-alpha}
-	\alpha(m, n) \triangleq \min\left\{i \ge 1 : \Ack\left(i, \left\lfloor \frac{m}{n} \right\rfloor \right)\ge \log_2n \right\}
+	\ackt (m, n) \triangleq \min\left\{i \ge 1 : \Ack\left(i, \left\lfloor \frac{m}{n} \right\rfloor \right)\ge \log_2n \right\}
 	\end{equation}
 \end{defn}
-Note that $\alpha(n, n)$ and the single-parameter $\alpha(n)$ 
+Note that $\ackt(n, n)$ and the single-parameter $\alpha(n)$ 
 are neither equal nor directly related, but
-it is straightforward to modify our techniques to compute $\alpha(n, n)$.
+it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 \hide{This function arises from deep runtime analysis of the disjoint-set data structure. Tarjan \cite{tarjan} showed that, in the disjoint-set data structure, the time required $t(m,n)$ for a sequence of $m$ \textsc{\color{magenta}FIND}s intermixed with $n-1$ \textsc{\color{magenta}UNION}s (such that $m \geq n$) is bounded as: $k_{1}m\cdot\alpha(m,n) \leq t(m,n) \leq k_{2}m\cdot\alpha(m,n)$. In graph theory, Chazelle \cite{chazelle} showed that the minimum spanning tree of a connected graph with $n$ vertices and $m$ edges can be found in time $O(m\cdot\alpha(m,n))$. Computing this function is in fact easier than $\alpha(n)$, as when $m$ and $n$ are given, we are reduced to finding the minimum $i\ge 1$ such that $\Ack_i(s)\ge t$ for $s, t$ fixed, which can be done with the following variant of the \emph{inverse Ackermann worker}.
 }
 \begin{defn} \label{defn: 2para-inv-ack-worker}
-	The two-parameter inverse Ackermann worker is a function $\alpha^{\W}_{2}$: 
+	The two-parameter inverse Ackermann worker is a function $\ackt^{\W}$: 
 	\hide{$(\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:}
 	\begin{equation} \label{eq: 2para-inv-ack-worker-recursion}
-	\alpha^{\W}_{2}(f, n, k, b) = \begin{cases}
-	0 & \text{if } b = 0 \vee n\le k \\ 1 + \alpha^{\W}_{2}\big(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k, b-1\big) & \text{if } b \ge 1 \wedge n \ge k+1
+	\ackt^{\W}(f, n, k, b) = \begin{cases}
+	0 & \text{if } b = 0 \vee n\le k \\ 1 + \ackt^{\W}\big(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k, b-1\big) & \text{if } b \ge 1 \wedge n \ge k+1
 	\end{cases}
 	\end{equation}
 \end{defn}
 %Similar to the one-parameter version, the following theorem establishes the correct setting for $\W\alpha_2$ to compute $\alpha(m, n)$.
 \begin{thm}
-	$\displaystyle \alpha(m, n) = 1 + \alpha^{\W}_{2}\left(\alpha_1, \alpha_1\big(\lceil\log_2n \rceil\big), \left\lfloor \frac{m}{n} \right\rfloor, \lceil\log_2n \rceil \right)$.
+	$\displaystyle \ackt(m, n) = 1 + \ackt^{\W}\left(\alpha_1, \alpha_1\big(\lceil\log_2n \rceil\big), \left\lfloor \frac{m}{n} \right\rfloor, \lceil\log_2n \rceil \right)$.
 \end{thm}
 \hide{
 	\begin{proof}[Proof Sketch]
@@ -122,10 +124,7 @@ The naïve approach is to simply use the \li{nat} translation of \li{n},
 takes linear time in \li{n}, or exponential in its length of representation, 
 which is obviously untenable as we try to leverage binary numbers 
 to improve efficiency. 
-\note[slow contracting has come out of nowhere - \textcolor{magenta}{Please check the rewritten version I wrote below}]{Unfortunately, it is the best we can do if we want to compute countdowns of slow-contracting functions like $\lambda n.(n - 2)$ (which is among both inverse hyperoperations and inverse Ackermann hierarchy!).}
-\textcolor{blue}{
 Unfortunately, a linear-sized budget is necessary to compute countdowns of functions like $\lambda n.(n-2)$, which is among both inverse hyperoperations and inverse Ackermann hierarchies.
-}
 
 The key is to ignore these functions entirely and focus on functions that can bring their argument to below any threshold with repeated applications in logarithm time, which allows a logarithm-sized budget for countdown worker. The following concept aims to describe a type of \emph{fast-contracting} functions.
 \begin{defn} \label{defn: bin-contraction}
@@ -156,7 +155,7 @@ Definition bin_countdown (f : N -> N) (a n : N) : N :=
   bin_countdown_worker f a n (nat_size (n - a)).
 \end{lstlisting}
 
-\paragraph*{Time complexity of countdown on strict binary contractions}
+\paragraph*{Time complexity of countdown on strict binary contractions.}
 
 On strict binary contractions, the binary version of countdown does exactly the same computations as the original one on \li{nat}, thus its computation time structure is the same. The only difference is the computation time of each component in the sum. We examine a more detailed breakdown of the time components below.
 \begin{equation} \label{eq: cdt-bin-runtime-struct}
@@ -170,17 +169,16 @@ On strict binary contractions, the binary version of countdown does exactly the 
 \end{aligned},
 \end{equation}
 where
-\begin{itemize}
-	\item $\Tleb(x, y)$ denotes the computation time of \li{x <=? y}.
-	\item $\Tsucc(u)$ denotes the computation time of \li{N.succ(u)}.
-	\item $\runtime_{\li{nat_size}}(n - a)$ denotes the computation time of \li{nat_size(n - a)}.
-	\item $\runtime_{\li{sub}}(n, a)$ denotes the computation time of $n - a$.
-\end{itemize}
-Note that in the unary system, $\Tleb\left(f^{(i)}(n), a\right) = a + 1$ and $\Tsucc(i) = 1$, which accumulate into the summand $\Theta\big((a + 1)\cdt{f}{a}(n) \big)$ in Lemma~\ref{lem: cdt-runtime}. In the binary system, we have
-\begin{itemize}
-	\item $\Tleb(x, y) = \Theta\left(1 + \log_2(\min\{x, y\})\right)$.
-	\item $\Tsucc(u)$ is the number of consecutive least significant \li{1} bits of $u$.
-\end{itemize}
+$\Tleb(x, y)$ is the computation time for \li{x <=? y}, 
+$\Tsucc(u)$ for \li{N.succ(u)}, 
+$\runtime_{\li{nat_size}}(n - a)$ for \li{nat_size(n - a)}, and
+$\runtime_{\li{sub}}(n, a)$ for $n - a$.
+
+In the unary system, $\Tleb\left(f^{(i)}(n), a\right) = a + 1$ and $\Tsucc(i) = 1$, which accumulate into the summand $\Theta\big((a + 1)\cdt{f}{a}(n) \big)$ in Lemma~\ref{lem: cdt-runtime}. 
+
+In the binary system,
+$\Tleb(x, y) = \Theta\left(1 + \log_2(\min\{x, y\})\right)$ and 
+$\Tsucc(u)$ is the number of consecutive least significant \li{1} bits of $u$.
 Since $f^{(i)}(n)\ge a$ for $i < \cdt{f}{a}(n)$, the $\Tleb$ sum (third summand) on the RHS of~(\ref{eq: cdt-bin-runtime-struct}) is $\Theta\big((\log_2a + 1)\cdt{f}{a}(n)\big)$. The fourth and fifth summands are clearly $\Theta\left(\log_2n + 1\right)$ in total.
 For the second summand, we will show that $\Tsucc(i)$ is amortized constant.
 \begin{lem}
@@ -216,8 +214,8 @@ The above analysis leads to the following result about countdown with binary num
 %Definition alpha3 (n: N) : N := N.size (n+2) - 3.
 %\end{lstlisting}
 %Let $n\ge 2$. The computation of \li{N.size(n)} takes time equal to itself, so the above definition gives $\runtime(\alpha_3, n) \le 2\log_2n$. Fix an $i\ge 3$ and suppose $\runtime(\alpha_i, n) \le C_i\log_2n$. By \Cref{lem: inv-ack-hier-runtime},
-\paragraph*{An inverse Ackermann computation in $\bigO\left(4^{\alpha(n)}\log_2 n\right)$ time}
-Our new Coq definition is able to compute the correct countdown value, but only for strict binary contractions. Fortunately, the inverse hyperoperations $a\angle{n}b$ are all strict binary contractions when $a\ge 2$ starting from $n = 3$, so are the inverse Ackermann hierarchy $\alpha_n$ starting from $n = 2$. We can hard-code their few initial levels. We focus on the latter in this paper, but the former's definition can also be found in our Github repository.
+\paragraph*{An inverse Ackermann computation in $\bigO\left(4^{\alpha(n)}\log_2 n\right)$ time.}
+Our new Coq definition is able to compute the correct countdown value, but only for strict binary contractions. Fortunately, the inverse hyperoperations $a\angle{n}b$ are all strict binary contractions when $a\ge 2$ starting from $n = 3$, so are the inverse Ackermann hierarchy $\alpha_n$ starting from $n = 2$. We can hard-code their few initial levels. We focus on the latter in this paper, but the former's definition can also be found in our code repository.
 \begin{lstlisting}
 Fixpoint bin_alpha (m : nat) (x : N) : N :=
   match m with

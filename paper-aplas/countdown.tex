@@ -300,7 +300,8 @@ $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 %	, which holds due to the fact $\displaystyle f^{(l)}(n) \le f^{(\cdt{f}{a}(n))}(n) \le a$ by $f\in \contract$. To prove $\eqref{eq: cdt-repeat}\Rightarrow \eqref{eq: cdt-minimum}$, it suffices to show $\displaystyle f^{(\cdt{f}{a}(n))}(n) \le a$
 %	, which in turn holds by substituting $k$ by $\cdt{f}{a}(n)$ in \eqref{eq: cdt-repeat}. Thus $\eqref{eq: cdt-minimum}\iff \eqref{eq: cdt-repeat}$ and we need only to prove \eqref{eq: cdt-minimum}.
 Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, 
-let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$. Our goal becomes 
+let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$.\footnote{We prove the existence 
+of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v\#L125-L150}{here} in our codebase.} Our goal becomes 
 $\cdt{f}{a}(n) = m$. Note that this setup gives us: 
 	\begin{equation}
 	\left(f^{(m)}(n) \le a\right) \label{eq: cdt-repeat-tmp} \wedge

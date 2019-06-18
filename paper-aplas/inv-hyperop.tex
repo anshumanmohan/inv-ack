@@ -56,7 +56,7 @@ to prove that all three definitions are correct, since that statement implies
 the correctness of  $\logc$, which in turn implies the correctness of $\log^*$. We will prove this in \ref{blah},
 together with the correctness of the entire hyperoperation hierarchy.
 }
-Where the Curried $a\angle{n{-}1}$ denotes the single-variable function 
+where the Curried $a\angle{n{-}1}$ denotes the single-variable function 
 $\lambda b.a\angle{n{-}1}b$.
 We now show that $a\angle{n}$ is the inverse to $a[n]$. 
 First note that $a\angle{0}\in \contract_0$.~Then:
@@ -205,15 +205,17 @@ We start with the following lemma.
 	 \end{equation*}
 	\begin{enumerate}[leftmargin=*]
 		\item \emph{Base case}. $\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\cdt{\big(\alpha_0}{1}\big)\circ \alpha_0, \cdt{\alpha_0}{1}\big(\alpha_0(n)\big), 1, b - 1\big) $ by
-		(\ref{eq: inv-ack-worker-recursion}) with $b\ge 1$ and $\alpha_0(n)\le 1$. Since $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$ per Definition~\ref{defn: inv-ack-hier}, $P(0)$ holds.
+		(\ref{eq: inv-ack-worker-recursion}) with $b\ge 1$ and $\alpha_0(n)\le 1$.
+		Definition~\ref{defn: inv-ack-hier} gives $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$, so $P(0)$ holds.
 		
 		\item \emph{Inductive step.} Suppose $\alpha_{k+1}(n)\ge k+2$ and $b\ge k+2$. Then $\alpha_k(n)\ge k+1$ and $b\ge k+1$, so $P(k)$ applies. It suffices to show
 		\begin{equation*}
 		\alpha^{\W}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
 		= \alpha^{\W}\big(\alpha_{k+2}, \alpha_{k+2}(n), k+2, b-k-2\big)
 		\end{equation*}
-		Per Definition~\ref{defn: inv-ack-hier}, $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this 
-		is~(\ref{eq: inv-ack-worker-recursion}) with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$. Thus $P(k+1)$ holds. Induction on $k$ completes the proof. %\vspace*{-\baselineskip}
+		Definition~\ref{defn: inv-ack-hier} gives $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this 
+		is~(\ref{eq: inv-ack-worker-recursion}) with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$. Thus $P(k+1)$ holds. 
+		%\vspace*{-\baselineskip}
 	\end{enumerate}
 	% \vspace{-2.2em}
 \end{proof}
@@ -238,7 +240,7 @@ We start with the following lemma.
 	\end{enumerate}
 \end{proof}}%end hide
 
-We are at last ready for a strategy for computing the inverse Ackermann function.
+\noindent We are finally ready for a strategy to compute the inverse Ackermann function:
 %formalizes a setting for $\W\alpha$ to work.
 \begin{thm} \label{thm: inv-ack-worker-correct}
 	$\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
@@ -259,8 +261,7 @@ We are at last ready for a strategy for computing the inverse Ackermann function
 	$$ \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\W}\big(\alpha_m, \alpha_m(n), m, n - m\big) = m $$
 	where the last equality follows from the recursive rule.
 \end{proof}
-
-The code to compute the inverse Ackermann function in Gallina follows.
+% The code to compute the inverse Ackermann function in Gallina follows.
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_worker}` (f : nat -> nat) (n k bud : nat) : nat :=
   match bud with
