@@ -50,28 +50,17 @@ it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 Thus far we have used the Coq type \li{nat}, which is a unary system of 
 natural numbers no more sophisticated than tally marks: 
 a number~$n$ is represented in~$n$ bits. 
-The binary system represents numbers using $0$s and $1$s, thus 
-allowing~$n$ to be represented in $\lfloor \log_{2} n \rfloor + 1$ bits.
-In both systems, addition and subtraction of two $n$-bit numbers take $\Theta(n)$ time, 
-while multiplication takes $\Theta \big(n^2\big)$ time. 
-The binary system thus easily outperforms the unary in basic arithmetic operations. 
-
+The binary system represents~$n$ in $\lfloor \log_{2} n \rfloor + 1$ bits.
+In both systems, addition and subtraction of two $b$-bit 
+numbers take $\Theta(b)$ time, 
+while multiplication takes $\Theta \big(b^2\big)$ time. 
+Basic arithmetic operations are therefore much faster when the inputs 
+are encoded in binary. 
 Here we show that this advantage carries forward to the computation of 
 hyperoperations, Ackermann functions, and their inverses. 
-Coq has support for binary numbers with the type \li{N}, which consists 
-of constructors \li{0} and \li{positive}:
-\begin{lstlisting}
-Inductive positive : Set := 
-  | xI : positive -> positive | xO : positive -> positive
-  | xH : positive.
-\end{lstlisting}
-Constructor \li{xH} represents $1$, and constructors \li{xO} and \li{xI} represent 
-appending $0$ and $1$ respectively. 
-By always starting with $1$, \li{positive} dodges
-the issue of disambiguating \emph{e.g.} the numbers \li{011} and 
-\li{00011}, which represent the same number but pose
-a minor technical challenge. 
-To represent $0$, the type \li{N} simply provides a separate constructor \li{0}. 
+We put a further explanation of the Coq-supported binary type \li{N} in 
+Appendix~\ref{apx:bin_in_coq}.
+
 
 %\paragraph*{Exponentiation with Binary Numbers}
 %This a massive improvement over the bound $\Theta\left(a^b\right)$ of exponentiation in the unary system.
@@ -109,24 +98,31 @@ This a massive improvement over the bound $\Theta\left(a^b\right)$ of exponentia
 \hide{Apart from speeding up addition and multiplication, the binary system does the same for their successor, namely exponentiation. We achieve this by \emph{repeated squaring},
 which by standard techniques allows us to calculate $a^b$ in $\bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$.} % end hide
 
-Although the definition of \emph{countdown} is independent of the system representing natural numbers, its Coq definition should be adjusted appropriately to account for the type \li{N}. The first step is to translate the arguments of \emph{countdown worker} from \li{nat} to \li{N}. While the type of the budget \li{k} should remain \li{nat} as it must decrease by $1$ on every recursive step, all other \li{nat} arguments should be changed to \li{N}, and functions on \li{nat} to functions on \li{N}.
+Although the theoretical \emph{countdown} is independent of the encoding 
+of its inputs, its Coq definition needs to be adjusted to allow for inputs 
+in \li{N}. The first step is to translate the arguments of 
+\emph{countdown worker} from \li{nat} to \li{N}. While the type of 
+the budget \li{k} should remain \li{nat} as it must decrease by $1$ on 
+every recursive step, all other \li{nat} arguments should be changed 
+to \li{N}, and functions on \li{nat} to functions on \li{N}.
 \begin{lstlisting}
 Fixpoint bin_countdown_worker (f : N -> N) (a n : N) (b : nat) : N :=
   match b with
   | O    => 0
   | S b' => if (n <=? a) then 0
              else 1 + bin_countdown_worker f a (f n) b'
-end.
+  end.
 \end{lstlisting}
-Determining the appropriate budget value for \emph{countdown} is trickier. 
+Determining the budget for \li{bin\_countdown} is trickier. 
 The naïve approach is to simply use the \li{nat} translation of \li{n}, 
-\emph{i.e.} \li{N.to_nat n}. However, the conversion to \li{nat} alone 
-takes linear time in \li{n}, or exponential in its length of representation, 
-which is obviously untenable as we try to leverage binary numbers 
-to improve efficiency. 
-Unfortunately, a linear-sized budget is necessary to compute countdowns of functions like $\lambda n.(n-2)$, which is among both inverse hyperoperations and inverse Ackermann hierarchies.
+\emph{i.e.} \li{N.to_nat n}. However, this is untenable as the conversion 
+to \li{nat} alone takes exponential time 
+(\emph{viz} the length of its representation).
+Unfortunately, a linear-sized budget is necessary to compute countdowns 
+of functions like $\lambda n.(n-2)$, which is used by both the inverse 
+hyperoperation and inverse Ackermann hierarchies.
 
-The key is to ignore these functions entirely and focus on functions that can bring their argument to below any threshold with repeated applications in logarithm time, which allows a logarithm-sized budget for countdown worker. The following concept aims to describe a type of \emph{fast-contracting} functions.
+The key is to ignore these functions entirely and focus on functions that can bring their argument to below any threshold with repeated applications in logarithmic time, which allows a logarithm-sized budget for countdown worker. The following concept aims to describe a type of \emph{fast-contracting} functions.
 \begin{defn} \label{defn: bin-contraction}
 	A contraction $f$ is \emph{binary strict above} $a\in \mathbb{N}$ if $f(n) \le \lfloor \frac{n + a}{2} \rfloor$ for all $n > a$.
 \end{defn}
@@ -174,7 +170,7 @@ $\Tsucc(u)$ for \li{N.succ(u)},
 $\runtime_{\li{nat_size}}(n - a)$ for \li{nat_size(n - a)}, and
 $\runtime_{\li{sub}}(n, a)$ for $n - a$.
 
-In the unary system, $\Tleb\left(f^{(i)}(n), a\right) = a + 1$ and $\Tsucc(i) = 1$, which accumulate into the summand $\Theta\big((a + 1)\cdt{f}{a}(n) \big)$ in Lemma~\ref{lem: cdt-runtime}. 
+%In the unary system, $\Tleb\left(f^{(i)}(n), a\right) = a + 1$ and $\Tsucc(i) = 1$, which accumulate into the summand $\Theta\big((a + 1)\cdt{f}{a}(n) \big)$ in Lemma~\ref{lem: cdt-runtime}. 
 
 In the binary system,
 $\Tleb(x, y) = \Theta\left(1 + \log_2(\min\{x, y\})\right)$ and 
@@ -215,13 +211,12 @@ The above analysis leads to the following result about countdown with binary num
 %\end{lstlisting}
 %Let $n\ge 2$. The computation of \li{N.size(n)} takes time equal to itself, so the above definition gives $\runtime(\alpha_3, n) \le 2\log_2n$. Fix an $i\ge 3$ and suppose $\runtime(\alpha_i, n) \le C_i\log_2n$. By \Cref{lem: inv-ack-hier-runtime},
 \paragraph*{An inverse Ackermann computation in $\bigO\left(4^{\alpha(n)}\log_2 n\right)$ time.}
-Our new Coq definition is able to compute the correct countdown value, but only for strict binary contractions. Fortunately, the inverse hyperoperations $a\angle{n}b$ are all strict binary contractions when $a\ge 2$ starting from $n = 3$, so are the inverse Ackermann hierarchy $\alpha_n$ starting from $n = 2$. We can hard-code their few initial levels. We focus on the latter in this paper, but the former's definition can also be found in our code repository.
+Our new Coq definition computes the correct countdown value, but only for strict binary contractions. Fortunately, the inverse hyperoperations $a\angle{n}b$ are all strict binary contractions when $a\ge 2$ and $n \ge 3$, as are the inverse Ackermann hierarchy $\alpha_n$ starting for $n \ge 2$. We focus on the latter in this paper, but the former's definition can also be found in our 
+codebase. We can hard-code the initial levels:
 \begin{lstlisting}
 Fixpoint bin_alpha (m : nat) (x : N) : N :=
   match m with
-  | 0%nat => x - 1
-  | 1%nat => x - 2
-  | 2%nat => N.div2 (x - 2)
+  | 0%nat => x - 1 | 1%nat => x - 2 | 2%nat => N.div2 (x - 2)
   | S m'  => countdown (bin_alpha m') 1 (bin_alpha m' x)
   end.
 \end{lstlisting}
@@ -239,15 +234,17 @@ Fixpoint bin_inv_ack_worker (f : N -> N) (n k : N) (bud : nat) : N :=
                    bin_inv_ack_worker (compose g f) (g n) (N.succ k) bud'
   end.
 \end{lstlisting}
-Note that the above Coq Fixpoint is the direct translation of the \li{inv_ack_worker} on \li{nat}, with only the budget remaining \li{nat} as it is the decreasing argument. Now the inverse Ackermann function can be computed by the following Coq definition:
+Note that this Coq Fixpoint is a simple translation of 
+\li{inv_ack_worker} in \li{nat}, with only the budget still in \li{nat} so it
+can serve as the decreasing argument. The inverse Ackermann function can be computed by the following Coq definition:
 \begin{lstlisting}
 Definition bin_inv_ack (n : N) : N :=
-       if (n <=? 1) then 0
+  if (n <=? 1) then 0
   else if (n <=? 3) then 1
-  else let f := (bin_alpha 2) in
-       bin_inv_ack_worker f (f n) 2 (nat_size n).
+       else let f := (bin_alpha 2) in
+            bin_inv_ack_worker f (f n) 2 (nat_size n).
 \end{lstlisting}
-Similar to the inverse Ackermann hierarchy, we hard code the result for $n = 0,1,2,3$. This ensures the correct output for small $n$, while for larger $n$ we can use \li{inv_ack_worker} with $\alpha_2$, which is the first binary strictly contractive level, as the starting function. Here the budget is \li{nat_size n}, or $\lfloor \log_2n \rfloor + 1$, which is enough for $n\ge 4$. The full proof of correctness can be found in our Github repository.
+Similar to the inverse Ackermann hierarchy, we hard-code the result for $n = 0,1,2,3$. This ensures the correct output for small $n$, while for larger $n$ we can use \li{inv_ack_worker} with $\alpha_2$, which is the first binary strictly contractive level, as the starting function. Here the budget is \li{nat_size n}, or $\lfloor \log_2n \rfloor + 1$, which is enough for $n\ge 4$. The full proof of correctness can be found in our codebase.
 
 To analyze the time complexity of \li{inv_ack}, we decompose it into components, in a similar fashion to the derivation of~(\ref{eq: inv-ack-runtime-improved}). We consider only $n\ge 4$.
 \begin{equation*}
@@ -286,8 +283,8 @@ where the last inequality follows from $\alpha_{i+1}(n)\le \log_2n$ and Lemma~\r
 Picking $C_i = 4^{i-1} - 1$ gives $C_2 > 2$ and $C_{i+1} > 4C_i + 2 \ \forall i$, so \linebreak $\runtime\big(\alpha_i, n\big) \le C_i\log_2n \ \forall i\ge 3$ by induction. 
 By~(\ref{eq: inv-ack-runtime-improved}), for $n > 3 = \Ack(1, 1)$, $\runtime(\alpha, n) = \runtime\big(\alpha_{\alpha(n)}, n\big) = \bigO\big(4^{\alpha(n)}\log_2n\big)$. 
 
-This bound can potentially be improved by further tightening the above inequalities. We do not obtain an exact asymptotic runtime similar 
-to Theorem~\ref{thm: inv-ack-hier-runtime-improved} because this bound of $4^{\alpha(n)}\log_2n$ is strictly larger than the lower bound of $\log_2n$. However, it is still extremely small and can be bounded by simpler expressions such as $(\log_2n)^2$.
+This bound can potentially be improved by further tightening the above inequalities. We do not obtain an exact asymptotic runtime as in 
+Theorem~\ref{thm: inv-ack-hier-runtime-improved} because the bound $4^{\alpha(n)}\log_2n$ is larger than the lower bound of $\log_2n$. However, it is still very small and can be bounded by a simple expression like $(\log_2n)^2$.
 %Our result is an improved version of the inverse Ackermann function which runs in time $\bigO\big(4^{\alpha(n)}\log_2n\big)$.
 %\begin{equation*}
 %\alpha(n) \triangleq \begin{cases}
