@@ -185,12 +185,13 @@
 %\address{}
 
 \begin{abstract}
-We implement in Gallina a hierarchy of functions that calculate the upper inverses
-to the Ackermann/hyperoperation hierarchy, and then use our inverses
-to compute the inverse of the diagonal Ackermann function $\Ack(n)$. 
-We show that our computation runs in linear time, and that it is consistent with 
-the usual definition of the inverse Ackermann function $\alpha(n)$.
-
+We implement in Gallina a hierarchy of functions that calculate 
+the upper inverses to the hyperoperation/Ackermann hierarchy.
+We show that our functions run in $\Theta(n)$ for inputs expressed 
+in both unary and binary ($n$ = bitlength). We use our inverses
+to define linear-time functions that compute the inverse of the diagonal 
+Ackermann \linebreak[3] function~$\Ack(n)$ and show that these functions are consistent with the usual definition of the inverse 
+Ackermann function~$\alpha(n)$.
 \keywords{Ackermann  \and hyperoperations \and Coq}
 \end{abstract}
 
@@ -203,11 +204,11 @@ the usual definition of the inverse Ackermann function $\alpha(n)$.
 \label{sec: overview}
 \input{overview.tex}
 
-\section{Hyperoperations, Ackermann, and Repeater}
+\section{Hyperoperations and Ackermann via Repeater}
 \label{sec: countdown-repeater}
 \input{hierarchy.tex}
 
-\section{Inverses and Countdown}
+\section{Inverses via Countdown}
 \label{sec: countdown}
 \input{countdown.tex}
 
@@ -223,12 +224,9 @@ the usual definition of the inverse Ackermann function $\alpha(n)$.
 \label{sec: discussion}
 \input{discussion.tex}
 
-\subsection{Related Work and Conclusion}
+\section{Related Work and Conclusion}
 \input{related.tex}
 
-%% The Appendices part is started with the command \appendix;
-%% appendix sections are then done as normal sections
-%% \appendix
 
 %% \section{}
 %% \label{}
@@ -240,6 +238,12 @@ the usual definition of the inverse Ackermann function $\alpha(n)$.
 
 \bibliographystyle{splncs04}
 \bibliography{inv-ack}
+
+%% The Appendices part is started with the command \appendix;
+%% appendix sections are then done as normal sections
+\appendix
+\input{appendix.tex}
+
 
 %% else use the following coding to input the bibitems directly in the
 %% TeX file.

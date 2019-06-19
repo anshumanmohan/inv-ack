@@ -3,33 +3,34 @@
 %\input{discussion.tex}
 
 
-\paragraph*{Historical notes}
+\paragraph*{Historical notes.}
 % This creates an unnumbered paragraph. ie a smaller, less flashy, header
 
 %\marginpar{\tiny \color{blue} Multiplication, Division, Algorisms. Representations of numbers (Egyption fractions/Roman numerals/Decimal/Zero). Exponentiation, Logarithm, Tetration, Log*, ...   Hyperoperations, Knuth Arrows.  Inverses as a separate notation? Mechanizations of the above?}
 The operations successor, predecessor, addition, and subtraction have
 been integral to counting forever. The ancient Egyptian
 number system used glyphs denoting $1$, $10$, $100$, \emph{etc.},
-and then expressed numbers using additive combinations of these.
-The Roman system is similar, but
+and expressed numbers using additive combinations of these.
+The Roman system, which is still in use, is similar, but
 it combines glyphs using both addition and subtraction. This buys brevity,
 since \emph{e.g.} $9_{\text{roman}}$ is two characters, ``one less than ten'',
-whereas $9_{\text{egyptian}}$ is nine characters, a series of nine $1$s.
+and not a series of nine $1$s.
 The ancient Babylonian system was, like the modern Hindu-Arabic decimal system,
-an \emph{algorism}: the place value of a glyph determined how many times it would
-be counted towards the number being represented.
+an \emph{algorism}: the place value of a glyph determined how many times it 
+counted towards the number being represented.
 The Babylonians operated in
 base $60$, and so \emph{e.g.} a three-gylph number $abc_{\text{babylonian}}$ could
-be parsed as $a \times 3600 + b \times 60 + c$. Sadly they lacked
+be parsed as $a \times 60^2 + b \times 60 + c$. Sadly they lacked
 a radix point, and so
-$a \times 216000 + b \times 3600 + c \times 60$ and $a \times 60 + b + c \div 60$
-were also reasonable interpretations. In return for incorporating the operations
-multiplication and division, they enjoyed great brevity: a number $n$ was represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
+$a \times 60^3 + b \times 60^2 + c \times 60$, $a \times 60 + b + c \div 60$, 
+\emph{etc.} were also reasonable interpretations. 
+Multiplication and division, bought great brevity: a number $n$ was 
+represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
 
 %\subsection*{The Ackermann function and its inverse.}
 % This creates an unnumbered subsection
 
-\paragraph*{The Ackermann function and its inverse}
+\paragraph*{The Ackermann function and its inverse.}
 %\marginpar{\tiny \color{blue} Several variations. Original. Peter.
 %Primitive recursive. Hilbert? Ackermann is used in CS. Formalizations that use or define it. The grit of sand. The bug.}
 % https://projecteuclid.org/download/pdf_1/euclid.bams/1183512393
@@ -67,9 +68,9 @@ later joined by Guéneau \cite{charpott,gueneauetal},
 extended Separation Logic with the notion of ``time credits'',
 formalized the~$O$ notation in Coq,
 and gave a proof in Coq that simultaneously verifies the correctness
-and the time complexity of the union-find data structure. Several others
+and the time complexity of the union-find data structure. Others
 \cite{others2,others4,others3,others1}
-have explored the idea of checking bounds on the resources
+have also checked bounds on the resources
 used by programs formally in proof assistants such as Coq, Isabelle/HOL, and Why3.
 
 Every pearl starts with a grain of sand.  We had the benefit of two: a website and slide deck 
@@ -78,7 +79,7 @@ respectively.  They proposed a definition of the inverse Ackermann essentially i
 the inverse hyperoperations.  Unfortunately, their technique is unsound, since it diverges from
 the true Ackermann inverse when the inputs grow sufficiently large.  Our technique is verified in Coq.
 
-\paragraph*{Conclusion}
+\paragraph*{Conclusion.}
 We have implemented a hierarchy of functions that calculate the upper inverses
 to the Ackermann/hyperoperation hierarchy and used these inverses
 to compute the inverse of the diagonal Ackermann function $\Ack(n)$.
