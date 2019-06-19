@@ -266,7 +266,7 @@ Next, we show the internal working of \emph{countdown worker} at the $\text{i}^\
 	\begin{equation*}
 	P(i) \triangleq \forall b, n.~ b\ge i+1 \Rightarrow f^{(i)}(n) > a \Rightarrow \cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{1+i}(n), b - i - 1\right)
 	\end{equation*}
-	\begin{enumerate}[leftmargin=*]
+	\begin{itemize}[leftmargin=*]
 		\item \textit{Base case.} For $i = 0$, our goal $P(0)$ is:
 		$\cdw{f}{a}(n, b) = 1 + \cdw{f}{a}\left(f(n), b - 1\right)$
 		where $b \ge 1$ and $f(n)\ge a+1$. This is straightforward.
@@ -279,7 +279,7 @@ Next, we show the internal working of \emph{countdown worker} at the $\text{i}^\
 		\cdw{f}{a}\left(f^{1+i}(n), b-i-1\right) = 1 + \cdw{f}{a}\left( f^{2+i}(n), b-i-2 \right)
 		\end{equation*}
 		This is in fact $P(0)$ with $(b, n)$ substituted for $\left(b-i-1, f^{(1+i)}(n)\right)$. Since $f^{(1+i)}(n) \ge a+1$ and $b-i-1\ge 1$, the above holds and $P(i+1)$ follows.
-	\end{enumerate}
+	\end{itemize}
 \end{proof}
 Now it is time to prove the correctness of \emph{countdown}, \emph{i.e.} that our computational Definition~\ref{defn: countdown} computes the value originally specified in Definition~\ref{defn: informal-countdown}.
 \begin{thm} \label{thm: cdt-repeat}

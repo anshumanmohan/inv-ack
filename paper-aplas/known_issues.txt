@@ -10,7 +10,7 @@
 
 4. See Anshuman's inline notes throughout. They mark rough language that was a little too delicate for him to massage away.
 
-5. Test Makefile, slash remove it entirely and just give them a text-based order of compiling the files.
+5. Test Makefile on different machines, slash remove it entirely and just give them a text-based order of compiling the files.
 
 6. Acknowledge Charguéraud and Pottier's repeater when introducing repeater
 
@@ -46,17 +46,15 @@ will change the widow situation anyway.
 the function, i.e. the repeater of $f$, and the variable $n$ than $f^{(n)}(a)$, 
 while making clear that $a$ is a parameter of \emph{repeater} itself." from Hierarchy.tex, please add back if you want.
 
-18. Base case and inductive case is somtimes listed with numbers and sometimes with dashes. Must make them consistent. Prefer dashes personally.
-
-19. The two argument inv-ack needs a new notation, the subscript of 2 is too confusing. I have proposed something and piped it through.
+19. The two-argument inv-ack needs a new notation, the subscript of 2 is too confusing. I have proposed something and piped it through.
 
 20. It is confusing to refer to the 4th and 5th summands of (15), especially as they are typeset a little confusingly. I guess no need to change too urgently because this section needs cutting and reorganisation anyway.
-
-21. Page 17, there is suddenly A(0,0), A(1,1), etc. Do you really meant the two-arg function again? If so, could you please use the new \mathcal{A} to represent it, as shown in Definition 1?
 
 22. When there is a discussion of the time bound of each summand in a list, there isn't enough space to make a list every time. Try to crunch into a paragraph. Also, why is the order often flipped? Consider just saying it in order. I have shown this in Page 21 after "We consider only n >= 4".
 
 23. Add hyperlink to ack_hyperop in repeater.v when discussing kludge.
+
+24. Use "inverse Ackermann" and "Inverse Ackermann" consistently. Right now captial I is used only in overview.tex
 
 
 

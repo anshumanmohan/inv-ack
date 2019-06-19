@@ -281,7 +281,7 @@ Suppose for $i\ge 2$ we already have $\runtime\left(\alpha_i(n)\right) \le C_i\l
 where the last inequality follows from $\alpha_{i+1}(n)\le \log_2n$ and Lemma~\ref{lem: sum-alpha-repeat}.
 
 Picking $C_i = 4^{i-1} - 1$ gives $C_2 > 2$ and $C_{i+1} > 4C_i + 2 \ \forall i$, so \linebreak $\runtime\big(\alpha_i, n\big) \le C_i\log_2n \ \forall i\ge 3$ by induction. 
-By~(\ref{eq: inv-ack-runtime-improved}), for $n > 3 = \Ack(1, 1)$, $\runtime(\alpha, n) = \runtime\big(\alpha_{\alpha(n)}, n\big) = \bigO\big(4^{\alpha(n)}\log_2n\big)$. 
+By~(\ref{eq: inv-ack-runtime-improved}), for $n > 3 = \Ack(1)$, $\runtime(\alpha, n) = \runtime\big(\alpha_{\alpha(n)}, n\big) = \bigO\big(4^{\alpha(n)}\log_2n\big)$. 
 
 This bound can potentially be improved by further tightening the above inequalities. We do not obtain an exact asymptotic runtime as in 
 Theorem~\ref{thm: inv-ack-hier-runtime-improved} because the bound $4^{\alpha(n)}\log_2n$ is larger than the lower bound of $\log_2n$. However, it is still very small and can be bounded by a simple expression like $(\log_2n)^2$.

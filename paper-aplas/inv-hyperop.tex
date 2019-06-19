@@ -203,7 +203,7 @@ We start with the following lemma.
 	 P(k) \quad \triangleq \quad & (\alpha_k(n)\ge k+1) \wedge (b\ge k+1) \implies \null \\ & \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
 	 \end{aligned}
 	 \end{equation*}
-	\begin{enumerate}[leftmargin=*]
+	\begin{itemize}[leftmargin=*]
 		\item \emph{Base case}. $\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\cdt{\big(\alpha_0}{1}\big)\circ \alpha_0, \cdt{\alpha_0}{1}\big(\alpha_0(n)\big), 1, b - 1\big) $ by
 		(\ref{eq: inv-ack-worker-recursion}) with $b\ge 1$ and $\alpha_0(n)\le 1$.
 		Definition~\ref{defn: inv-ack-hier} gives $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$, so $P(0)$ holds.
@@ -216,7 +216,7 @@ We start with the following lemma.
 		Definition~\ref{defn: inv-ack-hier} gives $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this 
 		is~(\ref{eq: inv-ack-worker-recursion}) with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$. Thus $P(k+1)$ holds. 
 		%\vspace*{-\baselineskip}
-	\end{enumerate}
+	\end{itemize}
 	% \vspace{-2.2em}
 \end{proof}
 \hide{\color{red}
@@ -227,7 +227,7 @@ We start with the following lemma.
 	 P(k) \triangleq \forall n, b \ \ & (\alpha_k(n)\ge k+1) \to (b\ge k+1)\\ & \to \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
 	 \end{aligned}
 	 \end{equation*}
-	\begin{enumerate}[leftmargin=*]
+		\begin{itemize}[leftmargin=*]
 		\item \emph{Base case}. $ \W\alpha\big(\alpha_0, \alpha_0(n), 0, b\big) = \W\alpha\big(\cdt{\big(\alpha_0}{1}\big)\circ \alpha_0, \cdt{\alpha_0}{1}\big(\alpha_0(n)\big), 1, b - 1\big) $ by
 		\eqref{eq: inv-ack-worker-recursion} with $b\ge 1$ and $\alpha_0(n)\le 1$. Since $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$ per Definition~\ref{defn: inv-ack-hier}, $P(0)$ holds.
 		
@@ -237,7 +237,7 @@ We start with the following lemma.
 		= \W\alpha\big(\alpha_{k+2}, \alpha_{k+2}(n), k+2, b-k-2\big)
 		\end{equation*}
 		Per Definition~\ref{defn: inv-ack-hier}, $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this is just \eqref{eq: inv-ack-worker-recursion} with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$, so $P(k+1)$ holds. The proof is complete by induction.\vspace*{-\baselineskip}
-	\end{enumerate}
+	\end{itemize}
 \end{proof}}%end hide
 
 \noindent We are finally ready for a strategy to compute the inverse Ackermann function:
