@@ -64,29 +64,29 @@ along with their relation to the $\Ack_n$ functions and their inverses.
 
 \begin{table}[t]
 \begin{centermath}
-\begin{array}{c|cc|c|cc}
-n & \text{function} & a [n] b & \Ack_n(b) & \text{inverse} & \text{\color{red}a name?} \\
+\begin{array}{c|ccc|ccc}
+n & \text{function} & a [n] b & \Ack_n(b) & \text{upper inverse} & a \angle{n} b & \alpha_n(b)\\
 \hline
-0 & \text{successor} & 1 + b & 1 + b & \text{predecessor} & b - 1 \\
-1 & \text{addition} & a + b & 2 + b & \text{subtraction} & b - a \\
-2 & \text{multiplication} & a \cdot b & 2b + 3 & \text{division} & \frac{b}{a}\\
-3 & \text{exponentiation} & a^b & 2^{b + 3} - 3 & \text{logarithm} & \mathsf{log}_a b \\
+0 & \text{successor} & 1 + b & 1 + b & \text{predecessor} & b - 1 & b - 1 \\
+1 & \text{addition} & a + b & 2 + b & \text{subtraction} & b - a & b - 2 \\
+2 & \text{multiplication} & a \cdot b & 2b + 3 & \text{division} & \left\lceil \frac{b}{a} \right\rceil & \left\lceil \frac{b-3}{2} \right\rceil \\
+3 & \text{exponentiation} & a^b & 2^{b + 3} - 3 & \text{logarithm} & \left\lceil \mathsf{log}_a ~ b \right\rceil & \left\lceil \mathsf{log}_2 ~ (b + 3)\right\rceil - 3 \\
 [2pt]
-4 & \text{tetration} & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \begin{array}{@{}c@{}}\text{iterated}\\[-3pt]\text{logarithm}\end{array} & \mathsf{log}^*_a b
+4 & \text{tetration} & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \begin{array}{@{}c@{}}\text{iterated}\\[-3pt]\text{logarithm}\end{array} & \left\lceil \mathsf{log}^*_a ~ b \right\rceil & \left\lceil \mathsf{log}^*_2 ~ (b + 3)\right\rceil - 3
 \end{array}
 \end{centermath}
-\caption{Hyperoperations, Ackermann functions and inverses.}
+\caption{Hyperoperations, the family of Ackermann functions, and inverse hyperoperations.}
 \label{table: hyperop-ack-inv}
 \end{table}
 
-The kludge has three parts. First, the Ackermann hierarchy is related
-to the hyperoperation hierarchy with the value of $a$ fixed as $2$, 
-\emph{i.e.} $2[n]b$;
-second, \linebreak for $n>0$, $\Ack_n$ repeats the previous hyperoperation $2[n-1]b$
-%{\color{magenta}(\textbf{not} the previous $\Ack_{n-1}$!)} 
+{\color{red} The kludge has three parts. First, the Ackermann hierarchy is related
+to the hyperoperation hierarchy with $a$ set to $2$, ie $2[n]b$;
+second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation $2[n-1]b$
+%{\color{magenta}(\textbf{not} the previous $\Ack_{n-1}$!)}
 three extra times;
-lastly,~$\Ack_n$ subtracts three\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not break this pattern: $2 + (b + 3) - 3 = 2 + b$, and $2 \cdot (b + 3) - 3 = 2b + 3$.}.
+lastly, $\Ack_n$ subtracts three\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not break this pattern: $2 + (b + 3) - 3 = 2 + b$, and $2 \cdot (b + 3) - 3 = 2b + 3$.}.
 It is worth studying and inverting the hyperoperations before handling the Ackermann function.
+}
 
 %Our initial goal of inverting the Ackermann function can thus be broken
 %into three parts: first, inverting each individual member of the hyperoperation hierarchy; second, using these individual inverses to invert the diagonal hyperoperation {\color{red}$a [n] n$}; and lastly adjusting for the kludge.

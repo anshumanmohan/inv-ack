@@ -39,7 +39,8 @@
 
 15. Theorem 19: Instead of "a simple induction", say "induction on <blah>". When there is time, do this in all lemmas and theorems.
 
-16. Widow on Page 4 that causes a bad code-based widow on Page 5. I am not fixing because Aquinas needs to add in the new table and the edited text that comes just after the table.
+16. Widow on Page 4 that causes a bad code-based widow on Page 5. I am not fixing because Aquinas is going to edit the text that comes just after the table, and that
+will change the widow situation anyway. 
 
 17. I have cut "The notation $\rf{f}{a}(b)$ does much better at separating 
 the function, i.e. the repeater of $f$, and the variable $n$ than $f^{(n)}(a)$, 
