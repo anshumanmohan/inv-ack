@@ -241,9 +241,10 @@ Qed.
 (* Demonstrating Linear Runtime *)
 Time Compute inv_ack_linear 10000.
 Time Compute inv_ack_linear 100000.
+(*
 Time Compute inv_ack_linear 1000000.
 Time Compute inv_ack_linear 10000000.
-
+*)
 (* Our code can be extracted to OCaml by running the two lines below: *)
 (* 
 Require Extraction. 

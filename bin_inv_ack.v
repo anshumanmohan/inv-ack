@@ -30,23 +30,43 @@ Qed.
 (* Definition *)
 Fixpoint bin_alpha (m : nat) (x : N) : N :=
   match m with
-  | 0%nat => x - 1
-  | 1%nat => x - 2
-  | 2%nat => N.div2 (x - 2)
+  | 0%nat => x - 1          | 1%nat => x - 2
+  | 2%nat => N.div2 (x - 2) | 3%nat => N.log2 (x + 2) - 2
   | S m'  => bin_countdown_to (bin_alpha m') 1 (bin_alpha m' x)
   end.
+
+(* Crucial Lemma to prove the link from level 2 to level 3 *)
+Lemma bin_alpha_2_bin_contract : bin_contract_strict_above 1 (bin_alpha 2).
+Proof.
+  split; intro n; simpl; rewrite N.div2_div;
+  [apply N.div_le_upper_bound|intro; apply N.div_le_mono]; lia.
+Qed.
 
 (* Recursion *)
 Theorem bin_alpha_recursion : forall m, (2 <= m)%nat ->
     bin_alpha (S m) = compose (bin_countdown_to (bin_alpha m) 1) (bin_alpha m).
-Proof. destruct m as [|[|m]]; [omega|omega|trivial]. Qed.
+Proof.
+  destruct m as [|[|[|m]]]; trivial; [omega|omega|intro]. clear H.
+  apply functional_extensionality; intro n. unfold compose.
+  simpl. fold (bin_alpha 2). rewrite N.div2_div.
+  replace ((n-2) / 2) with ((n+2) / 2 - 2).
+  2: { Search (_ / _ - _).
+  destruct n as [|n]; trivial.
+  induction n; trivial;
+  [remember (N.div2 (N.pos n~1 - 2)) as m|
+     remember (N.div2 (N.pos n~0 - 2)) as m];
+  destruct (bin_countdown_recursion (bin_alpha 2) 1 m
+              bin_alpha_2_bin_contract) as [Hf0 Hf1]; subst m.
+  
+Qed.
 
 
 (* ******* CORRECTNESS OF INVERSE ACKERMANN HIERARCHY ************** *)
 
 (* Countdown composed with self preserves binary contractiveness *)
 Theorem countdown_bin_contract : forall f a b,
-    bin_contract_strict_above a f -> bin_contract_strict_above b (compose (bin_countdown_to f a) f).
+    bin_contract_strict_above a f
+    -> bin_contract_strict_above b (compose (bin_countdown_to f a) f).
 Proof.
   intros f a b Haf0. assert (H:=Haf0). destruct H as [Hf Haf].
   split; intro n; [ |intro Hbn]; unfold compose;
