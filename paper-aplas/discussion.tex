@@ -1,4 +1,4 @@
-\newcommand{\ackt}{\ensuremath{\underline{\alpha}}}
+\newcommand{\ackt}{\ensuremath{\hat{\alpha}}}
 
 \subsection{A performance improvement with binary numbers}
 \hide{
@@ -330,7 +330,34 @@ it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 		Here $b\ge l$ due to the fact that $\Ack(b, k)\ge b$, so $\alpha_b(b)\le k$. This completes the proof.
 \end{proof}}%end hide
 
-\hide{
-	\subsection{Lower inverse of hyperoperations and Ackermann function}
-	{\color{red}TODO. I'm not sure if I have time to write about this one.}
-}
+\subsection{The value of a linear-time solution to the hierarchy}
+
+Our functions' linear runtime can be understood in two distinct but
+complementary ways.  A runtime less than the bitlength is impossible 
+without prior knowledge of the size of the input.  Accordingly, in
+an information-theory or pure-mathematical sense, our definitions are
+optimal up to constant factors.  And of course in practice, linear-time 
+solutions are highly useable in real computations.
+
+Sublinear solutions are possible with \emph{a priori} knowledge about
+the function and bounds on the inputs one will receive.
+An extreme case is $\alpha(n)$, which has value 4 for all practical 
+inputs greater than 61: accordingly, 
+this function can be inverted in $O(1)$ in practice.  That said, these 
+kinds of solutions require external knowledge of the problems and
+lookup tables within the algorithm to store the associated precomputed 
+values, and so fall more into the realm of engineering than mathematics.
+
+The Coq standard library already includes a linear-time definition 
+of division on \li{nat} and \li{N}; and base-two discrete logarithm 
+on \li{nat}.  The Mathematical Components library~\cite{MathComp} 
+provides a logarithm on \li{nat}.
+
+
+
+
+Other standard libaries
+provide some additional ad-hoc examples, such as logarithms in prime
+bases
+
+

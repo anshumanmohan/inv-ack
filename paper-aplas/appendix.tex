@@ -14,3 +14,113 @@ the issue of disambiguating \emph{e.g.} the numbers \li{011} and
 \li{00011}, which represent the same number but pose
 a minor technical challenge. 
 To represent $0$, the type \li{N} simply provides a separate constructor \li{0}. 
+
+\section{Proofs of time bounds lemmas on \li{nat}}
+\label{apx:time_analysis}
+
+\begin{proof}[Lemma \ref{lem: cdt-runtime-general}]
+	Since $f\in \contract_{a}$, $\cdt{f}{a}\ $ is the minimum $k$ such that $f^{(k)}(n) \le a$. The execution of $\cdw{f}{a}\big(n, n\big)$ then takes $k+1$ recursive calls, where the $i^{th}$ call for $0\le i \le k$ takes the arguments $i, a$ and $n_i \triangleq f^{(i)}(n)$ from the previous call (or the initial argument when $i = 0$), and performs the following computations:
+	\begin{enumerate}
+		\item Compute $\li{leb}\left(n_i, a\right)$ for $\Tleb\left(f^{(i)}(n), a\right)$ steps
+		\item If $\li{leb}\left(n_i, a\right) = \li{true}$, return $0$. Else proceed to the next step
+		\item Compute $n_{i+1} \triangleq f(n_i) = f^{(i+1)}(n)$ for $\runtime_f\left(f^{(i)}(n)\right)$ steps
+		\item Pass $n_{i+1}, i+1, a$ to the next recursive call and wait for it to return $k - i - 1$
+		\item Add $1$ to the result for $\Tsucc(k-i-1)$ steps and return $k - i$
+	\end{enumerate}
+    Summing up the time of each call gives the desired expression for $\runtime_{\cdt{f}{a}}(n)$.
+\end{proof}
+
+\begin{proof}[Lemma \ref{lem: cdt-runtime}]
+	Per Definition~\ref{defn: countdown} of countdown,
+
+$\Tleb\left(f^{(i)}(n), a\right) = a + 1$ if $i < \cdt{f}{a}(n)$ and $f^{(i)}(n) + 1$ otherwise (\S\ref{apx:time_analysis}, Lemma~\ref{lem: sub-runtime}).  Thus,
+the second summand in \eqref{eq: cdt-runtime-struct} is equal to $(a + 1)\cdt{f}{a}(n) + f^{\left(\cdt{f}{a}(n)\right)}(a) + 1$. Since $\Tsucc(i) = 1$ on \li{nat}, the third summand is equal to $\cdt{f}{a}(n)$, completing the desired formula.
+%	Per Definition~\ref{defn: countdown-worker}, the computation makes $\cdt{f}{a}(n)$ recursive calls to $\W\cdt{f}{a}$ before terminating. At the $(i+1)^{\text{th}}$ call, two computations must take place: $n_i - a$, which takes $\Theta(a + 1)$ time, and $f(n_i) = n_{i+1}$, where $n_i \triangleq f^{(i)}(n)$ has been  computed by the $i$th call, and is greater than $a$.  The total time is then
+%	\begin{equation*}
+%	\begin{aligned}
+%	\runtime\big(\cdt{f}{a}\ , n\big)
+%	& = \sum_{i=0}^{\cdt{f}{a}(n) - 1} \left[\runtime\left(f, f^{(i)}(n)\right) + \Theta(a + 1)\right] \\
+%	& = \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime\left(f, f^{(i)}(n)\right) + \Theta\big((a + 1)\cdt{f}{a}(n)\big)
+%	\end{aligned}
+%	\end{equation*}
+\end{proof}
+
+\begin{proof}[Lemma \ref{lem:runtimealpha2}]
+	$\alpha_0 = \lambda m.(m-1)$ so $\alpha_1 = \cdt{\big(\alpha_0\big)}{1}\circ \alpha_0 = \lambda m.(m - 2)$. By Lemma~\ref{lem: inv-ack-hier-runtime},
+	\begin{equation*}
+	\runtime_{\alpha_1}(n) \ge \textstyle \sum_{i=0}^{n-1} \runtime\big(\lambda m.(m-1), n - i\big) + 3(n - 2) + 1 = 4n - 5\text{,}
+	\end{equation*}
+	since $\runtime_{\alpha_0}(k) = 1$. Because $\alpha_2 = \cdt{\big(\alpha_1\big)}{1}\circ \alpha_1 = \lambda m.\left\lceil \frac{m-3}{2} \right\rceil$, again by Lemma~\ref{lem: inv-ack-hier-runtime},
+	\begin{equation*}
+	\runtime_{\alpha_2}(n)
+	\ge \textstyle \sum_{i=0}^{\left\lceil \frac{n-3}{2} \right\rceil} \big(4(n-2i) - 5\big) + 3\left\lceil \frac{n-3}{2} \right\rceil + 1
+	= \Theta\big(n^2\big)
+	\end{equation*}
+\end{proof}
+
+\begin{proof}[Lemma \ref{lem: inv-ack-3-runtime}]
+	It is easy to show that $\alpha_2^{(k)}(n) = \left\lfloor \frac{n+2}{2^k} \right\rfloor - 2$. Thus
+	\begin{equation*}
+	\begin{aligned}
+		\runtime_{\alpha_3}(n)
+		& \textstyle \le \ \sum_{k=0}^{\alpha_{3}(n)}\runtime_{\alpha_2}\left(\left\lfloor \frac{n+2}{2^k} \right\rfloor - 2\right) + 3\alpha_{3}(n) + 2 \\
+		& \textstyle \le \ 2\sum_{k=0}^{\alpha_3(n)}\left(\frac{n+2}{2^k} - 3\right) + 3\alpha_3(n) + 2 \\
+		& \le \ 4(n + 2) - 6(\alpha_3(n) + 1) + 3\alpha_3(n) + 2 \le 4n + 4.
+	\end{aligned}
+\end{equation*}
+%	$\runtime_{\alpha_3}(n) \le $
+%	\begin{equation*}
+%\begin{array}{@{}l@{}}
+%	\sum_{k=0}^{\alpha_{3}(n)}\runtime_{\alpha_2}\left(\left\lceil \frac{n+3}{2^k} \right\rceil - 3\right) + 3\alpha_{3}(n) + 2  \quad
+%	\le \quad 2\sum_{k=0}^{\alpha_3(n)}\frac{n+3}{2^k} - 3\big(\alpha_3(n) + 1\big) + 3\alpha_3(n) + 2 \\
+%	\le 4(n + 3) - 1 \le \quad 4n + 11 \\
+%\end{array}
+%	\end{equation*}
+\end{proof}
+
+\begin{proof}[Lemma \ref{lem:critlem2}]
+	Define $S: \mathbb{R}_{\ge 0}\to \mathbb{R}_{\ge 0}$ where $S(x) \triangleq \sum_{k = 0}^{\log_2^*(x) - 1}\log_2^{(k)}x$. Clearly $S$ is strictly increasing and $\forall x>1, S(x) = n + S(\log_2 x)$. Using the fact $\log_2^*(x)\in \mathbb{N}$, we prove by induction on $k$ the statement $P(k) \triangleq$ $\forall x: \log_2^*(x) = k$, $S(x)\le 2x$.
+	\begin{itemize}[leftmargin=*]
+		\item \emph{Base case.} $P(0)$, $P(1)$ hold trivially and $P(2) = \forall x: 2 < x \le 4$, $x + \log_2x \le 2x$, which is equivalent to $\log_2x \le x$, which holds for all $x > 2$.
+		\item \emph{Inductive case.} Assume $P(k-1)$ where $k\ge 3$. Fix any $x$ such that $\log_2^*(x)=~k$, then $x > 4$. The function $\lambda x.\frac{x}{\log_2x}$ is increasing on $[4, +\infty)$, so $\frac{4}{\log_24} \le \frac{x}{\log_2x}$ or $2\log_2x \le x$. Since $\log_2^*(x) = k$, we have $\log_2^*(\log_2x) = k-1$. By $P(k-1)$, $S(x) = x + S(\log_2x) \le x + 2\log_2x \le 2x$, which completes the proof.
+	\end{itemize}
+\end{proof}
+
+\begin{proof}[Lemma \ref{lem: sum-alpha-repeat}]
+%	Let the LHS be $S_i(n)$. Firstly, consider $i = 3$. Note that for $n\le 13$, $S_3(n) = 0$ and for $n\ge 14$, i.e. $\alpha_3(n)\ge 2$, $S_3(n) = \alpha_3(n) + S_3\big(\alpha_3(n)\big)$. The result thus holds for $n\le 13$. Suppose it holds for all $m < n$, where $n\ge 14$. Then
+%	\begin{equation*}
+%	S_3(n) \quad \le \quad \alpha_3(n) + 3\big\lceil \log_2(\alpha_3(n)) \big\rceil \quad \le \quad \big\lceil \log_2n \big\rceil + 3\big\lceil \log_2\log_2n \big\rceil
+%	\end{equation*}
+%	It is easy to prove \, $2\big\lceil \log_2\log_2n \big\rceil \le \big\lceil \log_2n \big\rceil$ by induction on $\big\lceil \log_2n \big\rceil$. Thus $S_3(n)~\le~3\big\lceil \log_2n \big\rceil$, as desired. Now for $i \ge 4$,
+  $\forall i\ge 3, \forall n, \alpha_i(n)\le \log_2n$ and $\alpha_{i+1}(n)\le \log_2^*(n)-1$, therefore
+	\begin{equation*}
+%	S_i(n) \ = \
+	\sum_{k=s}^{\alpha_{i+1}(n)} \log_2^{(l)}\alpha_i^{(k)}(n) \ \le \
+%	\sum_{k=1}^{\log_2^*(n)-1} \log_2^{(l)}\alpha_i^{(k)}(n) \ \le \
+	\sum_{k=s}^{\log_2^*(n)-1} \log_2^{(l+k)}(n) \ \le \
+	2\log_2^{(l+s)} n
+	\end{equation*}
+%	Let $P(n) \triangleq 2\big\lceil \log_2\log_2n \big\rceil \le \big\lceil \log_2n \big\rceil$. It suffices to prove $P(n) \ \forall n$. Observe that $P(n)$ holds for $n\ge 4$.
+\end{proof}
+\begin{proof}[of Theorem~\ref{thm: inv-ack-hier-runtime-improved}]
+	We have proved the result for $i = 0, 1, 2$. Let us proceed with induction on $i\ge 3$. The case $i = 3$ has been covered by Lemma~\ref{lem: inv-ack-3-runtime}. Let $M_i \triangleq 2^{i-3}19 - 2i - 13$ for each $i$ and suppose the result holds for $i\ge 3$. We have
+	\begin{equation*}
+	\begin{array}{@{}l@{}}
+	 \runtime_{\alpha_{i+1}}(n) \le \sum_{k=0}^{\alpha_{i+1}(n)} \runtime_{\alpha_i}\big(\alpha_i^{(k)}(n)\big) + 3\alpha_{i+1}(n) + 2 \\[3pt]
+	\le \sum_{k=0}^{\alpha_{i+1}(n)}\big(4\alpha_i^{(k)}(n) + M_i\log_2\alpha_i^{(k)}(n) + 2i \big) + 3\alpha_{i+1}(n) + 2 \\[3pt]
+%	\le 4n + 2(i+1) + (2i + 3)\alpha_{i+1}(n) + 4\sum_{k=1}^{\alpha_{i+1}(n)}\alpha_i^{(k)}(n) + M_i\sum_{k=0}^{\alpha_{i+1}(n)}\log_2\alpha_i^{(k)}(n) \\[3pt]
+  \le 4n + 2(i+1) + (2i + 3)\underbrace{\alpha_{i+1}(n)}_{\le \log_2n} + 4\underbrace{\textstyle \sum_{k=1}^{\alpha_{i+1}(n)}\alpha_i^{(k)}(n)}_{\le 2\log_2n} + M_i\underbrace{\textstyle \sum_{k=0}^{\alpha_{i+1}(n)}\log_2\alpha_i^{(k)}(n)}_{\le 2\log_2n} \\[3pt]
+	\le 4n + 2(i+1) + (2M_i + 2i + 3 + 8)\log_2n
+	= 4n + M_{i+1}\log_2n + 2(i+1)
+%	\le 4n + M_i\left\lceil\log_2n\right\rceil + 5 + (M_i+2)\sum_{k=1}^{\alpha_{i+1}(n)}\alpha_i^{(k)}(n) + 6\alpha_{i+1}(n) \\
+%	\le 2n + M_i\left\lceil\log_2n\right\rceil + 5 +
+%	3(M_i + 2)\left\lceil\log_2n\right\rceil + 6\left\lceil\log_2n\right\rceil ~~
+%	= ~~ 2n + (4M_i + 12)\left\lceil\log_2n\right\rceil + 5 \\
+%	= 2n + M_{i+1}\left\lceil\log_2n\right\rceil + 5\text{, since $4M_i + 12 = 4^{i+2} - 16 + 12 = M_{i+1}$}.
+	\end{array}
+	\end{equation*}
+\end{proof}
+
+\begin{col}
+	$\runtime(\alpha, n) = \Omega\big(n^2\big)$ per Definition~\ref{defn: inv-ack-worker}.
+\end{col}

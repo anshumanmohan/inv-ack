@@ -5,7 +5,7 @@ do not come as naturally.
 \subsection{Upper Inverses, Expansions, and Repeatability}
 %; indeed, simply defining an inverse can be a little subtle.
 \begin{defn} \label{defn: inverse}
-The \emph{upper inverse} of $F$, written $F^{-1}_{+}$, 
+The \emph{upper inverse} of $F$, written $F^{-1}$, 
 % {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$} 
 is $\min\{m : F(m)\ge n\}$.\end{defn}
 Notice that this is well-defined as long as $F$ is unbounded, \emph{i.e.} $\forall b.~\exists a.~ b \leq F(a)$.  However, as a notion of ``inverse,'' it really only makes sense if $F$ is strictly
@@ -30,12 +30,12 @@ Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower
 Fix $n$. The sentence $\forall m.~ f(n)\le m \iff n\le F(m)$ implies: (1) $f(n)$ is a lower bound to $\{m: n \le F(m)\}$ and (2) $f(n)$ is itself in the set, since plugging in $m \triangleq f(n)$ yields $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we know $\forall m.~n\le F(m)\Rightarrow f(n)\le m$. Now, $\forall m \ge f(n)$.~$F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus completing the proof.
 \end{proof}
 \begin{col}
-If $F$ is strictly increasing, then $F^{-1}_{+} \circ F$ is
+If $F$ is strictly increasing, then $F^{-1} \circ F$ is
 the identity function.
 \end{col}
 \begin{proof}
 By ($\Leftarrow$) of Theorem~\ref{thm: upp-inverse-rel}, $F(n) \le F(n)$ implies 
-$(F^{-1}_{+} \circ F)(n) \le n$.  By ($\Rightarrow$) of the same theorem, $(F^{-1}_{+} \circ F)(n) \le (F^{-1}_{+} \circ F)(n)$ implies $F(n) \le F \big((F^{-1}_{+} \circ F)(n)\big)$. $F$ is strictly increasing, so $n \le (F^{-1}_{+} \circ F)(n)$.
+$(F^{-1} \circ F)(n) \le n$.  By ($\Rightarrow$) of the same theorem, $(F^{-1} \circ F)(n) \le (F^{-1} \circ F)(n)$ implies $F(n) \le F \big((F^{-1} \circ F)(n)\big)$. $F$ is strictly increasing, so $n \le (F^{-1} \circ F)(n)$.
 \end{proof}
 
 Our setup for inverse requires increasing functions, and our definitions for 
@@ -60,7 +60,7 @@ It is straightforward to see that $\forall s,t.~ s \le t \Rightarrow \repeatable
 \subsection{Contractions and the countdown operation}
 
 Suppose $F \in \repeatable_a$ for some $a \ge 1$, and 
-let $f \triangleq F^{-1}_{+}$, \emph{i.e.} the inverse of $F$.
+let $f \triangleq F^{-1}$, \emph{i.e.} the inverse of $F$.
 Our goal is to use $f$ to compute an inverse to $\rf{F}{a}$.  
 From the preceeding discussion we know that this inverse must exist, 
 since $F \in \repeatable_a$ implies $\rf{F}{a} \in \repeatable_0$.  
@@ -74,9 +74,9 @@ fix $n$ and observe that $\forall m.~f^{(m)}(n)\le a \iff m \ge \cdt{f}{a}(n)$ s
 \end{equation}
 Moreover, setting $m = \cdt{f}{a}(n)$, we realize that 
 $f^{(\cdt{f}{a}(n))}(n) \le a$.  
-\textbf{Together these imply that $\cdt{f}{a}(n)$ is the minimum number of 
+Together these imply that $\cdt{f}{a}(n)$ is the minimum number of 
 times~$f$ needs to be compositionally applied to $n$ before equalling or 
-passing $a$.} 
+passing $a$.
 In other words, count the length of the chain $\{n, f(n), f^{(2)}(n), \ldots\}$ that 
 terminates as soon as we reach/pass $a$.  For this process to work, 
 we need each chain link

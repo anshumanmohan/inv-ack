@@ -12,10 +12,10 @@ The Ackermann-P\'eter function~\cite{peter} (hereafter just
 written $\mathcal{A} : \mathbb{N}^2 \to \mathbb{N}$ and defined as follows:
 \begin{equation}
 \label{eq:ackermann}
-\mathcal{A}(n, m) \triangleq \begin{cases}
+A(n, m) \triangleq \begin{cases}
 m + 1 & \text{ when } n = 0 \\
-\mathcal{A}(n-1, 1) & \text{ when } n > 0, m = 0 \\
-\mathcal{A}\big(n-1, \mathcal{A}(n, m-1)\big) & \text{ otherwise}
+A(n-1, 1) & \text{ when } n > 0, m = 0 \\
+A\big(n-1, A(n, m-1)\big) & \text{ otherwise}
 \end{cases}
 %A(m, n) \triangleq \begin{cases}
 %n + 1 & \text{ if } m = 0 \\
@@ -25,7 +25,7 @@ m + 1 & \text{ when } n = 0 \\
 \end{equation}
 \end{defn}
 
-The one-variable \emph{diagonal} Ackermann function $\Ack : \mathbb{N} \to \mathbb{N}$ is defined as $\Ack(n)~\triangleq~\mathcal{A}(n, n)$.	
+The one-variable \emph{diagonal} Ackermann function $\Ack : \mathbb{N} \to \mathbb{N}$ is defined as $\Ack(n)~\triangleq~A(n, n)$.	
 The diagonal Ackermann function grows explosively: starting from $\Ack(0)$, the first four terms are $1, 3, 7, 61$.  The fifth term is $2^{2^{2^{65536}}}-3$, and the sixth dwarfs the fifth.
 %This explosive behavior is problematical when we turn our attention to the canonical definition of
 %the inverse Ackermann function\cite{blah}.
@@ -159,7 +159,7 @@ a cleverer approach to define division, but we are not aware of any explanation
 of the technique used, and we also find it hard to extend that technique 
 to other functions of the natural sequence of functions.  One indication
 of this difficulty is that the Coq standard library does not include a $\mathsf{log}_b$ function\footnote{Coq's standard library \textbf{does} include a $\mathsf{log}_2$ function, but
-change-of-base does not work on \li{nat}:
+change-of-base does not work on discrete logarithms:
 $\left \lfloor \frac{\lfloor \mathsf{log}_2 100 \rfloor}{\lfloor \mathsf{log}_2 7 \rfloor} \right \rfloor = 3 \; \not= \; 2 = \lfloor \mathsf{log}_7 100 \rfloor$.  
 %{\color{blue} efficiency of standard library version?} {\color{red} SSReflect?}
 }, to say nothing of a $\mathsf{log}^{*}_b$ or the inverse Ackermann.
@@ -169,8 +169,8 @@ $\left \lfloor \frac{\lfloor \mathsf{log}_2 100 \rfloor}{\lfloor \mathsf{log}_2 
 %\marginpar{Let's carefully double-check this section once the rest of the paper is close to final form.} 
 We provide a complete solution to inverting each individual function in the hyperoperation/Ackermann hierarchy,
 as well as the diagonal Ackermann function itself.  All our functions are structurally recursive, so
-Coq is immediately convinced of their termination.  Moreover, all our functions run in linear
-time.  Finally, our techniques are extremely succinct: the code to invert the diagonal Ackermann function fits in a single page of this paper, and our entire Coq development is about 1,000 lines. The rest of this paper is organized as follows.
+Coq is immediately convinced of their termination.  Moreover, all our functions run in linear time: practical utility follows from theoretical grace.
+Finally, our techniques are extremely succinct: the code to invert the diagonal Ackermann function fits in a single page of this paper, and our entire Coq development is about 1,000 lines. The rest of this paper is organized as follows.
 %, so they are as asymptotically efficient as they can be, and are thus suitable for extraction\footnote{A criterion more useful in practice for $\mathsf{log}_b$ and perhaps $\mathsf{log}^*_b$ than the other members of the hierarchy.}
 %\begin{itemize}
 %\item[\S\ref{blah}] We explain our core techniques of \emph{repeaters} and \emph{countdowns}. {\color{red}that allow us to define each level of the Ackermann hierarchy---and their upper inverses---in a straightforward and uniform manner.} We show how countdowns, in particular, can be written
@@ -183,8 +183,8 @@ time.  Finally, our techniques are extremely succinct: the code to invert the di
 \begin{itemize}
 	\item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, present Coq encodings for hyperoperations and the Ackermann function, \note{and discuss \emph{repeater}}.
 	\item[\S\ref{sec: countdown}] We discuss upper inverses and show how to invert repeater with \emph{countdown}.
-	\item[\S\ref{sec: inv-hyperop}] We use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base. We then sketch a method to find the Inverse Ackermann function.
-	\item[\S\ref{sec: inv-ack}] We give a computation for the Inverse Ackermann function in $\bigO(n)$ time.
+	\item[\S\ref{sec: inv-hyperop}] We use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base. We then sketch a method to find the inverse Ackermann function.
+	\item[\S\ref{sec: inv-ack}] We give a computation for the inverse Ackermann function in $\bigO(n)$ time.
 	\item[\S\ref{sec: discussion}] We discuss the two-argument inverse Ackermann function, \note{other derivative functions such as foo bar doo dah,} and survey related work.
 \end{itemize}
 All our techniques are mechanized in Coq and our code is available 
