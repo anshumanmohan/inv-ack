@@ -193,7 +193,7 @@ The following lemma is the version of Lemma~\ref{lem: cdt-runtime} for the binar
 %\end{lstlisting}
 %Let $n\ge 2$. The computation of \li{N.size(n)} takes time equal to itself, so the above definition gives $\runtime(\alpha_3, n) \le 2\log_2n$. Fix an $i\ge 3$ and suppose $\runtime(\alpha_i, n) \le C_i\log_2n$. By \Cref{lem: inv-ack-hier-runtime},
 \subsubsection*{An inverse Ackermann computation in $\Theta\left(\log_2 n\right)$ time}
-Our new Coq definition is able to compute the correct countdown value, but only for strict binary contractions. Fortunately, starting from $n = 2$, the inverse hyperoperations $a\angle{n}b$ when $a\ge 2$ and the inverse Ackermann hierarchy $\alpha_n$ are all strict binary contractions. We can construct these hierarchies by hardcoding their first four levels and use countdown to recursively build higher levels. We focus on the inverse Ackermann hierarchy in this paper, but the hyperoperations' definition can also be found in our Github repository, along with their proofs of correctness. Furthermore, for the purpose of optimizing the computation time, we also hardcode the fourth level in the below Coq Fixpoint.
+Our new Coq definition is able to compute the correct countdown value, but only for strict binary contractions. Fortunately, starting from $n = 2$, the inverse hyperoperations $a\angle{n}b$ when $a\ge 2$ and the inverse Ackermann hierarchy $\alpha_n$ are all strict binary contractions. We can construct these hierarchies by hardcoding their first four levels and use countdown to recursively build higher levels. We focus on the inverse Ackermann hierarchy in this paper, but the hyperoperations' definition can also be found in our codebase, along with their proofs of correctness. Furthermore, for the purpose of optimizing the computation time, we also hardcode the fourth level in the below Coq Fixpoint.
 \begin{lstlisting}
 Fixpoint bin_alpha (m : nat) (x : N) : N :=
   match m with
@@ -254,7 +254,7 @@ Definition bin_inv_ack (n : N) : N :=
   else let f := (bin_alpha 3) in
        bin_inv_ack_worker f (f n) 3 (nat_size n).
 \end{lstlisting}
-Note that for all $n > 7$, $n < \Ack\big(\lfloor \log_2n \rfloor + 1\big)$ $= \Ack\big(\li{nat_size}(n)\big)$, thus a budget of $\li{nat_size}(n)$ is sufficient for the worker to reach the correct inverse Ackermann value before terminating. The full proof of correctness for \li{bin_inv_ack} can be found in our Github repository.
+Note that for all $n > 7$, $n < \Ack\big(\lfloor \log_2n \rfloor + 1\big)$ $= \Ack\big(\li{nat_size}(n)\big)$, thus a budget of $\li{nat_size}(n)$ is sufficient for the worker to reach the correct inverse Ackermann value before terminating. The full proof of correctness for \li{bin_inv_ack} can be found in our codebase.
 
 The time complexity of \li{bin_inv_ack} can be expressed as a sum of components similar to of~(\ref{eq: inv-ack-runtime-improved}).
 \begin{equation*}

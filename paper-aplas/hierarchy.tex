@@ -58,8 +58,7 @@ constant but the second is shrinking. The elegant solution uses double recursion
               match b with
               | 0    => hyperop_init a n'
               | S b' => hyperop_original a n' (hyperop' b')
-              end
-            in hyperop' b
+              end in hyperop' b
   end.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L107-L116}{Fixpoint ackermann\_original}` (m n : nat) : nat :=
@@ -69,8 +68,7 @@ constant but the second is shrinking. The elegant solution uses double recursion
               match n with
               | 0    => ackermann_original m' 1
               | S n' => ackermann_original m' (ackermann' n')
-              end
-            in ackermann' n
+              end in ackermann' n 
   end.
 \end{lstlisting}
 Coq is satisfied since both recursive calls are on structurally smaller arguments.
@@ -88,10 +86,7 @@ to the former.  We call this idea a \emph{repeater}:
 $\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L21-L25}{Fixpoint repeater\_from}` (f : nat -> nat) (a n : nat) : nat :=
-  match n with
-  | 0    => a
-  | S n' => f (repeater_from f a n')
-  end.
+  match n with 0 => a | S n' => f (repeater_from f a n') end.
 \end{lstlisting}
 \end{defn}
 This allows simple and function-oriented definitions of hyperoperations and the 
