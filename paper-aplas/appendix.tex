@@ -47,6 +47,7 @@ the issue of disambiguating \emph{e.g.} the numbers \li{011} and
 a minor technical challenge. 
 To represent $0$, the type \li{N} simply provides a separate constructor \li{0}. 
 
+\hide{
 \begin{lstlisting}
 Definition exp (x y : N) : N := match y with
 | 0 => 1 | Npos y'
@@ -75,6 +76,7 @@ This a massive improvement over the bound $\Theta\left(a^b\right)$ of exponentia
 
 Apart from speeding up addition and multiplication, the binary system does the same for their successor, namely exponentiation. We achieve this by \emph{repeated squaring},
 which by standard techniques allows us to calculate $a^b$ in $\bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$.
+}%end hide
 
 \section{Proofs of Time Bound Lemmas on \li{nat}}
 \label{apx:time_analysis}
@@ -185,3 +187,83 @@ the second summand in \eqref{eq: cdt-runtime-struct} is equal to $(a + 1)\cdt{f}
 \begin{col}
 	$\runtime(\alpha, n) = \Omega\big(n^2\big)$ per Definition~\ref{defn: inv-ack-worker}.
 \end{col}
+
+\section{Proofs of Time Bound Lemmas on \li{N}}
+\label{apx:time_analysis_bin}
+
+We start by inspecting the execution time of \li{leb} and \li{succ} for the binary encoding system. While \li{leb} is trivial, \li{succ} requires more care as it is worst-case logarithmic time but amortized constant time.
+\begin{lem} \label{lem: leb-runtime-bin}
+	In the binary encoding system, $\runtime_{\li{leb}}(n, a) = \lfloor \log_{2}\min\{a, n\} \rfloor + 1$.
+\end{lem}
+\begin{lem} \label{lem: succ-runtime-bin}
+	$\forall n\ge 1.~S(n) = \displaystyle \sum_{i=0}^{n-1}\Tsucc(i) \le 2n + \log_2n$.
+\end{lem}
+\begin{proof}
+	In the binary encoding system, $\Tsucc(u)$ is the number of consecutive least significant \li{1} bits of $u$.
+	If $n = 1$, $\Tsucc(0) = 1$, our goal is $1\le 2$, which is trivial. For $n > 1$, observe that for all $k$, $\Tsucc(k) = \Tsucc\left(\frac{k-1}{2}\right) + 1$ if $k$ is odd and $1$ if $k$ is even. Thus for all $n$, $S(2n+1) = S(2n) + 1$ and
+	\begin{equation*}
+	\begin{aligned}
+	S(2n) & = \ \sum_{i=0}^{n}\Tsucc(2i) + \sum_{i=0}^{n-1}\Tsucc(2i+1)
+	= \ \sum_{i=0}^{n}1 + \sum_{i=0}^{n-1}\big(\Tsucc(i) + 1\big) \\
+	& = n+1 + S(n) + n = S(n) + 2n + 1
+	\end{aligned}
+	\end{equation*}
+	From the above, it is easy to complete the proof via induction on $n$.
+\end{proof}
+
+\begin{proof}[\emph{of Lemma~\ref{lem: cdt-runtime-bin}}]
+	On strict binary contractions, the binary version of countdown does exactly the same computations as the original one on \li{nat}, with the added step of computing the budget of \li{nat_size (n-a)}, thus its execution time structure is almost the same. The only difference is the running time of each component in the sum.
+	\begin{equation} \label{eq: cdt-bin-runtime-struct}
+	\runtime_{\cdt{f}{a}}(n) =
+	\hspace{5pt}
+	\begin{aligned} 
+	& \textstyle \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
+	&\hspace{-4pt}+& \textstyle ~ \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right) \\
+	& \textstyle +~ \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i)
+	&\hspace{-4pt}+& ~ \runtime_{\li{sub}}(n, a) \ + \ \runtime_{\li{nat_size}}(n - a)
+	\end{aligned},
+	\end{equation}
+	By Lemma~\ref{lem: leb-runtime-bin}, $\forall i, \Tleb\left(f^{(i)}(n), a\right) \le \log_2a + 1$, thus the second summand in \eqref{eq: cdt-bin-runtime-struct} is no more than $(\log_2a + 1)\big(\cdt{f}{a}(n) + 1\big)$. By Lemma~\ref{lem: succ-runtime-bin}, the third summand is no more than $2\cdt{f}{a}(n) + \log_2\cdt{f}{a}(n)$. Lastly, the last two summands are each no more than $\log_2n + 1$. Thus
+	 \begin{equation*}
+	 \begin{aligned}
+	 & \runtime_{\cdt{f}{a}(n)}(n) \ \le \
+	 \left(\begin{aligned}
+	 & \textstyle \sum_{i=0}^{\cdt{f}{a}(n) - 1} 
+	 \runtime_f\big(f^{(i)}(n)\big)
+	 \ + \ (\log_2a + 1)\big(f^{(i)}(n) + 1\big) \\
+	 & \ + \ 2\cdt{f}{a}(n) \ + \ \log_2\cdt{f}{a}(n)
+	 \ + \ 2\big(\!\log_2n + 1\big)
+	 \end{aligned}\right)\\
+	 & \le \ \textstyle \sum_{i=0}^{\cdt{f}{a}(n) - 1}
+	 \runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \ + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
+	 \end{aligned}
+	 \end{equation*}
+\end{proof}
+
+\begin{proof}[\emph{of Theorem~\ref{thm: inv_ack_runtime_bin}}]
+	Firstly, we have:
+	\begin{itemize}
+		\item Clearly $\runtime_{\alpha_i}(n)\le \log_2n + 1$ for $i = 0, 1$.
+		\item Computing $\alpha_2(n)$ consists of 2 steps: subtracting by 2 and dividing by 2 (shifting right by 1 bit), both of which takes no more than time $\log_2n + 1$ time, thus $\runtime_{\alpha_2}(n)\le 2\log_2n$.
+		\item Computing $\alpha_3(n)$ consists of 3 steps: adding 2, then take base 2 logarithm and subtract 2 from the result, with the first two taking no longer than time $\log_2n + 1$ each and the last taking time at most $\log_2\log_2(n+2) + 1$ $\le \log_2\log_2 n + 2$. Thus $\runtime_{\alpha_3}(n)\le 2\log_2n + \log_2\log_2n + 3$.
+	\end{itemize}
+  Let $M_i = 3\cdot 2^i - 3i - 13$, then $\runtime_{\alpha_i}(n)\le 2\log_2n + M_i\log_2^{(2)}n + 3i$ for $i = 0, 1, 2, 3$.
+	Suppose the same inequality holds for $i\ge 3$, by Lemmas~\ref{lem: compose-runtime} and \ref{lem: cdt-runtime-bin}, note that Lemma~\ref{lem: compose-runtime} works for all encoding systems, we have
+	\begin{equation*}
+	\begin{aligned}
+	& \runtime_{\alpha_{i+1}}(n) \le
+	\sum_{k=0}^{\alpha_{i+1}(n)} \hspace{-5pt} \runtime_{\alpha_i}\big(\alpha_i^{(k)}(n)\big)
+	\ + \ 3\hspace{-4pt}\underbrace{\alpha_{i+1}(n)}_{\le \log_2\log_2n}
+	+ \ 2\underbrace{\log_2\alpha_i(n)}_{\le \log_2\log_2n}
+	+ \ \underbrace{\log_2\alpha_{i+1}(n)}_{\le \log_2\log_2n} + \ 3 \\
+	& \le 2\log_2n
+	+ 2\underbrace{\hspace{-5pt}\sum_{k=1}^{\alpha_{i+1}(n)}\hspace{-5pt} \log_2\alpha_i^{(k)}(n)}_{\le 2\log_2\log_2n}
+	+ M_i\underbrace{\hspace{-5pt}\sum_{k=0}^{\alpha_{i+1}(n)}\hspace{-5pt} \log_2^{(2)}\alpha_i^{(k)}(n)}_{\le 2\log_2\log_2n}
+	+ 3i\big(\hspace{-5.5pt}\underbrace{\alpha_{i+1}(n)}_{\le \log_2\log_2n}\hspace{-4pt} + 1\big) + 6\log_2^{(2)}n + 3 \\
+	& \le 2\log_2n + (2M_i + 3i + 10)\log_2^{(2)}n + 3(i + 1)
+	= 2\log_2 + M_{i+1}\log_2^{(2)}n + 3(i + 1)
+	\end{aligned}
+	\end{equation*}
+	where $\forall i\ge 3, \alpha_i(n)\le \log_2n$ and $\alpha_{i+1}(n)\le \log_2^{(2)}n$, while the $2\log_2^{(2)}n$ upper bounds for the sums come from Lemma~\ref{lem: sum-alpha-repeat}.
+	By induction on $i$, proof is complete.
+\end{proof}

@@ -12,6 +12,8 @@ Here we show that this advantage carries forward to the computation of
 hyperoperations, Ackermann functions, and their inverses. 
 We put a further explanation of the Coq-supported binary type \li{N} in 
 Appendix~\ref{apx:bin_in_coq}.
+As before, we present an intuitive sketch here and put full proofs in 
+Appendix~\ref{apx:time_analysis_bin}.
 
 \subsection{Countdown and contractions with binary numbers}
 
@@ -39,13 +41,22 @@ Unfortunately, a linear-sized budget is necessary to compute countdowns
 of functions like $\lambda n.(n-2)$, which is used by both the inverse 
 hyperoperation and inverse Ackermann hierarchies.
 
-The key is to ignore these functions entirely and focus on functions that can bring their argument to below any threshold with repeated applications in logarithmic time, which allows a logarithm-sized budget for countdown worker. The following concept aims to describe a type of \emph{fast-contracting} functions.
+The key is to ignore these functions entirely and focus on functions that can bring their arguments below a threshold via repeated application in 
+\emph{logarithmic} time. This allows a log-sized budget for 
+\emph{countdown worker}. Simply shrinking by $1$ is no longer good enough;
+we need to halve the argument on every application:
 \begin{defn} \label{defn: bin-contraction}
 	$f\in \contract$ is \emph{binary strict above} $a\in \mathbb{N}$ if $\forall n > a, f(n) \le \lfloor \frac{n + a}{2} \rfloor$.
 \end{defn}
-The key advantage of binary strict contractions is that if a contraction $f$ is binary strict above some $a$, then for all $n > a$ and $k$,
-$f(n) \le \left\lfloor \frac{n - a}{2^k} \right\rfloor + a$.
-Therefore within $\lfloor \log_2 (n - a) \rfloor + 1$ compositional applications of $f$, the result will become equal to or less than $a$, so we can choose this number as the budget for \emph{countdown worker} to successfully reach the correct countdown value before terminating. Our last step is to compute this budget as a \li{nat} given the number $n$ of type \li{N}, \note[consider moving this Coq definition to appendix and give a one-liner explanation here]{which is done with the following function:}
+The key advantage of binary strict contractions is that if a contraction $f$ is binary strict above some $a$, then 
+$\forall n > a, \forall k.~f(n) \le \left\lfloor \frac{n - a}{2^k} \right\rfloor + a$.
+Therefore within $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than $a$, so we can choose this number as the budget for \emph{countdown worker} to successfully reach the countdown value before terminating. 
+Note that this budget is simply the length of the binary representation 
+of \li{n - a}, which we calculate using our function 
+\href{example.com}{\li{nat\_size}}.
+We have the following Coq definition of countdown on \li{N}:
+
+\hide{
 \begin{lstlisting}
 Definition nat_size (n : N) : nat :=
   match n with
@@ -59,32 +70,12 @@ Definition nat_size (n : N) : nat :=
   end.
 \end{lstlisting}
 Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the size of its binary representation, thus equals to $\lfloor \log_{2} m \rfloor + 1$.
-To sum up, we have the following Coq definition of countdown on \li{N}.
+}% end hide
 \begin{lstlisting}
 Definition bin_countdown (f : N -> N) (a n : N) : N := 
   bin_countdown_worker f a n (nat_size (n - a)).
 \end{lstlisting}
 
-\subsection{Time complexity of countdown on strict binary contractions}
-We start by inspecting the execution time of \li{leb} and \li{succ} for the binary encoding system. While \li{leb} is trivial, \li{succ} requires more care as it is worst-case logarithmic time but amortized constant time.
-\begin{lem} \label{lem: leb-runtime-bin}
-	In the binary encoding system, $\runtime_{\li{leb}}(n, a) = \lfloor \log_{2}\min\{a, n\} \rfloor + 1$.
-\end{lem}
-\begin{lem} \label{lem: succ-runtime-bin}
-	For all $n\ge 1$, $S(n) = \displaystyle \sum_{i=0}^{n-1}\Tsucc(i) \le 2n + \log_2n$.
-\end{lem}
-\begin{proof}
-	In the binary encoding system, $\Tsucc(u)$ is the number of consecutive least significant \li{1} bits of $u$.
-	If $n = 1$, $\Tsucc(0) = 1$, our goal is $1\le 2$, which is trivial. For $n > 1$, observe that for all $k$, $\Tsucc(k) = \Tsucc\left(\frac{k-1}{2}\right) + 1$ if $k$ is odd and $1$ if $k$ is even. Thus for all $n$, $S(2n+1) = S(2n) + 1$ and
-	\begin{equation*}
-	\begin{aligned}
-	S(2n) & = \ \sum_{i=0}^{n}\Tsucc(2i) + \sum_{i=0}^{n-1}\Tsucc(2i+1)
-	= \ \sum_{i=0}^{n}1 + \sum_{i=0}^{n-1}\big(\Tsucc(i) + 1\big) \\
-	& = n+1 + S(n) + n = S(n) + 2n + 1
-	\end{aligned}
-	\end{equation*}
-	From the above, it is easy to complete the proof via induction on $n$.
-\end{proof}
 The following lemma is the version of Lemma~\ref{lem: cdt-runtime} for the binary system.
 \begin{lem} \label{lem: cdt-runtime-bin}
 	In the binary encoding system, if $f$ is a binary strict contraction above $a$, we have
@@ -93,34 +84,7 @@ The following lemma is the version of Lemma~\ref{lem: cdt-runtime} for the binar
 	\runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \ + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
 	\end{equation*}
 \end{lem}
-\begin{proof}
-	On strict binary contractions, the binary version of countdown does exactly the same computations as the original one on \li{nat}, with the added step of computing the budget of \li{nat_size (n-a)}, thus its execution time structure is almost the same. The only difference is the running time of each component in the sum.
-	\begin{equation} \label{eq: cdt-bin-runtime-struct}
-	\runtime_{\cdt{f}{a}}(n) =
-	\hspace{5pt}
-	\begin{aligned} 
-	& \textstyle \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
-	&\hspace{-4pt}+& \textstyle ~ \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right) \\
-	& \textstyle +~ \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i)
-	&\hspace{-4pt}+& ~ \runtime_{\li{sub}}(n, a) \ + \ \runtime_{\li{nat_size}}(n - a)
-	\end{aligned},
-	\end{equation}
-	By Lemma~\ref{lem: leb-runtime-bin}, $\forall i, \Tleb\left(f^{(i)}(n), a\right) \le \log_2a + 1$, thus the second summand in \eqref{eq: cdt-bin-runtime-struct} is no more than $(\log_2a + 1)\big(\cdt{f}{a}(n) + 1\big)$. By Lemma~\ref{lem: succ-runtime-bin}, the third summand is no more than $2\cdt{f}{a}(n) + \log_2\cdt{f}{a}(n)$. Lastly, the last two summands are each no more than $\log_2n + 1$. Thus
-	 \begin{equation*}
-	 \begin{aligned}
-	 & \runtime_{\cdt{f}{a}(n)}(n) \ \le \
-	 \left(\begin{aligned}
-	 & \textstyle \sum_{i=0}^{\cdt{f}{a}(n) - 1} 
-	 \runtime_f\big(f^{(i)}(n)\big)
-	 \ + \ (\log_2a + 1)\big(f^{(i)}(n) + 1\big) \\
-	 & \ + \ 2\cdt{f}{a}(n) \ + \ \log_2\cdt{f}{a}(n)
-	 \ + \ 2\big(\!\log_2n + 1\big)
-	 \end{aligned}\right)\\
-	 & \le \ \textstyle \sum_{i=0}^{\cdt{f}{a}(n) - 1}
-	 \runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \ + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
-	 \end{aligned}
-	 \end{equation*}
-\end{proof}
+
 %Substituting $a=1$ into \eqref{eq: cdt-runtime-bin} shows that \Cref{lem: inv-ack-hier-runtime} still holds.
 %Similar to \Cref{sect: hardcode-lvl2}, the use of binaries is not immediately effective since the first level. We delve deeper into the hierarchy by \emph{hardcoding the $3^{\text{th}}$ level} and starts from there. Now
 %\begin{equation*}
@@ -133,7 +97,16 @@ The following lemma is the version of Lemma~\ref{lem: cdt-runtime} for the binar
 %\end{lstlisting}
 %Let $n\ge 2$. The computation of \li{N.size(n)} takes time equal to itself, so the above definition gives $\runtime(\alpha_3, n) \le 2\log_2n$. Fix an $i\ge 3$ and suppose $\runtime(\alpha_i, n) \le C_i\log_2n$. By \Cref{lem: inv-ack-hier-runtime},
 \subsection{An inverse Ackermann computation in $\Theta\left(\log_2 n\right)$ time}
-Our new Coq definition is able to compute the correct countdown value, but only for strict binary contractions. Fortunately, starting from $n = 2$, the inverse hyperoperations $a\angle{n}b$ when $a\ge 2$ and the inverse Ackermann hierarchy $\alpha_n$ are all strict binary contractions. We can construct these hierarchies by hardcoding their first four levels and use countdown to recursively build higher levels. We focus on the inverse Ackermann hierarchy in this paper, but the hyperoperations' definition can also be found in our codebase, along with their proofs of correctness. Furthermore, for the purpose of optimizing the computation time, we also hardcode the fourth level in the below Coq Fixpoint.
+Our new Coq definition computes countdown 
+only for strict binary contractions. Fortunately, starting 
+from $n = 2$, the inverse hyperoperations $a\angle{n}b$ when $a\ge 2$ 
+and the inverse Ackermann hierarchy $\alpha_n$ are all strict binary contractions.
+We can construct these hierarchies by hardcoding their 
+first three levels and recursively building higher levels with \emph{countdown}. 
+We focus on the inverse Ackermann hierarchy in this paper, 
+but the hyperoperations' definitions can also be found in our codebase, 
+along with their proofs of correctness. Furthermore, 
+analagously to the optimization for \li{nat}, we hardcode an additional level.
 \begin{lstlisting}
 Fixpoint bin_alpha (m : nat) (x : N) : N :=
   match m with
@@ -142,51 +115,32 @@ Fixpoint bin_alpha (m : nat) (x : N) : N :=
   | S m'  => countdown (bin_alpha m') 1 (bin_alpha m' x)
   end.
 \end{lstlisting}
-Note that for all $x$, $\li{N.div2}(x - 2) = \left\lfloor \frac{x - 2}{2} \right\rfloor = \left\lceil \frac{x - 3}{2} \right\rceil$ and $\li{N.log2}(x + 2) - 2 = \left\lfloor \log_2(x+2) \right\rfloor - 2 = \left\lceil \log_2(x+3) \right\rceil - 3$, so the above Coq code is correct. Next, we define the \emph{inverse Ackermann worker}.
+Note that for all $x$, $\li{N.div2}(x - 2) = \left\lfloor \frac{x - 2}{2} \right\rfloor = \left\lceil \frac{x - 3}{2} \right\rceil$ and $\li{N.log2}(x + 2) - 2 = \left\lfloor \log_2(x+2) \right\rfloor - 2 = \left\lceil \log_2(x+3) \right\rceil - 3$, so the above Coq code is correct. 
+ 
+\begin{thm} \label{thm: inv_ack_runtime_bin}
+	$\forall i, \forall n, \runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i$.
+\end{thm}
+
+\noindent For any level of the Ackermann hierarchy, this theorem demonstrates
+a linear runtime up to the size of the representation of the input.
+That is to say, a logarithmic runtime up to its magnitude $n$:
+$\runtime_{\alpha_i}(n) = \Theta\big(\log_2n + 2^i\log_2\log_2n \big)$.
+
+Next, we define \emph{inverse Ackermann worker} and the 
+\emph{inverse Ackermann} in a style nearly identical to that in 
+Section~\ref{subsec: inv_ack_hier}. We simply translate to 
+\li{N} as described earlier and keep the budget in \li{nat} so it 
+can serve as Coq's decreasing argument. The Ackermann function 
+has an extra hardcoded level.
 \begin{lstlisting}
 Fixpoint bin_inv_ack_worker (f : N -> N) (n k : N) (b : nat) : N :=
   match b with
   | 0%nat  => k
   | S b' => if n <=? k then k
-              else let g := (bin_countdown f 1) in
-                bin_inv_ack_worker (compose g f) (g n) (N.succ k) b'
+            else let g := (bin_countdown f 1) in
+                 bin_inv_ack_worker (compose g f) (g n) (N.succ k) b'
   end.
-\end{lstlisting}
-Note that the above Coq Fixpoint is the direct translation of the \li{inv_ack_worker} on \li{nat}, with only the budget remaining at type \li{nat} as it is the decreasing argument. Next we discuss its time complexity.
-\begin{thm}
-	$\forall i, \forall n, \runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i$.
-\end{thm}
-\begin{proof}
-	Firstly, we have:
-	\begin{itemize}
-		\item Clearly $\runtime_{\alpha_i}(n)\le \log_2n + 1$ for $i = 0, 1$.
-		\item Computing $\alpha_2(n)$ consists of 2 steps: subtracting by 2 and dividing by 2 (shifting right by 1 bit), both of which takes no more than time $\log_2n + 1$ time, thus $\runtime_{\alpha_2}(n)\le 2\log_2n$.
-		\item Computing $\alpha_3(n)$ consists of 3 steps: adding 2, then take base 2 logarithm and subtract 2 from the result, with the first two taking no longer than time $\log_2n + 1$ each and the last taking time at most $\log_2\log_2(n+2) + 1$ $\le \log_2\log_2 n + 2$. Thus $\runtime_{\alpha_3}(n)\le 2\log_2n + \log_2\log_2n + 3$.
-	\end{itemize}
-  Let $M_i = 3\cdot 2^i - 3i - 13$, then $\runtime_{\alpha_i}(n)\le 2\log_2n + M_i\log_2^{(2)}n + 3i$ for $i = 0, 1, 2, 3$.
-	Suppose the same inequality holds for $i\ge 3$, by Lemmas~\ref{lem: compose-runtime} and \ref{lem: cdt-runtime-bin}, note that Lemma~\ref{lem: compose-runtime} works for all encoding systems, we have
-	\begin{equation*}
-	\begin{aligned}
-	& \runtime_{\alpha_{i+1}}(n) \le
-	\sum_{k=0}^{\alpha_{i+1}(n)} \hspace{-5pt} \runtime_{\alpha_i}\big(\alpha_i^{(k)}(n)\big)
-	\ + \ 3\hspace{-4pt}\underbrace{\alpha_{i+1}(n)}_{\le \log_2\log_2n}
-	+ \ 2\underbrace{\log_2\alpha_i(n)}_{\le \log_2\log_2n}
-	+ \ \underbrace{\log_2\alpha_{i+1}(n)}_{\le \log_2\log_2n} + \ 3 \\
-	& \le 2\log_2n
-	+ 2\underbrace{\hspace{-5pt}\sum_{k=1}^{\alpha_{i+1}(n)}\hspace{-5pt} \log_2\alpha_i^{(k)}(n)}_{\le 2\log_2\log_2n}
-	+ M_i\underbrace{\hspace{-5pt}\sum_{k=0}^{\alpha_{i+1}(n)}\hspace{-5pt} \log_2^{(2)}\alpha_i^{(k)}(n)}_{\le 2\log_2\log_2n}
-	+ 3i\big(\hspace{-5.5pt}\underbrace{\alpha_{i+1}(n)}_{\le \log_2\log_2n}\hspace{-4pt} + 1\big) + 6\log_2^{(2)}n + 3 \\
-	& \le 2\log_2n + (2M_i + 3i + 10)\log_2^{(2)}n + 3(i + 1)
-	= 2\log_2 + M_{i+1}\log_2^{(2)}n + 3(i + 1)
-	\end{aligned}
-	\end{equation*}
-	where $\forall i\ge 3, \alpha_i(n)\le \log_2n$ and $\alpha_{i+1}(n)\le \log_2^{(2)}n$, while the $2\log_2^{(2)}n$ upper bounds for the sums come from Lemma~\ref{lem: sum-alpha-repeat}.
-	By induction on $i$, proof is complete.
-\end{proof}
-This lemma implies $\runtime_{\alpha_i}(n) = \Theta\big(\log_2n + 2^i\log_2\log_2n \big)$.
 
-Now, the inverse Ackermann function on \li{N} can be computed by the following Coq definition, which is a mirror of the version on \li{nat} from Section~\ref{sect: hardcode-lvl2} with an extra hardcoded level:
-\begin{lstlisting}
 Definition bin_inv_ack (n : N) : N :=
   if (n <=? 1) then 0
   else if (n <=? 3) then 1
