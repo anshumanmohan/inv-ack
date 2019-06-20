@@ -197,12 +197,15 @@ Qed.
 
 Corollary bin_countdown_recursion : forall f a n,
     bin_contract_strict_above a f ->
-    (n <= a -> bin_countdown_to f a n = 0) /\
-    (a < n -> bin_countdown_to f a n = 1 + bin_countdown_to f a (f n)).
+    bin_countdown_to f a n = if n <=? a then 0
+                              else 1 + bin_countdown_to f a (f n).
 Proof.
   intros f a n Haf. rewrite bin_countdown_correct by apply Haf. unfold to_N_func.
-  rewrite N.add_1_l, <- Nat2N.inj_succ, <- (N2Nat.id 0), Nat2N.inj_iff, Nat2N.inj_iff,
-  le_N_nat, lt_N_nat. replace (N.to_nat (f n)) with ((to_nat_func f) (N.to_nat n)).
+  rewrite N.add_1_l, <- Nat2N.inj_succ, <- (N2Nat.id 0).
+  destruct (N.le_gt_cases n a) as [Hna|Hna]; assert (T:=Hna);
+  [rewrite <- N.leb_le in T|rewrite <- N.leb_gt in T]; rewrite T;
+  generalize Hna; rewrite Nat2N.inj_iff; [rewrite le_N_nat|rewrite lt_N_nat];
+  replace (N.to_nat (f n)) with ((to_nat_func f) (N.to_nat n))
+    by (unfold to_nat_func; rewrite N2Nat.id; trivial);
   apply countdown.countdown_recursion, bin_contract_strict_Nnat, Haf.
-  unfold to_nat_func. rewrite N2Nat.id. trivial.
 Qed.

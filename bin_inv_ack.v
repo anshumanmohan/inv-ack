@@ -49,10 +49,8 @@ Proof.
   destruct m as [|[|[|m]]]; trivial; [omega|omega|intro]. clear H.
   apply functional_extensionality; intro n. unfold compose.
   simpl. fold (bin_alpha 2). rewrite N.div2_div.
-  replace ((n-2) / 2) with ((n+2) / 2 - 2).
-  2: { Search (_ / _ - _).
-  destruct n as [|n]; trivial.
-  induction n; trivial;
+  destruct n as [|n]; trivial. induction n; trivial;
+  rewrite bin_countdown_recursion by apply bin_alpha_2_bin_contract.
   [remember (N.div2 (N.pos n~1 - 2)) as m|
      remember (N.div2 (N.pos n~0 - 2)) as m];
   destruct (bin_countdown_recursion (bin_alpha 2) 1 m
