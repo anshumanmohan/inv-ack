@@ -4,7 +4,7 @@ division, $\log$, and $\log^{*}$.
 We then modify the inverse hyperoperation hierarchy to arrive at the inverse
 Ackermann hierarchy.
 
-\subsection{The Inverse Hyperoperations, including Div, Log, and Log*}
+\subsection{The inverse hyperoperations, including \li{div}, \li{log}, and \li{log*}}
 
 \begin{defn} \label{defn: inv-hyperop}
 	The inverse hyperoperations, written $a\angle{n}b$, are defined as:
@@ -151,7 +151,7 @@ Note that the functions $\log_a b$, and $\log^*_a b$ are not in the Coq Standard
 \end{rem}
 }
 
-\subsection{The Inverse Ackermann hierarchy}
+\subsection{The inverse Ackermann hierarchy}
 
 % NEW METHOD FOR INVERSE ACKERMANN
 We want to use \emph{countdown} to build the \emph{inverse Ackermann hierarchy}, where each
@@ -263,16 +263,15 @@ We start with the following lemma.
 \end{proof}
 % The code to compute the inverse Ackermann function in Gallina follows.
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_worker}` (f : nat -> nat) (n k bud : nat) : nat :=
-  match bud with
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_worker}` (f : nat -> nat) (n k b : nat) : nat :=
+  match b with
   | 0 => 0
-  | S bud' =>
-    match (n - k) with
-    | 0 => k
-    | S _ =>
-      let g := (countdown_to 1 f) in 
-      inv_ack_worker (compose g f) (g n) (S k) bud'
-    end
+  | S b' => match (n - k) with
+            | 0 => k
+            | S _ =>
+              let g := (countdown_to 1 f) in 
+              inv_ack_worker (compose g f) (g n) (S k) b'
+            end
   end.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L32-L36}{Fixpoint alpha}` (m x : nat) : nat :=

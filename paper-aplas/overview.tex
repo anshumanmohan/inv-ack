@@ -64,7 +64,7 @@ along with their relation to the $\Ack_n$ functions and their inverses.
 
 \begin{table}[t]
 \begin{centermath}
-\begin{array}{c|ccc|ccc}
+\begin{array}{c@{\hskip 0.5em}|@{\hskip 1em}c@{\hskip 1em}c@{\hskip 1em}c@{\hskip 1em}|@{\hskip 1em}c@{\hskip 1em}c@{\hskip 1em}c}
 n & \text{function} & a [n] b & \Ack_n(b) & \text{upper inverse} & a \angle{n} b & \alpha_n(b)\\
 \hline
 0 & \text{successor} & 1 + b & 1 + b & \text{predecessor} & b - 1 & b - 1 \\
@@ -75,8 +75,9 @@ n & \text{function} & a [n] b & \Ack_n(b) & \text{upper inverse} & a \angle{n} b
 4 & \text{tetration} & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \begin{array}{@{}c@{}}\text{iterated}\\[-3pt]\text{logarithm}\end{array} & \left\lceil \mathsf{log}^*_a ~ b \right\rceil & \left\lceil \mathsf{log}^*_2 ~ (b + 3)\right\rceil - 3
 \end{array}
 \end{centermath}
-\caption{Hyperoperations, the family of Ackermann functions, and inverse hyperoperations.}
+\caption{Hyperoperations, the Ackermann hierarchy, and inverses thereof}
 \label{table: hyperop-ack-inv}
+\vspace{-2em}
 \end{table}
 
 {\color{red} The kludge has three parts. First, the Ackermann hierarchy is related
@@ -111,9 +112,10 @@ It is worth studying and inverting the hyperoperations before handling the Acker
 \label{sec:incfuncinv}
 Defining increasing functions is often significantly easier than defining their inverses.
 The Church numeral encodings of addition, multiplication, and exponentiation
-are each simpler than their corresponding inverses, \emph{i.e.} subtraction, division, and logarithm. Similarly, defining multiplication in Gallina~\cite{coq} is easy, but defining division is unexpectedly painful.\\[5pt]
+are each simpler than their corresponding inverses, \emph{i.e.} subtraction, division, and logarithm. Similarly, defining multiplication in Gallina~\cite{coq} is easy, but defining division is unexpectedly painful:
 
 \begin{minipage}[c]{0.4\textwidth}
+% \vspace{-1.5em}
 \begin{tabular}{@{}l@{}@{\qquad \qquad}l}
 \begin{lstlisting}
 Fixpoint mult a b :=
@@ -158,7 +160,7 @@ Realizing this, the standard library employs
 a cleverer approach to define division, but we are not aware of any explanation 
 of the technique used, and we also find it hard to extend that technique 
 to other functions of the natural sequence of functions.  One indication
-of this difficulty is that the Coq standard library does not include a $\mathsf{log}_b$ function\footnote{Coq's standard library \textbf{does} include a $\mathsf{log}_2$ function, but
+of this difficulty is that the Coq standard library does not include a $\mathsf{log}_b$ function\footnote{Coq's standard library does include a $\mathsf{log}_2$ function, but
 change-of-base does not work on discrete logarithms:
 $\left \lfloor \frac{\lfloor \mathsf{log}_2 100 \rfloor}{\lfloor \mathsf{log}_2 7 \rfloor} \right \rfloor = 3 \; \not= \; 2 = \lfloor \mathsf{log}_7 100 \rfloor$.  
 %{\color{blue} efficiency of standard library version?} {\color{red} SSReflect?}

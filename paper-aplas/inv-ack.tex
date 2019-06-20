@@ -34,6 +34,7 @@
 % required by LNCS
 \renewcommand\UrlFont{\color{blue}\rmfamily}
 \colorlet{red}{red!80!black}
+\colorlet{green}{green!50!black}
 
 %% NEW COMMANDS =============================================
 
@@ -41,7 +42,7 @@
 %	language=Coq,
     keywords={Definition,Fixpoint,match,with,end,let,in,fix},
 	basicstyle=\normalfont\footnotesize\tt,
-    keywordstyle=\color{red}, % Blue clashes with the cyan links. Change if you want.
+    keywordstyle=\color{green}, % Blue clashes with the cyan links. Change if you want.
 	stepnumber=1,
 	tabsize=2,
     numbers=none,
@@ -184,7 +185,9 @@
 
 %\address{}
 
+
 \begin{abstract}
+\vspace{-2em}
 We implement in Gallina a hierarchy of functions that calculate 
 the upper inverses to the hyperoperation/Ackermann hierarchy.
 We show that our functions run in $\Theta(n)$ for inputs expressed 
@@ -212,7 +215,7 @@ Ackermann function~$\alpha(n)$.
 \label{sec: countdown}
 \input{countdown.tex}
 
-\section{Inverting the Hyperoperations and the Ackermann Function}
+\section{Inverting Hyperoperations and Ackermann}
 \label{sec: inv-hyperop}
 \input{inv-hyperop.tex}
 

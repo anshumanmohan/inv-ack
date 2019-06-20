@@ -3,7 +3,7 @@
 %\input{discussion.tex}
 
 
-\paragraph*{Historical notes.}
+\subsection{Historical notes}
 % This creates an unnumbered paragraph. ie a smaller, less flashy, header
 
 %\marginpar{\tiny \color{blue} Multiplication, Division, Algorisms. Representations of numbers (Egyption fractions/Roman numerals/Decimal/Zero). Exponentiation, Logarithm, Tetration, Log*, ...   Hyperoperations, Knuth Arrows.  Inverses as a separate notation? Mechanizations of the above?}
@@ -30,7 +30,7 @@ represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
 %\subsection*{The Ackermann function and its inverse.}
 % This creates an unnumbered subsection
 
-\paragraph*{The Ackermann function and its inverse.}
+\subsection{The Ackermann function and its inverse}
 %\marginpar{\tiny \color{blue} Several variations. Original. Peter.
 %Primitive recursive. Hilbert? Ackermann is used in CS. Formalizations that use or define it. The grit of sand. The bug.}
 % https://projecteuclid.org/download/pdf_1/euclid.bams/1183512393
@@ -79,7 +79,7 @@ respectively.  They proposed a definition of the inverse Ackermann essentially i
 the inverse hyperoperations.  Unfortunately, their technique is unsound, since it diverges from
 the true Ackermann inverse when the inputs grow sufficiently large.  Our technique is verified in Coq.
 
-\paragraph*{Conclusion.}
+\subsection{Conclusion}
 We have implemented a hierarchy of functions that calculate the upper inverses
 to the Ackermann/hyperoperation hierarchy and used these inverses
 to compute the inverse of the diagonal Ackermann function $\Ack(n)$.

@@ -2,7 +2,7 @@ Many functions on $\mathbb{R}$ are bijections and thus have an intuituve inverse
 Functions on~$\mathbb{N}$ are often non-bijections and so their inverses
 do not come as naturally.
 
-\subsection{Upper Inverses, Expansions, and Repeatability}
+\subsection{Upper inverses, expansions, and repeatability}
 %; indeed, simply defining an inverse can be a little subtle.
 \begin{defn} \label{defn: inverse}
 The \emph{upper inverse} of $F$, written $F^{-1}$, 
@@ -23,13 +23,13 @@ is defined as $\max\{m : F(m)\le n\}$.
 Even if $F$ strictly increases, as $a[n]$ does for every $a\ge 2$, notice that the lower inverse will be undefined for $n < F(0)$, \emph{e.g.} $\{m : a[n]m \le 0 \} = \varnothing$ for $n\ge 3$.
 Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower inverses in \cref{sec: discussion}. 
 }%end hide 
-\begin{thm} \label{thm: upp-inverse-rel}
+\begin{thm}[a Galois connection] \label{thm: upp-inverse-rel}
 	If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
 \end{thm}
 \begin{proof}
 Fix $n$. The sentence $\forall m.~ f(n)\le m \iff n\le F(m)$ implies: (1) $f(n)$ is a lower bound to $\{m: n \le F(m)\}$ and (2) $f(n)$ is itself in the set, since plugging in $m \triangleq f(n)$ yields $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we know $\forall m.~n\le F(m)\Rightarrow f(n)\le m$. Now, $\forall m \ge f(n)$.~$F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus completing the proof.
 \end{proof}
-\begin{col}
+\begin{col}\label{col:inv_gives_id}
 If $F$ is strictly increasing, then $F^{-1} \circ F$ is
 the identity function.
 \end{col}
@@ -37,6 +37,13 @@ the identity function.
 By ($\Leftarrow$) of Theorem~\ref{thm: upp-inverse-rel}, $F(n) \le F(n)$ implies 
 $(F^{-1} \circ F)(n) \le n$.  By ($\Rightarrow$) of the same theorem, $(F^{-1} \circ F)(n) \le (F^{-1} \circ F)(n)$ implies $F(n) \le F \big((F^{-1} \circ F)(n)\big)$. $F$ is strictly increasing, so $n \le (F^{-1} \circ F)(n)$.
 \end{proof}
+
+\begin{rem}
+Theorem~\ref{thm: upp-inverse-rel} and Corollary~\ref{col:inv_gives_id} 
+and are the key reasoning rules for using our functions. Users who wish 
+to incorporate our techniques into larger computations will manipulate
+use these facts to manipulate proof goals.
+\end{rem}
 
 Our setup for inverse requires increasing functions, and our definitions for 
 hyperoperations/Ackermann use repeater.  Suppose $F$ is a strictly increasing function.
@@ -146,7 +153,7 @@ It remains to show $\cdt{f}{a}(f(n))\le p \Rightarrow f^{(p)}(f(n))\le a \Righta
 %	Thus $f^{(n-1)}(n)\le 1 \le a$, a contradiction. The theorem then follows.
 %\end{proof}
 
-\subsection{A Structurally Recursive Computation for Countdown}
+\subsection{A structurally recursive computation of countdown}
 
 The higher-order repeater function is well-defined for all input functions, 
 even those not in $\repeatable_a$ (although for such functions it may not 
@@ -173,12 +180,12 @@ and the \emph{budget} $b$, the maximum number of times we shall attempt
 to compositionally apply $f$ on the input before giving up. 
 If the input goes below or equals $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n) \le a$, we return the count $k$. If the budget is exhausted (\emph{i.e.} $b = 0$) while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but it can clearly be written as a Coq \li{Fixpoint}:
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint countdown\_worker}` (a : nat) (f : nat -> nat) (n k : nat) : nat :=
-match k with
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint countdown\_worker}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
+match b with
  | 0    => 0
- | S k' => match (n - a) with
+ | S b' => match (n - a) with
            | 0 => 0
-           | _ => S (countdown_worker a f (f n) k') 
+           | _ => S (countdown_worker a f (f n) b') 
            end
  end.
 \end{lstlisting}
