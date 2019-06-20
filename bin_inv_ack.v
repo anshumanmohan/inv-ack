@@ -48,8 +48,17 @@ Theorem bin_alpha_recursion : forall m, (2 <= m)%nat ->
 Proof.
   destruct m as [|[|[|m]]]; trivial; [omega|omega|intro]. clear H.
   apply functional_extensionality; intro n. unfold compose.
-  simpl. fold (bin_alpha 2). rewrite N.div2_div.
-  destruct n as [|n]; trivial. induction n; trivial;
+  simpl. replace (N.div2 (n - 2)) with (N.div2 (n + 2) - 2).
+  2: { destruct (N.le_gt_cases n 2) as [H|H]; repeat rewrite N.div2_div.
+       - replace (n - 2) with 0 by lia. rewrite N.div_0_l, N.sub_0_le by lia.
+         apply N.div_le_upper_bound; lia.
+       - remember (n - 2) as p. replace n with (p + 2) by lia.
+         replace (p + 2 + 2) with (p + 2 * 2) by lia. rewrite N.div_add by lia. lia.
+     }
+  replace (N.log2 (n + 2) - 2) with (N.log2 (N.div2 (n + 2)) - 1)
+    by (rewrite N.div2_spec, N.log2_shiftr; lia).
+  remember (N.div2 (n + 2)) as m. clear n Heqm.
+  destruct m as [|n]; trivial. induction n; trivial;
   rewrite bin_countdown_recursion by apply bin_alpha_2_bin_contract.
   [remember (N.div2 (N.pos n~1 - 2)) as m|
      remember (N.div2 (N.pos n~0 - 2)) as m];
