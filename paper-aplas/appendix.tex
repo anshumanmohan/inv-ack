@@ -30,7 +30,7 @@ Definition inv_ack_linear n :=
   end.
 \end{lstlisting}
 
-\section{Binary Numbers in Coq}
+\section{Support for Binary Numbers in Coq}
 \label{apx:bin_in_coq}
 Coq has support for binary numbers with the type \li{N}, which consists 
 of constructors \li{0} and \li{positive}:
@@ -47,7 +47,7 @@ the issue of disambiguating \emph{e.g.} the numbers \li{011} and
 a minor technical challenge. 
 To represent $0$, the type \li{N} simply provides a separate constructor \li{0}. 
 
-\section{Proofs of time bounds lemmas on \li{nat}}
+\section{Proofs of Time Bound Lemmas on \li{nat}}
 \label{apx:time_analysis}
 
 \begin{proof}[Lemma \ref{lem: cdt-runtime-general}]
