@@ -165,7 +165,7 @@ Our strategy is to define a \emph{countdown worker} which is written with only
 structural recursion and is thus more palatable to Coq, and then 
 prove that this worker computes the countdown when passed a contraction.
 
-\begin{defn} \label{defn: countdown-worker}
+\begin{defn} \label{defn: countdown-worker} \label{lem: cdt-init}
 For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown worker} to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
 \begin{equation*}
 \cdw{f}{a}(n, b) = \begin{cases}
@@ -256,12 +256,12 @@ Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.
 %	\end{enumerate}
 %\end{proof}
 
-\begin{lem} \label{lem: cdt-init}
-	$\forall n\le a.~\cdw{f}{a} (n, b) = 0$.
-\end{lem}
-\begin{proof}
-This simple fact follows directly from Definition \ref{defn: countdown-worker}.
-\end{proof}
+% \begin{lem} 
+% 	$\forall n\le a.~\cdw{f}{a} (n, b) = 0$.
+% \end{lem}
+% \begin{proof}
+% This simple fact follows directly from Definition \ref{defn: countdown-worker}.
+% \end{proof}
 Next, we show the internal working of \emph{countdown worker} at the $\text{i}^\text{th}$ recursive step, including the accumulated result $1+i$, the current input $f^{(1+i)}(n)$, and the current budget $b-i-1$.
 \begin{lem} \label{lem: cdt-intermediate}
 	$\forall a, n, b, i \in \mathbb{N}.~\forall f \in \contract$. such that $i < b$ and $a < f^{(i)}(n)$:~
@@ -315,12 +315,12 @@ $\cdt{f}{a}(n) = m$. Note that this setup gives us:
 	\left(f^{(m)}(n) \le a\right) \label{eq: cdt-repeat-tmp} \wedge
 	 \left(\forall k.~f^{(k)}(n)\le a \Rightarrow m \le k\right)
 	\end{equation}
-If $m = 0$, then $n = f^{(0)}(n)\le a$. So $\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = 0 = m$ by Lemma~\ref{lem: cdt-init}.
+If $m = 0$, then $n = f^{(0)}(n)\le a$. So $\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = 0 = m$ by Definition~\ref{lem: cdt-init}.
 When $m > 0$, our plan is to apply Lemma~\ref{lem: cdt-intermediate} to get
 	\begin{equation*}
 	\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = m + \cdw{f}{a}\left(f^{(m)}(n), n-m\right),
 	\end{equation*}
-and then use Lemma~\ref{lem: cdt-init} over (\ref{eq: cdt-repeat-tmp})'s first conjunct to conclude $\cdt{f}{a}(n) = m$. It suffices to prove the premises of Lemma~\ref{lem: cdt-intermediate}: $a < f^{(m-1)}(n)$ and $m-1 < n$.
+and then use Definition~\ref{lem: cdt-init} over (\ref{eq: cdt-repeat-tmp})'s first conjunct to conclude $\cdt{f}{a}(n) = m$. It suffices to prove the premises of Lemma~\ref{lem: cdt-intermediate}: $a < f^{(m-1)}(n)$ and $m-1 < n$.
 	
 	The former follows by contradiction: if $f^{(m-1)}(n) \le a$, (\ref{eq: cdt-repeat-tmp})'s second conjunct implies $m\le m-1$, which is impossible for $m > 0$. The latter then easily follows by $f\in \contract_{a}$, since
 	$n \ge 1 + f(n) \ge 2 + f(f(n)) \ge \cdots \ge m + f^{(m)}(n)$.

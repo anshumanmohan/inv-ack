@@ -131,7 +131,7 @@ We can prove a bound of $O(n)$ for every level.
 }
 By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time $\Theta(n)$ for fixed $i$.
 \begin{thm} \label{thm: inv-ack-hier-runtime-improved}
-	$\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \Theta(n)$.
+	$\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \Theta(n)$.
 \end{thm}
 
 \subsection{Running time of $\alpha$ on \li{nat}} %\label{sect: hardcode-lvl2}

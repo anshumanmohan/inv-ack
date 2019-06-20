@@ -17,7 +17,7 @@ Fixpoint inv_ack_worker (f : nat -> nat) (n k b : nat) : nat :=
   match b with
   | 0    => k
   | S b' => match (n - k) with
-            | 0   => k
+            | 0 => k
             | _ => let g := (countdown_to f 1) in
                      inv_ack_worker (compose g f) (g n) (S k) b'
             end
