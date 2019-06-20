@@ -268,9 +268,8 @@ We start with the following lemma.
   | 0 => 0
   | S b' => match (n - k) with
             | 0 => k
-            | S _ =>
-              let g := (countdown_to 1 f) in 
-              inv_ack_worker (compose g f) (g n) (S k) b'
+            | _ => let g := (countdown_to 1 f) in 
+                   inv_ack_worker (compose g f) (g n) (S k) b'
             end
   end.
 
@@ -280,8 +279,7 @@ We start with the following lemma.
   | S m' => countdown_to 1 (alpha m') (alpha m' x)
   end.
   
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L151-L152}{Definition inv\_ack}` (n : nat) : nat :=
-  match (alpha 0) with f => inv_ack_worker f (f n) 0 n end.
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L151-L152}{Definition inv\_ack}` := inv_ack_worker (alpha 0) (alpha 0 n) 0 n.
 \end{lstlisting}
 
 % OLD METHOD FOR INVERSE ACKERMANN

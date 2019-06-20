@@ -1,7 +1,10 @@
-We sketch the proof that the inverse Ackermann function in 
-Definition~\ref{thm: inv-ack-hier-correct} runs in~$O(n^2)$, 
-and in $O(n)$ after a simple optimization, under a call-by-value strategy.  
-Proofs of key lemmas can be found in Appendix~\ref{apx:time_analysis}.
+We show that the inverse Ackermann from 
+Definition~\ref{thm: inv-ack-hier-correct} runs in~$\Omega(n^2)$ 
+under a call-by-value strategy, and in $O(n)$
+after a simple optimization.
+To give intuition and remain accessible to readers, we 
+present here a detailed sketch via lemma statements.
+We put proofs of these lemmas in Appendix~\ref{apx:time_analysis}.
 We elide the parallel analysis for the inverse hyperoperations, 
 which have simpler initial values. % but are otherwise similar.
 
@@ -19,7 +22,7 @@ operating on \li{N}, \emph{i.e.} in binary.
 %it in Coq .
 
 \begin{defn}
- For a function on $k$ variables, the \emph{runtime} of $f$, denoted by $\runtime_f\big(n_1, n_2, \ldots, n_k\big)$, counts the computational steps to compute $f(n_1, n_2, \ldots, n_k)$.
+ For a function $f$ on $k$ variables, the \emph{runtime} of $f$, denoted by $\runtime_f\big(n_1, n_2, \ldots, n_k\big)$, counts the computational steps to compute $f(n_1, n_2, \ldots, n_k)$.
 \end{defn}
 \begin{lem} \label{lem: sub-runtime}
 	The standard $\li{leb}(x, y)$ function returns \li{true} if $x\le y$ and \li{false} otherwise. $\runtime_{\li{leb}}(n, a) = \min\{a, n\} + 1$.
@@ -31,7 +34,9 @@ operating on \li{N}, \emph{i.e.} in binary.
 	$\runtime_{f\circ g}(n) = \runtime_f(g(n)) + \runtime_g(n)$.
 	 % per Coq's definition of functional composition.
 \end{lem}
-The next two lemmas establish the general runtime structure of countdown and tighten the bound when operating on \li{nat}.
+The next lemma establishes the general runtime structure of 
+\emph{countdown}, and the one after it tightens the bound when 
+operating on \li{nat}.
 \begin{lem} \label{lem: cdt-runtime-general}
 	$\forall a\in \mathbb{N}, f\in \contract_{a}$, where $\li{succ}(x) \triangleq x+1$,
 	\begin{equation} \label{eq: cdt-runtime-struct}
@@ -44,7 +49,7 @@ The next two lemmas establish the general runtime structure of countdown and tig
 
 \begin{lem} \label{lem: cdt-runtime}
 	% in the unary encoding system, \emph{i.e.} the type \li{nat} in Coq, 
-	$\forall a\ge 1, \forall n, \forall f\in \contract_{a}$ we have:
+	$\forall a\ge 1, \forall n \in \li{nat}, \forall f\in \contract_{a}$ we have:
 	\begin{equation*}
 	\runtime_{\cdt{f}{a}}(n) =
 	\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
@@ -88,15 +93,15 @@ This lemma implies $\runtime_{\alpha_{i+1}}(n) \ge \runtime_{\alpha_i}(n)$. Prov
 %Intuitively, the function $2\angle{1} \equiv \lambda n.(n-2)$ is responsible for dragging the whole hierarchy's performance due to one silly weakness: its does not know it will always output $n-2$ before beginning its computation, hence needs to tediously subtract $1$ until it goes below $2$. This observation leads to the next improvement.
 
 Although $\alpha_1 (n)$ always returns $n-2$, it gets to this answer
-via $\theta$(n) steps due to the nature of \emph{countdown}.
+via $\Theta$(n) steps due to the nature of \emph{countdown}.
 This hurts the performance of the entire hierarchy. 
 %This observation leads to the next improvement.
 We can hardcode $\alpha_1$ as $\lambda n.(n-2)$ to reduce its runtime
 from $\Theta(n)$ to $\Theta(1)$.
-\begin{lstlisting}
+\hide{\begin{lstlisting}
 Definition sub_2 (n : nat) : nat :=
   match n with | 0 => 0 | 1 => 1 | S (S n') => n' end.
-\end{lstlisting}
+\end{lstlisting}}%end hide
 %Without loss of generality, let us henceforth assume that the constant factors in $\runtime(\alpha_1, n)$ and Lemma~\ref{lem: inv-ack-hier-runtime} are both $1$.
 The runtime for $\alpha_2$ can thus be bounded as follows:
 \begin{equation*}
@@ -105,8 +110,7 @@ The runtime for $\alpha_2$ can thus be bounded as follows:
  \le 2n - 2
 \end{equation*}
 Note that the above bound only applies for $n\ge 2$. When $n\le 1$, the LHS is 1.
-
-We will need three crucial technical lemmas to prove the $O(n)$ overall bound.
+We will need three crucial technical lemmas to prove the $O(n)$ bound.
 \begin{lem} \label{lem: inv-ack-3-runtime}
 	If $n\ge 1$, $\runtime_{\alpha_3}(n) = 2$ $\runtime_{\alpha_3}(n) \le 4n + 4$.
 \end{lem}
@@ -118,12 +122,14 @@ We will need three crucial technical lemmas to prove the $O(n)$ overall bound.
 \end{lem}
 By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time $\Theta(n)$ for fixed $i$.
 \begin{thm} \label{thm: inv-ack-hier-runtime-improved}
-	$\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = O(n)$.
+	$\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \Theta(n)$.
 \end{thm}
 
 \subsection{Running time of $\alpha$ on \li{nat}} %\label{sect: hardcode-lvl2}
 
-This also allows us to improve the runtime of $\alpha(n)$ per Definition~\ref{defn: inv-ack-hier} by hardcoding the output when $n\le 1 = \Ack(0)$, and starting $\alpha^{\mathcal{W}}$ with $f = \alpha_1$ and $n = \alpha_1(n)$:
+A linear-time calculation of the inverse Ackermann hierarchy 
+leads naturally to a similarly efficient calculation of $\alpha(n)$ itself.
+We hardcod the output when $n\le 1 = \Ack(0)$, and start $\alpha^{\mathcal{W}}$ with $f = \alpha_1$ and $n = \alpha_1(n)$:
 \begin{equation*}
 \tilde{\alpha}(n) = \begin{cases}
 0 & \text{ if } n \le 1 \\ \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2
@@ -148,4 +154,3 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 = \Theta\left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2\right) = \Theta(n)
 \end{aligned}
 \end{equation}
-Therefore, $\tilde{\alpha}$ is able to compute $\alpha$ in linear time.

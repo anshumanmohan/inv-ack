@@ -79,6 +79,15 @@ respectively.  They proposed a definition of the inverse Ackermann essentially i
 the inverse hyperoperations.  Unfortunately, their technique is unsound, since it diverges from
 the true Ackermann inverse when the inputs grow sufficiently large.  Our technique is verified in Coq.
 
+{\color{red}The Coq standard library already includes a linear-time definition 
+of division on \li{nat} and \li{N}; and base-two discrete logarithm 
+on \li{nat}.  The Mathematical Components library~\cite{MathComp} 
+provides a logarithm on \li{nat}.
+
+Other standard libaries provide some additional ad-hoc examples, 
+such as logarithms in prime bases...}
+
+
 \subsection{Conclusion}
 We have implemented a hierarchy of functions that calculate the upper inverses
 to the Ackermann/hyperoperation hierarchy and used these inverses

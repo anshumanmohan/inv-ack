@@ -47,6 +47,35 @@ the issue of disambiguating \emph{e.g.} the numbers \li{011} and
 a minor technical challenge. 
 To represent $0$, the type \li{N} simply provides a separate constructor \li{0}. 
 
+\begin{lstlisting}
+Definition exp (x y : N) : N := match y with
+| 0 => 1 | Npos y'
+  => match x with
+     | 0 => 0 | _ => 
+     let fix expPos (p : positive) :=
+            match p with
+            | xH => x
+            | xI p' => let t := expPos p' in x * t * t
+            | xO p' => let t := expPos p' in t * t
+            end in expPos y'
+     end end.
+\end{lstlisting}
+To analyse the performance of this definition, let us denote the computation time for \li{exp a b} and \li{a * b} respectively by $\Texp (a, b)$ and $ \Tmul (a, b)$.Now
+\begin{equation*}
+\begin{aligned}
+\Texp(a, b)
+& \le \Texp\left(a, \left\lfloor \frac{b}{2} \right\rfloor\right)
++ \Tmul\left(a^{\left\lfloor \frac{b}{2} \right\rfloor}, a^{\left\lfloor \frac{b}{2} \right\rfloor} \right) + \Tmul\left(a^{2\left\lfloor \frac{b}{2} \right\rfloor}, a\right) \\
+& \le \Texp\left(a, \left\lfloor \frac{b}{2} \right\rfloor\right) + \left\lfloor \frac{b}{2} \right\rfloor^2 \big(\log_2 a + 1\big)^2 + 2\left\lfloor \frac{b}{2} \right\rfloor \big(\log_2 a + 1\big)^2 \\
+& \le \Texp\left(a, \left\lfloor \frac{b}{2} \right\rfloor\right) + 3\left(\frac{b}{2}\right)^2 \big(\log_2 a + 1\big)^2
+\end{aligned}
+\end{equation*}
+Thus, $\Texp(a, b) \le 3\big(\log_2 a + 1\big)^2 \sum_{k=1}^{\infty} \frac{b^{2k}}{4^k} = \bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$. 
+This a massive improvement over the bound $\Theta\left(a^b\right)$ of exponentiation in the unary system.
+
+Apart from speeding up addition and multiplication, the binary system does the same for their successor, namely exponentiation. We achieve this by \emph{repeated squaring},
+which by standard techniques allows us to calculate $a^b$ in $\bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$.
+
 \section{Proofs of Time Bound Lemmas on \li{nat}}
 \label{apx:time_analysis}
 
