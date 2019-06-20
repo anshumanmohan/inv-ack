@@ -231,13 +231,11 @@ Qed.
 (*
 Time Compute inv_ack_linear 10000.
 Time Compute inv_ack_linear 100000.
-(*
 Time Compute inv_ack_linear 1000000.
 Time Compute inv_ack_linear 10000000.
  *)
 
 (* Further, our code can be extracted to OCaml by running the two lines below: *)
->>>>>>> f592a55f4a21fc704226525071e6a88e61ff590b
 (* 
 Require Extraction. 
 Recursive Extraction inv_ack_linear.
@@ -266,10 +264,3 @@ time_print 10000;;
 time_print 100000;;
 time_print 1000000;;
  *)
-
-
-Definition bin_inv_ack (n : N) : N :=
-  if (n <=? 1) then 0
-  else if (n <=? 3) then 1
-       else let f := (bin_alpha 2) in
-            bin_inv_ack_worker f (f n) 2 (nat_size n).

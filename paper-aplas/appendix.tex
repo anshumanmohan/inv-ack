@@ -30,6 +30,95 @@ Definition inv_ack_linear n :=
   end.
 \end{lstlisting}
 
+\section{Proofs of Correctness for Worker Functions}
+\label{apx:proof_correct_worker}
+
+Next, we show the internal working of \emph{countdown worker} at the $\text{i}^\text{th}$ recursive step, including the accumulated result $1+i$, the current input $f^{(1+i)}(n)$, and the current budget $b-i-1$.
+\begin{lem} \label{lem: cdt-intermediate}
+	$\forall a, n, b, i \in \mathbb{N}.~\forall f \in \contract$. such that $i < b$ and $a < f^{(i)}(n)$:~
+	\begin{equation}  \label{eq: cdt-intermediate}
+	\cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{1+i}(n), b - i - 1\right)
+	\end{equation}
+\end{lem}
+\begin{proof}
+	Fix $a$. We proceed by induction on $i$. Then define $P(i)$ as
+	\begin{equation*}
+	P(i) \triangleq \forall b, n.~ b\ge i+1 \Rightarrow f^{(i)}(n) > a \Rightarrow \cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{1+i}(n), b - i - 1\right)
+	\end{equation*}
+	\begin{itemize}[leftmargin=*]
+		\item \textit{Base case.} For $i = 0$, our goal $P(0)$ is:
+		$\cdw{f}{a}(n, b) = 1 + \cdw{f}{a}\left(f(n), b - 1\right)$
+		where $b \ge 1$ and $f(n)\ge a+1$. This is straightforward.
+		\item \textit{Inductive step.} Assume $P(i)$ has been proved. Then $P(i+1)$ is
+		\begin{equation*}
+		\cdw{f}{a}(n, b) = 2 + i + \cdw{f}{a}\left( f^{2+i}(n), b - i - 2 \right)
+		\end{equation*}
+		where $b \ge i+2$ and $f^{1+i}(n) \ge a+1$. This also implies $b\ge i+1$ and $\displaystyle f^{(i)}(n) \ge f^{1+i}(n)\ge a+1$ by $f\in \contract$, and so $P(i)$ holds. It suffices to prove:
+		\begin{equation*}
+		\cdw{f}{a}\left(f^{1+i}(n), b-i-1\right) = 1 + \cdw{f}{a}\left( f^{2+i}(n), b-i-2 \right)
+		\end{equation*}
+		This is in fact $P(0)$ with $(b, n)$ substituted for $\left(b-i-1, f^{(1+i)}(n)\right)$. Since $f^{(1+i)}(n) \ge a+1$ and $b-i-1\ge 1$, the above holds and $P(i+1)$ follows.
+	\end{itemize}
+\end{proof}
+
+\begin{proof}
+	Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, 
+	let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$.\footnote{We prove the existence 
+		of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v\#L125-L150}{here} in our codebase.} Our goal becomes 
+	$\cdt{f}{a}(n) = m$. Note that this setup gives us: 
+	\begin{equation}
+	\left(f^{(m)}(n) \le a\right) \label{eq: cdt-repeat-tmp} \wedge
+	\left(\forall k.~f^{(k)}(n)\le a \Rightarrow m \le k\right)
+	\end{equation}
+	If $m = 0$, then $n = f^{(0)}(n)\le a$. So $\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = 0 = m$ by Definition~\ref{lem: cdt-init}.
+	When $m > 0$, our plan is to apply Lemma~\ref{lem: cdt-intermediate} to get
+	\begin{equation*}
+	\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = m + \cdw{f}{a}\left(f^{(m)}(n), n-m\right),
+	\end{equation*}
+	and then use Definition~\ref{lem: cdt-init} over (\ref{eq: cdt-repeat-tmp})'s first conjunct to conclude $\cdt{f}{a}(n) = m$. It suffices to prove the premises of Lemma~\ref{lem: cdt-intermediate}: $a < f^{(m-1)}(n)$ and $m-1 < n$.
+	
+	The former follows by contradiction: if $f^{(m-1)}(n) \le a$, (\ref{eq: cdt-repeat-tmp})'s second conjunct implies $m\le m-1$, which is impossible for $m > 0$. The latter then easily follows by $f\in \contract_{a}$, since
+	$n \ge 1 + f(n) \ge 2 + f(f(n)) \ge \cdots \ge m + f^{(m)}(n)$.
+	\linebreak Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
+\end{proof}
+
+\begin{lem} \label{lem: inv-ack-worker-intermediate}
+	$\forall n, b, k$ such that $k+1\le \min\big\{b, \alpha_k(n)\big\}$, 
+	\begin{equation*}
+	\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+	\end{equation*}
+\end{lem}
+\begin{proof}[Lemma~\ref{lem: inv-ack-worker-intermediate}]
+	We prove $P(k)$ by induction, where
+	\begin{equation*}
+	\begin{aligned}
+	P(k) \quad \triangleq \quad & (\alpha_k(n)\ge k+1) \wedge (b\ge k+1) \implies \null \\ & \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+	\end{aligned}
+	\end{equation*}
+	\begin{itemize}[leftmargin=*]
+		\item \emph{Base case}. $\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\cdt{\big(\alpha_0}{1}\big)\circ \alpha_0, \cdt{\alpha_0}{1}\big(\alpha_0(n)\big), 1, b - 1\big) $ by
+		(\ref{eq: inv-ack-worker-recursion}) with $b\ge 1$ and $\alpha_0(n)\le 1$.
+		Definition~\ref{defn: inv-ack-hier} gives $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$, so $P(0)$ holds.
+		
+		\item \emph{Inductive step.} Suppose $\alpha_{k+1}(n)\ge k+2$ and $b\ge k+2$. Then $\alpha_k(n)\ge k+1$ and $b\ge k+1$, so $P(k)$ applies. It suffices to show
+		\begin{equation*}
+		\alpha^{\W}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+		= \alpha^{\W}\big(\alpha_{k+2}, \alpha_{k+2}(n), k+2, b-k-2\big)
+		\end{equation*}
+		Definition~\ref{defn: inv-ack-hier} gives $\alpha_{k+2} = \big(\cdt{\alpha_{k+1}}{1}\big)\circ \alpha_{k+1}$, so this 
+		is~(\ref{eq: inv-ack-worker-recursion}) with $b - k - 1\ge 1$ and $\alpha_{k+1}(n)\ge k+2$. Thus $P(k+1)$ holds. 
+		%\vspace*{-\baselineskip}
+	\end{itemize}
+	% \vspace{-2.2em}
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm: inv-ack-worker-correct}]
+	Since the sequence $\big\{\alpha_k(n)\big\}_{k=1}^{\infty}$ decreases while $\{k\}_{k=1}^{\infty}$ increases to infinity, there exists $m \triangleq \min\big\{k : \alpha_k(n) \le k \} = \alpha(n)$. Note that $m\le n$ since $\alpha_n(n)\le n$.
+	If $m = 0$, $\alpha_0(n)\le 0 \implies \alpha_0(n) = 0$. Thus $\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = 0 = m$. If $m \ge 1$, Lemma~\ref{lem: inv-ack-worker-intermediate} implies:
+	$$ \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\W}\big(\alpha_m, \alpha_m(n), m, n - m\big) = m $$
+	where the last equality follows from the recursive rule.
+\end{proof}
+
 \section{Support for Binary Numbers in Coq}
 \label{apx:bin_in_coq}
 Coq has support for binary numbers with the type \li{N}, which consists 
@@ -80,6 +169,17 @@ which by standard techniques allows us to calculate $a^b$ in $\bigO\left(b^2\big
 
 \section{Proofs of Time Bound Lemmas on \li{nat}}
 \label{apx:time_analysis}
+%TODO: Write some introduction here
+\begin{lem} \label{lem: sub-runtime}
+	The standard $\li{leb}(x, y)$ function returns \li{true} if $x\le y$ and \li{false} otherwise. $\runtime_{\li{leb}}(n, a) = \min\{a, n\} + 1$.
+	% When the inputs are encoded in the unary, \emph{i.e.} Coq type \li{nat}, $\runtime_{\li{leb}}(n, a) = \min\{a, n\} + 1$. In binary, \emph{i.e.} Coq type \li{N}, $\runtime_{\li{leb}}(n, a) = \lfloor \log_{2}\min\{a, n\} \rfloor+~1$. 
+	% per Coq's definitions of \li{leb} on these types.
+\end{lem}
+\begin{lem} \label{lem: compose-runtime}
+	% In all encoding systems, 
+	$\runtime_{f\circ g}(n) = \runtime_f(g(n)) + \runtime_g(n)$.
+	% per Coq's definition of functional composition.
+\end{lem}
 
 \begin{proof}[Lemma \ref{lem: cdt-runtime-general}]
 	Since $f\in \contract_{a}$, $\cdt{f}{a}\ $ is the minimum $k$ such that $f^{(k)}(n) \le a$. The execution of $\cdw{f}{a}\big(n, n\big)$ then takes $k+1$ recursive calls, where the $i^{th}$ call for $0\le i \le k$ takes the arguments $i, a$ and $n_i \triangleq f^{(i)}(n)$ from the previous call (or the initial argument when $i = 0$), and performs the following computations:

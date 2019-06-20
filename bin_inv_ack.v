@@ -48,23 +48,31 @@ Theorem bin_alpha_recursion : forall m, (2 <= m)%nat ->
 Proof.
   destruct m as [|[|[|m]]]; trivial; [omega|omega|intro]. clear H.
   apply functional_extensionality; intro n. unfold compose.
-  simpl. replace (N.div2 (n - 2)) with (N.div2 (n + 2) - 2).
-  2: { destruct (N.le_gt_cases n 2) as [H|H]; repeat rewrite N.div2_div.
-       - replace (n - 2) with 0 by lia. rewrite N.div_0_l, N.sub_0_le by lia.
-         apply N.div_le_upper_bound; lia.
-       - remember (n - 2) as p. replace n with (p + 2) by lia.
-         replace (p + 2 + 2) with (p + 2 * 2) by lia. rewrite N.div_add by lia. lia.
-     }
-  replace (N.log2 (n + 2) - 2) with (N.log2 (N.div2 (n + 2)) - 1)
-    by (rewrite N.div2_spec, N.log2_shiftr; lia).
-  remember (N.div2 (n + 2)) as m. clear n Heqm.
-  destruct m as [|n]; trivial. induction n; trivial;
-  rewrite bin_countdown_recursion by apply bin_alpha_2_bin_contract.
-  [remember (N.div2 (N.pos n~1 - 2)) as m|
-     remember (N.div2 (N.pos n~0 - 2)) as m];
-  destruct (bin_countdown_recursion (bin_alpha 2) 1 m
-              bin_alpha_2_bin_contract) as [Hf0 Hf1]; subst m.
-  
+  simpl. rewrite N.div2_div.
+  replace (n - 2) with (n + 2 - 2*2) by lia.
+  rewrite div_sub by lia.
+  replace (N.log2 (n + 2) - 2)
+    with (N.log2 ((n + 2) / 2) - 1)
+    by (rewrite <- N.div2_div, N.div2_spec, N.log2_shiftr; lia).
+  remember ((n + 2) / 2) as m. clear n Heqm.
+  destruct m as [|p]; trivial. induction p; trivial;
+  rewrite bin_countdown_recursion by apply bin_alpha_2_bin_contract;
+  rewrite N.div2_div; [remember (N.pos p~1) as m|remember (N.pos p~0) as m];
+  replace (m - 2 - 2) with (m - 2 * 2) by lia; rewrite div_sub by lia;
+  rewrite <- N.log2_shiftr, <- N.div2_spec, N.div2_div;
+  remember (m - 2 <=? 1) as b; destruct b; symmetry in Heqb.
+  1, 3: rewrite N.leb_le, N.le_sub_le_add_l in Heqb;
+  apply (N.div_le_mono _ _ 2) in Heqb.
+  2, 4: lia.
+  1, 2: unfold N.div at 2 in Heqb; simpl in Heqb;
+        rewrite N.log2_null; trivial.
+  1, 2: replace (Npos p) with (m / 2) in IHp.
+  2: rewrite <- N.div2_succ_double. 
+  4: rewrite <- N.div2_double.
+  2, 4: rewrite <- N.div2_div; f_equal; trivial.
+  1, 2: rewrite N.leb_gt in Heqb; rewrite N.add_comm, <- IHp;
+        symmetry; apply N.sub_add; rewrite N.le_ngt, N.lt_1_r, N.log2_null, <- N.lt_succ_r;
+        simpl; rewrite <- N.le_ngt, le_div_mul by lia; lia.
 Qed.
 
 

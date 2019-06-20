@@ -55,13 +55,15 @@ Proof.
   - apply N.div_le_lower_bound; trivial.
 Qed.
 
-Lemma div_add : forall a b c, c <> 0 -> (a - c * b) / c = a / c - b.
+Lemma div_sub : forall a b c, c <> 0 -> (a - c * b) / c = a / c - b.
 Proof.
   intros a b c Hc. destruct (N.le_gt_cases a (c * b)) as [H|H].
-  - replace (a / c - b) with 0.
-    rewrite N.div_0_l by apply Hc. 
-    rewrite N.sub_0_le. apply N.div_le_upper_bound; trivial. rewrite <- N.sub_0_le.
-
+  - replace (a / c - b) with 0 by
+      (symmetry; rewrite N.sub_0_le; apply N.div_le_upper_bound; trivial).
+    rewrite <- N.sub_0_le in H. rewrite H. apply N.div_0_l, Hc.
+  - replace a with (a - c * b + b * c) at 2 by lia.
+    rewrite N.div_add by trivial. lia.
+Qed.
 
 (* ****** REPEATED APPLICATION ************ *)
 

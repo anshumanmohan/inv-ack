@@ -24,17 +24,7 @@ operating on \li{N}, \emph{i.e.} in binary.
 \begin{defn}
  For a function $f$ on $k$ variables, the \emph{runtime} of $f$, denoted by $\runtime_f\big(n_1, n_2, \ldots, n_k\big)$, counts the computational steps to compute $f(n_1, n_2, \ldots, n_k)$.
 \end{defn}
-\begin{lem} \label{lem: sub-runtime}
-	The standard $\li{leb}(x, y)$ function returns \li{true} if $x\le y$ and \li{false} otherwise. $\runtime_{\li{leb}}(n, a) = \min\{a, n\} + 1$.
-	% When the inputs are encoded in the unary, \emph{i.e.} Coq type \li{nat}, $\runtime_{\li{leb}}(n, a) = \min\{a, n\} + 1$. In binary, \emph{i.e.} Coq type \li{N}, $\runtime_{\li{leb}}(n, a) = \lfloor \log_{2}\min\{a, n\} \rfloor+~1$. 
-	% per Coq's definitions of \li{leb} on these types.
-\end{lem}
-\begin{lem} \label{lem: compose-runtime}
-	% In all encoding systems, 
-	$\runtime_{f\circ g}(n) = \runtime_f(g(n)) + \runtime_g(n)$.
-	 % per Coq's definition of functional composition.
-\end{lem}
-The next lemma establishes the general runtime structure of 
+The following lemma establishes the general runtime structure of 
 \emph{countdown} when the input is encoded in \li{nat}.
 \hide{
 \begin{lem} \label{lem: cdt-runtime-general}
