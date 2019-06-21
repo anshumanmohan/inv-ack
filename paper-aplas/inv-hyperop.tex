@@ -48,7 +48,7 @@ Thus it is natural to define it using \emph{countdown}.
 Definition divc a b := countdown_to 0 (fun n => n - a) b.
 Definition logc a b := countdown_to 1 (divc a) b.
 Definition logstar a b := countdown_to 1 (logc a) b.
-\end{lstlisting}\vspace*{-0.5\baselineskip}
+\end{lstlisting}
 \end{defn}
 }%end hide
 \hide{Proving $\forall a, b \ge 1,~\divc(a, b) = \left\lceil b/a \right\rceil$ serves
@@ -56,6 +56,7 @@ to prove that all three definitions are correct, since that statement implies
 the correctness of  $\logc$, which in turn implies the correctness of $\log^*$. We will prove this in \ref{blah},
 together with the correctness of the entire hyperoperation hierarchy.
 }
+\vspace{-1.3em}
 where the Curried $a\angle{n{-}1}$ denotes the single-variable function 
 $\lambda b.a\angle{n{-}1}b$.
 We now show that $a\angle{n}$ is the inverse to $a[n]$. 
@@ -64,12 +65,13 @@ First note that $a\angle{0}\in \contract_0$.~Then:
 $a\angle{1}b = b - a$.
 \end{lem}
 \begin{proof}
-Since $a\angle{0} \in \contract_0 \subseteq \contract_{a}$, Theorem~\ref{thm: cdt-recursion} applies.
+Theorem~\ref{thm: cdt-recursion} applies because $a\angle{0} \in \contract_0 \subseteq \contract_{a}$, giving the result shown below. 
+Then $a\angle{1}b = b - a$ by induction on $b$.
+\vspace{-0.8em}
 \begin{equation*}
 a\angle{1}b \quad = \quad \cdt{\left(a\angle{0}\right)}{a}(b) \quad = \quad \begin{cases}
 0 & \text{ if } b\le a \\ 1 + a\angle{1}(b - 1) & \text{ if } b\ge a+1 \end{cases} \\
 \end{equation*}
-Then, $a\angle{1}b = b - a$ by induction on $b$.
 \end{proof}
 \begin{col} \label{col: inv-hyperop-1-contr1}
 $\forall a \ge 1, a\angle{1} \in \contract_1$.
@@ -83,7 +85,7 @@ $\forall a \ge 1, a\angle{1} \in \contract_1$.
 \end{enumerate}
 \end{col}}%end hide
 %Now we are ready to prove the correctness of the inverse hyperoperations.
-Note: $a\angle{n}b$ is a total function, but it is never actually used for $a = 0$ when $n \ge 2$ or for $a=1$ when $n \ge 3$. For the values
+\textbf{N.B.} $a\angle{n}b$ is a total function, but it is never actually used for $a = 0$ when $n \ge 2$ or for $a=1$ when $n \ge 3$. For the values
 we do care about, we have our inverse:
 \begin{thm} \label{thm: inv-hyperop-correct}
 When $n\le 1$, or $n \le 2 \wedge a\ge 1$, or $a\ge 2$, then
@@ -122,7 +124,7 @@ reduces the goal to $P(n)$. Using~(\ref{eq: tmp-induction-2}) and the fact that 
 \begin{equation*}
 a[2]\in \repeatable_0 \iff \forall b < c.~ab < ac \quad \wedge \quad \forall b \ge 1.~ab \ge b+1\text{,}
 \end{equation*}
-which is straightforward for $a\ge 2$. Induction on n gives us the third goal.
+which is straightforward for $a\ge 2$. Induction on $n$ gives us the third goal.
 \end{proof}
 %With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^*$, as well as the whole inverse hyperoperation hierarchy.
 \begin{rem}
@@ -198,16 +200,18 @@ The following theorem demonstrates that a budget of $n$ suffices.
 \begin{thm} \label{thm: inv-ack-worker-correct}
 	$\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{thm}
-\begin{proof}[Outline]
-	Observe that given the arguments $\big(\alpha_i, \alpha_i(n), i, b - i\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$ at the next recursive call. A straightforward induction on $k$ then show that if $k\le \min\big\{b, \alpha_k(n)\big\}$, 
+\begin{proof}[outline]
+	If given the arguments $\big(\alpha_i, \alpha_i(n), i, b - i\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$ at the next recursive call. A straightforward induction on $k$ then shows that if $k\le \min\big\{b, \alpha_k(n)\big\}$, 
 	\begin{equation} \label{eq: inv-ack-worker-intermediate}
 	\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_k, \alpha_k(n), k, b-k\big)
 	\end{equation}
 	Let $m \triangleq \min\big\{k : \alpha_k(n) \le k \}$, then $m\le n$ since $\alpha_n(n)\le n$, \eqref{eq: inv-ack-worker-intermediate} then implies:
 	$$ \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\W}\big(\alpha_m, \alpha_m(n), m, n - m\big) = m = \alpha(n) $$
-	For the full proof, refer to Appendix~\ref{apx:proof_correct_worker}.
 \end{proof}
-% The code to compute the inverse Ackermann function in Gallina follows.
+We put a more involved proof of correctness in Appendix~\ref{apx:proof_correct_worker}.
+We now have a definition of inverse Ackermann that is computationally 
+definable via a Coq-accepted worker. Below, we present the inverse 
+Ackermann function in Gallina.
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_worker}` (f : nat -> nat) (n k b : nat) : nat :=
   match b with

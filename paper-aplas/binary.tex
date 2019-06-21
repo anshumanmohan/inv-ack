@@ -72,7 +72,7 @@ Definition bin_countdown (f : N -> N) (a n : N) : N :=
   bin_countdown_worker f a n (nat_size (n - a)).
 \end{lstlisting}
 
-\noindent The following lemma is the version of Lemma~\ref{lem: cdt-runtime} for the binary system:
+\noindent The following is the binary version of Lemma~\ref{lem: cdt-runtime}:
 \begin{lem} \label{lem: cdt-runtime-bin}
 	$\forall n \in \li{N}$, if $f$ is a binary strict contraction above $a$,
 	\begin{equation*}

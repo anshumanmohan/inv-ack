@@ -58,9 +58,11 @@ The following lemma establishes the general runtime structure of
 	\end{equation*}
 	\hspace{5em}where $\forall i, n.~C_i(n) \triangleq \alpha_i^{(\alpha_{i+1}(n) + 1)}(n) + 1 \in \{1, 2\}$
 \end{lem}
-\textbf{This lemma implies} $\mathbf{\runtime_{\alpha_{i+1}}(n) \ge 
-\runtime_{\alpha_i}(n)}$. 
-Given some index $i$ \emph{s.t.} $\runtime_{\alpha_i}(n) = \Omega\big(n^2\big)$, each function after $\alpha_i$ in the hierarchy will take at least $\Omega\big(n^2\big)$, thus making $\runtime_{\alpha_i} (n) = \Omega\big(n^2\big)$ per Definition~\ref{defn: inv-ack-worker}. In fact, $i = 2$ suffices.
+Crucially, this lemma implies $\runtime_{\alpha_{i+1}}(n) \ge 
+\runtime_{\alpha_i}(n)$. 
+Given some index $i$ such that \linebreak $\runtime_{\alpha_i}(n) = \Omega\big(n^2\big)$, each function after $\alpha_i$ in the hierarchy will take at least $\Omega\big(n^2\big)$, thus making $\runtime_{\alpha_i} (n) = \Omega\big(n^2\big)$.
+% per Definition~\ref{defn: inv-ack-worker}. 
+In fact, $i = 2$ suffices.
 \begin{lem} \label{lem:runtimealpha2}
 	When $\alpha_i$ is defined per Definitions~\ref{defn: inv-ack-hier}, $\runtime_{\alpha_2}(n) = \Theta\big(n^2\big)$
 \end{lem}
@@ -106,8 +108,8 @@ The runtime for $\alpha_2$ can thus be bounded to $\bigO(n)$ as follows:
 Note that the above bound only applies for $n\ge 2$. When $n\le 1$, the LHS is 1.
 \end{rem}
 
-This simple optimization has a cascading effect through the entire hierarchy.
-We can prove a bound of $O(n)$ for every level.
+This simple optimization has a cascading effect through the entire hierarchy:
+we can now prove a bound of $O(n)$ for every level.
 \hide{
 \begin{lem} \label{lem: inv-ack-3-runtime}
 	If $n\ge 1$, $\runtime_{\alpha_3}(n) = 2$ $\runtime_{\alpha_3}(n) \le 4n + 4$.
@@ -119,7 +121,7 @@ We can prove a bound of $O(n)$ for every level.
 	$\forall l, \forall i \ge 3, \forall s\le \alpha_{i+1}(n)$.~$\displaystyle \sum_{k=s}^{\alpha_{i+1}(n)} \log_2^{(l)}\alpha_i^{(k)}(n) \le 2\log_2^{(l+s)}n$.
 \end{lem}
 }
-By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in $\Theta\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time $\Theta(n)$ for fixed $i$.
+By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in \linebreak $\Theta\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time $\Theta(n)$ for fixed $i$.
 \begin{thm} \label{thm: inv-ack-hier-runtime-improved}
 	$\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \Theta(n)$.
 \end{thm}
