@@ -188,13 +188,9 @@ to compositionally apply $f$ on the input before giving up.
 If the input goes below or equals $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n)~\le~a$, we return the count $k$. If the budget is exhausted (\emph{i.e.} $b = 0$) while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but the point is that it can clearly be written as a Coq \li{Fixpoint}:
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint countdown\_worker}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
-match b with
- | 0    => 0
- | S b' => match (n - a) with
-           | 0 => 0
-           | _ => S (countdown_worker a f (f n) b') 
-           end
- end.
+match b with 0 => 0 | S b' => 
+  match (n - a) with 0 => 0 | _ => S (countdown_worker a f (f n) b') end
+end.
 \end{lstlisting}
 Given an $f$ that is a contraction strict from $a$, 
 and given a sufficient budget, \emph{countdown worker} 

@@ -37,10 +37,10 @@ represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
 % https://www.cs.princeton.edu/~chazelle/pubs/mst.pdf
 %{\color{magenta}A brief sentence explaining what a primitive recursive function is and
 %why total computable functions tend to be primitive recursive.}
-The original three-variable Ackermann function was discovered by
+The three-variable Ackermann function was presented by
 Wilhelm Ackermann as an example of a total computable function that
 is not primitive recursive~\cite{ackermann}.
-It grows tremendously fast, but does not have the higher-order
+It does not have the higher-order
 relation to repeated application and hyperoperation that we have been studying in
 this paper. Those properties emerged thanks to refinements by Rózsa Péter~\cite{peter},
 and it is her variant, usually called the Ackermann-Péter function, 
@@ -73,20 +73,19 @@ and the time complexity of the union-find data structure. Others
 have also checked bounds on the resources
 used by programs formally in proof assistants such as Coq, Isabelle/HOL, and Why3.
 
-Every pearl starts with a grain of sand.  We had the benefit of two: a website and slide deck 
-discussing the inverse Ackermann function by Nivasch~\cite{nivasch} and Seidel~\cite{seidel},
-respectively.  They proposed a definition of the inverse Ackermann essentially in terms of
+{\color{red}The Coq standard library has linear-time definitions 
+of division on \li{nat} and \li{N}, and base-$2$ discrete logarithm 
+on \li{nat}.  The Mathematical Components library~\cite{MathComp} 
+has \li{log} on \li{nat} with prime base. 
+To our knowledge, we are the first to extend this problem further 
+upwards and downwards in the natural hierarchy of functions, and to
+provide linear computations up to representation size.}
+
+Every pearl starts with a grain of sand.  We had the benefit of two: 
+Nivasch~\cite{nivasch} and Seidel~\cite{seidel}.
+They proposed a definition of the inverse Ackermann essentially in terms of
 the inverse hyperoperations.  Unfortunately, their technique is unsound, since it diverges from
 the true Ackermann inverse when the inputs grow sufficiently large.  Our technique is verified in Coq.
-
-{\color{red}The Coq standard library already includes a linear-time definition 
-of division on \li{nat} and \li{N}; and base-two discrete logarithm 
-on \li{nat}.  The Mathematical Components library~\cite{MathComp} 
-provides a logarithm on \li{nat}.
-
-Other standard libaries provide some additional ad-hoc examples, 
-such as logarithms in prime bases...}
-
 
 \subsection{Conclusion}
 We have implemented a hierarchy of functions that calculate the upper inverses

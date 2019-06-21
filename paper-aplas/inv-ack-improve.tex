@@ -56,7 +56,7 @@ The following lemma establishes the general runtime structure of
 	\begin{equation*}
 	\runtime_{\alpha_{i+1}}(n) = \sum_{k=0}^{\alpha_{i+1}(n)}\runtime_{\alpha_i}\left( \alpha_i^{(k)}(n)\right) + 3\alpha_{i+1}(n) + C_i(n)
 	\end{equation*}
-	\hspace{5em}where $\forall i, n.~C_i(n) \triangleq \alpha_i^{(\alpha_{i+1}(n) + 1)}(n) + 1 \in \{1, 2\}$
+	\hspace{7em}where $\forall i, n.~C_i(n) \triangleq \alpha_i^{(\alpha_{i+1}(n) + 1)}(n) + 1 \in \{1, 2\}$
 \end{lem}
 Crucially, this lemma implies $\runtime_{\alpha_{i+1}}(n) \ge 
 \runtime_{\alpha_i}(n)$. 
