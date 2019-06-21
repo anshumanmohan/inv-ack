@@ -63,22 +63,23 @@ can be found in time $O(m\cdot\alpha(m,n))$.
 % http://gallium.inria.fr/~fpottier/publis/chargueraud-pottier-uf-sltc.pdf
 % http://gallium.inria.fr/~agueneau/publis/gueneau-chargueraud-pottier-coq-bigO.pdf
 % https://scholar.google.com.sg/scholar?start=0&hl=en&as_sdt=2005&sciodt=0,5&cites=6488308509111085774&scipsc=
-Moving on to mechanized verifications, Charguéraud and Pottier, 
-later joined by Guéneau \cite{charpott,gueneauetal},
-extended Separation Logic with the notion of ``time credits'',
+Charguéraud and Pottier, later joined by Guéneau \cite{charpott,gueneauetal},
+extended Separation Logic with ``time credits'',
 formalized the~$O$ notation in Coq,
-and gave a proof in Coq that simultaneously verifies the correctness
-and the time complexity of the union-find data structure. Others
-\cite{others2,others4,others3,others1}
+and verified the correctness
+and the time complexity of the union-find data structure in Coq.
+They formalized a version of the Ackermann function, but not its inverse. 
+Others \cite{others2,others4,others3,others1}
 have also checked bounds on the resources
 used by programs formally in proof assistants such as Coq, Isabelle/HOL, and Why3.
 
 {\color{red}The Coq standard library has linear-time definitions 
-of division on \li{nat} and \li{N}, and base-$2$ discrete logarithm 
-on \li{nat}.  The Mathematical Components library~\cite{MathComp} 
-has \li{log} on \li{nat} with prime base. 
-To our knowledge, we are the first to extend this problem further 
-upwards and downwards in the natural hierarchy of functions, and to
+of division and base-$2$ discrete logarithm on \li{nat} and \li{N}.
+The Mathematical Components library~\cite{MathComp} 
+has \li{log} on \li{nat} with prime bases. 
+To our knowledge, we are the first to generalize this 
+problem, extend it both 
+upwards and downwards in the natural hierarchy of functions, and
 provide linear computations up to representation size.}
 
 Every pearl starts with a grain of sand.  We had the benefit of two: 

@@ -80,8 +80,9 @@ hyperoperations use the initial values given in Equation~\ref{eq:hyper}.
 Having noticed that the deep recursion in both notions is expressing the same idea
 of repeated application, we arrive at another useful idea. We can express the relationship
 between the $(\text{n+1})^{\text{th}}$ and $\text{n}^{\text{th}}$ levels in
-a \emph{functional} way if we develop a higher-order function that transforms the latter level
-to the former.  We call this idea a \emph{repeater}:
+a \emph{functional} way via a higher-order function that transforms the latter level
+to the former. We employ a version of the well-known function iterator
+\li{iter}~\cite{bertotcast}:
 \begin{defn}
 $\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 \begin{lstlisting}
