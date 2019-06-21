@@ -187,13 +187,13 @@ and the \emph{budget} $b$, the maximum number of times we shall attempt
 to compositionally apply $f$ on the input before giving up. 
 If the input goes below or equals $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n)~\le~a$, we return the count $k$. If the budget is exhausted (\emph{i.e.} $b = 0$) while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but the point is that it can clearly be written as a Coq \li{Fixpoint}:
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint countdown\_worker}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
 match b with 0 => 0 | S b' => 
-  match (n - a) with 0 => 0 | _ => S (countdown_worker a f (f n) b') end
+  match (n - a) with 0 => 0 | _ => S (cdn_wkr a f (f n) b') end
 end.
 \end{lstlisting}
 Given an $f$ that is a contraction strict from $a$, 
-and given a sufficient budget, \emph{countdown worker} 
+and given a sufficient budget, \li{cdn_wkr} 
 will compute the correct \emph{countdown} value.  
 Careful readers may have noticed that \emph{budget} is similar to 
 \emph{gas}, which we discussed in ~\S\ref{sec:incfuncinv} 
@@ -206,7 +206,7 @@ This lets us define \emph{countdown} in Coq for the first time:
 \begin{defn} \label{defn: countdown}
 Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L104}{Definition countdown\_to}` a f n := countdown_worker a f n n.
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L104}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
 \end{lstlisting}
 \vspace{-0.8em}
 \end{defn}

@@ -212,18 +212,19 @@ We now have a definition of inverse Ackermann that is computationally
 definable via a Coq-accepted worker. Below, we present the inverse 
 Ackermann function in Gallina.
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_worker}` (f : nat -> nat) (n k b : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
   match b with 0 => 0 | S b' => 
     match (n - k) with 0 => k | _ => let g := (countdown_to 1 f) 
-      in inv_ack_worker (compose g f) (g n) (S k) b'
+      in inv_ack_wkr (compose g f) (g n) (S k) b'
     end
   end.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L32-L36}{Fixpoint alpha}` (m x : nat) : nat :=
-  match m with 0 => x - 1 | S m' => countdown_to 1 (alpha m') (alpha m' x)
+  match m with 0 => x - 1 | S m' => 
+    countdown_to 1 (alpha m') (alpha m' x)
   end.
   
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L151-L152}{Definition inv\_ack}` := inv_ack_worker (alpha 0) (alpha 0 n) 0 n.
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L151-L152}{Definition inv\_ack}` := inv_ack_wkr (alpha 0) (alpha 0 n) 0 n.
 \end{lstlisting}
 
 % OLD METHOD FOR INVERSE ACKERMANN

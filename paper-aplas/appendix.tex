@@ -23,7 +23,7 @@ Fixpoint inv_ack_worker (f : nat -> nat) (n k b : nat) : nat :=
             end
   end.
 
-Definition inv_ack_linear n :=
+Definition inv_ack_linear_time n :=
   match n with
   | 0 | 1 => 0
   | _     => let f := (fun x => x - 2) in inv_ack_worker f (f n) 1 (n - 1)
