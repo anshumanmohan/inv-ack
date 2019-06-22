@@ -1,4 +1,3 @@
-
 Thus far we have used the Coq type \li{nat}, which represents 
 a number~$n$ using~$n$ bits. 
 The binary system represents~$n$ in $\lfloor \log_{2} n \rfloor + 1$ bits.
@@ -93,7 +92,7 @@ Definition bin_countdown (f : N -> N) (a n : N) : N :=
 %Definition alpha3 (n: N) : N := N.size (n+2) - 3.
 %\end{lstlisting}
 %Let $n\ge 2$. The computation of \li{N.size(n)} takes time equal to itself, so the above definition gives $\runtime(\alpha_3, n) \le 2\log_2n$. Fix an $i\ge 3$ and suppose $\runtime(\alpha_i, n) \le C_i\log_2n$. By \Cref{lem: inv-ack-hier-runtime},
-\subsection{Inverse Ackermann in $\Theta\left(\log_2 n\right)$ time}
+\subsection{Inverse Ackermann in $\bigO\left(\log_2 n\right)$ time}
 Our new Coq definition computes countdown 
 only for strict binary contractions. Fortunately, starting 
 from $n = 2$, the inverse hyperoperations $a\angle{n}b$ when $a\ge 2$ 
