@@ -106,16 +106,33 @@
 \renewcommand{\implies}{\Rightarrow}
 \renewcommand{\iff}{\Leftrightarrow}
 
+%\makeatletter
+%\newtheorem*{rep@theorem}{\rep@title}
+%\newcommand{\newreptheorem}[2]{%
+%	\newenvironment{rep#1}[1]{%
+%		\def\rep@title{#2 \ref{##1}}%
+%		\begin{rep@theorem}}%
+%		{\end{rep@theorem}}}
+%\makeatother
+
 % %\theoremstyle{plain}
 \newtheorem{defn}{Definition}
 \newtheorem{ex}{Example}
-\newtheorem{prop}{Proposition}
+\newtheorem{prop}[defn]{Proposition}
 \newtheorem{col}[defn]{Corollary}
 \newtheorem{lem}[defn]{Lemma}
 \newtheorem{hypo}{Hypothesis}
 % %\theoremstyle{definition}
 \newtheorem{thm}[defn]{Theorem}
 \newtheorem{rem}[defn]{Remark}
+
+%\newreptheorem{thm}{Theorem}
+
+\newenvironment{usethmcounterof}[1]{%
+	\renewcommand\thedefn{\ref{#1}}\thm}{\endthm\addtocounter{defn}{-1}}
+
+\newenvironment{uselemcounterof}[1]{%
+	\renewcommand\thedefn{\ref{#1}}\lem}{\endlem\addtocounter{defn}{-1}}
 
 %\crefname{thm}{theorem}{theorems}
 %\crefname{defn}{definition}{definitions}
