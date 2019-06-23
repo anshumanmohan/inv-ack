@@ -1,28 +1,27 @@
+\vspace{-2em}
 \section{Standalone Code for Linear-Time $\alpha$ in \li{nat}}
 \label{apx:code}
 
+\vspace{-2em}
+
 \begin{lstlisting}
-Require Import Omega.
-Require Import Program.Basics.
+Require Import Omega. Require Import Program.Basics.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
-match b with 0 => 0 | S b' => 
+match b with 0 => 0 | S b' =>
   if (n <=? a) then 0 else S (cdn_wkr f a (f n) k')
 end.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L104}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
-
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
-match b with 0 => 0 | S b' => 
+match b with 0 => 0 | S b' =>
   if (n <=? k) then k else let g := (countdown_to f 1) in
                         inv_ack_wkr (compose g f) (g n) (S k) b
 end.
 
 Definition inv_ack_linear_time n :=
-  match n with
-  | 0 | 1 => 0
-  | _     => let f := (fun x => x - 2) in
-               inv_ack_wkr f (f n) 1 (n - 1)
+  match n with 0 | 1 => 0 | _ => 
+    let f := (fun x => x - 2) in inv_ack_wkr f (f n) 1 (n - 1)
   end.
 \end{lstlisting}
 
@@ -76,10 +75,10 @@ Now, we are ready to prove the correctness of the \emph{countdown} computation. 
 \end{usethmcounterof}
 
 \begin{proof}
-	Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, 
-	let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$.\footnote{We prove the existence 
-		of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v\#L125-L150}{here} in our codebase.} Our goal becomes 
-	$\cdt{f}{a}(n) = m$. Note that this setup gives us: 
+	Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered,
+	let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$.\footnote{We prove the existence
+		of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v\#L125-L150}{here} in our codebase.} Our goal becomes
+	$\cdt{f}{a}(n) = m$. Note that this setup gives us:
 	
 	\begin{equation} \label{eq: cdt-repeat-tmp}
 	\left(f^{(m)}(n) \le a\right) \wedge
@@ -104,10 +103,10 @@ Now, we are ready to prove the correctness of the \emph{countdown} computation. 
 \label{apx:proof_correct_inv_ack_worker}
 This subsection provides the fully detailed proof of Theorem~\ref{thm: inv-ack-worker-correct}, which states that given the appropriate arguments, the function \emph{inverse Ackermann worker} in Definition~\ref{defn: inv-ack-worker} correctly computes the value of the inverse Ackermann function as defined in Definition~\ref{defn: inv-ack-new}.
 
-The following lemma illustrates the working of \emph{inverse Ackermann worker} by examining each recursive call made during the execution of $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, b\big)$. 
+The following lemma illustrates the working of \emph{inverse Ackermann worker} by examining each recursive call made during the execution of $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, b\big)$.
 
 \begin{lem} \label{lem: inv-ack-worker-intermediate}
-	$\forall n, b, k$ such that $k\le \min\big\{b, \alpha_{k-1}(n)\big\}$, 
+	$\forall n, b, k$ such that $k\le \min\big\{b, \alpha_{k-1}(n)\big\}$,
 	\begin{equation*}
 	\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
 	\end{equation*}
@@ -135,8 +134,8 @@ The following lemma illustrates the working of \emph{inverse Ackermann worker} b
 		= \alpha^{\W}\big(\alpha_k, \alpha_k(n), k, b-k\big)
 		\end{equation*}
 		
-		Definition~\ref{defn: inv-ack-hier} gives $\alpha_{k+1} = \big(\cdt{\alpha_k}{1}\big)\circ \alpha_k$, so this 
-		is~(\ref{eq: inv-ack-worker-recursion}) when $b - k\ge 1$ and $\alpha_k(n)\ge k+1$. Thus $P(k+1)$ holds. 
+		Definition~\ref{defn: inv-ack-hier} gives $\alpha_{k+1} = \big(\cdt{\alpha_k}{1}\big)\circ \alpha_k$, so this
+		is~(\ref{eq: inv-ack-worker-recursion}) when $b - k\ge 1$ and $\alpha_k(n)\ge k+1$. Thus $P(k+1)$ holds.
 		%\vspace*{-\baselineskip}
 	\end{itemize}
 \end{proof}
@@ -156,29 +155,29 @@ With this lemma, we can proceed to establish the correctness of \emph{inverse Ac
 
 \section{Support for Binary Numbers in Coq}
 \label{apx:bin_in_coq}
-Coq has support for binary numbers with the type \li{N}, which consists 
+Coq has support for binary numbers with the type \li{N}, which consists
 of constructors \li{0} and \li{positive}:
 
 \begin{lstlisting}
-Inductive positive : Set := 
+Inductive positive : Set :=
   | xI : positive -> positive | xO : positive -> positive
   | xH : positive.
 \end{lstlisting}
 
-Constructor \li{xH} represents $1$, and constructors \li{xO} and \li{xI} represent 
-appending $0$ and $1$ respectively. 
+Constructor \li{xH} represents $1$, and constructors \li{xO} and \li{xI} represent
+appending $0$ and $1$ respectively.
 By always starting with $1$, \li{positive} bypasses
-the issue of disambiguating \emph{e.g.} the strings \li{011} and 
+the issue of disambiguating \emph{e.g.} the strings \li{011} and
 \li{00011}, which represent the same number but pose
-a minor technical challenge. 
-To represent $0$, the type \li{N} simply provides a separate constructor \li{0}. 
+a minor technical challenge.
+To represent $0$, the type \li{N} simply provides a separate constructor \li{0}.
 
 \hide{
 \begin{lstlisting}
 Definition exp (x y : N) : N := match y with
 | 0 => 1 | Npos y'
   => match x with
-     | 0 => 0 | _ => 
+     | 0 => 0 | _ =>
      let fix expPos (p : positive) :=
             match p with
             | xH => x
@@ -199,7 +198,7 @@ To analyse the performance of this definition, let us denote the computation tim
 \end{aligned}
 \end{equation*}
 
-Thus, $\Texp(a, b) \le 3\big(\log_2 a + 1\big)^2 \sum_{k=1}^{\infty} \frac{b^{2k}}{4^k} = \bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$. 
+Thus, $\Texp(a, b) \le 3\big(\log_2 a + 1\big)^2 \sum_{k=1}^{\infty} \frac{b^{2k}}{4^k} = \bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$.
 This a massive improvement over the bound $\Theta\left(a^b\right)$ of exponentiation in the unary system.
 
 Apart from speeding up addition and multiplication, the binary system does the same for their successor, namely exponentiation. We achieve this by \emph{repeated squaring},
@@ -228,14 +227,14 @@ We start by examining the running time of two operations used in the Coq definit
 	Let $P(x) \triangleq \forall y. \runtime_{\li{leb}}(x, y) = \min\{x, y\} + 1$. $P(0)$ holds since both sides are $1$. Assume $P(x-1)$ holds for $x > 0$, consider any $y$
 	\begin{itemize}
 		\item If $y = 0$, $\runtime_{\li{leb}}(x, 0) = 1 = \min\{x-1, 0\} + 1$.
-		\item If $y > 0$, $\runtime_{\li{leb}}(x, y)$ $= \runtime_{\li{leb}}(x - 1, y - 1) + 1$ 
+		\item If $y > 0$, $\runtime_{\li{leb}}(x, y)$ $= \runtime_{\li{leb}}(x - 1, y - 1) + 1$
 		$ = \min\{x-1, y-1\} + 2$ (by $P(x-1)$) $= \min\{(x-1) + 1, (y-1) + 1\} + 1 = \min\{x, y\} + 1$.
 	\end{itemize}
   In both cases, $P(x)$ holds. The proof is complete by induction on $x$.
 \end{proof}
 
 \begin{lem} \label{lem: compose-runtime}
-	% In all encoding systems, 
+	% In all encoding systems,
 	$\runtime_{f\circ g}(n) = \runtime_f(g(n)) + \runtime_g(n)$.
 	% per Coq's definition of functional composition.
 \end{lem}
@@ -284,7 +283,7 @@ the second summand in \eqref{eq: cdt-runtime-struct} is equal to $(a + 1)\cdt{f}
 The above lemma is the last step for us to build a recursive formula for the running time of the inverse Ackermann hierarchy, with each level's runtime involving that of its previous one. We restate and prove Lemma~\ref{lem: inv-ack-hier-runtime} from \S\ref{sect: hardcode-lvl2}.
 
 \begin{uselemcounterof}{lem: inv-ack-hier-runtime}
-	When $\alpha_i$ is defined per Definitions~\ref{defn: inv-ack-hier} 
+	When $\alpha_i$ is defined per Definitions~\ref{defn: inv-ack-hier}
 	and~\ref{defn: countdown},
 	\begin{equation} \label{eq: inv-ack-hier-runtime}
 	\runtime_{\alpha_{i+1}}(n) = \sum_{k=0}^{\alpha_{i+1}(n)}\runtime_{\alpha_i}\left( \alpha_i^{(k)}(n)\right) + 3\alpha_{i+1}(n) + C_i(n)
@@ -518,7 +517,7 @@ Now we are ready to prove Lemma~\ref{lem: cdt-runtime-bin}, reproduced here for 
 	\begin{equation} \label{eq: cdt-bin-runtime-struct}
 	\runtime_{\cdt{f}{a}}(n) =
 	\hspace{5pt}
-	\begin{aligned} 
+	\begin{aligned}
 	& \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
 	&\hspace{-4pt}+& ~ \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right) \\
 	& +~ \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i)
@@ -530,7 +529,7 @@ Now we are ready to prove Lemma~\ref{lem: cdt-runtime-bin}, reproduced here for 
 	 \begin{aligned}
 	 & \runtime_{\cdt{f}{a}(n)}(n) \ \le \
 	 \left(\begin{aligned}
-	 & \sum_{i=0}^{\cdt{f}{a}(n) - 1} 
+	 & \sum_{i=0}^{\cdt{f}{a}(n) - 1}
 	 \runtime_f\big(f^{(i)}(n)\big)
 	 \ + \ (\log_2a + 1)\big(f^{(i)}(n) + 1\big) \\
 	 & \ + \ 2\cdt{f}{a}(n) \ + \ \log_2\cdt{f}{a}(n)
@@ -546,7 +545,7 @@ With all critical lemmas established and proven, including Lemma~\ref{lem: sum-a
 
 \begin{usethmcounterof}{thm: inv-ack-runtime-bin}
 	When $\alpha_i$ on \li{N} is defined via \li{bin_alpha}, for all $i$ and $n$ we have $\runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i$.
-\end{usethmcounterof} 
+\end{usethmcounterof}
 
 \begin{proof}
 	Firstly, we have:
