@@ -24,6 +24,11 @@ Require Import prelims.
 
 (* ****** REPEATER ****** *)
 
+(* 
+ * Our version of the classic "iter",
+ * renamed to emphasize the "starting value" a 
+ * and the duality with "countdown_to", which will be introduced soon 
+ *) 
 Fixpoint repeater_from (f : nat -> nat) (a : nat) (n : nat) : nat :=
   match n with
   | 0    => a
