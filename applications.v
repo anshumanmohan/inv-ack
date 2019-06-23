@@ -7,7 +7,7 @@ Require Import countdown.
 
 (*
 ===================================================================================
-************** SECTION 4.1 INVERSE HYPEROPS, DIVISION, LOG AND LOG* ***************
+*************** SECTION 6: INVERSE HYPEROPS, DIVISION, LOG AND LOG* ***************
 ===================================================================================
  *)
 
@@ -16,6 +16,7 @@ Require Import countdown.
  * Interestingly, the 2nd, 3rd and 4th levels of this tower correspond to 
  * divcision, logc base b and log* base b, which are not defined in the 
  * Coq Standard Library. 
+ *
  * Our definitions, which use countdown, offer enough versatility and 
  * flexibility to substantiate easy and direct proof for a vast range 
  * of facts about these functions.
@@ -67,8 +68,8 @@ Qed.
 
 (* 
  * Main theorem of this section. 
- * Establish the correctness of the inverse hyperoperations' definition 
- * in inv_hyperop 
+ * Establishes the correctness of the inverse hyperoperations' 
+ * definition given in inv_hyperop.v 
  *)
 Theorem inv_hyperop_correct :
   forall a n, 2 <= a -> upp_inv_rel (inv_hyperop a n) (hyperop a n).

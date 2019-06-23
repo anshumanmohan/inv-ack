@@ -6,9 +6,9 @@ Require Import repeater.
 Require Import increasing_expanding.
 
 (*
-===================================================================================
-**** SECTION 3.1 INCREASING FUNCTIONS, UPPER INVERSE AND EXPANSIONS (2)************
-===================================================================================
+==================================================================================
+******* SECTION 4: INCREASING FUNCTIONS, UPPER INVERSE AND EXPANSIONS ************
+==================================================================================
  *)
 
 (* 
@@ -24,7 +24,7 @@ Require Import increasing_expanding.
  *
  * In the previous file (increasing_expanding.v), we dealt with 
  * increasing functions and expansions.
- * In this second part, we deal with upper inverses of increasing functions 
+ * In this file, we deal with upper inverses of increasing functions. 
  *)
 
 

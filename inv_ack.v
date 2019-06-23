@@ -10,7 +10,7 @@ Require Import applications.
 
 (*
 ==========================================================================
-************** SECTION 4.2 THE INVERSE ACKERMANN FUNCTION ****************
+*************** SECTION 7: THE INVERSE ACKERMANN FUNCTION ****************
 ==========================================================================
  *)
 
@@ -76,7 +76,7 @@ Qed.
 
 (* 
  * Ackermann at level 1. It is useful for two purposes:
- *  (1) Compute alpha 1 below, which is used in hard-coding the second level
+ *  (1) Computes alpha 1 below, which is used in hard-coding the second level
  *      for linear runtime.
  *  (2) Serves to prove base case for "ack_incr_by_lvl"  
  *)

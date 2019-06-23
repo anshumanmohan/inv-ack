@@ -4,9 +4,30 @@ Require Import micromega.Lia.
 Require Import Program.Basics.
 Require Import Nnat.
 Require Import bin_prelims.
-
 Require inverse.
 
+(*
+==================================================================================
+**** SECTION 10: BINARY INCREASING FUNCTIONS, UPPER INVERSE AND EXPANSIONS *******
+==================================================================================
+ *)
+
+(* 
+ * We introduce "upper inverses" (upp_inv), and increasing functions 
+ * and explain why we prefer to consider inverses of increasing functions only.
+ * We prove several useful results about upper inverse and increasing functions.
+ *
+ * We introduce expansions and show how they are connected to 
+ * increasing functions through repeater.
+ * 
+ * Increasing functions that are also strict expansions are noteworthy, 
+ * as they later prove to be ideal candidates for inverting via "countdown".
+ *
+ * Linh, where is this stuff now?
+ * In the previous file (increasing_expanding.v), we dealt with 
+ * increasing functions and expansions.
+ * In this file, we deal with upper inverses of increasing functions. 
+ *)
 
 (* f is the upper inverse of F: f N is the smallest n such that F n >= N *)
 Definition upp_inv_rel (f F : N -> N) : Prop :=
@@ -24,7 +45,8 @@ Proof.
 Qed.
 
 (* Translation of the upper inverse computation from nat to N *)
-Definition upp_inv (F : N -> N) : N -> N := to_N_func (inverse.upp_inv (to_nat_func F)).
+Definition upp_inv (F : N -> N) : N -> N :=
+  to_N_func (inverse.upp_inv (to_nat_func F)).
 
 Theorem upp_inv_correct :
     forall F, increasing F -> upp_inv_rel (upp_inv F) F.

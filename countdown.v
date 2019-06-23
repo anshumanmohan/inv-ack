@@ -5,15 +5,15 @@ Require Import increasing_expanding.
 Require Import inverse.
 
 (*
-===================================================================================
-**** SECTION 3.2 INCREASING FUNCTIONS, UPPER INVERSE AND EXPANSIONS ***************
-===================================================================================
+==================================================================================
+**** SECTION 5: INCREASING FUNCTIONS, UPPER INVERSE AND EXPANSIONS ***************
+================-=================================================================
  *)
 
 (* 
- * In Section 3.2, we explore how to compute inverse of a function's repeater
- * solely from its own inverse, without directly computing the repeater itself.
- *  The first lemma addresses this.
+ * We explore how to compute inverse of a function's repeater solely from the 
+ * function's own inverse, without directly computing the repeater itself.
+ * The first lemma addresses this.
  *
  * We base the definition of "contractions" and "countdown" on this observation.
  * We also give a computation for countdown and prove several useful results 

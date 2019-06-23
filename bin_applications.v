@@ -7,9 +7,24 @@ Require Import bin_prelims.
 Require Import bin_repeater.
 Require Import bin_countdown.
 Require Import bin_inverse.
-
 Require applications.
 
+(*
+===================================================================================
+************** SECTION 12: INVERSE HYPEROPS, DIVISION, LOG AND LOG* ***************
+===================================================================================
+ *)
+
+(* 
+ * We use countdown to implement an inverse tower for the Hyperoperation.
+ * Interestingly, the 2nd, 3rd and 4th levels of this tower correspond to 
+ * divcision, logc base b and log* base b, which are not defined in the 
+ * Coq Standard Library. 
+ *
+ * Our definitions, which use countdown, offer enough versatility and 
+ * flexibility to substantiate easy and direct proof for a vast range 
+ * of facts about these functions.
+ *)
 
 Fixpoint inv_bin_hyperop (a : N) (n : nat) (b : N) :=
   match n with
@@ -36,26 +51,32 @@ Proof.
 Qed.
 
 Theorem inv_bin_hyperop_0_correct : forall a b,
-  inv_bin_hyperop a 0 b = N.of_nat (applications.inv_hyperop (N.to_nat a) 0 (N.to_nat b)).
+    inv_bin_hyperop a 0 b =
+    N.of_nat (applications.inv_hyperop (N.to_nat a) 0 (N.to_nat b)).
 Proof. intros a b. simpl. lia. Qed.
 
 Theorem inv_bin_hyperop_1_correct : forall a b,
-  inv_bin_hyperop a 1 b = N.of_nat (applications.inv_hyperop (N.to_nat a) 1 (N.to_nat b)).
+    inv_bin_hyperop a 1 b =
+    N.of_nat (applications.inv_hyperop (N.to_nat a) 1 (N.to_nat b)).
 Proof. intros a b. rewrite applications.inv_hyperop_1. simpl. lia. Qed.
 
-Theorem inv_bin_hyperop_2_correct : forall a b, 1 <= a ->
-  inv_bin_hyperop a 2 b = N.of_nat (applications.inv_hyperop (N.to_nat a) 2 (N.to_nat b)).
+Theorem inv_bin_hyperop_2_correct : forall a b,
+    1 <= a ->
+    inv_bin_hyperop a 2 b =
+    N.of_nat (applications.inv_hyperop (N.to_nat a) 2 (N.to_nat b)).
 Proof.
-  intros a b Ha. fold (applications.div (N.to_nat a) (N.to_nat b)).
+  intros a b Ha. fold (applications.divc (N.to_nat a) (N.to_nat b)).
   apply le_antisym.
   - rewrite (upp_inv_bin_hyperop_2 a Ha _ b), bin_hyperop_2, le_N_nat,
-     N2Nat.inj_mul, Nat2N.id, <- applications.div_correct by lia. trivial.
-  - rewrite le_N_nat, Nat2N.id, applications.div_correct, <- N2Nat.inj_mul,
-     <- le_N_nat, <- bin_hyperop_2, <- (upp_inv_bin_hyperop_2 a Ha _ b) by lia. lia.
+     N2Nat.inj_mul, Nat2N.id, <- applications.divc_correct by lia. trivial.
+  - rewrite le_N_nat, Nat2N.id, applications.divc_correct, <- N2Nat.inj_mul,
+    <- le_N_nat, <- bin_hyperop_2, <- (upp_inv_bin_hyperop_2 a Ha _ b) by lia.
+    lia.
 Qed.
 
 Lemma countdown_1_bin_contract_1 : forall f,
-    bin_contract_strict_above 1 f -> bin_contract_strict_above 1 (bin_countdown_to f 1).
+    bin_contract_strict_above 1 f ->
+    bin_contract_strict_above 1 (bin_countdown_to f 1).
 Proof.
   intros f Hf1. assert (H:=Hf1). destruct H as [Hf H1f].
   split; intro n; [ |intro Hbn]; rewrite bin_countdown_repeat by assumption;
@@ -64,9 +85,11 @@ Proof.
   - replace (nat_size (n - 1)) with (S (nat_size ((n - 1) / 2))) in H.
     + assert (H0 := nat_size_contract ((n - 1) / 2)). simpl in H.
       rewrite <- Nat.succ_le_mono in H. apply (Nat.le_trans _ _ _ H) in H0.
-      replace ((n + 1) / 2) with (1 + (n - 1) / 2) in H0. rewrite N2Nat.inj_add in H0.
-      simpl in H0. omega. rewrite <- N.div_add_l by lia. f_equal. lia.
-    + rewrite <- N.div2_div. destruct (n - 1); [simpl in H; omega|induction p; trivial].
+      replace ((n + 1) / 2) with (1 + (n - 1) / 2) in H0.
+      rewrite N2Nat.inj_add in H0. simpl in H0.
+      omega. rewrite <- N.div_add_l by lia. f_equal. lia.
+    + rewrite <- N.div2_div. destruct (n - 1);
+                               [simpl in H; omega | induction p; trivial].
 Qed.
 
 Lemma inv_bin_hyperop_bin_contract : forall a n,
@@ -87,12 +110,14 @@ Proof.
         apply N.mul_le_mono_r. apply Ha. }
       rewrite <- le_div_mul in contra; lia. replace (_ - 1) with ((b + 1)/2) by lia.
       replace (b + 1) with (c + 1 * 2) by lia. symmetry. apply N.div_add. lia.
-  - replace (inv_bin_hyperop _ _) with (bin_countdown_to (inv_bin_hyperop a (S (S n))) 1) by trivial.
+  - replace (inv_bin_hyperop _ _) with
+        (bin_countdown_to (inv_bin_hyperop a (S (S n))) 1) by trivial.
     apply countdown_1_bin_contract_1. apply IHn.
 Qed.
 
 Theorem inv_bin_hyperop_correct : forall a n,
-  2 <= a -> inv_bin_hyperop a n = to_N_func (applications.inv_hyperop (N.to_nat a) n).
+    2 <= a -> inv_bin_hyperop a n =
+              to_N_func (applications.inv_hyperop (N.to_nat a) n).
 Proof.
   intros a n Ha. induction n as [|[|[|n]]].
   1,2,3: apply functional_extensionality; intro b.

@@ -6,23 +6,26 @@ Require Import Nnat.
 Require Import Omega.
 Require Import bin_prelims.
 Require repeater.
-
 Open Scope N_scope.
 
 (*
-=============================================================================
-******* SECTION 2: HYPEROPS, ACKERMANN AND REPEATER *************************
-=============================================================================
+====================================================================================
+*********** SECTION 8: BINARY HYPEROPS, ACKERMANN AND REPEATER *********************
+====================================================================================
  *)
 
-(* We introduce "bin_repeater" and how to use it to redefine the bin_hyperoperations
-   and Ackermann function.
-   We also prove several results about the value of hypeopererations at small
-   numbers and levels, which are treated as known in the paper but need to be
-   rigourously proven here to be used in the proofs of theorems in the paper.
-   Several similar results for the Ackermann function are also provided.
-   Note that some results here may not be related to results in the paper, but
-   appear purely for aesthetics reasons. *)
+(* 
+ * We introduce "bin_repeater" and how to use it to redefine the 
+ * bin_hyperoperations and binary Ackermann function.
+ * 
+ * We also prove several results about the value of hypeopererations at small
+ * numbers and levels, which are treated as known in the paper but need to be
+ * rigourously proven here to be used in the proofs of theorems in the paper.
+ *
+ * Several similar results for the Ackermann function are also provided.
+ * Note that some results here may not be related to results in the paper, but
+ * appear for reasons of completeness.
+ *)
 
 (* ****** REPEATER ********************************* *)
 
@@ -37,7 +40,7 @@ Definition bin_repeater_from (f : N -> N) (a : N) (n : N) : N :=
                end in bin_repeater_pos f p a
   end.
 
-(* Repeater is a functional way to look at repeat
+(* Repeater is a functional way to look at repeat.
    See "repeat" in "prelims.v" *)
 Theorem bin_repeater_repeat :
     forall a f n, bin_repeater_from f a n = repeat f (N.to_nat n) a.
@@ -92,12 +95,14 @@ Fixpoint bin_hyperop (a : N) (n : nat) (b : N) : N :=
 (* A handy theorem to transform goals involving bin_hyperops *)
 Lemma bin_hyperop_recursion :
   forall (n : nat) (a : N),
-    bin_hyperop a (S n) = bin_repeater_from (bin_hyperop a n) (bin_hyperop_init a n).
+    bin_hyperop a (S n) = bin_repeater_from (bin_hyperop a n)
+                                            (bin_hyperop_init a n).
 Proof. intros. apply functional_extensionality. intro b. trivial. Qed.
 
 (* Proof that the two bin_hyperops are the same *)
 Theorem bin_hyperop_correct :
-  forall n a b, bin_hyperop a n b = N.of_nat (repeater.hyperop (N.to_nat a) n (N.to_nat b)).
+  forall n a b, bin_hyperop a n b =
+                N.of_nat (repeater.hyperop (N.to_nat a) n (N.to_nat b)).
 Proof.
   intros n a. induction n; intro b.
   - unfold bin_hyperop. unfold repeater.hyperop. lia.
@@ -113,8 +118,10 @@ Proof.
     unfold to_nat_func. rewrite IHn. repeat rewrite Nat2N.id. trivial.
 Qed.
 
-(* The first few functions in the bin_hyperops. Useful for pointing out
-   their inverse specifically *)
+(* 
+ * The first few functions in the bin_hyperops. 
+ * Useful for pointing out their inverses specifically 
+ *)
 
 Lemma bin_hyperop_1 : forall a b, bin_hyperop a 1 b = b + a.
 Proof.
@@ -135,9 +142,11 @@ Proof.
   rewrite N.pow_add_r. rewrite N.pow_1_r. simpl. rewrite <- IHb0. lia.
 Qed.
 
-(* A beautiful result about hypeops value at b = 1.
-   Used in the proof of the theorem "ack_bin_hyperop",
-   which is also just for aesthetics *)
+(* 
+ * A beautiful result about hypeops value at b = 1.
+ * Used in the proof of the theorem "ack_bin_hyperop",
+ *  which is also included just for completeness 
+ *)
 Lemma bin_hyperop_n_1 : forall n a, (2 <= n)%nat -> bin_hyperop a n 1 = a.
 Proof.
   intros n a Hn. do 2 (destruct n; [omega|]).

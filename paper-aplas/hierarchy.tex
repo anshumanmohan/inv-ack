@@ -9,19 +9,19 @@ multiplication gives exponentiation, which is level 3.
 There is a subtlety here: in the former case, we add $a$
 repeatedly to an \emph{initial value}, which should be the additive identity $0$.
 In the latter case, we multiply $a$ repeatedly to an initial value, which 
-which should now be multiplicative identity $1$. The formal definition of hyperoperation is:
+which should now be the multiplicative identity $1$. The formal definition of hyperoperation is:
 %\marginpar{\tiny \color{blue} Should 2 just be under 1?}
 \begin{equation}
 \label{eq:hyper}
-\begin{array}{@{}l@{\qquad}l}
-\textit{1. 0$^{\textit{th}}$ level: } a[0]b ~ \triangleq ~ b + 1 &
-\textit{2. Initial values: } a[n+1]0 ~ \triangleq ~
+\begin{array}{lrcl}
+\textit{1. 0$^{\textit{th}}$ level: } & a[0]b & ~ \triangleq ~ & b + 1 \\
+\textit{2. Initial values: } & a[n+1]0 & ~ \triangleq ~ &
   \begin{cases}
     a & \text{when } n = 0 \\
     0 & \text{when } n = 1 \\
     1 & \text{otherwise}
   \end{cases} \\
-\multicolumn{2}{@{}l}{\textit{3. Recursive rule: } a[n+1](b+1) ~ \triangleq ~ a[n]\big(a[n+1]b\big)}
+\textit{3. Recursive rule: } \quad & a[n+1](b+1) & ~ \triangleq ~ & a[n]\big(a[n+1]b\big)
 \end{array}
 \end{equation}
 The seemingly complicated recursive rule is actually just \emph{repeated application} in disguise. By fixing $a$ and treating $a[n]b$ as a function of $b$, we can write
@@ -37,9 +37,9 @@ a[n+1]b ~& = ~ a[n]\big(a[n+1](b-1)\big) ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \
 & = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
 \end{array}
 \end{equation*}
-where $f^{(k)}(u) ~ \triangleq ~ \overbrace{(f\circ f\circ \cdots \circ f)}^{k \text{ times}} (u)$, 
-\emph{i.e.} it denotes $k$ successive applications of a function~$f$ to an 
-input~$u$, with $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times). 
+%where $f^{(k)}(u) ~ \triangleq ~ \overbrace{(f\circ f\circ \cdots \circ f)}^{k \text{ times}} (u)$, 
+where $f^{(k)}(u) \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ compositional applications of a function~$f$ to an 
+input~$u$; $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times yields the identity). 
 
 This insight helps us encode hyperoperations~(\ref{eq:hyper}) and 
 Ackermann~(\ref{eq:ackermann}) in Coq.  Notice that the recursive case of hyperoperations--and
