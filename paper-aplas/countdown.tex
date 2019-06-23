@@ -54,7 +54,7 @@ $\rf{F}{a}$ is not necessarily strictly increasing:
 \emph{e.g.} the identity function
 $\li{id}$ is strictly increasing, but $\rf{\li{id}}{a}(n) = (\li{id} \circ \ldots \circ \li{id}) (a) = a$ is a constant function.  We need a little more.
 \begin{defn}
-A function $F:\mathbb{N}\to\mathbb{N}$ is an \emph{expansion} if $\forall n.~ F(n)\ge n$. Further, given $a\in \mathbb{N}$, an expansion $F$ is \emph{strict from} $a$ if \note{$\forall n \ge a.~ F(n)\ge n+1$}.
+A function $F:\mathbb{N}\to\mathbb{N}$ is an \emph{expansion} if $\forall n.~ F(n)\ge n$. Further, given $a\in \mathbb{N}$, an expansion $F$ is \emph{strict from} $a$ if $\forall n \ge a.~ F(n) > n$.
 \end{defn}
 If $a\ge 1$ and $F$ is an expansion \emph{strict from} $a$, we quickly get: 
 $\forall n.~ \rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$. That is, $\rf{F}{a} \ $ is itself an expansion strict from $0$. 
@@ -111,7 +111,9 @@ Since $F\in \repeatable_a$, $F(n-1)\ge n$ holds.
 Next, $n-1\ge F^{-1}_+(n) \Rightarrow n > F^{-1}_+(n)$. 
 \end{proof}
 This clarifies the inverse relationship between expansions strict from some $a$ and contractions strict above that same $a$. The inverse of an expansion's 
-repeater exists and can be built \note{from its own inverse}, in a method formalized as \emph{countdown}.
+repeater exists, and can be built from the expansion's inverse. 
+To this end we introduce \emph{countdown}, a new iterative technique in the 
+spirit of \emph{repeater}.
 \begin{defn} \label{defn: informal-countdown} \label{eq: countdown}
 Let $f\in \contract_a$. The \textit{countdown to} $a$ of $f$, written 
 $\cdt{f}{a}(n)$, is the smallest number of times $f$ needs to be applied to 
