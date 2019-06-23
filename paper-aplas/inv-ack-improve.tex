@@ -58,16 +58,16 @@ In fact, $i = 2$ suffices.
 
 %This lemma implies $\runtime\big(\cdt{f}{a}\ , n\big) \ge \runtime(f, n)$. If for some $i$, $\runtime\big(2\angle{i}, n\big) = \Theta\big(n^2\big)$, the entire hierarchy will take at least $\Omega\big(n^2\big)$ from $2\angle{i}$, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}. The next lemma shows $i = 2$ suffices.
 %\begin{lem}
-%	Per \cref{defn: inv-hyperop}, $\runtime\big(2\angle{2}, n\big) = \Theta\big(n^2\big) \ \forall n$.
+%	Per \cref{defn: inv-hyperop}, $\runtime\big(2\angle{2}, n\big) = \Omega\big(n^2\big) \ \forall n$.
 %\end{lem}
 %\begin{proof}
 %	Since $2\angle{1} = \cdt{\lambda m.(m-1)}{2}\ \equiv \lambda m.(m - 2)$, by \cref{lem: cdt-runtime},
-%	$$ \runtime\big(2\angle{1}, n\big) = \sum_{i=0}^{n-2} \runtime\big(\lambda m.(m-1), n - i\big) + \Theta\big(3(n-2)\big) = \Theta(n) $$
+%	$$ \runtime\big(2\angle{1}, n\big) = \sum_{i=0}^{n-2} \runtime\big(\lambda m.(m-1), n - i\big) + \Omega\big(3(n-2)\big) = \Omega(n) $$
 %	, since $\runtime\big(\lambda m.(m-1), k\big) = 1 \ \forall k$. Since $2\angle{2} = \cdt{2\angle{1}}{0}\ $, again by \cref{lem: cdt-runtime},
 %	$$ \runtime\big(2\angle{2}, n\big)
-%	= \sum_{i=0}^{\lceil n/2 \rceil} \runtime \big(2\angle{1}, n-2i\big) + \Theta\left(\frac{n}{2}\right)
-%	= \Theta\left( \sum_{i=0}^{\lceil n/2 \rceil}(n - 2i) \right)
-%	= \Theta\big(n^2\big) $$
+%	= \sum_{i=0}^{\lceil n/2 \rceil} \runtime \big(2\angle{1}, n-2i\big) + \Omega\left(\frac{n}{2}\right)
+%	= \Omega\left( \sum_{i=0}^{\lceil n/2 \rceil}(n - 2i) \right)
+%	= \Omega\big(n^2\big) $$
 %	The proof is complete.
 %\end{proof}
 %\begin{col}
@@ -97,10 +97,10 @@ Note that the above bound only applies for $n\ge 2$. When $n\le 1$, the LHS is 1
 \end{rem}
 
 This simple optimization has a cascading effect through the entire hierarchy:
-we can now prove a bound of $O(n)$ for every level.
-By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in \linebreak $\Theta\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time $\Theta(n)$ for fixed $i$.
+we can now prove a bound of $\bigO(n)$ for every level.
+By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in \linebreak $\bigO\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time for fixed $i$.
 \begin{thm} \label{thm: inv-ack-hier-runtime-improved}
-	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \Theta(n)$.
+	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$.
 \end{thm}
 
 \subsection{Running time of $\alpha$ on \li{nat}} %\label{sect: hardcode-lvl2}
@@ -124,7 +124,7 @@ Thus $\tilde{\alpha}(n)$, defined below, equals $\alpha(n)$ and our alternate de
 
 \note[If we have space, should turn into a theorem and proof]{Let us consider the complexity of this definition.}
 At each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of the following computations. 
-Firstly, calculate $\cdt{\big(\alpha_k\big)}{1}(x)$ given $x\triangleq \alpha_k(n)$, taking time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ (by Lemma~\ref{lem: compose-runtime}). Next, calculate $\alpha_k(n) - k$, taking time $\Theta(k)$.
+Firstly, calculate $\cdt{\big(\alpha_k\big)}{1}(x)$ given $x\triangleq \alpha_k(n)$, taking time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ (by Lemma~\ref{lem: compose-runtime}). Next, calculate $\alpha_k(n) - k$, taking time $\bigO(k)$.
 
 The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 \begin{equation} %\label{eq: inv-ack-runtime-improved}
@@ -132,9 +132,9 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 \runtime_{\tilde{\alpha}}(n)
 & = \textstyle \runtime_{\alpha_1}(n) + \sum_{k=1}^{\alpha(n) - 1}
 \left[ \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)
-\right] + \sum_{k=1}^{\alpha(n)}\Theta(k) \\
-& = \runtime_{\alpha_{\alpha(n)}}\left(n\right) + \Theta\left(\alpha(n)^2\right)
-= \Theta\left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2\right) = \Theta(n)
+\right] + \sum_{k=1}^{\alpha(n)}\bigO(k) \\
+& = \runtime_{\alpha_{\alpha(n)}}\left(n\right) + \bigO\left(\alpha(n)^2\right)
+= \bigO\left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2\right) = \bigO(n)
 \end{aligned}
 \end{equation}
 }%end hide
@@ -164,7 +164,7 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 	\left[ \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)
 	\right] + \sum_{k=1}^{\alpha(n)}(k + 1) \\
 	& \le \runtime_{\alpha_{\alpha(n)}}\left(n\right) + \alpha(n)^2
-	= \Theta\left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2\right) = \Theta(n)
+	= \bigO\left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2\right) = \bigO(n)
 	\end{aligned}
 	\end{equation*}
 \end{proof}

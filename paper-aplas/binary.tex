@@ -119,9 +119,8 @@ Note that for all $x$, $\li{N.div2}(x - 2) = \left\lfloor \frac{x - 2}{2} \right
 \end{thm}
 
 \noindent For any level of the Ackermann hierarchy, this theorem demonstrates
-a linear runtime up to the size of the representation of the input.
-That is to say, a logarithmic runtime up to its magnitude $n$:
-$\runtime_{\alpha_i}(n) = \Theta\big(\log_2n + 2^i\log_2\log_2n \big)$.
+a linear computation time up to the size of the representation of the input, \emph{i.e.} logarithmic time up to its magnitude $n$:
+$\runtime_{\alpha_i}(n) = \bigO\big(\log_2n + 2^i\log_2\log_2n \big)$.
 
 Moving on to inverse Ackermann itself, we follow a style nearly identical to that 
 in~\S\ref{subsec: inv_ack_hier}. For the worker, we simply translate to 
@@ -180,7 +179,7 @@ The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by Lemma~\
 & = \runtime_{\alpha_3}(n)
 + \sum_{k = 3}^{\alpha(n) - 1} \big(\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_{k}}(n)\big) + \Theta\left(\log_2 n\right)
 = \runtime_{\alpha_{\alpha(n)}}(n) + \Theta\big(\log_2 n\big) \\
-& = \Theta\big(\log_2n + 2^{\alpha(n)}\log_2\log_2n \big) + \Theta\big(\log_2n\big)
+& = \bigO\big(\log_2n + 2^{\alpha(n)}\log_2\log_2n \big) + \Theta\big(\log_2n\big)
 = \Theta\big(\log_2n\big)
 \end{aligned}
 \end{equation*}

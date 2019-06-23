@@ -393,7 +393,7 @@ With the hardcoding $\alpha_1 \triangleq \lambda n.(n - 2)$, we can improve the 
 With these lemma, we are ready to tackle Theorem~\ref{thm: inv-ack-hier-runtime-improved}.
 
 \begin{usethmcounterof}{thm: inv-ack-hier-runtime-improved}
-	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \Theta(n)$.
+	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$.
 \end{usethmcounterof}
 
 \begin{proof}

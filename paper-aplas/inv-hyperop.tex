@@ -61,7 +61,7 @@ $\lambda b.a\angle{n{-}1}b$.
 We now show that $a\angle{n}$ is the inverse to $a[n]$. 
 First note that $a\angle{0}\in \contract_0$.~Then:
 \begin{lem}
-$a\angle{1}b = b - a$.
+$\forall a. \forall b.~a\angle{1}b = b - a$.
 \end{lem}
 \begin{proof}
 Theorem~\ref{thm: cdt-recursion} applies because $a\angle{0} \in \contract_0 \subseteq \contract_{a}$, giving the result shown below. 
@@ -176,7 +176,7 @@ Crucially, we have a new definition of $\alpha$
 that is \emph{independent of $\Ack$}:
 \begin{defn} \label{defn: inv-ack-new}
 	%For all $n, k$, $n\le \Ack(k, k) \!\!\iff \!\! \alpha_k(n)\le k$. Thus
-	$\alpha(n) \triangleq \min\big\{k : \alpha_k(n)\le k \big\}$.
+	$\alpha \triangleq \lambda n. \min\big\{k : \alpha_k(n)\le k \big\}$.
 \end{defn}
 Finally, we must provide a structurally-recursive function that computes $\alpha$.
 \begin{defn} \label{defn: inv-ack-worker}
@@ -197,7 +197,7 @@ The following theorem demonstrates that a budget of $n$ suffices.
 }%end hide
 %formalizes a setting for $\W\alpha$ to work.
 \begin{thm} \label{thm: inv-ack-worker-correct}
-	$\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
+	$\forall n. \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{thm}
 \begin{proof}[outline]
 	If given the arguments $\big(\alpha_i, \alpha_i(n), i, b - i\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$ at the next recursive call. A straightforward induction on $k$ then shows that if $k\le \min\big\{b, \alpha_k(n)\big\}$, 
