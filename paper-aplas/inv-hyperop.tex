@@ -21,7 +21,7 @@ Ackermann hierarchy.
 	\end{equation}
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/applications.v#L23-L28}{Fixpoint inv\_hyperop}` (a n b : nat) : nat :=
-  match n with 0 => b - 1 | S n' => 
+  match n with 0 => b - 1 | S n' =>
     countdown_to (hyperop_init a n') (inv_hyperop a n') b
   end.
 \end{lstlisting}
@@ -56,15 +56,15 @@ the correctness of  $\logc$, which in turn implies the correctness of $\log^*$. 
 together with the correctness of the entire hyperoperation hierarchy.
 }
 \vspace{-1.3em}
-where the Curried $a\angle{n{-}1}$ denotes the single-variable function 
+where the Curried $a\angle{n{-}1}$ denotes the single-variable function
 $\lambda b.a\angle{n{-}1}b$.
-We now show that $a\angle{n}$ is the inverse to $a[n]$. 
+We now show that $a\angle{n}$ is the inverse to $a[n]$.
 First note that $a\angle{0}\in \contract_0$.~Then:
 \begin{lem}
 $\forall a. \forall b.~a\angle{1}b = b - a$.
 \end{lem}
 \begin{proof}
-Theorem~\ref{thm: cdt-recursion} applies because $a\angle{0} \in \contract_0 \subseteq \contract_{a}$, giving the result shown below. 
+Theorem~\ref{thm: cdt-recursion} applies because $a\angle{0} \in \contract_0 \subseteq \contract_{a}$, giving the result shown below.
 Then $a\angle{1}b = b - a$ by induction on $b$.
 \vspace{-0.8em}
 \begin{equation*}
@@ -116,7 +116,7 @@ P(n) \Rightarrow Q(n) \Rightarrow Q(n+1) \label{eq: tmp-induction-1}
 Goal 1: $P(0) \iff \lambda b.(b+1)\in \repeatable_a$ and
 $Q(0) \iff a\angle{0} = \left(a[0]\right)^{-1} \iff (b-~1\le c \iff b\le c+1)$.
 These are both straightforward, and $Q(1)$ holds by~(\ref{eq: tmp-induction-1}). Goal 2: we have $a \ge 1$, so
-$P(1)$ holds by $P(0)$ and~(\ref{eq: tmp-induction-2}), and 
+$P(1)$ holds by $P(0)$ and~(\ref{eq: tmp-induction-2}), and
 $Q(2)$ holds by $Q(1)$ and~(\ref{eq: tmp-induction-1}).
 Goal 3: we have $a\ge 2$, and using~(\ref{eq: tmp-induction-1}) and $Q(0)$
 reduces the goal to $P(n)$. Using~(\ref{eq: tmp-induction-2}) and the fact that $\forall n \neq 1.~a_n\ge 1$, the goal reduces to $P(2)$. This unfolds to:
@@ -172,13 +172,12 @@ Equivalently, $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+1)}(n)\l
 	\\ \big(\cdt{\alpha_{i-1}}{1}\big)\circ \alpha_{i-1} & \text{if } i\ge 1 \end{cases}
 $
 \end{defn}
-Crucially, we have a new definition of $\alpha$ 
-that is \emph{independent of $\Ack$}:
-\begin{defn} \label{defn: inv-ack-new}
+Abracadabra! We can express $\alpha$ using the hierarchy \emph{without referring to $\Ack$ itself}:
+\begin{thm} \label{thm: inv-ack-new}
 	%For all $n, k$, $n\le \Ack(k, k) \!\!\iff \!\! \alpha_k(n)\le k$. Thus
-	$\alpha \triangleq \lambda n. \min\big\{k : \alpha_k(n)\le k \big\}$.
-\end{defn}
-Finally, we must provide a structurally-recursive function that computes $\alpha$.
+	$\forall n.~ \alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}$.
+\end{thm}
+All that remains is to provide a structurally-recursive function that computes $\alpha$.
 \begin{defn} \label{defn: inv-ack-worker}
 	The inverse Ackermann worker is a function $\alpha^{\W}$: %(\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
 	\begin{equation} \label{eq: inv-ack-worker-recursion}
@@ -187,7 +186,7 @@ Finally, we must provide a structurally-recursive function that computes $\alpha
 	\end{cases}
 	\end{equation}
 \end{defn}
-The following theorem shows that the above Coq function computes the inverse Ackermann function correctly given appropriate arguments.
+The following theorem shows that this function computes the inverse Ackermann function correctly given appropriate arguments.
 \hide{
 Given the arguments $\big(\alpha_i, \alpha_i(n), i, b - i\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$ at the next recursive call. Thus if $\alpha^{\W}$ is given a sufficient budget $b$, it will recursively transform the tuple $(\alpha_k, \alpha_k(n), k, b - k)$ until a point $k$ where $\alpha_k(n)\le k$, and will then return $k$. We now need to show that $\alpha^{\W}$ correctly computes $\alpha(n)$ given a reasonable budget.
 The following theorem demonstrates that a budget of $n$ suffices.
@@ -197,10 +196,10 @@ The following theorem demonstrates that a budget of $n$ suffices.
 }%end hide
 %formalizes a setting for $\W\alpha$ to work.
 \begin{thm} \label{thm: inv-ack-worker-correct}
-	$\forall n. \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
+	$\forall n.~\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{thm}
 \begin{proof}[outline]
-	If given the arguments $\big(\alpha_i, \alpha_i(n), i, b - i\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$ at the next recursive call. A straightforward induction on $k$ then shows that if $k\le \min\big\{b, \alpha_k(n)\big\}$, 
+	If given the arguments $\big(\alpha_i, \alpha_i(n), i, b - i\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$ at the next recursive call. A straightforward induction on $k$ then shows that if $k\le \min\big\{b, \alpha_k(n)\big\}$,
 	\begin{equation} \label{eq: inv-ack-worker-intermediate}
 	\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_k, \alpha_k(n), k, b-k\big)
 	\end{equation}
@@ -208,22 +207,22 @@ The following theorem demonstrates that a budget of $n$ suffices.
 	$$ \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\W}\big(\alpha_m, \alpha_m(n), m, n - m\big) = m = \alpha(n) $$
 \end{proof}
 We put a more involved mathematical proof of correctness in Appendix~\ref{apx:proof_correct_inv_ack_worker}, and a mechanized proof \note{here}.
-We now have a definition of inverse Ackermann that is computationally 
-definable via a Coq-accepted worker. Below, we present the inverse 
+We thus have a (re-)definition of inverse Ackermann that is %computationally
+definable via a Coq-accepted worker, \emph{i.e.} $\alpha(n) \triangleq \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big)$. Below, we present the inverse
 Ackermann function in Gallina.
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
-  match b with 0 => 0 | S b' => 
-    match (n - k) with 0 => k | _ => let g := (countdown_to 1 f) 
+  match b with 0 => 0 | S b' =>
+    match (n - k) with 0 => k | _ => let g := (countdown_to 1 f)
       in inv_ack_wkr (compose g f) (g n) (S k) b'
     end
   end.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L32-L36}{Fixpoint alpha}` (m x : nat) : nat :=
-  match m with 0 => x - 1 | S m' => 
+  match m with 0 => x - 1 | S m' =>
     countdown_to 1 (alpha m') (alpha m' x)
   end.
-  
+
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L151-L152}{Definition inv\_ack}` := inv_ack_wkr (alpha 0) (alpha 0 n) 0 n.
 \end{lstlisting}
 

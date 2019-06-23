@@ -1,13 +1,13 @@
-The inverse to the explosively-growing Ackermann function 
+The inverse to the explosively-growing Ackermann function
 features in several key algorithmic asymptotic
-bounds, such as the union-find data structure~\cite{tarjan} and 
+bounds, such as the union-find data structure~\cite{tarjan} and
 the computation of a minimum spanning
-tree of a graph~\cite{chazelle}.  Unfortunately, both the Ackermann 
+tree of a graph~\cite{chazelle}.  Unfortunately, both the Ackermann
 function and its inverse
 can be hard to understand, and the inverse in particular can be hard to define in a computationally-efficient manner in a theorem prover.  Let us consider why this
 is so.
-\begin{defn} \label{defn: ack} 
-The Ackermann-P\'eter function~\cite{peter} (hereafter just 
+\begin{defn} \label{defn: ack}
+The Ackermann-P\'eter function~\cite{peter} (hereafter just
 ``the'' \linebreak[4] Ackermann function; see~\S\ref{sec:related}) is
 written $\mathcal{A} : \mathbb{N}^2 \to \mathbb{N}$ and defined as follows:
 \begin{equation}
@@ -32,13 +32,13 @@ The diagonal Ackermann function grows explosively: starting from $\Ack(0)$, the 
 This explosive behavior becomes problematical when we consider
 the inverse Ackermann function~\cite{chazelle,tarjan}.
 \begin{defn} \label{defn: inv_ack}
-The inverse Ackermann function $\alpha(n)$ is the smallest~$k$ for 
+The inverse Ackermann function $\alpha(n)$ is the smallest~$k$ for
 \linebreak which $n \le \Ack(k)$, \emph{i.e.} $\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}$.
 \end{defn}
-This definition is computational: start at $k=0$, calculate $\Ack(k)$, 
-compare~it~to~$n$, and increment $k$ until $n \le \Ack(k)$. 
+This definition is computational: start at $k=0$, calculate $\Ack(k)$,
+compare~it~to~$n$, and increment $k$ until $n \le \Ack(k)$.
 The runtime of this algorithm is $\Omega(\Ack(\alpha(n)))$,
-so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ in this way requires 
+so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ in this way requires
 $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 
 \subsection{The hyperoperation/Ackermann hierarchy}
@@ -46,21 +46,28 @@ $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 %\marginpar{\tiny \color{blue}cite the grit?}
 The Ackermann function is relatively easy to define, but hard to
 understand.  We see it as
-a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.\Ack(n,b)$, where for each $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times, with a \note{\emph{kludge}}.
+a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.A(n,b)$, where for each $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times, with a \note{\emph{kludge}}.
 
 %\marginpar{\tiny \color{blue}Moved Knuth to a footnote because we
 %don't discuss it much anymore. It's clear to see that Knuth
 %follows from Hyperop.}
 The desire to clean up this kludge, and to generalize the natural sequence
 of functions (addition, multiplication, exponentiation, \emph{etc.}),
-led to the development of the related idea of hyperoperations\footnote{Knuth arrows~\cite{knuth}, written $a \uparrow^n b$,
+led to the development of hyperoperations\footnote{Knuth arrows~\cite{knuth}, written $a \uparrow^n b$,
 are also in the same vein, but we will focus on hyperoperations
 since they are more general. In particular, $a \uparrow^n b = a[n+2]b$.}~\cite{goodstein},
 written $a [n] b$.
 %Hereafter we will refer to this sequence of functions as ``the hierarchy'' when we mean the general pattern rather than \emph{e.g.} specifically ``the Ackermann hierarchy'' or ``the hyperoperation hierarchy''.
-Table~\ref{table: hyperop-ack-inv} illustrates this relation and the Ackermann kludge
-by showing the first five hyperoperations (indexed by $n$ and named),
-along with their relation to the $\Ack_n$ functions and their inverses.
+Table~\ref{table: hyperop-ack-inv} gives the first five hyperoperations 
+(indexed by $n$ and named) and the related kludgy $\Ack_n$ Ackermann functions.  
+We also name and give their inverses,
+which we write as $a \angle{n} b$ and $\alpha_n(b)$.
+The kludge has three parts. First, the Ackermann hierarchy is related
+to the hyperoperation hierarchy with $a$ set to $2$, ie $2[n]b$;
+second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation $2[n-1]b$
+%{\color{magenta}(\textbf{not} the previous $\Ack_{n-1}$!)}
+three extra times;
+lastly, $\Ack_n$ subtracts three\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not break this pattern: $2 + (b + 3) - 3 = 2 + b$, and $2 \cdot (b + 3) - 3 = 2b + 3$.}.
 
 \begin{table}[t]
 \begin{centermath}
@@ -80,14 +87,14 @@ n & \text{function} & a [n] b & \Ack_n(b) & \text{upper inverse} & a \angle{n} b
 \vspace{-2em}
 \end{table}
 
-{\color{red} The kludge has three parts. First, the Ackermann hierarchy is related
-to the hyperoperation hierarchy with $a$ set to $2$, ie $2[n]b$;
-second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation $2[n-1]b$
-%{\color{magenta}(\textbf{not} the previous $\Ack_{n-1}$!)}
-three extra times;
-lastly, $\Ack_n$ subtracts three\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not break this pattern: $2 + (b + 3) - 3 = 2 + b$, and $2 \cdot (b + 3) - 3 = 2b + 3$.}.
-It is worth studying and inverting the hyperoperations before handling the Ackermann function.
-}
+It is worth studying and inverting the hyperoperations before handling the Ackermann inverses.
+Once we have defined these inverses, we shall define an efficient inverse $\alpha$ to the diagonal Ackermann $\Ack$ thanks to our Theorem \ref{thm: inv-ack-new},
+which characterizes $\alpha$ without referring to $\Ack$ directly:
+%\[
+$
+\forall n.~ \alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}
+$.
+%\]
 
 %Our initial goal of inverting the Ackermann function can thus be broken
 %into three parts: first, inverting each individual member of the hyperoperation hierarchy; second, using these individual inverses to invert the diagonal hyperoperation {\color{red}$a [n] n$}; and lastly adjusting for the kludge.
@@ -110,9 +117,12 @@ It is worth studying and inverting the hyperoperations before handling the Acker
 
 \subsection{Increasing functions and their inverses}
 \label{sec:incfuncinv}
-Defining increasing functions is often significantly easier than defining their inverses.
-The Church numeral encodings of addition, multiplication, and exponentiation
-are each simpler than their corresponding inverses, \emph{i.e.} subtraction, division, and logarithm. Similarly, defining multiplication in Gallina~\cite{coq} is easy, but defining division is unexpectedly painful:
+Defining increasing functions is often easier than defining their inverses.
+Addition, multiplication, and exponentiation on Church numerals 
+are simpler than subtraction, division, and logarithm. Similarly, defining multiplication in Gallina~\cite{coq} is easy, but defining division is unexpectedly painful:
+%Defining increasing functions is often significantly easier than defining their inverses.
+%The Church numeral encodings of addition, multiplication, and exponentiation
+%are each simpler than their corresponding inverses, \emph{i.e.} subtraction, division, and logarithm. Similarly, defining multiplication in Gallina~\cite{coq} is easy, but defining division is unexpectedly painful:
 
 \begin{minipage}[c]{0.4\textwidth}
 % \vspace{-1.5em}
@@ -156,23 +166,25 @@ for our purposes: the first can be hard to generalize and the second requires a 
 not least because we cannot use the inverse Ackerman function in its own termination argument.
 %One method is to define a custom termination measure~\cite{Chlipala?}, but this is
 %both vaguely unsatisfying and not always easy to generalize.
+
 Realizing this, the standard library employs
-a cleverer approach to define division, but we are not aware of any explanation 
-of the technique used, and we also find it hard to extend that technique 
-to other functions of the natural sequence of functions.  One indication
+a cleverer approach to define division, but we are not aware of any explanation
+of the technique used, and we also find it hard to extend that technique
+to other functions in the hierarchy.  One indication
 of this difficulty is that the Coq standard library does not include a $\mathsf{log}_b$ function\footnote{Coq's standard library does include a $\mathsf{log}_2$ function, but
 change-of-base does not work on discrete logarithms:
-$\left \lfloor \frac{\lfloor \mathsf{log}_2 100 \rfloor}{\lfloor \mathsf{log}_2 7 \rfloor} \right \rfloor = 3 \; \not= \; 2 = \lfloor \mathsf{log}_7 100 \rfloor$.  
+$\left \lfloor \frac{\lfloor \mathsf{log}_2 100 \rfloor}{\lfloor \mathsf{log}_2 7 \rfloor} \right \rfloor = 3 \; \not= \; 2 = \lfloor \mathsf{log}_7 100 \rfloor$.
 %{\color{blue} efficiency of standard library version?} {\color{red} SSReflect?}
 }, to say nothing of a $\mathsf{log}^{*}_b$ or the inverse Ackermann.
 %We discuss alternative approaches further in \cref{sec:related}.
 
 \subsection{Contributions}
-%\marginpar{Let's carefully double-check this section once the rest of the paper is close to final form.} 
+%\marginpar{Let's carefully double-check this section once the rest of the paper is close to final form.}
 We provide a complete solution to inverting each individual function in the hyperoperation/Ackermann hierarchy,
 as well as the diagonal Ackermann function itself.  All our functions are structurally recursive, so
 Coq is immediately convinced of their termination.  Moreover, all our functions run in linear time: practical utility follows from theoretical grace.
-Finally, our techniques are extremely succinct: the code to invert the diagonal Ackermann function fits in a single page of this paper, and our entire Coq development is about 1,000 lines. The rest of this paper is organized as follows.
+Finally, our techniques are succinct: the code to invert the diagonal Ackermann function fits in a single page of this paper, and our entire Coq development is about 3,000 lines, half of which for unary-encoded numbers and a parallel development for binary-encoded. 
+%The rest of this paper is organized as follows.
 %, so they are as asymptotically efficient as they can be, and are thus suitable for extraction\footnote{A criterion more useful in practice for $\mathsf{log}_b$ and perhaps $\mathsf{log}^*_b$ than the other members of the hierarchy.}
 %\begin{itemize}
 %\item[\S\ref{blah}] We explain our core techniques of \emph{repeaters} and \emph{countdowns}. {\color{red}that allow us to define each level of the Ackermann hierarchy---and their upper inverses---in a straightforward and uniform manner.} We show how countdowns, in particular, can be written
@@ -183,17 +195,18 @@ Finally, our techniques are extremely succinct: the code to invert the diagonal 
 %\item[\S\ref{blah}] We discuss related work and give some closing thoughts.
 %\end{itemize}
 \begin{itemize}
-	\item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, present Coq encodings for hyperoperations and the Ackermann function, \note{and discuss \emph{repeater}}.
+	\item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, present Coq encodings for hyperoperations and the Ackermann function, and discuss \emph{repeater}.
 	\item[\S\ref{sec: countdown}] We discuss upper inverses and show how to invert repeater with \emph{countdown}.
 	\item[\S\ref{sec: inv-hyperop}] We use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base. We then sketch a method to find the inverse Ackermann function.
 	\item[\S\ref{sec: inv-ack}] We give a computation for the inverse Ackermann function in $\bigO(n)$ time.
 	\item[\S\ref{sec: binary}] We extend to $\bigO(b)$, where $b$ is the bitlength
 	of the binary encoding of $n$.
-	\item[\S\ref{sec: discussion}] We discuss the two-argument inverse Ackermann function, \note{other derivative functions such as foo bar doo dah,} and survey related work.
+	\item[\S\ref{sec: discussion}] We discuss the value of linear time inverses for
+explosively growing functions, and extend to the two-argument inverse Ackermann function. %, \note{other derivative functions such as foo bar doo dah,} and survey related work.
 \end{itemize}
-All our techniques are mechanized in Coq and our code is available 
-online~\cite{inv-ack}. Further, definitions and theorems presented 
-in this paper are \href{https://github.com/inv-ack/inv-ack}{hyperlinked} 
+All our techniques are mechanized in Coq and our code is available
+online~\cite{inv-ack}. Further, definitions and theorems presented
+in this paper are \href{https://github.com/inv-ack/inv-ack}{hyperlinked}
 to appropriate points in our codebase. Interested readers are invited to also
 explore the equivalence proofs and associated lemmas that were elided in this paper.
 %, and
