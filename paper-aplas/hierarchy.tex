@@ -1,14 +1,14 @@
 Let us formally define hyperoperations and clarify the intuition
 given by Table~\ref{table: hyperop-ack-inv} by relating them to
 the Ackermann function.
-The first hyperoperation (level 0) is simply successor, and 
+The first hyperoperation (level 0) is simply successor, and
 every hyperoperation that follows is the repeated application of the previous.
 Level 1 is thus addition, and $b$ repetitions of addition
 gives level 2: multiplication. Next, $b$ repetitions of
-multiplication gives exponentiation, which is level 3. 
+multiplication gives exponentiation, which is level 3.
 There is a subtlety here: in the former case, we add $a$
 repeatedly to an \emph{initial value}, which should be the additive identity $0$.
-In the latter case, we multiply $a$ repeatedly to an initial value, which 
+In the latter case, we multiply $a$ repeatedly to an initial value, which
 which should now be the multiplicative identity $1$. The formal definition of hyperoperation is:
 %\marginpar{\tiny \color{blue} Should 2 just be under 1?}
 \begin{equation}
@@ -37,11 +37,11 @@ a[n+1]b ~& = ~ a[n]\big(a[n+1](b-1)\big) ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \
 & = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ \big(a[n]\big)^{(b)}\big(a[n+1]0\big)
 \end{array}
 \end{equation*}
-%where $f^{(k)}(u) ~ \triangleq ~ \overbrace{(f\circ f\circ \cdots \circ f)}^{k \text{ times}} (u)$, 
-where $f^{(k)}(u) \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ compositional applications of a function~$f$ to an 
-input~$u$; $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times yields the identity). 
+%where $f^{(k)}(u) ~ \triangleq ~ \overbrace{(f\circ f\circ \cdots \circ f)}^{k \text{ times}} (u)$,
+where $f^{(k)}(u) \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ compositional applications of a function~$f$ to an
+input~$u$; $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times yields the identity).
 
-This insight helps us encode hyperoperations~(\ref{eq:hyper}) and 
+This insight helps us encode hyperoperations~(\ref{eq:hyper}) and
 Ackermann~(\ref{eq:ackermann}) in Coq.  Notice that the recursive case of hyperoperations--and
 indeed, the third case of Ackermann--is troublesome to encode in Coq due to
 deep nested recursion.  In the outer recursive call, the first argument is shrinking
@@ -68,7 +68,7 @@ constant but the second is shrinking. The elegant solution uses double recursion
               match n with
               | 0    => ackermann_original m' 1
               | S n' => ackermann_original m' (ackermann' n')
-              end in ackermann' n 
+              end in ackermann' n
   end.
 \end{lstlisting}
 Coq is satisfied since both recursive calls are on structurally smaller arguments.
@@ -90,8 +90,8 @@ $\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from}
   match n with 0 => a | S n' => f (repeater_from f a n') end.
 \end{lstlisting}
 \end{defn}
-This allows simple and function-oriented definitions of hyperoperations and the 
-Ackermann function that we give below. Note that the Curried $a[n-1]$ denotes 
+This allows simple and function-oriented definitions of hyperoperations and the
+Ackermann function that we give below. Note that the Curried $a[n-1]$ denotes
 the single-variable function $\lambda b.a[n-1]b$.
 \vspace{-0.5em}
 \begin{equation*}
@@ -114,10 +114,12 @@ a & \text{when } n = 0 \\
   end.
 \end{lstlisting}
 \begin{equation*}
+%\begin{array}{l}
 A(n,m) ~ \triangleq ~ \begin{cases}
 m + 1 & \text{when } n = 0 \\
 \rf{A_{n-1}}{A(n-1,1)}(m) & \text{otherwise}
-\end{cases}
+\end{cases} \qquad \qquad \qquad \qquad \qquad \qquad \qquad ~ 
+%\end{array}
 \end{equation*}
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L119-L123}{Fixpoint ackermann}` (n m : nat) : nat :=

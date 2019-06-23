@@ -1,11 +1,11 @@
-\vspace{-2em}
-\section{Standalone Code for Linear-Time $\alpha$ in \li{nat}}
+\vspace{-1.25em}
+\section{Standalone Linear-Time Inverse Ackermann $\alpha$ in \li{nat}}
 \label{apx:code}
 
-\vspace{-2em}
+\vspace{-1em}
 
 \begin{lstlisting}
-Require Import Omega. Require Import Program.Basics.
+Require Import Omega Program.Basics.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
 match b with 0 => 0 | S b' =>
@@ -13,11 +13,12 @@ match b with 0 => 0 | S b' =>
 end.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L104}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
+
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
-match b with 0 => 0 | S b' =>
-  if (n <=? k) then k else let g := (countdown_to f 1) in
-                        inv_ack_wkr (compose g f) (g n) (S k) b
-end.
+  match b with 0 => 0 | S b' =>
+    if (n <=? k) then k else let g := (countdown_to f 1) in
+                         inv_ack_wkr (compose g f) (g n) (S k) b
+  end.
 
 Definition inv_ack_linear_time n :=
   match n with 0 | 1 => 0 | _ => 
