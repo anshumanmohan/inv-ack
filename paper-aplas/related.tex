@@ -24,7 +24,7 @@ be parsed as $a \times 60^2 + b \times 60 + c$. Sadly they lacked
 a radix point, and so
 $a \times 60^3 + b \times 60^2 + c \times 60$, $a \times 60 + b + c \div 60$, 
 \emph{etc.} were also reasonable interpretations. 
-Incorporating multiplication and division bought great brevity: a number $n$ was 
+Including multiplication and division bought great concision: a number $n$ was 
 represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
 
 %\subsection*{The Ackermann function and its inverse.}
@@ -89,11 +89,11 @@ the inverse hyperoperations.  Unfortunately, their technique is unsound, since i
 the true Ackermann inverse when the inputs grow sufficiently large.  Our technique is verified in Coq.
 
 \subsection{Conclusion}
-We have implemented a hierarchy of functions that calculate the upper inverses
+\note{We have implemented a hierarchy of functions that calculate the upper inverses
 to the Ackermann/hyperoperation hierarchy and used these inverses
 to compute the inverse of the diagonal Ackermann function $\Ack(n)$.
-Our functions are structurally recursive, and are thus immediately accepted by Coq,
-and we have shown that they run in linear time.
+Our functions are structurally recursive, and are thus immediately accepted by Coq.
+We have shown that they run in linear time.}
 %, and that it is consistent with
 %the usual definition of the inverse Ackermann function $\alpha(n)$.
 
