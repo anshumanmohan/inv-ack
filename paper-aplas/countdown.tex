@@ -273,7 +273,7 @@ Definition~\ref{defn: informal-countdown}:
 %	\begin{equation} \label{eq: cdt-minimum}
 $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 \end{thm}
-\begin{proof}[outline, full proof found in Appendix~\ref{apx:proof_correct_countdown_worker}]
+\begin{proof}[outline]
 	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.
 	\note[Can be further shortened for 2-3 lines, but I'll hold it for now]
 	{A simple induction on $i$ confirms that $\forall n, \forall a, \forall b$ and $f\in \contract_{a}$,
@@ -287,7 +287,9 @@ of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-
 	\end{equation*}
 where the last equality follows by applying Definition~\ref{defn: countdown-worker} given $f^{(m)}(n)\le a$}.
 \end{proof}
-The fully elaborate version of the above proof is in Appendix~\ref{apx:proof_correct_countdown_worker}.
+We give an extended version of this proof in 
+Appendix~\ref{apx:proof_correct_countdown_worker}, 
+and mechanize it \note{here}.
 Theorem~\ref{thm: cdt-repeat} and (\ref{eq: rf-upp-inv}) establish the correctness of the Coq definitions of \emph{countdown worker} and \emph{countdown}, thereby justifying our budget of $n$ and our unification of 
 Definitions \ref{defn: informal-countdown} and \ref{defn: countdown}. We wrap everything together with the following theorem:
 \begin{thm} \label{thm: cdt-inv-rf}
