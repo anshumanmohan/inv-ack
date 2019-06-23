@@ -189,7 +189,7 @@ If the input goes below or equals $a$ after $k$ applications, \emph{i.e.} $f^{(k
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
 match b with 0 => 0 | S b' => 
-  match (n - a) with 0 => 0 | _ => S (cdn_wkr a f (f n) b') end
+  if (n <=? a) then 0 else S (cdn_wkr f a (f n) k')
 end.
 \end{lstlisting}
 Given an $f$ that is a contraction strict from $a$, 

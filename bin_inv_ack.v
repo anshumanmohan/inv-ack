@@ -12,16 +12,18 @@ Require Import bin_inverse.
 Require inv_ack.
 
 Lemma to_nat_diag_ack :
-    (fun n => repeater.ackermann n n) = to_nat_func (fun n : N => ackermann n n).
+    (fun n => repeater.ackermann n n)
+    = to_nat_func (fun n : N => bin_ackermann n n).
 Proof.
   apply functional_extensionality. unfold to_nat_func. intro n.
-  rewrite ackermann_correct. repeat rewrite Nat2N.id. trivial.
+  rewrite bin_ackermann_correct. repeat rewrite Nat2N.id. trivial.
 Qed.
 
 (* Diagonal Strict Increasing *)
-Lemma diag_ack_incr : increasing (fun n => ackermann n n).
+Lemma diag_ack_incr : increasing (fun n => bin_ackermann n n).
 Proof.
-  rewrite to_nat_func_incr. rewrite <- to_nat_diag_ack. apply inv_ack.diag_ack_incr.
+  rewrite to_nat_func_incr.
+  rewrite <- to_nat_diag_ack. apply inv_ack.diag_ack_incr.
 Qed.
 
 
@@ -44,7 +46,8 @@ Qed.
 
 (* Recursion *)
 Theorem bin_alpha_recursion : forall m, (2 <= m)%nat ->
-    bin_alpha (S m) = compose (bin_countdown_to (bin_alpha m) 1) (bin_alpha m).
+    bin_alpha (S m)
+    = compose (bin_countdown_to (bin_alpha m) 1) (bin_alpha m).
 Proof.
   destruct m as [|[|[|m]]]; trivial; [omega|omega|intro]. clear H.
   apply functional_extensionality; intro n. unfold compose.
@@ -71,7 +74,8 @@ Proof.
   4: rewrite <- N.div2_double.
   2, 4: rewrite <- N.div2_div; f_equal; trivial.
   1, 2: rewrite N.leb_gt in Heqb; rewrite N.add_comm, <- IHp;
-        symmetry; apply N.sub_add; rewrite N.le_ngt, N.lt_1_r, N.log2_null, <- N.lt_succ_r;
+        symmetry; apply N.sub_add;
+        rewrite N.le_ngt, N.lt_1_r, N.log2_null, <- N.lt_succ_r;
         simpl; rewrite <- N.le_ngt, le_div_mul by lia; lia.
 Qed.
 
@@ -93,12 +97,14 @@ Proof.
       rewrite <- Nat.succ_le_mono in H. apply (Nat.le_trans _ _ _ H) in H0.
       assert (S (N.to_nat (n/2)) <= N.to_nat (n/2))%nat as contra.
       { apply (Nat.le_trans _ (S (N.to_nat ((n + b) / 2))) _);
-        [rewrite <- Nat.succ_le_mono|apply (Nat.le_trans _ (N.to_nat ((n - a) / 2)) _)].
+        [rewrite <- Nat.succ_le_mono|
+         apply (Nat.le_trans _ (N.to_nat ((n - a) / 2)) _)].
         1,3 : rewrite <- le_N_nat; apply N.div_le_mono; lia.
         apply (Nat.le_trans _ (S (N.to_nat ((n + b) / 2) +
                nat_size (f (f (repeat f (N.to_nat ((n + b) / 2)) n)) - a))) _);
         omega. } omega.
-    + rewrite <- N.div2_div. destruct (n - a); [simpl in H; omega|induction p; trivial].
+    + rewrite <- N.div2_div. destruct (n - a);
+      [simpl in H; omega|induction p; trivial].
 Qed.
 
 Lemma bin_alpha_2_correct : forall n,
@@ -128,7 +134,8 @@ Proof.
   destruct m as [|[|m]]; try omega; intro; clear H. induction m.
   - split; intro n; simpl; rewrite N.div2_div;
     [apply N.div_le_upper_bound|intro; apply N.div_le_mono]; lia.
-  - rewrite bin_alpha_recursion; [|omega]. apply (countdown_bin_contract _ _ _ IHm).
+  - rewrite bin_alpha_recursion; [|omega].
+  apply (countdown_bin_contract _ _ _ IHm).
 Qed.
 
 Theorem bin_alpha_correct :
@@ -138,16 +145,17 @@ Proof.
   intro n; unfold to_N_func. 2: rewrite inv_ack.alpha_1.
   1,2: simpl; lia. 1: apply bin_alpha_2_correct.
   rewrite bin_alpha_recursion by omega. unfold compose.
-  rewrite bin_countdown_correct by (apply bin_alpha_contract_strict_above_1; omega).
+  rewrite bin_countdown_correct by
+    (apply bin_alpha_contract_strict_above_1; omega).
   rewrite IHm. rewrite <- nat_N_func_id.
   replace (N.to_nat 1) with 1%nat by trivial.
   unfold to_N_func. f_equal. rewrite Nat2N.id. trivial.
 Qed.
 
 Corollary bin_alpha_ackermann :
-    forall m, upp_inv_rel (bin_alpha m) (ackermann (N.of_nat m)).
+    forall m, upp_inv_rel (bin_alpha m) (bin_ackermann (N.of_nat m)).
 Proof.
-  intros m n p. rewrite <- (N2Nat.id n). rewrite ackermann_correct.
+  intros m n p. rewrite <- (N2Nat.id n). rewrite bin_ackermann_correct.
   rewrite bin_alpha_correct. unfold to_N_func. rewrite <- le_nat_N.
   rewrite le_N_nat. repeat rewrite Nat2N.id.
   destruct (inv_ack.alpha_correct m) as [_ H]. apply H.
@@ -168,12 +176,14 @@ Fixpoint bin_inv_ack_worker (f : N -> N) (n k : N) (bud : nat) : N :=
 Definition bin_inv_ack n :=
   if (n <=? 1) then 0
   else if (n <=? 3) then 1
-  else let f := (bin_alpha 2) in
-        bin_inv_ack_worker f (f n) 2 (nat_size n).
+  else if (n <=? 7) then 2
+  else let f := (fun x => N.log2 (x + 2) - 2) in
+        bin_inv_ack_worker f (f n) 3 (nat_size n).
 
 (* Intermediate lemmas about bin_inv_ack_worker *)
 Lemma bin_alpha_contr : forall i n,
-    (S i < N.to_nat (bin_alpha (S i) n))%nat -> (i < N.to_nat (bin_alpha i n))%nat.
+    (S i < N.to_nat (bin_alpha (S i) n))%nat
+      -> (i < N.to_nat (bin_alpha i n))%nat.
 Proof.
   intros i n. specialize (bin_alpha_ackermann i (N.of_nat i) n).
   specialize (bin_alpha_ackermann (S i) (N.of_nat (S i)) n).
@@ -183,7 +193,8 @@ Qed.
 Lemma bin_inv_ack_worker_intermediate : forall i n b,
     (S i < N.to_nat (bin_alpha (S i) n))%nat -> (S i < b)%nat ->
       bin_inv_ack_worker (bin_alpha 2) (bin_alpha 2 n) 2 b
-       = bin_inv_ack_worker (bin_alpha (S (S i))) (bin_alpha (S (S i)) n) (N.of_nat (S (S i))) (b - i).
+       = bin_inv_ack_worker (bin_alpha (S (S i)))
+         (bin_alpha (S (S i)) n) (N.of_nat (S (S i))) (b - i).
 Proof.
   induction i; intros n b Hn Hib; symmetry;
   [f_equal; omega|rewrite bin_alpha_recursion by omega].
@@ -195,18 +206,18 @@ Qed.
 
 (* Proof that bin_inv_ack_worker is correct given sufficient budget *)
 Lemma bin_inv_ack_worker_sufficient :
-    forall n b, (4 <= n <= ackermann b b) ->
+    forall n b, (4 <= n <= bin_ackermann b b) ->
      bin_inv_ack_worker (bin_alpha 2) (bin_alpha 2 n) 2 (N.to_nat b)
-      = upp_inv (fun m => ackermann m m) n.
+      = upp_inv (fun m => bin_ackermann m m) n.
 Proof.
   assert (Hincr := diag_ack_incr). assert (Hack := upp_inv_correct _ Hincr).
   unfold upp_inv_rel in Hack. intros n b [Hn Hnb].
-  remember (N.to_nat (upp_inv (fun m : N => ackermann m m) n)) as p.
+  remember (N.to_nat (upp_inv (fun m : N => bin_ackermann m m) n)) as p.
   rewrite <- (Nat2N.id p) in Heqp. apply N2Nat.inj in Heqp.
-  assert (n <= ackermann (N.of_nat p) (N.of_nat p)) as Hp0 by (apply Hack; lia).
+  assert (n <= bin_ackermann (N.of_nat p) (N.of_nat p)) as Hp0 by (apply Hack; lia).
   destruct p as [|[|p]].
-  1,2 : unfold N.of_nat in Heqp; unfold ackermann in Hp0; simpl in Hp0; lia.
-  assert (ackermann (N.of_nat (S p)) (N.of_nat (S p)) < n) as Hp1
+  1,2 : unfold N.of_nat in Heqp; unfold bin_ackermann in Hp0; simpl in Hp0; lia.
+  assert (bin_ackermann (N.of_nat (S p)) (N.of_nat (S p)) < n) as Hp1
    by (rewrite N.lt_nge; rewrite <- Hack; lia).
   assert (S p < N.to_nat b)%nat as Hpb. { rewrite Nat.lt_nge. intro Hc.
   inversion Hc as [Hc0|Hc1]. rewrite <- Hc0 in Hp1. rewrite N2Nat.id in Hp1. lia.
@@ -215,7 +226,8 @@ Proof.
   - replace (N.to_nat b - p)%nat with (S (N.to_nat b - S p))%nat by omega.
     unfold bin_inv_ack_worker.
     replace (bin_alpha (S (S p)) n <=? N.of_nat (S (S p))) with true; trivial.
-    symmetry. rewrite N.leb_le.  rewrite (bin_alpha_ackermann (S (S p)) _ _). apply Hp0.
+    symmetry. rewrite N.leb_le.
+    rewrite (bin_alpha_ackermann (S (S p)) _ _). apply Hp0.
   - rewrite lt_nat_N. rewrite N2Nat.id. rewrite N.lt_nge.
     rewrite (bin_alpha_ackermann (S p) _ _). lia.
   - apply Hpb.
@@ -247,15 +259,18 @@ Close Scope nat_scope.
 Theorem bin_inv_ack_correct : bin_inv_ack = to_N_func (inv_ack.inv_ack).
 Proof.
   apply functional_extensionality. intro n.
-  assert (n = 0 \/ n = 1 \/ n = 2 \/ n = 3 \/ 4 <= n) as Hn by lia.
+  assert (n = 0 \/ n = 1 \/ n = 2 \/ n = 3 \/ n = 4 \/
+          n = 5 \/ n = 6 \/ n = 7 \/ 8 <= n) as Hn by lia.
   repeat destruct Hn as [Hn|Hn]; try rewrite Hn; trivial.
-  unfold bin_inv_ack. replace (n <=? 1) with false by (symmetry; rewrite N.leb_gt; lia).
+  unfold bin_inv_ack.
+  replace (n <=? 1) with false by (symmetry; rewrite N.leb_gt; lia).
   replace (n <=? 3) with false by (symmetry; rewrite N.leb_gt; lia).
+  replace (n <=? 7) with false by (symmetry; rewrite N.leb_gt; lia).
   rewrite <- (Nat2N.id (nat_size n)). rewrite bin_inv_ack_worker_sufficient.
   - unfold upp_inv. f_equal. rewrite <- to_nat_diag_ack. symmetry.
     apply inverse.upp_inv_unique. apply inv_ack.diag_ack_incr.
     apply inv_ack.inv_ack_correct.
-  - split; trivial. rewrite ackermann_correct. rewrite Nat2N.id.
+  - split; [lia|]. rewrite bin_ackermann_correct. rewrite Nat2N.id.
     apply (N.le_trans _ (N.of_nat (repeater.ackermann 3 (nat_size n))) _).
     + clear Hn. rewrite le_N_nat. rewrite Nat2N.id.
       rewrite ack_3. destruct n; simpl; [lia|].
@@ -271,5 +286,6 @@ Proof.
     + rewrite <- le_nat_N. rewrite Nat.le_ngt.
       assert (H := inv_ack.ack_incr_by_lvl (nat_size n)).
       apply (increasing_expanding.incr_twoways _ (nat_size n) 3) in H.
-      simpl in *. rewrite <- H. apply nat_size_incr in Hn. simpl in Hn. omega.
+      simpl in *. rewrite <- H. apply nat_size_incr in Hn.
+      simpl in Hn. omega.
 Qed.

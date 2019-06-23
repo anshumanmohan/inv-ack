@@ -5,29 +5,24 @@
 Require Import Omega.
 Require Import Program.Basics.
 
-Fixpoint countdown_worker (f : nat -> nat) (a n k : nat) : nat :=
-  match k with
-  | 0    => 0
-  | S k' => if (n <=? a) then 0 else
-              S (countdown_worker f a (f n) k')
-  end.
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
+match b with 0 => 0 | S b' => 
+  if (n <=? a) then 0 else S (cdn_wkr f a (f n) k')
+end.
 
-Definition countdown_to f a n := countdown_worker f a n n.
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L104}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
 
-Fixpoint inv_ack_worker (f : nat -> nat) (n k b : nat) : nat :=
-  match b with
-  | 0    => k
-  | S b' => match (n - k) with
-            | 0 => k
-            | _ => let g := (countdown_to f 1) in
-                     inv_ack_worker (compose g f) (g n) (S k) b'
-            end
-  end.
+`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
+match b with 0 => 0 | S b' => 
+  if (n <=? k) then k else let g := (countdown_to f 1) in
+                        inv_ack_wkr (compose g f) (g n) (S k) b
+end.
 
 Definition inv_ack_linear_time n :=
   match n with
   | 0 | 1 => 0
-  | _     => let f := (fun x => x - 2) in inv_ack_worker f (f n) 1 (n - 1)
+  | _     => let f := (fun x => x - 2) in
+               inv_ack_wkr f (f n) 1 (n - 1)
   end.
 \end{lstlisting}
 

@@ -78,15 +78,15 @@ Qed.
 
 (* ****** COUNTDOWN *************************************)
 
-Fixpoint bin_countdown_worker (f : N -> N) (a n : N) (b : nat) : N :=
+Fixpoint bin_cdn_wkr (f : N -> N) (a n : N) (b : nat) : N :=
   match b with
   | O    => 0
   | S b' => if (n <=? a) then 0
-             else 1 + bin_countdown_worker f a (f n) b'
+             else 1 + bin_cdn_wkr f a (f n) b'
   end.
 
 Definition bin_countdown_to (f : N -> N) (a n : N) : N
-  := bin_countdown_worker f a n (nat_size (n - a)).
+  := bin_cdn_wkr f a n (nat_size (n - a)).
 
 
 Lemma bin_contract_strict_threshold : forall a f n,
@@ -120,7 +120,7 @@ Qed.
 
 
 Lemma bin_countdown_base : forall f a n b,
-    n <= a -> bin_countdown_worker f a n b = 0.
+    n <= a -> bin_cdn_wkr f a n b = 0.
 Proof.
   intros f a n b Han. destruct b; trivial.
   rewrite <- N.leb_le in Han. simpl. rewrite Han. trivial.
@@ -128,17 +128,17 @@ Qed.
 
 Lemma bin_countdown_intermediate : forall f a n b i,
     bin_contracting f -> ((S i) <= b)%nat -> (a < repeat f i n)
-    -> bin_countdown_worker f a n b =
-       N.of_nat (S i) + bin_countdown_worker f a (repeat f (S i) n) (b - (S i)).
+    -> bin_cdn_wkr f a n b =
+       N.of_nat (S i) + bin_cdn_wkr f a (repeat f (S i) n) (b - (S i)).
 Proof.
   intros f a n b i Hf.
   generalize dependent b. generalize dependent n.
   induction i; intros n b Hib Han; rewrite <- N.leb_gt in Han.
   - destruct b. inversion Hib. replace (S b - 1)%nat with b by omega.
-    unfold bin_countdown_worker. simpl in Han. rewrite Han. trivial.
+    unfold bin_cdn_wkr. simpl in Han. rewrite Han. trivial.
   - rewrite IHi.
     + replace (b - S i)%nat with (S (b - S(S i))) by omega.
-      unfold bin_countdown_worker. rewrite Han.
+      unfold bin_cdn_wkr. rewrite Han.
       replace (N.of_nat (S(S i))) with (N.of_nat (S i) + 1).
       apply N.add_assoc. rewrite N.add_1_r.
       repeat rewrite Nat2N.inj_succ. trivial.

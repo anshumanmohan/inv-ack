@@ -14,7 +14,7 @@ Require Import countdown.
 (* 
  * We use countdown to implement an inverse tower for the Hyperoperation.
  * Interestingly, the 2nd, 3rd and 4th levels of this tower correspond to 
- * division, log base b and log* base b, which are not defined in the 
+ * divcision, logc base b and log* base b, which are not defined in the 
  * Coq Standard Library. 
  * Our definitions, which use countdown, offer enough versatility and 
  * flexibility to substantiate easy and direct proof for a vast range 
@@ -38,7 +38,7 @@ Theorem inv_hyperop_recursion :
 Proof. trivial. Qed.
 
 (* Several results about first few levels of inv_hyperop.
-   Used to prove correctness of division and log later on. *)
+   Used to prove correctness of divcision and logc later on. *)
 
 Theorem inv_hyperop_0_contract_strict :
   forall a k, contract_strict_above k (inv_hyperop a 0).
@@ -94,25 +94,25 @@ Qed.
 (* ****** DIVISION AND LOGARITHM ********************************* *)
 
 (* Computes ceiling of b / a *)
-Definition div a b := inv_hyperop a 2 b.
+Definition divc a b := inv_hyperop a 2 b.
 
-Theorem div_correct :
-  forall a b m, 1 <= a -> div a b <= m <-> b <= m * a.
+Theorem divc_correct :
+  forall a b m, 1 <= a -> divc a b <= m <-> b <= m * a.
 Proof.
   intros a b m Ha. destruct a; [omega|].
-  unfold div. rewrite inv_hyperop_recursion.
+  unfold divc. rewrite inv_hyperop_recursion.
   rewrite countdown_repeat by (split; intro n; rewrite inv_hyperop_1; omega).
   rewrite inv_hyperop_1_repeat. unfold hyperop_init. omega.
 Qed.
 
-(* Computes ceiling of log_a(b) *)
-Definition log a b := inv_hyperop a 3 b.
+(* Computes ceiling of logc_a(b) *)
+Definition logc a b := inv_hyperop a 3 b.
 
-Theorem log_correct :
-  forall a b m, 2 <= a -> log a b <= m <-> b <= a ^ m.
+Theorem logc_correct :
+  forall a b m, 2 <= a -> logc a b <= m <-> b <= a ^ m.
 Proof.
   intros a b m Ha.
-  unfold log. rewrite <- hyperop_3.
+  unfold logc. rewrite <- hyperop_3.
   apply inv_hyperop_correct; trivial.
 Qed.
 
