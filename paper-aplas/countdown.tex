@@ -275,7 +275,7 @@ Definition~\ref{defn: informal-countdown}:
 %	\begin{equation} \label{eq: cdt-minimum}
 $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 \end{thm}
-\begin{proof}[outline, full proof found in Appendix~\ref{apx:proof_correct_countdown_worker}]
+\begin{proof}[outline]
 %	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.
 %\hide{
 	Assume the initial arguments $(n, b)$, let the original call $\cdw{f}{a}(n, b)$ be the $0^{th}$ call. A straightforward induction on $i$ shows that in the $i^{th}$ call, the arguments will be $\big(f^{(i)}(n), b-i\big)$, while an accumulated amount of $i$ will have been added to the final result, with the exception of the last call, which returns $0$ and adds nothing to the result.
