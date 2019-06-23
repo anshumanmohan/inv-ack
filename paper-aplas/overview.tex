@@ -37,7 +37,7 @@ The inverse Ackermann function $\alpha(n)$ is the smallest~$k$ for
 \end{defn}
 This definition is computational: start at $k=0$, calculate $\Ack(k)$,
 compare~it~to~$n$, and increment $k$ until $n \le \Ack(k)$.
-The runtime of this algorithm is $\Omega(\Ack(\alpha(n)))$,
+Unfortunately, its runtime is $\Omega(\Ack(\alpha(n)))$,
 so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ in this way requires
 $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 
