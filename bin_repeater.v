@@ -147,7 +147,7 @@ Qed.
 (* ****** ACKERMANN FUNCTION ********************************* *)
 
 (* Our definition using bin_repeater_from *)
-Definition ackermann (n m : N) : N :=
+Definition bin_ackermann (n m : N) : N :=
   let fix ack_nat (n0 : nat) (m0 : N) : N :=
    match n0 with
    | 0%nat => 1 + m0
@@ -155,10 +155,10 @@ Definition ackermann (n m : N) : N :=
    end in ack_nat (N.to_nat n) m.
 
 (* Proof that the above are the same *)
-Theorem ackermann_correct : forall n m,
-  ackermann n m = N.of_nat (repeater.ackermann (N.to_nat n) (N.to_nat m)).
+Theorem bin_ackermann_correct : forall n m,
+  bin_ackermann n m = N.of_nat (repeater.ackermann (N.to_nat n) (N.to_nat m)).
 Proof.
-  intros n m. unfold ackermann. unfold repeater.ackermann.
+  intros n m. unfold bin_ackermann. unfold repeater.ackermann.
   generalize dependent m. induction (N.to_nat n); intro m; [lia| ].
   rewrite bin_repeater_Nnat. repeat f_equal;
   [unfold to_nat_func; apply functional_extensionality; intro p| ];

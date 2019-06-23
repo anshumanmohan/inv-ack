@@ -101,16 +101,16 @@ Qed.
 
 (* Repeats "f" "k" times over, or until we go below "a".
    Outputs "min(k, min{l : repeat f l n <= a})" *)
-Fixpoint countdown_worker (f : nat -> nat) (a : nat)  (n k : nat) : nat :=
+Fixpoint cdn_wkr (f : nat -> nat) (a : nat)  (n k : nat) : nat :=
   match k with
   | 0    => 0
   | S k' => if (n <=? a) then 0 else
-             S (countdown_worker f a (f n) k')
+             S (cdn_wkr f a (f n) k')
   end.
 
 (* Actual defintion. We give the worker a budget of "n" steps, which
    guarantees that it reaches below "a" before terminating *)
-Definition countdown_to f a n := countdown_worker f a n n.
+Definition countdown_to f a n := cdn_wkr f a n n.
 
 
 
@@ -119,12 +119,12 @@ Definition countdown_to f a n := countdown_worker f a n n.
 (* INITIAL VALUE THEOREM
    Basically countdown returns 0 if "n" is already below "a" *)
 Theorem countdown_init :
-  forall a f n k, n <= a -> countdown_worker f a n k = 0.
+  forall a f n k, n <= a -> cdn_wkr f a n k = 0.
 Proof.
   intros a f n k Hna.
   destruct k; trivial.
   rewrite <- Nat.leb_le in Hna.
-  unfold countdown_worker. rewrite Hna; trivial.
+  unfold cdn_wkr. rewrite Hna; trivial.
 Qed.
 
 (* EXISTENCE OF COUNTDOWN VALUE LEMMA *)
@@ -165,15 +165,15 @@ Theorem countdown_intermediate :
     contracting f ->
     S i <= k ->
     a < repeat f i n ->
-    countdown_worker f a n k =
-    (S i) + countdown_worker f a (repeat f (S i) n) (k - (S i)).
+    cdn_wkr f a n k =
+    (S i) + cdn_wkr f a (repeat f (S i) n) (k - (S i)).
 Proof.
   assert (forall a f n k,
              contracting f -> 1 <= k -> a < n ->
-             countdown_worker f a n k =
-             1 + countdown_worker f a (f n) (k - 1) ) as case_0.
+             cdn_wkr f a n k =
+             1 + cdn_wkr f a (f n) (k - 1) ) as case_0.
   { simpl. intros a f n k Hf Hk Ha. destruct k; [omega|].
-    replace (S k - 1) with k by omega. unfold countdown_worker.
+    replace (S k - 1) with k by omega. unfold cdn_wkr.
     rewrite Nat.lt_nge, <- Nat.leb_nle in Ha. rewrite Ha. trivial.
   }
   intros a f n k i Hf Hik Hai.
@@ -203,7 +203,7 @@ Proof.
     destruct m; [rewrite countdown_init; omega|]. 
     destruct (repeat_contract_strict_threshold a f n Haf); [omega|].
     destruct H0 as [Hx0 [Hxl Hxr]].
-    assert (countdown_worker f a n n = S x) as Hx.
+    assert (cdn_wkr f a n n = S x) as Hx.
     { rewrite (countdown_intermediate a f n n x); trivial.
       rewrite countdown_init; [omega | trivial].
     }

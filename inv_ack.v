@@ -130,40 +130,40 @@ Qed.
 
 (* ****** INVERSE ACKERMANN FUNCTION ****** *)
 
-Fixpoint inv_ack_worker (f : nat -> nat) (n k bud : nat) : nat :=
-  match bud with
+Fixpoint inv_ack_wkr (f : nat -> nat) (n k b : nat) : nat :=
+  match b with
   | 0      => k
-  | S bud' => match (n - k) with
-              | 0   => k
-              | S _ => let g := (countdown_to f 1) in
-                       inv_ack_worker (compose g f) (g n) (S k) bud'
-              end
+  | S b' => if (n <=? k) then k
+              else let g := (countdown_to f 1) in
+                   inv_ack_wkr (compose g f) (g n) (S k) b'
   end.
 
 (* Original defintion, runtime O(n^2) *)
-Definition inv_ack n := inv_ack_worker (alpha 0) (alpha 0 n) 0 n.
+Definition inv_ack n := inv_ack_wkr (alpha 0) (alpha 0 n) 0 n.
 
-(* Intermediate lemma about inv_ack_worker *)
-Lemma inv_ack_worker_intermediate :
+(* Intermediate lemma about inv_ack_wkr *)
+Lemma inv_ack_wkr_intermediate :
   forall i n b,
     i < alpha i n -> i < b ->
-    inv_ack_worker (alpha 0) (alpha 0 n) 0 b =
-    inv_ack_worker (alpha (S i)) (alpha (S i) n) (S i) (b - (S i)).
+    inv_ack_wkr (alpha 0) (alpha 0 n) 0 b =
+    inv_ack_wkr (alpha (S i)) (alpha (S i) n) (S i) (b - (S i)).
+Proof.
+  intros i n b. rewrite <- Nat.leb_gt.
+  generalize dependent b. generalize dependent n.
   induction i.
-  - simpl. intros n b Hn Hb. unfold inv_ack_worker.
-    destruct b; try omega.
-    remember ((n - 1) - 0) as m. destruct m; try omega.
+  - simpl. intros n b Hn Hb. unfold inv_ack_wkr.
+    destruct b; try omega. unfold compose. rewrite Hn.
     replace (S b - 1) with b by omega. trivial.
   - intros n b Hn Hb. rewrite IHi; [| |omega].
     + remember (S i) as p.
-      replace (alpha (S p)) with (compose (countdown_to (alpha p) 1) (alpha p))
-        by trivial.
-      unfold inv_ack_worker.
-      remember (alpha p n - p) as m. destruct m; try omega.
+      replace (alpha (S p)) with
+        (compose (countdown_to (alpha p) 1) (alpha p)) by trivial.
+      unfold inv_ack_wkr.
       remember (b - p) as c. destruct c; try omega.
-      replace (b - S p) with c by omega.
-      rewrite <- Heqm. trivial.
-    + rewrite <- not_le. destruct (alpha_correct i) as [_ Halphai].
+      rewrite Hn. replace (b - S p) with c by omega.
+      trivial.
+    + rewrite Nat.leb_gt. rewrite Nat.leb_gt in Hn.
+      rewrite <- not_le. destruct (alpha_correct i) as [_ Halphai].
       rewrite (Halphai i n). intro.
       assert (n <= ackermann (S i) (S i)).
       { apply (Nat.le_trans _ (ackermann i i) _ H), Nat.lt_le_incl.
@@ -198,10 +198,11 @@ Proof.
       assert (ackermann m m <= m) by omega.
       destruct (ack_repeatable m) as [_ Hackm].
       destruct Hackm as [_ Hackm]. specialize (Hackm m). omega. }
-    rewrite (inv_ack_worker_intermediate m n n Hn). 2: omega.
-    assert (alpha (S m) n - (S m) = 0)
-      by (specialize (H0 (S m) n); rewrite <- Heqm in H0; omega).
-    unfold inv_ack_worker.
+    rewrite (inv_ack_wkr_intermediate m n n Hn). 2: omega.
+    assert (alpha (S m) n <=? (S m) = true).
+      { rewrite Nat.leb_le. specialize (H0 (S m) n).
+        rewrite <- Heqm in H0. omega. }
+    unfold inv_ack_wkr.
     remember (n - S m) as p. destruct p; [omega|].
     rewrite H1. trivial.
 Qed.
@@ -212,7 +213,7 @@ Qed.
 Definition inv_ack_linear n :=
   match n with
   | 0 | 1 => 0
-  | _     => let f := (fun x => x - 2) in inv_ack_worker f (f n) 1 (n - 1)
+  | _     => let f := (fun x => x - 2) in inv_ack_wkr f (f n) 1 (n - 1)
   end.
 
 (* Correctness proof *)
@@ -221,46 +222,6 @@ Proof.
   apply functional_extensionality. intro n.
   unfold inv_ack, inv_ack_linear.
   destruct n; try destruct n; trivial.
-  rewrite (inv_ack_worker_intermediate 0 _ _) by (simpl; omega).
+  rewrite (inv_ack_wkr_intermediate 0 _ _) by (simpl; omega).
   rewrite alpha_1; trivial.
 Qed.
-
-(* Demonstrating Linear Runtime *)
-(* Commented out for clean builds on the command line. 
- * Interested readers are encouraged to uncomment and run these lines. *)
-(*
-Time Compute inv_ack_linear 10000.
-Time Compute inv_ack_linear 100000.
-Time Compute inv_ack_linear 1000000.
-Time Compute inv_ack_linear 10000000.
- *)
-
-(* Further, our code can be extracted to OCaml by running the two lines below: *)
-(* 
-Require Extraction. 
-Recursive Extraction inv_ack_linear.
- *)
-
-(* 
- * Next, assuming inv_ack_linear is in the same OCaml file,
- * our benchmarks can be tested in OCaml as follows: 
- *)
-
-(*
-let time n f x =
-    let t = Sys.time() in
-    let ans = f x in
-    Printf.printf "Execution time for %d: \t%fs\n" n (Sys.time() -. t); ans;;
-
-let rec buildnat j acc = 
-  if j = 0 then acc else buildnat (j-1) (S acc);;
-
-let time_print n = 
-  time n inv_ack_linear (buildnat n O);;
-
-time_print 100;;
-time_print 1000;;
-time_print 10000;;
-time_print 100000;;
-time_print 1000000;;
- *)

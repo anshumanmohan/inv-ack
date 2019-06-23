@@ -213,9 +213,8 @@ Ackermann function in Gallina.
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L138-L148} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
   match b with 0 => 0 | S b' =>
-    match (n - k) with 0 => k | _ => let g := (countdown_to 1 f)
-      in inv_ack_wkr (compose g f) (g n) (S k) b'
-    end
+    if (n <=? k) then k else let g := (countdown_to f 1) in
+      inv_ack_wkr (compose g f) (g n) (S k) b
   end.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/inv_ack.v#L32-L36}{Fixpoint alpha}` (m x : nat) : nat :=
