@@ -199,7 +199,7 @@ The following theorem demonstrates that a budget of $n$ suffices.
 \begin{thm} \label{thm: inv-ack-worker-correct}
 	$\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{thm}
-\begin{proof}[outline, full proof found in Appendix~\ref{apx:proof_correct_worker}]
+\begin{proof}[outline]
 	If given the arguments $\big(\alpha_i, \alpha_i(n), i, b - i\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$ at the next recursive call. A straightforward induction on $k$ then shows that if $k\le \min\big\{b, \alpha_k(n)\big\}$, 
 	\begin{equation} \label{eq: inv-ack-worker-intermediate}
 	\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_k, \alpha_k(n), k, b-k\big)
@@ -207,7 +207,7 @@ The following theorem demonstrates that a budget of $n$ suffices.
 	Let $m \triangleq \min\big\{k : \alpha_k(n) \le k \}$, then $m\le n$ since $\alpha_n(n)\le n$, \eqref{eq: inv-ack-worker-intermediate} then implies:
 	$$ \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\W}\big(\alpha_m, \alpha_m(n), m, n - m\big) = m = \alpha(n) $$
 \end{proof}
-We put a more involved proof of correctness in Appendix~\ref{apx:proof_correct_inv_ack_worker}.
+We put a more involved mathematical proof of correctness in Appendix~\ref{apx:proof_correct_inv_ack_worker}, and a mechanized proof \note{here}.
 We now have a definition of inverse Ackermann that is computationally 
 definable via a Coq-accepted worker. Below, we present the inverse 
 Ackermann function in Gallina.

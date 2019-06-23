@@ -7,8 +7,8 @@ Arithmetic operations are therefore faster when the inputs
 are encoded in binary\footnote{We put a further explanation of 
 Coq's binary type \li{N} in Appendix~\ref{apx:bin_in_coq}.}.
 
-Our codebase has binary versions of hyperoperations, inverse hyperoperations, 
-Ackermann, and inverse Ackermann. 
+Our codebase has binary versions of \note{hyperoperations, inverse hyperoperations, 
+Ackermann, and inverse Ackermann}. 
 Here we show how to compute inverse Ackermann for binary inputs in 
 linear time up to the size of input representation, 
 which is equivalent to logarithmic time up to input magnitude.
@@ -16,6 +16,9 @@ As before, we present an intuitive sketch here and put
 full proofs in Appendix~\ref{apx:time_analysis_bin}.
 
 \subsection{Countdown and contractions with binary numbers}
+
+\renewcommand{\Tleb}{\runtime_{\li{N.leb}}}
+\renewcommand{\Tsucc}{\runtime_{\li{N.succ}}}
 
 Although the theoretical \emph{countdown} is independent of the encoding 
 of its inputs, its Coq definition needs to be adjusted to allow for inputs 
@@ -157,12 +160,12 @@ As in Theorem~\ref{thm: inv-ack-hardcode-correct}, summing the time complexity
 of each component of \li{bin_inv_ack} shows that it is linear up to the 
 size of input representation.
 \begin{equation*}
-\runtime_\alpha(n) \ =
+\runtime_\alpha(n) =
 \begin{aligned}
-& \runtime_{\alpha_3}(n)
-+ \sum_{k = 3}^{\alpha(n) - 1} \runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n))
+& \ \runtime_{\alpha_3}(n)
++ \sum_{k = 3}^{\alpha(n) - 1} \hspace{-5pt} \runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n))
 + \sum_{k = 3}^{\alpha(n)}\Tleb\left(\alpha_k(n), k\right)
-+ \sum_{k = 3}^{\alpha(n) - 1}\Tsucc(k)\\
++ \sum_{k = 3}^{\alpha(n) - 1} \hspace{-5pt} \Tsucc(k)\\
 & \ + \ \runtime_{\li{nat_size}}(n)
 \ + \Tleb(n, 1) \ + \Tleb(n, 3) \ + \Tleb(n, 7)
 \end{aligned}
@@ -181,6 +184,10 @@ The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by Lemma~\
 = \Theta\big(\log_2n\big)
 \end{aligned}
 \end{equation*}
+
+\renewcommand{\Tleb}{\runtime_{\li{leb}}}
+\renewcommand{\Tsucc}{\runtime_{\li{succ}}}
+
 %We bound the RHS by bounding $\runtime\left(\alpha_{\alpha(n)}(n)\right)$, and $\runtime\left(\alpha_i(n)\right)$ in general. Note that by $\alpha_2(n) = \left\lfloor \frac{n - 2}{2} \right\rfloor$, we have $\runtime(\alpha_2, n) \le 2\log_2 n$ for all $n$.
 %Note that this bound can potentially be improved by further tightening the above inequalities. Although we do not obtain an exact asymptotic runtime similar 
 %to Theorem~\ref{thm: inv-ack-hier-runtime-improved}, since this bound of $4^{\alpha(n)}\log_2n$ is strictly larger than the lower bound of $\log_2n$, it is still extremely small and can be bounded by simpler expressions such as $(\log_2n)^2$.
