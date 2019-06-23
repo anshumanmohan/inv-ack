@@ -1,18 +1,18 @@
-Thus far we have used the Coq type \li{nat}, which represents 
-a number~$n$ using~$n$ bits. 
+Thus far we have used the Coq type \li{nat}, which represents
+a number~$n$ using~$n$ bits.
 The binary system represents~$n$ in $\lfloor \log_{2} n \rfloor + 1$ bits.
-In both systems, addition/subtraction of $b$-bit 
-numbers is $\Theta(b)$, while multiplication is $\Theta \big(b^2\big)$. 
-Arithmetic operations are therefore faster when the inputs 
-are encoded in binary\footnote{We put a further explanation of 
+In both systems, addition/subtraction of $b$-bit
+numbers is $\Theta(b)$, while multiplication is $\Theta \big(b^2\big)$.
+Arithmetic operations are therefore faster when the inputs
+are encoded in binary\footnote{We put a further explanation of
 Coq's binary type \li{N} in Appendix~\ref{apx:bin_in_coq}.}.
 
-Our codebase has binary versions of \note{hyperoperations, inverse hyperoperations, 
-Ackermann, and inverse Ackermann}. 
-Here we show how to compute inverse Ackermann for binary inputs in 
-linear time up to the size of input representation, 
+Our codebase has binary versions of \note{hyperoperations, inverse hyperoperations,
+Ackermann, and inverse Ackermann}.
+Here we show how to compute inverse Ackermann for binary inputs in
+linear time up to the size of input representation,
 which is equivalent to logarithmic time up to input magnitude.
-As before, we present an intuitive sketch here and put 
+As before, we present an intuitive sketch here and put
 full proofs in Appendix~\ref{apx:time_analysis_bin}.
 
 \subsection{Countdown and contractions with binary numbers}
@@ -20,39 +20,39 @@ full proofs in Appendix~\ref{apx:time_analysis_bin}.
 \renewcommand{\Tleb}{\runtime_{\li{N.leb}}}
 \renewcommand{\Tsucc}{\runtime_{\li{N.succ}}}
 
-Although the theoretical \emph{countdown} is independent of the encoding 
-of its inputs, its Coq definition needs to be adjusted to allow for inputs 
-in \li{N}. The first step is to translate the arguments of 
-\li{countdown\_worker} from \li{nat} to \li{N}. Budget \li{b} must 
-remain in \li{nat} so it can serve as Coq's termination argument, 
-but all other \li{nat} arguments should be changed 
+Although the theoretical \emph{countdown} is independent of the encoding
+of its inputs, its Coq definition needs to be adjusted to allow for inputs
+in \li{N}. The first step is to translate the arguments of
+\li{countdown\_worker} from \li{nat} to \li{N}. Budget \li{b} must
+remain in \li{nat} so it can serve as Coq's termination argument,
+but all other \li{nat} arguments should be changed
 to \li{N}, and functions on \li{nat} to functions on \li{N}.
 \begin{lstlisting}
 Fixpoint bin_cdn_wkr (f : N -> N) (a n : N) (b : nat) : N :=
-  match b with O => 0 | S b' => 
+  match b with O => 0 | S b' =>
     if (n <=? a) then 0 else 1 + bin_cdn_wkr f a (f n) b'
   end.
 \end{lstlisting}
 
-Determining the budget for \li{bin\_countdown} is tricky. 
-A naïve approach is to use the \li{nat} translation of \li{n}, 
-\emph{i.e.} \li{N.to_nat n}. This is untenable as it alone 
+Determining the budget for \li{bin\_countdown} is tricky.
+A naïve approach is to use the \li{nat} translation of \li{n},
+\emph{i.e.} \li{N.to_nat n}. This is untenable as it alone
 takes exponential time \emph{viz} the length of $n$'s representation.
-We need a linear-time budget calculation for countdowns 
+We need a linear-time budget calculation for countdowns
 of oft-used functions like $\lambda n.(n-2)$.
 
-The key is to focus on functions that can bring their arguments below a threshold via repeated application in 
-\emph{logarithmic} time, thus allowing a log-sized budget for 
+The key is to focus on functions that can bring their arguments below a threshold via repeated application in
+\emph{logarithmic} time, thus allowing a log-sized budget for
 \li{bin\_cdn\_wkr}. Simply shrinking by~$1$ is no longer good enough;
 we need to halve the argument on every application as shown below:
 \begin{defn} \label{defn: bin-contraction}
 	$f\in \contract$ is \emph{binary strict above} $a\in \mathbb{N}$ if $\forall n > a, f(n) \le \lfloor \frac{n + a}{2} \rfloor$.
 \end{defn}
-The key advantage of binary strict contractions is that if a contraction $f$ is binary strict above some $a$, then 
+The key advantage of binary strict contractions is that if a contraction $f$ is binary strict above some $a$, then
 $\forall n > a, \forall k.~f(n) \le \left\lfloor \frac{n - a}{2^k} \right\rfloor + a$.
-Therefore within $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than $a$, so we can choose this number as the budget for \li{bin\_cdn\_wkr} to successfully reach the countdown value before terminating. 
-Note that this budget is simply the length of the binary representation 
-of \li{n - a}, which we calculate using our function 
+Therefore within $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than $a$, so we can choose this number as the budget for \li{bin\_cdn\_wkr} to successfully reach the countdown value before terminating.
+Note that this budget is simply the length of the binary representation
+of \li{n - a}, which we calculate using our function
 \href{www.example.com}{\li{nat\_size}}.
 The Coq definition of countdown on \li{N} is:
 \hide{
@@ -63,7 +63,7 @@ Definition nat_size (n : N) : nat :=
   | Npos p => let fix nat_pos_size (x : positive) : nat :=
                   match x with
                   | xH => 1%nat
-                  | xI y | xO y => S (nat_pos_size y) 
+                  | xI y | xO y => S (nat_pos_size y)
                   end
               in nat_pos_size p
   end.
@@ -71,7 +71,7 @@ Definition nat_size (n : N) : nat :=
 Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the size of its binary representation, thus equals to $\lfloor \log_{2} m \rfloor + 1$.
 }% end hide
 \begin{lstlisting}
-Definition bin_countdown_to (f : N -> N) (a n : N) : N := 
+Definition bin_countdown_to (f : N -> N) (a n : N) : N :=
   bin_cdn_wkr f a n (nat_size (n - a)).
 \end{lstlisting}
 
@@ -95,14 +95,14 @@ Definition bin_countdown_to (f : N -> N) (a n : N) : N :=
 %Definition alpha3 (n: N) : N := N.size (n+2) - 3.
 %\end{lstlisting}
 %Let $n\ge 2$. The computation of \li{N.size(n)} takes time equal to itself, so the above definition gives $\runtime(\alpha_3, n) \le 2\log_2n$. Fix an $i\ge 3$ and suppose $\runtime(\alpha_i, n) \le C_i\log_2n$. By \Cref{lem: inv-ack-hier-runtime},
-\subsection{Inverse Ackermann in $\bigO\left(\log_2 n\right)$ time}
-Our new Coq definition computes countdown 
-only for strict binary contractions. Fortunately, starting 
-from $n = 2$, the inverse hyperoperations $a\angle{n}b$ when $a\ge 2$ 
+\subsection{Inverse Ackermann in $\bigO\left(\log_2 n\right)$ time, where $n$ is magnitude}
+Our new Coq definition computes countdown
+only for strict binary contractions. Fortunately, starting
+from $n = 2$, the inverse hyperoperations $a\angle{n}b$ when $a\ge 2$
 and the inverse Ackermann hierarchy $\alpha_n$ are all strict binary contractions.
-We can construct these hierarchies by hardcoding their 
-first three levels and recursively building higher levels with \li{bin\_countdown}. 
-Furthermore, 
+We can construct these hierarchies by hardcoding their
+first three levels and recursively building higher levels with \li{bin\_countdown}.
+Furthermore,
 analagously to the optimization for \li{nat}, we hardcode an additional level.
 \begin{lstlisting}
 Fixpoint bin_alpha (m : nat) (x : N) : N :=
@@ -112,8 +112,8 @@ Fixpoint bin_alpha (m : nat) (x : N) : N :=
   | S m'  => bin_countdown_to (bin_alpha m') 1 (bin_alpha m' x)
   end.
 \end{lstlisting}
-Note that for all $x$, $\li{N.div2}(x - 2) = \left\lfloor \frac{x - 2}{2} \right\rfloor = \left\lceil \frac{x - 3}{2} \right\rceil$ and $\li{N.log2}(x + 2) - 2 = \left\lfloor \log_2(x+2) \right\rfloor - 2 = \left\lceil \log_2(x+3) \right\rceil - 3$, so the above Coq code is correct. 
- 
+Note that for all $x$, $\li{N.div2}(x - 2) = \left\lfloor \frac{x - 2}{2} \right\rfloor = \left\lceil \frac{x - 3}{2} \right\rceil$ and $\li{N.log2}(x + 2) - 2 = \left\lfloor \log_2(x+2) \right\rfloor - 2 = \left\lceil \log_2(x+3) \right\rceil - 3$, so the above Coq code is correct.
+
 \begin{thm} \label{thm: inv-ack-runtime-bin}
 	$\forall i, \forall n, \runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i$.
 \end{thm}
@@ -122,21 +122,21 @@ Note that for all $x$, $\li{N.div2}(x - 2) = \left\lfloor \frac{x - 2}{2} \right
 a linear computation time up to the size of the representation of the input, \emph{i.e.} logarithmic time up to its magnitude $n$:
 $\runtime_{\alpha_i}(n) = \bigO\big(\log_2n + 2^i\log_2\log_2n \big)$.
 
-Moving on to inverse Ackermann itself, we follow a style nearly identical to that 
-in~\S\ref{subsec: inv_ack_hier}. For the worker, we simply translate to 
-\li{N}, keeping the budget in \li{nat} as described earlier. 
+Moving on to inverse Ackermann itself, we follow a style nearly identical to that
+in~\S\ref{subsec: inv_ack_hier}. For the worker, we simply translate to
+\li{N}, keeping the budget in \li{nat} as described earlier.
 The Ackermann function has an extra hardcoded level.
 \begin{lstlisting}
 Fixpoint bin_inv_ack_wkr (f : N -> N) (n k : N) (b : nat) : N :=
   match b with 0%nat  => k | S b' => if n <=? k then k else
-    let g := (bin_countdown_to f 1) in 
+    let g := (bin_countdown_to f 1) in
       bin_inv_ack_wkr (compose g f) (g n) (N.succ k) b'
   end.
 
 Definition bin_inv_ack (n : N) : N :=
   if (n <=? 1) then 0 else if (n <=? 3) then 1
     else if (n <=? 7) then 2 else
-      let f := (fun x => N.log2 (x + 2) - 2) in 
+      let f := (fun x => N.log2 (x + 2) - 2) in
         bin_inv_ack_wkr f (f n) 3 (nat_size n).
 \end{lstlisting}
 % Fixpoint bin_inv_ack_worker (f : N -> N) (n k : N) (b : nat) : N :=
@@ -153,10 +153,10 @@ Definition bin_inv_ack (n : N) : N :=
 %        else if (n <=? 7) then 2
 %             else let f := (bin_alpha 3) in
 %                  bin_inv_ack_worker f (f n) 3 (nat_size n).
-Note that, for $n > 7$, $n < \Ack\big(\lfloor \log_2n \rfloor + 1\big)$ $= \Ack\big(\li{nat_size}(n)\big)$, so a budget of $\li{nat_size}(n)$ suffices. 
+Note that, for $n > 7$, $n < \Ack\big(\lfloor \log_2n \rfloor + 1\big)$ $= \Ack\big(\li{nat_size}(n)\big)$, so a budget of $\li{nat_size}(n)$ suffices.
 We prove the correctness of \li{bin_inv_ack} in our codebase.
 As in Theorem~\ref{thm: inv-ack-hardcode-correct}, summing the time complexity
-of each component of \li{bin_inv_ack} shows that it is linear up to the 
+of each component of \li{bin_inv_ack} shows that it is linear up to the
 size of input representation.
 \begin{equation*}
 \runtime_\alpha(n) =
@@ -188,7 +188,7 @@ The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by Lemma~\
 \renewcommand{\Tsucc}{\runtime_{\li{succ}}}
 
 %We bound the RHS by bounding $\runtime\left(\alpha_{\alpha(n)}(n)\right)$, and $\runtime\left(\alpha_i(n)\right)$ in general. Note that by $\alpha_2(n) = \left\lfloor \frac{n - 2}{2} \right\rfloor$, we have $\runtime(\alpha_2, n) \le 2\log_2 n$ for all $n$.
-%Note that this bound can potentially be improved by further tightening the above inequalities. Although we do not obtain an exact asymptotic runtime similar 
+%Note that this bound can potentially be improved by further tightening the above inequalities. Although we do not obtain an exact asymptotic runtime similar
 %to Theorem~\ref{thm: inv-ack-hier-runtime-improved}, since this bound of $4^{\alpha(n)}\log_2n$ is strictly larger than the lower bound of $\log_2n$, it is still extremely small and can be bounded by simpler expressions such as $(\log_2n)^2$.
 %Our result is an improved version of the inverse Ackermann function which runs in time $\bigO\big(4^{\alpha(n)}\log_2n\big)$.
 %\begin{equation*}
@@ -197,4 +197,4 @@ The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by Lemma~\
 %\W\alpha\left(\alpha_3,
 %\alpha_3(n), 3, n\right) & \text{if } n\ge 8
 %\end{cases} \quad \text{ where } \alpha_3 \triangleq \lambda m. \big(\lfloor \log_2(m+2) \rfloor - 2\big)
-%\end{equation*}
+%\end{equation*} 
