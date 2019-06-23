@@ -191,10 +191,10 @@ Proof.
 Qed.
 
 Lemma bin_inv_ack_wkr_intermediate : forall i n b,
-    (S i < N.to_nat (bin_alpha (S i) n))%nat -> (S i < b)%nat ->
-      bin_inv_ack_wkr (bin_alpha 2) (bin_alpha 2 n) 2 b
-       = bin_inv_ack_wkr (bin_alpha (S (S i)))
-         (bin_alpha (S (S i)) n) (N.of_nat (S (S i))) (b - i).
+    (S (S i) < N.to_nat (bin_alpha (S (S i)) n))%nat -> (S (S i) < b)%nat ->
+      bin_inv_ack_wkr (bin_alpha 3) (bin_alpha 3 n) 3 b
+       = bin_inv_ack_wkr (bin_alpha (S (S (S i))))
+         (bin_alpha (S (S (S i))) n) (N.of_nat (S (S (S i)))) (b - i).
 Proof.
   induction i; intros n b Hn Hib; symmetry;
   [f_equal; omega|rewrite bin_alpha_recursion by omega].
@@ -206,8 +206,8 @@ Qed.
 
 (* Proof that bin_inv_ack_wkr is correct given sufficient budget *)
 Lemma bin_inv_ack_wkr_sufficient :
-    forall n b, (4 <= n <= bin_ackermann b b) ->
-     bin_inv_ack_wkr (bin_alpha 2) (bin_alpha 2 n) 2 (N.to_nat b)
+    forall n b, (8 <= n <= bin_ackermann b b) ->
+     bin_inv_ack_wkr (bin_alpha 3) (bin_alpha 3 n) 3 (N.to_nat b)
       = upp_inv (fun m => bin_ackermann m m) n.
 Proof.
   assert (Hincr := diag_ack_incr). assert (Hack := upp_inv_correct _ Hincr).
@@ -215,21 +215,21 @@ Proof.
   remember (N.to_nat (upp_inv (fun m : N => bin_ackermann m m) n)) as p.
   rewrite <- (Nat2N.id p) in Heqp. apply N2Nat.inj in Heqp.
   assert (n <= bin_ackermann (N.of_nat p) (N.of_nat p)) as Hp0 by (apply Hack; lia).
-  destruct p as [|[|p]].
-  1,2 : unfold N.of_nat in Heqp; unfold bin_ackermann in Hp0; simpl in Hp0; lia.
-  assert (bin_ackermann (N.of_nat (S p)) (N.of_nat (S p)) < n) as Hp1
+  destruct p as [|[|[|p]]].
+  1,2,3 : unfold N.of_nat in Heqp; unfold bin_ackermann in Hp0; simpl in Hp0; lia.
+  assert (bin_ackermann (N.of_nat (S (S p))) (N.of_nat (S (S p))) < n) as Hp1
    by (rewrite N.lt_nge; rewrite <- Hack; lia).
-  assert (S p < N.to_nat b)%nat as Hpb. { rewrite Nat.lt_nge. intro Hc.
+  assert (S (S p) < N.to_nat b)%nat as Hpb. { rewrite Nat.lt_nge. intro Hc.
   inversion Hc as [Hc0|Hc1]. rewrite <- Hc0 in Hp1. rewrite N2Nat.id in Hp1. lia.
   rewrite prelims.lt_S_le, lt_nat_N, N2Nat.id in H. apply Hincr in H. lia. }
   rewrite (bin_inv_ack_wkr_intermediate p).
   - replace (N.to_nat b - p)%nat with (S (N.to_nat b - S p))%nat by omega.
     unfold bin_inv_ack_wkr.
-    replace (bin_alpha (S (S p)) n <=? N.of_nat (S (S p))) with true; trivial.
+    replace (bin_alpha (S (S (S p))) n <=? N.of_nat (S (S (S p)))) with true; trivial.
     symmetry. rewrite N.leb_le.
-    rewrite (bin_alpha_ackermann (S (S p)) _ _). apply Hp0.
+    rewrite (bin_alpha_ackermann (S (S (S p))) _ _). apply Hp0.
   - rewrite lt_nat_N. rewrite N2Nat.id. rewrite N.lt_nge.
-    rewrite (bin_alpha_ackermann (S p) _ _). lia.
+    rewrite (bin_alpha_ackermann (S (S p)) _ _). lia.
   - apply Hpb.
 Qed.
 
@@ -266,7 +266,8 @@ Proof.
   replace (n <=? 1) with false by (symmetry; rewrite N.leb_gt; lia).
   replace (n <=? 3) with false by (symmetry; rewrite N.leb_gt; lia).
   replace (n <=? 7) with false by (symmetry; rewrite N.leb_gt; lia).
-  rewrite <- (Nat2N.id (nat_size n)). rewrite bin_inv_ack_wkr_sufficient.
+  rewrite <- (Nat2N.id (nat_size n)). fold (bin_alpha 3).
+  fold (bin_alpha 3 n). rewrite bin_inv_ack_wkr_sufficient.
   - unfold upp_inv. f_equal. rewrite <- to_nat_diag_ack. symmetry.
     apply inverse.upp_inv_unique. apply inv_ack.diag_ack_incr.
     apply inv_ack.inv_ack_correct.
