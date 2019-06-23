@@ -111,7 +111,7 @@ Fixpoint bin_alpha (m : nat) (x : N) : N :=
 \end{lstlisting}
 Note that for all $x$, $\li{N.div2}(x - 2) = \left\lfloor \frac{x - 2}{2} \right\rfloor = \left\lceil \frac{x - 3}{2} \right\rceil$ and $\li{N.log2}(x + 2) - 2 = \left\lfloor \log_2(x+2) \right\rfloor - 2 = \left\lceil \log_2(x+3) \right\rceil - 3$, so the above Coq code is correct. 
  
-\begin{thm} \label{thm: inv_ack_runtime_bin}
+\begin{thm} \label{thm: inv-ack-runtime-bin}
 	$\forall i, \forall n, \runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i$.
 \end{thm}
 
@@ -153,25 +153,29 @@ Definition bin_inv_ack (n : N) : N :=
 %                  bin_inv_ack_worker f (f n) 3 (nat_size n).
 Note that, for $n > 7$, $n < \Ack\big(\lfloor \log_2n \rfloor + 1\big)$ $= \Ack\big(\li{nat_size}(n)\big)$, so a budget of $\li{nat_size}(n)$ suffices. 
 We prove the correctness of \li{bin_inv_ack} in our codebase.
-As in~(\ref{eq: inv-ack-runtime-improved}), summing the time complexity
+As in Theorem~\ref{thm: inv-ack-hardcode-correct}, summing the time complexity
 of each component of \li{bin_inv_ack} shows that it is linear up to the 
 size of input representation.
 \begin{equation*}
 \runtime_\alpha(n) \ =
 \begin{aligned}
-& \sum_{k = 3}^{\alpha(n) - 1} \runtime_{\cdt{(\alpha_k)}{1}\ }(\alpha_k(n)) \ + \ \sum_{k = 3}^{\alpha(n)}\Tleb\left(\alpha_k(n), k\right) \ + \
-\sum_{k = 3}^{\alpha(n) - 1}\Tsucc(k)\\
-& \ + \runtime_{\alpha_2}(n) \ + \runtime_{\li{nat_size}}(n)
+& \runtime_{\alpha_3}(n)
++ \sum_{k = 3}^{\alpha(n) - 1} \runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n))
++ \sum_{k = 3}^{\alpha(n)}\Tleb\left(\alpha_k(n), k\right)
++ \sum_{k = 3}^{\alpha(n) - 1}\Tsucc(k)\\
+& \ + \ \runtime_{\li{nat_size}}(n)
 \ + \Tleb(n, 1) \ + \Tleb(n, 3) \ + \Tleb(n, 7)
 \end{aligned}
 \end{equation*}
-In the first summand, $\forall k.~\runtime_{\cdt{(\alpha_k)}{1}\ }(\alpha_k(n)) = \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$.
-Each $\Tleb$ in the second summand is $\Theta\left(\log_2k\right)$, totalling $\bigO\big(\alpha(n)\log_2\alpha(n)\big)$.
-The third summand is $\Theta(\alpha(n))$ by Lemma~\ref{lem: succ-runtime-bin}. The remaining items total $\Theta(\log_2n)$. Therefore,
+With reference to Lemmas \ref{lem: compose-runtime} (Appendix~\ref{apx:time_analysis}), \ref{lem: leb-runtime-bin} and \ref{lem: succ-runtime-bin} (Appendix~\ref{apx:time_analysis_bin}), we have:
+In the second summand, $\runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n)) = \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ for each $k$ by Lemma~\ref{lem: compose-runtime}.
+By Lemma~\ref{lem: leb-runtime-bin}, each $\Tleb$ in the third summand is $\Theta\left(\log_2k\right)$, totalling $\bigO\big(\alpha(n)\log_2\alpha(n)\big) = \text{o}\big(\log_2n\big)$.
+The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by Lemma~\ref{lem: succ-runtime-bin}. The remaining items total $\Theta(\log_2n)$. Thus $\forall n\ge 8$:
 \begin{equation*}
 \begin{aligned}
 \runtime_\alpha(n)
-& \textstyle = \sum_{k = 2}^{\alpha(n) - 1} \big(\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_{k}}(n)\big) + \Theta\left(\log_2 n\right)
+& = \runtime_{\alpha_3}(n)
++ \sum_{k = 3}^{\alpha(n) - 1} \big(\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_{k}}(n)\big) + \Theta\left(\log_2 n\right)
 = \runtime_{\alpha_{\alpha(n)}}(n) + \Theta\big(\log_2 n\big) \\
 & = \Theta\big(\log_2n + 2^{\alpha(n)}\log_2\log_2n \big) + \Theta\big(\log_2n\big)
 = \Theta\big(\log_2n\big)

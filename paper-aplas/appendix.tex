@@ -218,7 +218,7 @@ This section provides fully detailed proofs for the time complexity bounds estab
 
 We start by examining the running time of two operations used in the Coq definition of \emph{countdown worker} on \li{nat}, namely \li{leb} and \li{compose}.
 
-\begin{lem} \label{lem: sub-runtime}
+\begin{lem} \label{lem: leb-runtime}
 	The standard Coq library function $\li{leb}(x, y)$ returns \li{true} if $x\le y$ and \li{false} otherwise. $\runtime_{\li{leb}}(x, y) = \min\{x, y\} + 1$ when $n$ and $a$ are of type \li{nat}.
 \end{lem}
 
@@ -226,11 +226,11 @@ We start by examining the running time of two operations used in the Coq definit
 	Per its Coq definition, $\li{leb}(x, y)$ returns \li{true} if $x = 0$. When $x > 0$, $\li{leb}(x, y)$ returns \li{false} if $y = 0$, or $\li{leb}(x-1, y-1)$ if $y > 0$. Therefore,
 	\begin{equation*}
 	\runtime_{\li{leb}}(x, y) = \begin{cases}
-	1 & \text{ when } x = 0 \\ 1 & \text{ when } x > 0, y = 0 \\
+	1 & \text{ when } x = 0 \text{ or } y = 0 \\
 	\runtime_{\li{leb}}(x - 1, y - 1) + 1 & \text{ when } x > 0, y > 0
 	\end{cases}
 	\end{equation*}
-	Let $P(x) \triangleq \forall y. \runtime){\li{leb}}(x, y) = \min\{x, y\} + 1$. $P(0)$ holds since both sides are $1$. Assume $P(x-1)$ holds for $x > 0$, consider any $y$
+	Let $P(x) \triangleq \forall y. \runtime_{\li{leb}}(x, y) = \min\{x, y\} + 1$. $P(0)$ holds since both sides are $1$. Assume $P(x-1)$ holds for $x > 0$, consider any $y$
 	\begin{itemize}
 		\item If $y = 0$, $\runtime_{\li{leb}}(x, 0) = 1 = \min\{x-1, 0\} + 1$.
 		\item If $y > 0$, $\runtime_{\li{leb}}(x, y)$ $= \runtime_{\li{leb}}(x - 1, y - 1) + 1$ 
@@ -283,7 +283,7 @@ We start by examining the running time of two operations used in the Coq definit
 
 \begin{proof}
 	Per Definition~\ref{defn: countdown} of countdown,
-$\Tleb\big(f^{(i)}(n), a\big) = a + 1$ if $i < \cdt{f}{a}(n)$ and $f^{(i)}(n) + 1$ otherwise (\S\ref{apx:time_analysis}, Lemma~\ref{lem: sub-runtime}).  Thus,
+$\Tleb\big(f^{(i)}(n), a\big) = a + 1$ if $i < \cdt{f}{a}(n)$ and $f^{(i)}(n) + 1$ otherwise (\S\ref{apx:time_analysis}, Lemma~\ref{lem: leb-runtime}).  Thus,
 the second summand in \eqref{eq: cdt-runtime-struct} is equal to $(a + 1)\cdt{f}{a}(n) + f^{\left(\cdt{f}{a}(n)\right)}(n) + 1$. Since $\Tsucc(i) = 1$ on \li{nat}, the third summand is equal to $\cdt{f}{a}(n)$, completing the desired formula.
 \end{proof}
 The above lemma is the last step for us to build a recursive formula for the running time of the inverse Ackermann hierarchy, with each level's runtime involving that of its previous one. We restate and prove Lemma~\ref{lem: inv-ack-hier-runtime} from \S\ref{sect: hardcode-lvl2}.
@@ -361,6 +361,8 @@ With the hardcoding $\alpha_1 \triangleq \lambda n.(n - 2)$, we can improve the 
 \end{equation*}
 \end{proof}
 
+\noindent The following two technical lemmas that bound a sum of repeated applications of $\log_2$ and $\alpha_i$ are also needed in time bound proofs for the binary version of the inverse Ackermann hierarchy in Appendix~\ref{apx:time_analysis_bin}, hence has been made as general as possible for maximal reusability.
+
 \begin{lem} \label{lem: sum-log-repeat}
 	$\forall n$, $\displaystyle \sum_{k = 0}^{\log_2^*(n) - 1}\log_2^{(k)}n \le 2n$, where $\log_a^*(n) \triangleq \min\{k : \log_a^{(k)}n \le 1\}$. Note that the sum is $0$ when $n\le 1$.
 \end{lem}
@@ -412,18 +414,90 @@ With these lemma, we are ready to tackle Theorem~\ref{thm: inv-ack-hier-runtime-
 \section{Proofs of Time Bound Lemmas on \li{N}}
 \label{apx:time_analysis_bin}
 
-This section provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: binary}, \emph{i.e.} Lemma~\ref{lem: inv-ack-hier-runtime} for the general running time formula of $\alpha_i$, Lemma~\ref{lem: alpha2_runtime_naive} for the lower bound on the na\"ive version and Theorem~\ref{thm: inv-ack-hier-runtime-improved} for the upper bound on the improved version. These results and their supporting lemmas are reproduced here for readers' easy reference.
+\renewcommand{\Tleb}{\runtime_{\li{N.leb}}}
+\renewcommand{\Tsucc}{\runtime_{\li{N.succ}}}
 
-We start by inspecting the execution time of \li{leb} and \li{succ} for the binary encoding system. While \li{leb} is trivial, \li{succ} requires more care as it is worst-case logarithmic time but amortized constant time.
+This section provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: binary},
+\emph{i.e.} Lemma~\ref{lem: cdt-runtime-bin} for the upper bound on the time complexity of $\alpha_i$ on \li{N} (\li{bin_alpha}),
+and Theorem~\ref{thm: inv-ack-runtime-bin} for the upper bound on the time complexity of the $\alpha$ on \li{N} (\li{bin_inv_ack}).
+These results and their supporting lemmas are reproduced here for readers' easy reference.
+
+We start by inspecting the execution time of crucial computations in each recursive call of \li{bin_countdown}, namely \li{N.leb} and \li{N.succ}. While \li{leb} is easy, \li{succ} requires more care as it is worst-case logarithmic time but amortized constant time.
+
 \begin{lem} \label{lem: leb-runtime-bin}
-	In the binary encoding system, $\runtime_{\li{leb}}(n, a) = \lfloor \log_{2}\min\{a, n\} \rfloor + 1$.
+	In binary encoding, $\Tleb(x, y) \le \lfloor \log_{2}\min\{x, y\} \rfloor + 1$.
 \end{lem}
+\begin{proof}
+	\li{N.leb}'s Coq definition indirectly involves the function \li{Pos.compare_cont}, which maps from \li{Pos*Pos} to the set $\{Gt, Lt, Eq\}$ (respectively stand for ``Greater Than'', ``Less Than'' and ``Equal''). We henceforth use \li{Pc} as short form for \li{Pos.compare_cont}. Precisely we have:
+	
+	\begin{equation*}
+	\li{N.leb}(x, y) = \begin{cases}
+	\li{true} & \text{ when } x = 0 \\ \li{false} & \text{ when } x > 0, y = 0 \\
+	\neg \big(\li{Pc}(Eq, x, y) == Gt \big) & \text{ when } x > 0, y > 0
+	\end{cases}
+	\end{equation*}
+
+\hide{
+	\li{N.leb}'s Coq definition involves a function \li{N.compare}, which takes input in \li{N} to values in the set $\{Gt, Lt, Eq\}$ (respectively stand for ``Greater Than'', ``Less Than'' and ``Equal'').
+	$\li{N.leb}(x, y)$ returns \li{false} if $\li{N.compare}(x, y) =  Gt$ and \li{true} otherwise, thus $\runtime_{\li{N.leb}}(x, y) = \runtime_{\li{N.compare}}(x, y) + 1$.
+	\li{N.compare} indirectly uses another function, which is \li{Pos.compare_cont}.
+	
+	\begin{equation*}
+	\li{N.compare}(x, y) = \begin{cases}
+	Eq & \text{ when } x = 0, y = 0 \\ Lt & \text{ when } x = 0, y > 0 \\
+	Gt & \text{ when } x > 0, y = 0 \\ \li{Pos.compare_cont}(Eq, x, y) & \text{ when } x > 0, y > 0
+	\end{cases}
+	\end{equation*}
+	where in the last case, $x$ and $y$ are treated as type \li{Pos}.
+	Using \li{Nc} and \li{Pc} respectively as abbreviations for \li{N.compare} and \li{Pos.compare_cont}, we have $\runtime_{\li{Nc}}(x, y) = 1$ when $\min\{x, y\} = 0$ and $\runtime_{\li{Pc}}(x, y) + 1$ otherwise.
+}%end hide	
+	
+		where in the last case, $x$ and $y$ are treated as type \li{Pos}. The value of $\li{Pc}(x, y)$ is given in the following table, where $x{\sim}0$ and $x{\sim}1$ respectively representing appending $0$ and $1$ to the end of $x$'s representation:
+	
+	\begin{equation*}
+	\begin{array}{c|c|c|c}
+	\hspace{10pt} x \backslash y \hspace{10pt} & \hspace{10pt} 1 \hspace{10pt} & y'{\sim}0 & y'{\sim}1 \\ \hline
+	1 & R & Lt & Lt \\ \hline
+	x'{\sim}0 & Gt & \ \li{Pc}(R, x', y') \ & \ \li{Pc}(Lt, x', y') \ \\ \hline
+	x'{\sim}1 & Gt & \ \li{Pc}(Gt, x', y') \ & \ \li{Pc}(R, x', y') \
+	\end{array}
+	\end{equation*}
+	
+	\noindent It suffices to show $\runtime_{\li{Pc}}(x, y) \le \lfloor\log_2\min\{x, y\}\rfloor + 1$. The table above gives:
+	
+	\begin{equation*}
+	\runtime_{\li{Pc}}(x, y) = \begin{cases}
+	1 & \text{ if } x = 1 \vee y = 1 \\
+	\runtime_{\li{Pc}}\left(\left\lfloor \frac{x}{2} \right\rfloor, \left\lfloor \frac{x}{2} \right\rfloor\right) + 1 & \text{ if } x > 1 \wedge y > 1
+	\end{cases}
+	\end{equation*}
+	
+	\noindent A simple binary induction on $\min\{x, y\}$ shows $\runtime_{\li{Pc}}(x, y) = \lfloor\log_2\min\{x, y\}\rfloor + 1$. The proof is complete.
+\end{proof}
+
 \begin{lem} \label{lem: succ-runtime-bin}
 	$\forall n\ge 1.~S(n) = \displaystyle \sum_{i=0}^{n-1}\Tsucc(i) \le 2n + \log_2n$.
 \end{lem}
 \begin{proof}
-	In the binary encoding system, $\Tsucc(u)$ is the number of consecutive least significant \li{1} bits of $u$.
-	If $n = 1$, $\Tsucc(0) = 1$, our goal is $1\le 2$, which is trivial. For $n > 1$, observe that for all $k$, $\Tsucc(k) = \Tsucc\left(\frac{k-1}{2}\right) + 1$ if $k$ is odd and $1$ if $k$ is even. Thus for all $n$, $S(2n+1) = S(2n) + 1$ and
+	Per \li{N.succ}'s Coq definition, $\li{N.succ}(u) = 1$ if $u = 0$ and $\li{Pos.succ}(u)$ if $u > 0$, where when treating $u$ as \li{Pos} we have $\li{Pos.succ}(u)$ returns $2$ when $u = 1$, $u'{\sim}1$ when $u = u'{\sim}0$ and $(\li{Pos.succ}(u')){\sim}0$ when $u = u'{\sim}1$.
+%	\begin{equation*}
+%	\li{Pos.succ}(u) = \begin{cases}
+%	2 & \text{ when } u = 1 \\
+%	u'{\sim}1 & \text{ when } u = u'{\sim}0 \\ (\li{Pos.succ}(u')){\sim}0 & \text{ when } u = u'{\sim}1
+%	\end{cases}
+%	\end{equation*}
+  A binary induction on $u$ confirms that for all $u$,
+	
+	\begin{equation*}
+	\Tsucc(u) = \begin{cases}
+	\Tsucc\left(\frac{u-1}{2}\right) + 1 & \text{ when } u \text{ is odd,} \\
+	1 & \text{ when } u \text{ is even.}
+	\end{cases}
+	\end{equation*}
+	
+	\noindent We prove the lemma by induction on $n$.
+	If $n = 1$, $S(n) = \Tsucc(0) = 1$, our goal is $1\le 2$, which is trivial. For $n > 1$, observe that . Thus for all $n$, $S(2n+1) = S(2n) + 1$ and
+	
 	\begin{equation*}
 	\begin{aligned}
 	S(2n) & = \ \sum_{i=0}^{n}\Tsucc(2i) + \sum_{i=0}^{n-1}\Tsucc(2i+1)
@@ -431,18 +505,28 @@ We start by inspecting the execution time of \li{leb} and \li{succ} for the bina
 	& = n+1 + S(n) + n = S(n) + 2n + 1
 	\end{aligned}
 	\end{equation*}
-	From the above, it is easy to complete the proof via induction on $n$.
+	
+	\noindent From the above, it is easy to complete the proof via induction on $n$.
 \end{proof}
+Now we are ready to prove Lemma~\ref{lem: cdt-runtime-bin}, reproduced here for readers' reference.
 
-\begin{proof}[\emph{of Lemma~\ref{lem: cdt-runtime-bin}}]
-	On strict binary contractions, the binary version of countdown does exactly the same computations as the original one on \li{nat}, with the added step of computing the budget of \li{nat_size (n-a)}, thus its execution time structure is almost the same. The only difference is the running time of each component in the sum.
+\begin{uselemcounterof}{lem: cdt-runtime-bin}
+	$\forall n \in \li{N}$, if $f$ is a binary strict contraction above $a$,
+	\begin{equation*}
+	\runtime_{\cdt{f}{a}}(n) \le \sum_{i=0}^{\cdt{f}{a}(n) - 1} \hspace{-6pt}
+	\runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \ + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
+	\end{equation*}
+\end{uselemcounterof}
+
+\begin{proof}
+	On strict binary contractions, \li{bin_countdown} does exactly the same computations as the \li{countdown} on \li{nat}, with the added step of computing the budget of \li{nat_size (n-a)}, thus its execution time structure is almost the same. The only difference is the running time of each component in the sum.
 	\begin{equation} \label{eq: cdt-bin-runtime-struct}
 	\runtime_{\cdt{f}{a}}(n) =
 	\hspace{5pt}
 	\begin{aligned} 
-	& \textstyle \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
-	&\hspace{-4pt}+& \textstyle ~ \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right) \\
-	& \textstyle +~ \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i)
+	& \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
+	&\hspace{-4pt}+& ~ \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right) \\
+	& +~ \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i)
 	&\hspace{-4pt}+& ~ \runtime_{\li{sub}}(n, a) \ + \ \runtime_{\li{nat_size}}(n - a)
 	\end{aligned},
 	\end{equation}
@@ -451,19 +535,25 @@ We start by inspecting the execution time of \li{leb} and \li{succ} for the bina
 	 \begin{aligned}
 	 & \runtime_{\cdt{f}{a}(n)}(n) \ \le \
 	 \left(\begin{aligned}
-	 & \textstyle \sum_{i=0}^{\cdt{f}{a}(n) - 1} 
+	 & \sum_{i=0}^{\cdt{f}{a}(n) - 1} 
 	 \runtime_f\big(f^{(i)}(n)\big)
 	 \ + \ (\log_2a + 1)\big(f^{(i)}(n) + 1\big) \\
 	 & \ + \ 2\cdt{f}{a}(n) \ + \ \log_2\cdt{f}{a}(n)
 	 \ + \ 2\big(\!\log_2n + 1\big)
 	 \end{aligned}\right)\\
-	 & \le \ \textstyle \sum_{i=0}^{\cdt{f}{a}(n) - 1}
+	 & \le \ \sum_{i=0}^{\cdt{f}{a}(n) - 1}
 	 \runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \ + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
 	 \end{aligned}
 	 \end{equation*}
 \end{proof}
 
-\begin{proof}[\emph{of Theorem~\ref{thm: inv_ack_runtime_bin}}]
+With all critical lemmas established and proven, including Lemma~\ref{lem: sum-alpha-repeat} in Appendix~\ref{apx:time_analysis}, we proceed to prove the time complexity bound of each level in \li{bin_alpha} in the form of Theorem~\ref{thm: inv-ack-runtime-bin}.
+
+\begin{usethmcounterof}{thm: inv-ack-runtime-bin}
+	When $\alpha_i$ on \li{N} is defined via \li{bin_alpha}, for all $i$ and $n$ we have $\runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i$.
+\end{usethmcounterof} 
+
+\begin{proof}
 	Firstly, we have:
 	\begin{itemize}
 		\item Clearly $\runtime_{\alpha_i}(n)\le \log_2n + 1$ for $i = 0, 1$.

@@ -274,7 +274,14 @@ Definition~\ref{defn: informal-countdown}:
 $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 \end{thm}
 \begin{proof}[outline, full proof found in Appendix~\ref{apx:proof_correct_countdown_worker}]
-	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.
+%	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.
+%\hide{
+	Assume the initial arguments $(n, b)$, let the original call $\cdw{f}{a}(n, b)$ be the $0^{th}$ call. A straightforward induction on $i$ shows that in the $i^{th}$ call, the arguments will be $\big(f^{(i)}(n), b-i\big)$, while an accumulated amount of $i$ will have been added to the final result, with the exception of the last call, which returns $0$ and adds nothing to the result.
+	
+	Suppose $b = n$, let $m \triangleq \min\big\{i : f^{(i)}(n)\le a\big\}$\footnote{We prove the existence 
+		of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v\#L125-L150}{here} in our codebase.}, then $m \le n$ since $f^{(n)}(n)\le a$. Thus before the budget is exhausted, the function reaches the $m^{th}$ call, which is the last recursive call since $\big(f^{(m)}(n), n - m\big)$ satisfies the terminating condition $f^{(m)}(n)\le a$. This last call adds $0$ to the accumulated result, which is $m$ at the moment. Therefore $\cdw{f}{a}(n, n) = m$.
+%}%end hide
+\hide{
 	\note[Can be further shortened for 2-3 lines, but I'll hold it for now]
 	{A simple induction on $i$ confirms that $\forall n, \forall a, \forall b$ and $f\in \contract_{a}$,
 	\begin{equation*}  %\label{eq: cdt-intermediate}
@@ -286,6 +293,7 @@ of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-
 	\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = m + \cdw{f}{a}\left(f^{(m)}(n), n-m\right) = m,
 	\end{equation*}
 where the last equality follows by applying Definition~\ref{defn: countdown-worker} given $f^{(m)}(n)\le a$}.
+}%end hide
 \end{proof}
 The fully elaborate version of the above proof is in Appendix~\ref{apx:proof_correct_countdown_worker}.
 Theorem~\ref{thm: cdt-repeat} and (\ref{eq: rf-upp-inv}) establish the correctness of the Coq definitions of \emph{countdown worker} and \emph{countdown}, thereby justifying our budget of $n$ and our unification of 

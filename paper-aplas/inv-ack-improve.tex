@@ -1,5 +1,5 @@
 We show that the inverse Ackermann from 
-Definition~\ref{thm: inv-ack-hier-correct} runs in~$\Omega(n^2)$ 
+Definition~\ref{defn: inv-ack-hier} runs in~$\Omega(n^2)$ 
 under a call-by-value strategy, and in $O(n)$
 after a simple optimization.
 To give intuition and remain accessible to readers, we 
@@ -10,7 +10,7 @@ which have simpler initial values. % but are otherwise similar.
 
 \textbf{N.B.} For this section,
 all of our functions take inputs in \li{nat}, \emph{i.e.} in
-unary encoding.  In \S\ref{sec:binary} we will move to functions
+unary encoding.  In \S\ref{sec: binary} we will move to functions
 operating on \li{N}, \emph{i.e.} in binary.
 
 %\footnote{We will be careful not to conclude that functions
@@ -107,6 +107,7 @@ By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, the $i$th level of the inverse Ac
 
 A linear-time calculation of the inverse Ackermann hierarchy 
 leads naturally to a similarly efficient calculation of $\alpha(n)$ itself.
+\hide{
 We redefine $\alpha$ once again, hardcoding the output 
 when $n\le 1 = \Ack(0)$, and starting $\alpha^{\mathcal{W}}$ with 
 $f = \alpha_1$ and $n = \alpha_1(n)$.
@@ -114,6 +115,7 @@ $f = \alpha_1$ and $n = \alpha_1(n)$.
 $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big) =
 \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-~1\big)$.
 Thus $\tilde{\alpha}(n)$, defined below, equals $\alpha(n)$ and our alternate definition is reasonable.}
+
 \begin{equation*}
 \tilde{\alpha}(n) = \begin{cases}
 0 & \text{ if } n \le 1 \\ \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2
@@ -125,7 +127,7 @@ At each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, 
 Firstly, calculate $\cdt{\big(\alpha_k\big)}{1}(x)$ given $x\triangleq \alpha_k(n)$, taking time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ (by Lemma~\ref{lem: compose-runtime}). Next, calculate $\alpha_k(n) - k$, taking time $\Theta(k)$.
 
 The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
-\begin{equation} \label{eq: inv-ack-runtime-improved}
+\begin{equation} %\label{eq: inv-ack-runtime-improved}
 \begin{aligned}
 \runtime_{\tilde{\alpha}}(n)
 & = \textstyle \runtime_{\alpha_1}(n) + \sum_{k=1}^{\alpha(n) - 1}
@@ -135,3 +137,34 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 = \Theta\left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2\right) = \Theta(n)
 \end{aligned}
 \end{equation}
+}%end hide
+%
+% EXPERIMENT: TRY TO PUT A DEFINITION FOR LINEAR TIME INV-ACK AND PROOF OF CORRECTNESS AND RUNTIME HERE
+\begin{defn} \label{defn: inv-ack-hardcode}
+	Define 
+	$\tilde{\alpha}(n) = \begin{cases}
+	0 & \text{ if } n \le 1 \\ \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2
+	\end{cases}$
+\end{defn}
+
+\begin{thm} \label{thm: inv-ack-hardcode-correct}
+	$\forall n. \tilde{\alpha}(n) = \alpha(n)$ and $\runtime_{\tilde{\alpha}}(n) = \bigO(n)$.
+\end{thm}
+
+\begin{proof}
+	Regarding correctness of $\tilde{\alpha}(n)$, the cases $n = 0, 1$ are trivial. For $n > 1 = \Ack(0)$, $\alpha_1(n) > 1$ and $n - 1 > 0$, so $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big)$ $= \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n - 1\big)$ by Definition~\ref{defn: inv-ack-worker}. Theorem~\ref{thm: inv-ack-worker-correct} then implies $\tilde{\alpha}(n) = \alpha(n)$.	
+	
+	Regarding time complexity of $\tilde{\alpha}(n)$, at each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of two steps:
+	Firstly, calculate $\li{leb}\big(\alpha_k(n), k\big)$, taking no more than $k + 1$ steps by Lemma~\ref{lem: leb-runtime}, Appendix~\ref{apx:time_analysis}. Next, calculate $\alpha_{k+1}(n) = \cdt{\alpha_k)}{1}(x)$ given $x\triangleq \alpha_k(n)$, taking time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ by Lemma~\ref{lem: compose-runtime}, Appendix~\ref{apx:time_analysis}.
+	The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
+	\begin{equation*} %\label{eq: inv-ack-runtime-improved}
+	\begin{aligned}
+	\runtime_{\tilde{\alpha}}(n)
+	& \le \textstyle \runtime_{\alpha_1}(n) + \sum_{k=1}^{\alpha(n) - 1}
+	\left[ \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)
+	\right] + \sum_{k=1}^{\alpha(n)}(k + 1) \\
+	& \le \runtime_{\alpha_{\alpha(n)}}\left(n\right) + \alpha(n)^2
+	= \Theta\left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2\right) = \Theta(n)
+	\end{aligned}
+	\end{equation*}
+\end{proof}
