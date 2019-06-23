@@ -210,8 +210,8 @@ Definition bin_inv_ack n :=
 
 (* Intermediate lemmas about bin_inv_ack_wkr *)
 Lemma bin_alpha_contr : forall i n,
-    (S i < N.to_nat (bin_alpha (S i) n))%nat
-    -> (i < N.to_nat (bin_alpha i n))%nat.
+    (S i < N.to_nat (bin_alpha (S i) n))%nat ->
+    (i < N.to_nat (bin_alpha i n))%nat.
 Proof.
   intros i n. specialize (bin_alpha_ackermann i (N.of_nat i) n).
   specialize (bin_alpha_ackermann (S i) (N.of_nat (S i)) n).
@@ -219,15 +219,16 @@ Proof.
 Qed.
 
 Lemma bin_inv_ack_wkr_intermediate : forall i n b,
-    (S (S i) < N.to_nat (bin_alpha (S (S i)) n))%nat -> (S (S i) < b)%nat ->
-    bin_inv_ack_wkr (bin_alpha 3) (bin_alpha 3 n) 3 b
-    = bin_inv_ack_wkr (bin_alpha (S (S (S i))))
-                      (bin_alpha (S (S (S i))) n) (N.of_nat (S (S (S i)))) (b - i).
+    (S (S i) < N.to_nat (bin_alpha (S (S i)) n))%nat ->
+    (S (S i) < b)%nat ->
+    bin_inv_ack_wkr (bin_alpha 3) (bin_alpha 3 n) 3 b =
+    bin_inv_ack_wkr (bin_alpha (S (S (S i))))
+                    (bin_alpha (S (S (S i))) n) (N.of_nat (S (S (S i)))) (b - i).
 Proof.
   induction i; intros n b Hn Hib; symmetry;
-    [f_equal; omega|rewrite bin_alpha_recursion by omega].
+    [f_equal; omega | rewrite bin_alpha_recursion by omega].
   rewrite IHi; [replace (b - i)%nat with (S (b - S i))%nat by omega
-               |apply (bin_alpha_contr _ _ Hn)|omega].
+               |apply (bin_alpha_contr _ _ Hn) | omega].
   rewrite lt_nat_N, N2Nat.id in Hn. rewrite <- N.leb_gt in Hn.
   unfold bin_inv_ack_wkr at 2. rewrite Hn. rewrite <- Nat2N.inj_succ. trivial.
 Qed.

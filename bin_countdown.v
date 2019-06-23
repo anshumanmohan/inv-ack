@@ -5,7 +5,6 @@ Require Import Program.Basics.
 Require Import micromega.Lia.
 Require Import Nnat.
 Require Import bin_prelims.
-
 Require countdown.
 
 (*

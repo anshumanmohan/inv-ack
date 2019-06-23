@@ -53,20 +53,6 @@ Proof.
     simpl; f_equal; rewrite repeat_plus; repeat rewrite IHp; trivial.
 Qed.
 
-(*
-(* Repeater on N is consistent with its counterpart on nat *)
-Theorem bin_repeater_Nnat : 
-    forall a f, bin_repeater_from f a =
-    to_N_func (repeater.bin_repeater_from (to_nat_func f) (N.to_nat a)).
-Proof.
-  intros a f. apply functional_extensionality; intro n.
-  unfold to_N_func. rewrite bin_repeater_repeat.
-  rewrite repeater.bin_repeater_from_repeat.
-  remember (N.to_nat n) as m. clear Heqm. unfold to_nat_func.
-  induction m; simpl; [ |rewrite <- IHm]; rewrite N2Nat.id; trivial.
-Qed.
-*)
-
 (* Repeater on N is consistent with its counterpart on nat *)
 Theorem bin_repeater_Nnat : 
     forall a f n, bin_repeater_from f a n =
