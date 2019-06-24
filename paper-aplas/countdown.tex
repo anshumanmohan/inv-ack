@@ -37,7 +37,7 @@ If $F$ is strictly increasing, then $F^{-1} \circ F$ is
 the identity function.
 \end{col}
 \begin{proof}
-By ($\Leftarrow$) of Theorem~\ref{thm: upp-inverse-rel}, $F(n) \le F(n)$ implies
+Proceed by antisymmetry. By ($\Leftarrow$) of Theorem~\ref{thm: upp-inverse-rel}, $F(n) \le F(n)$ implies
 $(F^{-1} \circ F)(n) \le n$.  By ($\Rightarrow$) of the same theorem, $(F^{-1} \circ F)(n) \le (F^{-1} \circ F)(n)$ implies $F(n) \le F \big((F^{-1} \circ F)(n)\big)$. $F$ is strictly increasing, so $n \le (F^{-1} \circ F)(n)$.
 \end{proof}
 
@@ -50,12 +50,12 @@ encompass the primary reasoning framework we provide to clients of our inverse f
 
 \noindent Our inverses require increasing functions,
 and our definitions of hyperoperations/Ackermann use repeater.
-But if $F$, is strictly increasing,
+But if $F$ is strictly increasing,
 $\rf{F}{a}$ is not necessarily strictly increasing:
 \emph{e.g.} the identity function
 $\li{id}$ is strictly increasing, but $\rf{\li{id}}{a}(n) = (\li{id} \circ \ldots \circ \li{id}) (a) = a$ is a constant function.  We need a little more.
 \begin{defn}
-A function $F:\mathbb{N}\to\mathbb{N}$ is an \emph{expansion} if $\forall n.~ F(n)\ge n$. Further, given $a\in \mathbb{N}$, an expansion $F$ is \emph{strict from} $a$ if $\forall n \ge a.~ F(n) > n$.
+A function $F:\mathbb{N}\to\mathbb{N}$ is an \emph{expansion} if $\forall n.~ F(n)\ge n$. Further, given $a\in \mathbb{N}$, an expansion $F$ is \emph{strict from} $a$ if ~$\forall n \ge a.~ F(n) > n$.
 \end{defn}
 If $a\ge 1$ and $F$ is an expansion \emph{strict from} $a$, we quickly get:
 $\forall n.~ \rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$. That is, $\rf{F}{a} \ $ is itself an expansion strict from $0$.
@@ -109,7 +109,7 @@ $\forall a\in \mathbb{N}.~F\in \repeatable_a \Rightarrow F^{-1}_+ \in \contract_
 $\forall n.~F(n)\ge n \Rightarrow n \ge F^{-1}_+(n)$, so $F^{-1}_+ \in
 \contract$. Note, $n > a \iff n-1\ge a$.
 Since $F\in \repeatable_a$, $F(n-1)\ge n$ holds.
-Next, $n-1\ge F^{-1}_+(n) \Rightarrow n > F^{-1}_+(n)$.
+Finally, $n-1\ge F^{-1}_+(n) \Rightarrow n > F^{-1}_+(n)$.
 \end{proof}
 This clarifies the inverse relationship between expansions strict from some $a$ and contractions strict above that same $a$. The inverse of an expansion's
 repeater exists, and can be built from the expansion's inverse.
@@ -133,7 +133,7 @@ If $a \in \mathbb{N}$ and $f\in \contract_{a}$, then $\forall n, m.~ \cdt{f}{a}(
 %\end{thm}
 Another useful result is the recursive formula for \emph{countdown}:
 \begin{thm} \label{thm: cdt-recursion}
-	For all $a\in \mathbb{N}$ and $f\in \contract_{a}$, $\cdt{f}{a}$ satisfies:
+	$\forall a\in \mathbb{N}$ and $f\in \contract_{a}$, $\cdt{f}{a}$ satisfies:
 	\begin{equation*}
 	\cdt{f}{a}(n) = \begin{cases}
 	0 & \text{ if } n \le a \\ 1 + \cdt{f}{a}(f(n)) & \text{ if } n \ge a + 1
@@ -151,7 +151,8 @@ Next, a simple expansion of the last clause gives $f^{(m)}(f(n)) \le a$,
 and unfolding the definition of~$m$ shows that this last clause is true.
 Now since $n\ge a+1$, we have $\cdt{f}{a}(n)\ge 1$ by the above.
 Define $p \triangleq \cdt{f}{a}(n) - 1$.
-It remains to show $\cdt{f}{a}(f(n))\le p \Rightarrow f^{(p)}(f(n))\le a \Rightarrow f^{(p+1)}(n)\le a$, which holds by unfolding $p$'s definition.
+It remains to show $\cdt{f}{a}(f(n))\le p \Rightarrow 
+\linebreak f^{(p)}(f(n))\le a \Rightarrow f^{(p+1)}(n)\le a$, which holds by unfolding $p$'s definition.
 \end{proof}
 
 %\begin{thm} \label{thm: cdt-contr-0}
@@ -171,9 +172,10 @@ be useful), and so is easy to define
 in Coq as shown in \S\ref{sec: countdown-repeater}. In contrast, a
 \emph{countdown} only exists for certain functions, most conveniently
 contractions, which makes it a little harder to encode into Coq.
-Our strategy is to define a \emph{countdown worker} which is written with only
-structural recursion and is thus more palatable to Coq, and then
-prove that this worker computes the countdown when passed a contraction.
+Our strategy is to first define a \emph{countdown worker} which is
+structurally recursive and is thus more palatable to Coq, and to then
+prove that this worker correctly computes the countdown when it is 
+passed a contraction.
 
 \begin{defn} \label{defn: countdown-worker} \label{lem: cdt-init}
 For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown worker} to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
@@ -203,8 +205,8 @@ Careful readers may have noticed that \emph{budget} is similar to
 and dismissed for potentially
 being too computationally expensive to calculate.
 Budget is actually a refinement of gas because
-we support its use with a method to calculate it in constant time.
-In fact, we will soon show that a budget of $n$ is sufficient.
+we always accompany its use with a method to calculate it in constant time.
+In fact, we will soon show that a budget of $n$ is sufficient in this case.
 This lets us define \emph{countdown} in Coq for the first time:
 \begin{defn} \label{defn: countdown}
 Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.
@@ -279,10 +281,12 @@ $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 \begin{proof}[outline]
 %	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.
 %\hide{
-	Assume the initial arguments $(n, b)$, let the original call $\cdw{f}{a}(n, b)$ be the $0^{th}$ call. A straightforward induction on $i$ shows that in the $i^{th}$ call, the arguments will be $\big(f^{(i)}(n), b-i\big)$, while an accumulated amount of $i$ will have been added to the final result, with the exception of the last call, which returns $0$ and adds nothing to the result.
+	Assume the initial arguments $(n, b)$, and let the original call 
+	\linebreak $\cdw{f}{a}(n, b)$ be the $0^{th}$ call. A straightforward induction on $i$ shows that in the~$i^{th}$ call, the arguments will be $\big(f^{(i)}(n), b-i\big)$, while an accumulated amount~$i$ will have been added to the final result. The only exception to this rule will be the last call, which 
+	will return $0$ and add nothing to the result.
 	
-	Suppose $b = n$, let $m \triangleq \min\big\{i : f^{(i)}(n)\le a\big\}$\footnote{We prove the existence
-		of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v\#L125-L150}{here} in our codebase.}, then $m \le n$ since $f^{(n)}(n)\le a$. Thus before the budget is exhausted, the function reaches the $m^{th}$ call, which is the last recursive call since $\big(f^{(m)}(n), n - m\big)$ satisfies the terminating condition $f^{(m)}(n)\le a$. This last call adds $0$ to the accumulated result, which is $m$ at the moment. Therefore $\cdw{f}{a}(n, n) = m$.
+	Suppose $b = n$, and let $m \triangleq \min\big\{i : f^{(i)}(n)\le a\big\}$\footnote{We prove the existence
+		of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v\#L125-L150}{here} in our codebase.}. Then $m \le n$ since $f^{(n)}(n)\le a$. Thus, before the budget is exhausted, the function reaches \linebreak the $m^{th}$ call. This is actually the last recursive call since $\big(f^{(m)}(n), n - m\big)$ satisfies the terminating condition $f^{(m)}(n)\le a$. This last call adds $0$ to the accumulated result, which is $m$ at the moment. Therefore $\cdw{f}{a}(n, n) = m$.
 %}%end hide
 \hide{
 	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.
@@ -309,8 +313,8 @@ Definitions \ref{defn: informal-countdown} and \ref{defn: countdown}. We wrap ev
 \end{thm}
 \begin{proof}
 	By Theorem~\ref{thm: expansion-inv-contraction}, $f\triangleq F^{-1}_+ \in \contract_a$.
-	\eqref{eq: rf-upp-inv} and Corollary~\ref{col: cdt-repeat}
-	then show $\cdt{f}{a}\ = \left(\rf{F}{a}\ \right)^{-1}_+$.
-	Now if $a\ge 1$, a simple induction shows that $F^{(n)}(a)\ge a + n\ge 1 + n$, so $\rf{F}{a}\ \in \repeatable_0$, hence $\cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+ \in \contract_0$ by Theorem~\ref{thm: expansion-inv-contraction}.
+	Equation \ref{eq: rf-upp-inv} and Corollary~\ref{col: cdt-repeat}
+	then show that $\cdt{f}{a}\ = \left(\rf{F}{a}\ \right)^{-1}_+$.
+	Now if $a\ge 1$, a simple induction shows that $F^{(n)}(a)\ge a + n\ge 1 + n$, so $\rf{F}{a}\ \in \repeatable_0$. Hence $\cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+ \in \contract_0$ by Theorem~\ref{thm: expansion-inv-contraction}.
 \end{proof}
 
