@@ -63,7 +63,7 @@ Table~\ref{table: hyperop-ack-inv} gives the first five hyperoperations
 We also name and give their inverses,
 which we write as $a \angle{n} b$ and $\alpha_n(b)$.
 The kludge has three parts. First, the Ackermann hierarchy is related
-to the hyperoperation hierarchy with $a$ set to $2$, ie $2[n]b$;
+to the hyperoperation hierarchy with $a$ set to $2$, \emph{i.e.} $2[n]b$;
 second, for $n>0$, $\Ack_n$ repeats the previous hyperoperation $2[n-1]b$
 %{\color{magenta}(\textbf{not} the previous $\Ack_{n-1}$!)}
 three extra times;
@@ -79,7 +79,7 @@ n & \text{function} & a [n] b & \Ack_n(b) & \text{upper inverse} & a \angle{n} b
 2 & \text{multiplication} & a \cdot b & 2b + 3 & \text{division} & \left\lceil \frac{b}{a} \right\rceil & \left\lceil \frac{b-3}{2} \right\rceil \\
 3 & \text{exponentiation} & a^b & 2^{b + 3} - 3 & \text{logarithm} & \left\lceil \mathsf{log}_a ~ b \right\rceil & \left\lceil \mathsf{log}_2 ~ (b + 3)\right\rceil - 3 \\
 [2pt]
-4 & \text{tetration} & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \begin{array}{@{}c@{}}\text{iterated}\\[-3pt]\text{logarithm}\end{array} & \left\lceil \mathsf{log}^*_a ~ b \right\rceil & \left\lceil \mathsf{log}^*_2 ~ (b + 3)\right\rceil - 3
+4 & \text{tetration} & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \begin{array}{@{}c@{}}\text{iterated}\\[-3pt]\text{logarithm}\end{array} & \mathsf{log}^*_a ~ b & \mathsf{log}^*_2 ~ (b + 3) - 3
 \end{array}
 \end{centermath}
 \caption{Hyperoperations, the Ackermann hierarchy, and inverses thereof}
@@ -118,7 +118,7 @@ $.
 \subsection{Increasing functions and their inverses}
 \label{sec:incfuncinv}
 Defining increasing functions is often easier than defining their inverses.
-Addition, multiplication, and exponentiation on Church numerals
+For instance, addition, multiplication, and exponentiation on Church numerals
 are simpler than subtraction, division, and logarithm. Similarly, defining multiplication in Gallina~\cite{coq} is easy, but defining division is unexpectedly painful:
 %Defining increasing functions is often significantly easier than defining their inverses.
 %The Church numeral encodings of addition, multiplication, and exponentiation
@@ -183,7 +183,7 @@ $\left \lfloor \frac{\lfloor \mathsf{log}_2 100 \rfloor}{\lfloor \mathsf{log}_2 
 We provide a complete solution to inverting each individual function in the hyperoperation/Ackermann hierarchy,
 as well as the diagonal Ackermann function itself.  All our functions are structurally recursive, so
 Coq is immediately convinced of their termination.  Moreover, all our functions run in linear time: practical utility follows from theoretical grace.
-Finally, our techniques are compact: consider the 14 lines of code that invert the diagonal Ackermann function in \li{nat} on the 18th page of this paper (\S\ref{apx:code}).  Our Coq development is about 3,000 lines, split between parallel efforts in unary-encoded and binary-encoded numbers.
+Finally, our techniques are compact: consider the 14 lines of code that invert the diagonal Ackermann function in \li{nat} on the 18th page of this paper (\S\ref{apx:code}).  Our Coq development is about 3,000 lines, split between parallel efforts in unary-encoded and binary-encoded inputs.
 %The rest of this paper is organized as follows.
 %, so they are as asymptotically efficient as they can be, and are thus suitable for extraction\footnote{A criterion more useful in practice for $\mathsf{log}_b$ and perhaps $\mathsf{log}^*_b$ than the other members of the hierarchy.}
 %\begin{itemize}
