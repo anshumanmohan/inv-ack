@@ -49,4 +49,4 @@ test:
 	
 .PHONY: clean
 clean:
-	rm -f *.vo *.glob paper/inv-ack.pdf paper/*.aux paper/*.log paper/*.out paper/*.spl
+	rm -f *.cmo *.cmi test *.vo *.glob paper/inv-ack.pdf paper/*.aux paper/*.log paper/*.out paper/*.spl
