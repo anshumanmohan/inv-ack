@@ -1,7 +1,7 @@
 We now use \emph{countdown} to define the inverse
 hyperoperation hierarchy, which features elegant new definitions of
 division, $\log$, and $\log^{*}$.
-We then \hide{modify the inverse hyperoperation hierarchy} {modify the technique} to arrive at the inverse
+We then modify this technique to arrive at the inverse
 Ackermann hierarchy.
 
 \subsection{The inverse hyperoperations, including \li{div}, \li{log}, and \li{log*}}
@@ -61,11 +61,11 @@ $\lambda b.a\angle{n{-}1}b$.
 We now show that $a\angle{n}$ is the inverse to $a[n]$.
 First note that $a\angle{0}\in \contract_0$.~Then:
 \begin{lem}
-$\forall a. \forall b.~a\angle{1}b = b - a$.
+$\forall a.~\forall b.~a\angle{1}b = b - a$.
 \end{lem}
 \begin{proof}
-Theorem~\ref{thm: cdt-recursion} applies because $a\angle{0} \in \contract_0 \subseteq \contract_{a}$, giving the result shown below.
-Then $a\angle{1}b = b - a$ by induction on $b$.
+Theorem~\ref{thm: cdt-recursion} applies because $a\angle{0} \in \contract_0 \subseteq \contract_{a}$, giving the intermediate step shown below.
+Thereafter $a\angle{1}b = b - a$ by induction on $b$.
 \vspace{-0.8em}
 \begin{equation*}
 a\angle{1}b \quad = \quad \cdt{\left(a\angle{0}\right)}{a}(b) \quad = \quad \begin{cases}
@@ -91,10 +91,10 @@ When $n\le 1$, or $n \le 2 \wedge a\ge 1$, or $a\ge 2$, then
 $a\angle{n} = \left(a[n]\right)^{-1}_+$.
 \end{thm}
 \begin{proof}
-$\forall n \ge 2,~$ let $a_0 = a, a_1 = 0, a_n = 1$. Then define
+$\forall n \ge 2,~$ let $a_0 = a, a_1 = 0, a_n = 1$. Then define $P$ and $Q$ as:
 \begin{equation*}
 P(n) \triangleq  \Big(a[n] \in \repeatable_{a_n}\Big)\ \text{ and } \
-Q(n) \triangleq  \Big((a\angle{n} = \left(a[n]\right)^{-1}_+ \Big)
+Q(n) \triangleq  \Big((a\angle{n} = \left(a[n]\right)^{-1}_+ \Big).
 \end{equation*}
 We have three goals:
 (1) $\forall a.~ Q(0) \wedge Q(1)$.
@@ -128,7 +128,7 @@ which is straightforward for $a\ge 2$. Induction on $n$ gives us the third goal.
 %With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^*$, as well as the whole inverse hyperoperation hierarchy.
 \begin{rem}
 Three early hyperoperations are $a[2]b = ab$, $a[3]b = a^b$ and \linebreak $a[4]b = \! ^ba$, so, by Theorem~\ref{thm: inv-hyperop-correct}, we can define their inverses $\left\lceil b/a \right\rceil$, $\left\lceil \log_a b \right\rceil$, and $\log^*_a b$ as $a\angle{2}b$, $a\angle{3}b$, and $a\angle{4}b$.
-Note that the functions $\log_a b$, and $\log^*_a b$ are not in the Coq Standard Library.
+Note that the functions $\log_a b$ and $\log^*_a b$ are not in the Coq Standard Library.
 \end{rem}
 \hide{
 \begin{col}
@@ -156,7 +156,7 @@ Note that the functions $\log_a b$, and $\log^*_a b$ are not in the Coq Standard
 \label{subsec: inv_ack_hier}
 
 % NEW METHOD FOR INVERSE ACKERMANN
-We want to use \emph{countdown} to build the \emph{inverse Ackermann hierarchy}, where each
+Next, we want to use \emph{countdown} to build the \emph{inverse Ackermann hierarchy}, where each
 level $\alpha_i$ inverts the level $\Ack_i$.
 We know $\Ack_{i+1} = \rf{\Ack_i}{\Ack_i(1)}$, so the recursive
 rule $\alpha_{i+1} \triangleq \cdt{\alpha_i}{\Ack_i(1)}$ is tempting.
@@ -186,7 +186,7 @@ All that remains is to provide a structurally-recursive function that computes $
 	\end{cases}
 	\end{equation}
 \end{defn}
-The following theorem shows that this function computes the inverse Ackermann function correctly given appropriate arguments.
+The following theorem shows that this function computes the inverse Ackermann function correctly when passed appropriate arguments.
 \hide{
 Given the arguments $\big(\alpha_i, \alpha_i(n), i, b - i\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$ at the next recursive call. Thus if $\alpha^{\W}$ is given a sufficient budget $b$, it will recursively transform the tuple $(\alpha_k, \alpha_k(n), k, b - k)$ until a point $k$ where $\alpha_k(n)\le k$, and will then return $k$. We now need to show that $\alpha^{\W}$ correctly computes $\alpha(n)$ given a reasonable budget.
 The following theorem demonstrates that a budget of $n$ suffices.
@@ -203,7 +203,7 @@ The following theorem demonstrates that a budget of $n$ suffices.
 	\begin{equation} \label{eq: inv-ack-worker-intermediate}
 	\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_k, \alpha_k(n), k, b-k\big)
 	\end{equation}
-	Let $m \triangleq \min\big\{k : \alpha_k(n) \le k \}$, then $m\le n$ since $\alpha_n(n)\le n$, \eqref{eq: inv-ack-worker-intermediate} then implies:
+	Let $m \triangleq \min\big\{k : \alpha_k(n) \le k \}$. Then $m\le n$ since $\alpha_n(n)\le n$. \eqref{eq: inv-ack-worker-intermediate} then implies:
 	$$ \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\W}\big(\alpha_m, \alpha_m(n), m, n - m\big) = m = \alpha(n) $$
 \end{proof}
 We put a more involved mathematical proof of correctness in Appendix~\ref{apx:proof_correct_inv_ack_worker}, and a mechanized proof \note{here}.
