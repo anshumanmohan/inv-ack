@@ -31,9 +31,10 @@ Definition inv_ack_linear n :=
   end.
 
 (* Two parameters Inverse Ackerman worker function *)
+(* Two parameters Inverse Ackerman worker function *)
 Fixpoint two_params_inv_ack_wkr (f : nat -> nat) (n k b : nat) : nat :=
   match b with
-  | 0    => k
+  | 0    => 0
   | S b' => if (n <=? k) then 0
               else let g := (countdown_to f 1) in
                    S (two_params_inv_ack_wkr (compose g f) (g n) k b')
@@ -43,7 +44,7 @@ Fixpoint two_params_inv_ack_wkr (f : nat -> nat) (n k b : nat) : nat :=
 Definition two_params_inv_ack (m n : nat) : nat :=
   let f := (fun x => x - 2) in
     let n' := (Nat.log2_up n) in
-      1 + two_params_inv_ack_wkr f (f n') (Nat.div m n) n'.
+      1 + two_params_inv_ack_wkr f (f n') (m / n) n'.
 
 
 
