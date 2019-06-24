@@ -8,8 +8,6 @@ Time Compute inv_ack_linear 100.
 Time Compute inv_ack_linear 1000.
 Time Compute inv_ack_linear 10000.
 Time Compute inv_ack_linear 100000.
-Time Compute inv_ack_linear 1000000.
-Time Compute inv_ack_linear 10000000.
 
 
 

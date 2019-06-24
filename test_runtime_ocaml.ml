@@ -101,3 +101,4 @@ time_print 100;;
 time_print 1000;;
 time_print 10000;;
 time_print 100000;;
+print_string "\n"
