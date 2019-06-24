@@ -3,8 +3,8 @@ Definition~\ref{defn: inv-ack-hier} runs in~$\Omega(n^2)$
 under a call-by-value strategy, and in $O(n)$
 after a simple optimization.
 To give intuition and remain accessible to readers, we 
-present here a detailed sketch via lemma statements.
-We put proofs of these lemmas in Appendix~\ref{apx:time_analysis}.
+present a detailed sketch via lemma statements.
+We put full proofs of these lemmas in Appendix~\ref{apx:time_analysis}.
 We elide the parallel analysis for the inverse hyperoperations, 
 which have simpler initial values. % but are otherwise similar.
 
@@ -25,10 +25,10 @@ operating on \li{N}, \emph{i.e.} in binary encoding.
  For a function $f$ on $k$ variables, the \emph{runtime} of $f$, denoted by $\runtime_f\big(n_1, n_2, \ldots, n_k\big)$, counts the computational steps to compute $f(n_1, n_2, \ldots, n_k)$.
 \end{defn}
 The following lemma establishes the general runtime structure of 
-\emph{countdown} when the input is encoded in \li{nat}.
+the \emph{countdown} function when its input is encoded in \li{nat}.
 \begin{lem} \label{lem: cdt-runtime}
 	% in the unary encoding system, \emph{i.e.} the type \li{nat} in Coq, 
-	$\forall a\ge 1, \forall n \in \li{nat}, \forall f\in \contract_{a}$ we have:
+	$\forall a\ge 1,~\forall n \in \li{nat},~\forall f\in \contract_{a}$,
 	\begin{equation*}
 	\runtime_{\cdt{f}{a}}(n) =
 	\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
@@ -52,7 +52,7 @@ Given some index $i$ such that \linebreak $\runtime_{\alpha_i}(n) = \Omega\big(n
 % per Definition~\ref{defn: inv-ack-worker}. 
 In fact, $i = 2$ suffices.
 \begin{lem} \label{lem: alpha2_runtime_naive}
-	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier}, $\forall i\ge 2. \runtime_{\alpha_i}(n) = \Omega\big(n^2\big)$.
+	$\forall i\ge 2.~\runtime_{\alpha_i}(n) = \Omega\big(n^2\big)$.
 \end{lem}
 
 %This lemma implies $\runtime\big(\cdt{f}{a}\ , n\big) \ge \runtime(f, n)$. If for some $i$, $\runtime\big(2\angle{i}, n\big) = \Theta\big(n^2\big)$, the entire hierarchy will take at least $\Omega\big(n^2\big)$ from $2\angle{i}$, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}. The next lemma shows $i = 2$ suffices.
@@ -97,7 +97,7 @@ Note that the above bound only applies for $n\ge 2$. When $n\le 1$, the LHS is 1
 
 This simple optimization has a cascading effect through the entire hierarchy:
 we can now prove a bound of $\bigO(n)$ for every level.
-By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, the $i$th level of the inverse Ackermann hierarchy can be computed in \linebreak $\bigO\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time for fixed $i$.
+By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, we can compute the $i$th level of the inverse Ackermann hierarchy in \linebreak $\bigO\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time for fixed $i$.
 \begin{thm} \label{thm: inv-ack-hier-runtime-improved}
 	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$.
 \end{thm}
@@ -105,7 +105,8 @@ By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, the $i$th level of the inverse Ac
 \subsection{Running time of $\alpha$ on \li{nat}} %\label{sect: hardcode-lvl2}
 
 A linear-time calculation of the inverse Ackermann hierarchy 
-leads naturally to a similarly efficient calculation of $\alpha(n)$ itself.
+leads to a similarly efficient calculation of the inverse Ackermann 
+function itself. We present $\tilde{\alpha}(n)$:
 \hide{
 We redefine $\alpha$ once again, hardcoding the output 
 when $n\le 1 = \Ack(0)$, and starting $\alpha^{\mathcal{W}}$ with 
@@ -151,11 +152,11 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 \end{thm}
 
 \begin{proof}
-	Regarding correctness of $\tilde{\alpha}(n)$, the cases $n = 0, 1$ are trivial. For $n > 1 = \Ack(0)$, $\alpha_1(n) > 1$ and $n - 1 > 0$, so $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big)$ $= \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n - 1\big)$ by Definition~\ref{defn: inv-ack-worker}. Theorem~\ref{thm: inv-ack-worker-correct} then implies $\tilde{\alpha}(n) = \alpha(n)$.	
+	Consider the correctness of $\tilde{\alpha}(n)$. The cases $n = 0, 1$ are trivial. For \linebreak $n > 1 = \Ack(0)$, $\alpha_1(n) > 1$ and $n - 1 > 0$, so $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big) = \linebreak \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n - 1\big)$ by Definition~\ref{defn: inv-ack-worker}. Theorem~\ref{thm: inv-ack-worker-correct} then implies $\tilde{\alpha}(n) = \alpha(n)$.	
 	
-	Regarding time complexity of $\tilde{\alpha}(n)$, at each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of two steps:
-	Firstly, calculate $\li{leb}\big(\alpha_k(n), k\big)$, taking no more than $k + 1$ steps by Lemma~\ref{lem: leb-runtime}, Appendix~\ref{apx:time_analysis}. Next, calculate $\alpha_{k+1}(n) = \cdt{\alpha_k)}{1}(x)$ given $x\triangleq \alpha_k(n)$, taking time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ by Lemma~\ref{lem: compose-runtime}, Appendix~\ref{apx:time_analysis}.
-	The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
+	Consider the time complexity of $\tilde{\alpha}(n)$. At each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of two steps:
+	First, calculate $\li{leb}\big(\alpha_k(n), k\big)$, taking no more than $k + 1$ steps (as shown in Appendix~\ref{apx:time_analysis} Lemma~\ref{lem: leb-runtime}). Second, calculate $\alpha_{k+1}(n) = \cdt{\alpha_k)}{1}(x)$ \linebreak given $x\triangleq \alpha_k(n)$, taking time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ (as shown in Appendix~\ref{apx:time_analysis} Lemma~\ref{lem: compose-runtime}).
+	The computation will terminate at $k = \alpha(n)$. Thus, $\forall n\ge 1$,
 	\begin{equation*} %\label{eq: inv-ack-runtime-improved}
 	\begin{aligned}
 	\runtime_{\tilde{\alpha}}(n)
