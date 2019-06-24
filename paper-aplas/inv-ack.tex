@@ -54,6 +54,21 @@
 }
 %basicstyle=\fontsize{10}{11}\selectfont\ttfamily,
 
+\lstdefinestyle{myTinyStyle}{
+%   language=Coq,
+    keywords={Inductive,Require,Import,Definition,Fixpoint,match,with,end,let,in,fix},
+    basicstyle=\normalfont\fontsize{8.2}{8.5}\tt,
+    keywordstyle=\color{green}, % Blue clashes with the cyan links. Change if you want.
+    stepnumber=1,
+    tabsize=2,
+    numbers=none,
+    numberstyle=\tiny,
+    numbersep=5pt,
+    showspaces=false,
+    escapechar=`,
+    showstringspaces=false
+}
+
 \lstset{style=myStyle}
 \makeatletter
 \newlength{\@mli}

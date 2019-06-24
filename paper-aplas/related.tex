@@ -20,7 +20,8 @@ been integral to counting forever. The ancient Egyptian
 number system used glyphs denoting $1$, $10$, $100$, \emph{etc.},
 and expressed numbers using additive combinations of these.
 The Roman system is similar, but
-it combines glyphs using both addition and subtraction. This buys brevity,
+it combines glyphs using both addition and subtraction. 
+This buys brevity and readability,
 since \emph{e.g.} $9_{\text{roman}}$ is two characters, ``one less than ten'',
 and not a series of nine $1$s.
 The ancient Babylonian system, like the modern Hindu-Arabic decimal system,
@@ -54,19 +55,15 @@ this paper. Those properties emerged thanks to refinements by Rózsa Péter~\cit
 and it is her variant, usually called the Ackermann-Péter function,
 that computer scientists commonly care about.
 
-%\marginpar{\tiny \color{blue}implemented with }
-\note[triple check their bounds]{The inverse Ackermann
+The inverse Ackermann
 features in the time bound analyses of several algorithms.
-Tarjan \cite{tarjan} showed that the union-find data structure
+Tarjan~\cite{tarjan} showed that the union-find data structure
 takes time $O(m\cdot\alpha(m,n))$ for a sequence of $m$ operations
 involving no more than $n$ elements.
-%Tarjan \cite{tarjan} showed that the union-find data structure
-%with the optimisations of \emph{path compression} and \emph{weighted union}
-%takes time $O(m\cdot\alpha(n))$ for a sequence of $m$ operations
-%involving no more than $n$ elements.
-Chazelle \cite{chazelle} showed that the minimum spanning tree
+Tarjan and van Leeuwen~\cite{tarjan2} later refined this to $O(m\cdot\alpha(n))$.
+Chazelle~\cite{chazelle} showed that the minimum spanning tree
 of a connected graph with $n$ vertices and $m$ edges
-can be found in time $O(m\cdot\alpha(m,n))$.}
+can be found in time $O(m\cdot\alpha(m,n))$.
 
 % http://gallium.inria.fr/~fpottier/publis/chargueraud-pottier-uf-sltc.pdf
 % http://gallium.inria.fr/~agueneau/publis/gueneau-chargueraud-pottier-coq-bigO.pdf

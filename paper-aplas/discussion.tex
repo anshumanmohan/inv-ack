@@ -2,21 +2,21 @@
 
 \subsection{The value of a linear-time solution to the hierarchy}
 
-Our functions' linear runtime can be understood in two distinct but
+Our functions' linear runtimes can be understood in two distinct but
 complementary ways.  A runtime less than the bitlength is impossible
 without prior knowledge of the size of the input.  Accordingly, in
 an information-theory or pure-mathematical sense, our definitions are
 optimal up to constant factors.  And of course in practice, linear-time
-solutions are highly useable in real computations.
+solutions are highly usable in real computations.
 
 Sublinear solutions are possible with \emph{a priori} knowledge about
 the function and bounds on the inputs one will receive.
-An extreme case is $\alpha(n)$, which has value 4 for all practical
-inputs greater than 61: accordingly,
-this function can be inverted in $O(1)$ in practice.  That said, these
-kinds of solutions require external knowledge of the problems and
-lookup tables within the algorithm to store the associated precomputed
-values, and so fall more into the realm of engineering than mathematics. 
+An extreme case is $\alpha(n)$, which has value $4$ for all practical
+inputs greater than $61$. Accordingly,
+this function can be inverted in $O(1)$ in practice.  That said, 
+such solutions require external knowledge of the problems and
+lookup tables within the algorithm to store precomputed
+values, and thus fall more into the realm of engineering than mathematics. 
 
 \subsection{The two-parameter inverse Ackermann function}
 Some authors~\cite{chazelle,tarjan} prefer a two-parameter inverse Ackermann function.
