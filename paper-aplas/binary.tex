@@ -3,9 +3,10 @@ a number~$n$ using~$n$ bits.
 The binary system represents~$n$ in $\lfloor \log_{2} n \rfloor + 1$ bits.
 In both systems, addition/subtraction of $b$-bit
 numbers is $\Theta(b)$, while multiplication is $\Theta \big(b^2\big)$.
-Arithmetic operations are often faster when the inputs
+In general, arithmetic operations are often faster when the inputs
 are encoded in binary\footnote{We put a further explanation of
-Coq's binary type \li{N} in Appendix~\ref{apx:bin_in_coq}.}.
+Coq's binary type \li{N} in Appendix~\ref{apx:bin_in_coq}.}. 
+This advantage also extends to our techniques.
 
 Our codebase has binary versions of \note{hyperoperations, inverse hyperoperations,
 Ackermann, and inverse Ackermann}.
@@ -50,10 +51,10 @@ we need to halve the argument on every application as shown below:
 \end{defn}
 The key advantage of binary strict contractions is that if a contraction $f$ is binary strict above some $a$, then
 $\forall n > a, \forall k.~f(n) \le \left\lfloor \frac{n - a}{2^k} \right\rfloor + a$.
-Therefore within $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than $a$, so we can choose this number as the budget for \li{bin\_cdn\_wkr} to successfully reach the countdown value before terminating.
+Therefore within $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than~$a$. We can choose this number as the budget for \li{bin\_cdn\_wkr} to successfully reach the countdown value before terminating.
 Note that this budget is simply the length of the binary representation
 of \li{n - a}, which we calculate using our function
-\href{www.example.com}{\li{nat\_size}}.
+\note{\li{nat\_size}}.
 The Coq definition of countdown on \li{N} is:
 \hide{
 \begin{lstlisting}
@@ -101,9 +102,9 @@ only for strict binary contractions. Fortunately, starting
 from $n = 2$, the inverse hyperoperations $a\angle{n}b$ when $a\ge 2$
 and the inverse Ackermann hierarchy $\alpha_n$ are all strict binary contractions.
 We can construct these hierarchies by hardcoding their
-first three levels and recursively building higher levels with \li{bin\_countdown}.
+first three levels and recursively building higher levels with \li{bin\_countdown\_to}.
 Furthermore,
-analagously to the optimization for \li{nat}, we hardcode an additional level.
+analagously to the optimization for \li{nat} discussed in~\S\ref{sect: hardcode-lvl2}, we hardcode an additional level.
 \begin{lstlisting}
 Fixpoint bin_alpha (m : nat) (x : N) : N :=
   match m with
@@ -115,7 +116,7 @@ Fixpoint bin_alpha (m : nat) (x : N) : N :=
 Note that for all $x$, $\li{N.div2}(x - 2) = \left\lfloor \frac{x - 2}{2} \right\rfloor = \left\lceil \frac{x - 3}{2} \right\rceil$ and $\li{N.log2}(x + 2) - 2 = \left\lfloor \log_2(x+2) \right\rfloor - 2 = \left\lceil \log_2(x+3) \right\rceil - 3$, so the above Coq code is correct.
 
 \begin{thm} \label{thm: inv-ack-runtime-bin}
-	$\forall i, \forall n, \runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i$.
+	$\forall i,~\forall n,~\runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i$.
 \end{thm}
 
 \noindent For any level of the Ackermann hierarchy, this theorem demonstrates
@@ -172,7 +173,7 @@ size of input representation.
 With reference to Lemmas \ref{lem: compose-runtime} (Appendix~\ref{apx:time_analysis}), \ref{lem: leb-runtime-bin} and \ref{lem: succ-runtime-bin} (Appendix~\ref{apx:time_analysis_bin}), we have:
 In the second summand, $\runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n)) = \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ for each $k$ by Lemma~\ref{lem: compose-runtime}.
 By Lemma~\ref{lem: leb-runtime-bin}, each $\Tleb$ in the third summand is $\Theta\left(\log_2k\right)$, totalling $\bigO\big(\alpha(n)\log_2\alpha(n)\big) = \text{o}\big(\log_2n\big)$.
-The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by Lemma~\ref{lem: succ-runtime-bin}. The remaining items total $\Theta(\log_2n)$. Thus $\forall n\ge 8$:
+The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by Lemma~\ref{lem: succ-runtime-bin}. The remaining items total $\Theta(\log_2n)$. Thus, $\forall n\ge 8$:
 \begin{equation*}
 \begin{aligned}
 \runtime_\alpha(n)
