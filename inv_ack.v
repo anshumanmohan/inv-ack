@@ -127,6 +127,18 @@ Proof.
     [apply ack_repeatable | apply ack_incr_by_lvl]; assumption.
 Qed.
 
+(* Small helper lemma - alpha decreases by level *)
+Lemma alpha_decr_by_lvl : forall i n, alpha (S i) n <= alpha i n.
+Proof.
+  intros i n. 
+  destruct (alpha_correct i) as [_ Hi].
+  destruct (alpha_correct (S i)) as [_ HSi].
+  rewrite (HSi (alpha i n) n).
+  apply (Nat.le_trans _ (ackermann i (alpha i n)) _).
+  - rewrite <- (Hi (alpha i n) n). trivial.
+  - assert (H := ack_incr_by_lvl (alpha i n) i (S i)). omega.
+Qed.
+
 
 (* ****** INVERSE ACKERMANN FUNCTION ****** *)
 
@@ -163,13 +175,8 @@ Proof.
       rewrite Hn. replace (b - S p) with c by omega.
       trivial.
     + rewrite Nat.leb_gt. rewrite Nat.leb_gt in Hn.
-      rewrite <- not_le. destruct (alpha_correct i) as [_ Halphai].
-      rewrite (Halphai i n). intro.
-      assert (n <= ackermann (S i) (S i)).
-      { apply (Nat.le_trans _ (ackermann i i) _ H), Nat.lt_le_incl.
-        apply diag_ack_incr. omega. }
-      destruct (alpha_correct (S i)) as [_ HalphaSi].
-      rewrite <- (HalphaSi (S i) n) in H0. omega.
+      apply (Nat.lt_le_trans _ (alpha (S i) n) _);
+        [omega|apply alpha_decr_by_lvl].
 Qed.
 
 (* Proof that inv_ack correctly calculates the inverse of the 
@@ -225,3 +232,54 @@ Proof.
   rewrite (inv_ack_wkr_intermediate 0 _ _) by (simpl; omega).
   rewrite alpha_1; trivial.
 Qed.
+
+(* ********* TWO PARAMETERS INVERSE ACKERMANN ************* *)
+
+(* Two parameters Inverse Ackerman worker function *)
+Fixpoint two_params_inv_ack_wkr (f : nat -> nat) (n k b : nat) : nat :=
+  match b with
+  | 0    => 0
+  | S b' => if (n <=? k) then 0
+              else let g := (countdown_to f 1) in
+                   S (two_params_inv_ack_wkr (compose g f) (g n) k b')
+  end.
+
+(* Two parameters Inverse Ackermann function *)
+Definition two_params_inv_ack (m n : nat) : nat :=
+  let f := (fun x => x - 2) in
+    let n' := (Nat.log2_up n) in
+      1 + two_params_inv_ack_wkr f (f n') (m / n) n'.
+
+(* Correctness proofs begin here *)
+(* Lemma about worker function's inner working *)
+Lemma two_params_inv_ack_wkr_intermediate :
+    forall i n k b, k < alpha i n -> i < b ->
+      two_params_inv_ack_wkr (alpha 1) (alpha 1 n) k b =
+        i + two_params_inv_ack_wkr (alpha (S i)) (alpha (S i) n) k (b - i).
+Proof.
+  induction i; intros n k b Hin Hib.
+  - rewrite Nat.add_0_l. f_equal. omega.
+  - rewrite IHi.
+    2: apply (Nat.lt_le_trans _ (alpha (S i) n) _ Hin), alpha_decr_by_lvl.
+    2: omega.
+    unfold two_params_inv_ack_wkr at 1.
+    replace (b - i) with (S (b - (S i))) by omega.
+    rewrite <- Nat.leb_gt in Hin. rewrite Hin.
+    fold two_params_inv_ack_wkr.
+    rewrite <- Nat.add_succ_comm. f_equal.
+Qed.
+
+(* Correctness theorem for two_params_inv_ack *)
+Theorem two_params_inv_ack_correct :
+    forall m n p, two_params_inv_ack m n <= S p
+      <-> Nat.log2_up n <= ackermann (S p) (m / n).
+Proof.
+  intros m n p. unfold two_params_inv_ack.
+  remember (Nat.log2_up n) as b. remember (m / n) as a.
+  replace (b - 2) with (alpha 1 b) by (rewrite alpha_1; trivial).
+  rewrite <- Nat.succ_le_mono. destruct b; [simpl; omega|].
+  destruct (alpha_correct (S p)) as [_ H]. rewrite <- (H a (S b)).
+  rewrite <- alpha_1. split; intro.
+  - rewrite Nat.le_ngt. intro.
+    rewrite (two_params_inv_ack_wkr_intermediate (S p) _ _ _) in H0; try omega.
+    
