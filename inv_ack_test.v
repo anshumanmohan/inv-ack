@@ -8,17 +8,15 @@ Require Import inv_ack.
 Require Import bin_inv_ack.
 
 (* Demonstrating Linear Runtime *)
-(* Commented out for clean builds on the command line. 
- * Interested readers are encouraged to uncomment and run these lines. *)
-(*
+Time Compute inv_ack_linear 100.
+Time Compute inv_ack_linear 1000.
 Time Compute inv_ack_linear 10000.
 Time Compute inv_ack_linear 100000.
 Time Compute inv_ack_linear 1000000.
 Time Compute inv_ack_linear 10000000.
- *)
 
 (* Further, our code can be extracted to OCaml by running the two lines below: *)
-(* 
+(*
 Require Extraction. 
 Recursive Extraction inv_ack_linear.
  *)
@@ -45,4 +43,19 @@ time_print 1000;;
 time_print 10000;;
 time_print 100000;;
 time_print 1000000;;
+time_print 10000000;;
  *)
+
+Open Scope N.
+
+Definition bignum1 := 2^2^2^2.   (* tetration makes this 65536. *)
+Definition bignum2 := bignum1^2. (* 4.3 e09 *)
+Definition bignum3 := 2^bignum1. (* tetration makes this 2.0 e19728 *)
+Definition bignum4 := bignum3^2. (* 4.0 e39456 *)
+
+Time Compute (bin_inv_ack bignum1).
+Time Compute (bin_inv_ack bignum2).
+Time Compute (bin_inv_ack bignum3).
+Time Compute (bin_inv_ack bignum4).
+
+Close Scope N.

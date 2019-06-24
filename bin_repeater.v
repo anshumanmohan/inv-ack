@@ -10,12 +10,12 @@ Open Scope N_scope.
 
 (*
 ====================================================================================
-*********** SECTION 8: BINARY HYPEROPS, ACKERMANN AND REPEATER *********************
+*********** SECTION 9: BINARY HYPEROPS, ACKERMANN AND REPEATER *********************
 ====================================================================================
  *)
 
 (* 
- * We introduce "bin_repeater" and how to use it to redefine the 
+ * We introduce "bin_repeater" and how to use it to define the 
  * bin_hyperoperations and binary Ackermann function.
  * 
  * We also prove several results about the value of hypeopererations at small
@@ -26,6 +26,7 @@ Open Scope N_scope.
  * Note that some results here may not be related to results in the paper, but
  * appear for reasons of completeness.
  *)
+
 
 (* ****** REPEATER ********************************* *)
 
@@ -138,6 +139,7 @@ Proof.
   intros n a Hn. do 2 (destruct n; [omega|]).
   clear Hn. induction n; trivial.
 Qed.
+
 
 (* ****** ACKERMANN FUNCTION ********************************* *)
 

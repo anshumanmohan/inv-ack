@@ -11,7 +11,7 @@ Require applications.
 
 (*
 ===================================================================================
-************** SECTION 12: INVERSE HYPEROPS, DIVISION, LOG AND LOG* ***************
+****************** SECTION 12: BINARY INVERSE HYPEROPS ****************************
 ===================================================================================
  *)
 
@@ -25,6 +25,7 @@ Require applications.
  * flexibility to substantiate easy and direct proof for a vast range 
  * of facts about these functions.
  *)
+
 
 Fixpoint inv_bin_hyperop (a : N) (n : nat) (b : N) :=
   match n with

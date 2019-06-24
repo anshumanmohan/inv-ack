@@ -7,24 +7,15 @@ Require Import increasing_expanding.
 
 (*
 ==================================================================================
-******* SECTION 4: INCREASING FUNCTIONS, UPPER INVERSE AND EXPANSIONS ************
+********************* SECTION 4: UPPER INVERSES **********************************
 ==================================================================================
  *)
 
 (* 
- * We introduce "upper inverses" (upp_inv), and increasing functions 
- * and explain why we prefer to consider inverses of increasing functions only.
- * We prove several useful results about upper inverse and increasing functions.
- *
- * We introduce expansions and show how they are connected to 
- * increasing functions through repeater.
- * 
- * Increasing functions that are also strict expansions are noteworthy, 
- * as they later prove to be ideal candidates for inverting via "countdown".
- *
- * In the previous file (increasing_expanding.v), we dealt with 
+ * In the previous files, we dealt with 
  * increasing functions and expansions.
- * In this file, we deal with upper inverses of increasing functions. 
+ * In this file, we formalize upper inverses and 
+ * deal with upper inverses of increasing functions. 
  *)
 
 

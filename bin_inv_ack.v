@@ -12,7 +12,7 @@ Require inv_ack.
 
 (*
 ==========================================================================
-************** SECTION 13: THE INVERSE ACKERMANN FUNCTION ****************
+******* SECTION 13: THE BINARY INVERSE ACKERMANN FUNCTION ****************
 ==========================================================================
  *)
 
@@ -69,7 +69,7 @@ Theorem bin_alpha_recursion :
             bin_alpha (S m) =
             compose (bin_countdown_to (bin_alpha m) 1) (bin_alpha m).
 Proof.
-  destruct m as [|[|[|m]]]; trivial; [omega|omega|intro]. clear H.
+  destruct m as [|[|[|m]]]; trivial; [omega | omega | intro]. clear H.
   apply functional_extensionality; intro n. unfold compose.
   simpl. rewrite N.div2_div.
   replace (n - 2) with (n + 2 - 2*2) by lia.
@@ -81,7 +81,7 @@ Proof.
   destruct m as [|p]; trivial.
   induction p; trivial;
     rewrite bin_countdown_recursion by apply bin_alpha_2_bin_contract;
-    rewrite N.div2_div; [remember (N.pos p~1) as m|remember (N.pos p~0) as m];
+    rewrite N.div2_div; [remember (N.pos p~1) as m | remember (N.pos p~0) as m];
       replace (m - 2 - 2) with (m - 2 * 2) by lia; rewrite div_sub by lia;
         rewrite <- N.log2_shiftr, <- N.div2_spec, N.div2_div;
         remember (m - 2 <=? 1) as b; destruct b; symmetry in Heqb.
@@ -142,9 +142,11 @@ Proof.
     by trivial.
   rewrite inv_ack.alpha_1. generalize (m - 2)%nat. clear m. intro n.
   assert (Nat.div2 n = countdown.countdown_to (fun n0 : nat => (n0 - 2)%nat) 1 n
-          /\ Nat.div2 (S n) = countdown.countdown_to (fun n0 : nat => (n0 - 2)%nat) 1 (S n)).
+          /\ Nat.div2 (S n) =
+             countdown.countdown_to (fun n0 : nat => (n0 - 2)%nat) 1 (S n)).
   { induction n; split; trivial. apply IHn.
-    destruct (countdown.countdown_recursion 1 (fun n0 => (n0-2)%nat) (S(S n))) as [_ H].
+    destruct (countdown.countdown_recursion 1
+                                            (fun n0 => (n0-2)%nat) (S(S n))) as [_ H].
     - split; intro m; omega.
     - rewrite H by omega. replace (S(S n) - 2)%nat with n by omega.
       simpl. f_equal. apply IHn. }
@@ -243,15 +245,18 @@ Proof.
   unfold upp_inv_rel in Hack. intros n b [Hn Hnb].
   remember (N.to_nat (upp_inv (fun m : N => bin_ackermann m m) n)) as p.
   rewrite <- (Nat2N.id p) in Heqp. apply N2Nat.inj in Heqp.
-  assert (n <= bin_ackermann (N.of_nat p) (N.of_nat p)) as Hp0 by (apply Hack; lia).
+  assert (n <= bin_ackermann (N.of_nat p) (N.of_nat p)) as Hp0 by
+        (apply Hack; lia).
   destruct p as [|[|[|p]]].
-  1,2,3 : unfold N.of_nat in Heqp; unfold bin_ackermann in Hp0; simpl in Hp0; lia.
+  1,2,3 : unfold N.of_nat in Heqp; unfold bin_ackermann in Hp0;
+    simpl in Hp0; lia.
   assert (bin_ackermann (N.of_nat (S (S p))) (N.of_nat (S (S p))) < n) as Hp1
       by (rewrite N.lt_nge; rewrite <- Hack; lia).
-  assert (S (S p) < N.to_nat b)%nat as Hpb. { rewrite Nat.lt_nge. intro Hc.
-                                              inversion Hc as [Hc0|Hc1]. rewrite <- Hc0 in Hp1. rewrite N2Nat.id in Hp1. lia.
-                                              rewrite prelims.lt_S_le, lt_nat_N, N2Nat.id in H. apply Hincr in H. lia. }
-                                            rewrite (bin_inv_ack_wkr_intermediate p).
+  assert (S (S p) < N.to_nat b)%nat as Hpb.
+  { rewrite Nat.lt_nge. intro Hc.
+    inversion Hc as [Hc0|Hc1]. rewrite <- Hc0 in Hp1. rewrite N2Nat.id in Hp1. lia.
+    rewrite prelims.lt_S_le, lt_nat_N, N2Nat.id in H. apply Hincr in H. lia. }
+  rewrite (bin_inv_ack_wkr_intermediate p).
   - replace (N.to_nat b - p)%nat with (S (N.to_nat b - S p))%nat by omega.
     unfold bin_inv_ack_wkr.
     replace (bin_alpha (S (S (S p))) n <=? N.of_nat (S (S (S p)))) with true; trivial.

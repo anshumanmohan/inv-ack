@@ -107,9 +107,3 @@ Definition two_params_bin_inv_ack (m n : N) : N :=
   let f := (fun x => x - 2) in
     let n' := (N.log2_up n) in
     1 + two_params_bin_inv_ack_wkr f (f n') (N.div m n) (nat_size n).
-
-(* Move to test later. *)
-Definition bignum := 2^2^2^2^2.
-Definition bignum2 := bignum^2.
-Time Compute (bin_inv_ack bignum).
-Time Compute (bin_inv_ack bignum2).

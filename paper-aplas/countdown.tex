@@ -136,20 +136,20 @@ Another useful result is the recursive formula for \emph{countdown}:
 	$\forall a\in \mathbb{N}$ and $f\in \contract_{a}$, $\cdt{f}{a}$ satisfies:
 	\begin{equation*}
 	\cdt{f}{a}(n) = \begin{cases}
-	0 & \text{ if } n \le a \\ 1 + \cdt{f}{a}(f(n)) & \text{ if } n \ge a + 1
+	0 & \text{ if } n \le a \\ 1 + \cdt{f}{a}(f(n)) & \text{ if } n > a 
 	\end{cases}
 	\end{equation*}
 \end{thm}
 \begin{proof}
 When $n \le a$, use Corollary~\ref{col: cdt-repeat} as follows:
 $n = f^{(0)}(n)\le a \iff \cdt{f}{a}(n)\le 0$.
-When $n\ge a+1$, proceed by antisymmetry.
+When $n > a$, proceed by antisymmetry.
 Define $m \triangleq \cdt{f}{a}(f(n))$, and note that
 Corollary~\ref{col: cdt-repeat} gives
 $\cdt{f}{a}(n)\le 1+m \iff f^{(1+m)}(n) \le a$.
 Next, a simple expansion of the last clause gives $f^{(m)}(f(n)) \le a$,
 and unfolding the definition of~$m$ shows that this last clause is true.
-Now since $n\ge a+1$, we have $\cdt{f}{a}(n)\ge 1$ by the above.
+Now since $n > a$, we have $\cdt{f}{a}(n)\ge 1$ by the above.
 Define $p \triangleq \cdt{f}{a}(n) - 1$.
 It remains to show $\cdt{f}{a}(f(n))\le p \Rightarrow 
 \linebreak f^{(p)}(f(n))\le a \Rightarrow f^{(p+1)}(n)\le a$, which holds by unfolding $p$'s definition.

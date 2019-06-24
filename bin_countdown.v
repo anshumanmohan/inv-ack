@@ -7,27 +7,28 @@ Require Import Nnat.
 Require Import bin_prelims.
 Require countdown.
 
+
 (*
 ==================================================================================
-**** SECTION 9: BINARY INCREASING FUNCTIONS, UPPER INVERSE AND EXPANSIONS ********
-================-=================================================================
+***************************** SECTION 11: COUNTDOWN  *****************************
+==================================================================================
  *)
 
 (* 
- * We explore how to compute inverse of a function's repeater solely from the 
- * function's own inverse, without directly computing the repeater itself.
- * The first lemma addresses this.
+ * In Section 4 (inverse.v) 
+ * we explored how to compute inverse of a function's repeater 
+ * solely from the function's own inverse, without directly computing the 
+ * repeater itself. The first lemma addresses this.
  *
  * We base the definition of "contractions" and "countdown" on this observation.
  * We also give a computation for countdown and prove several useful results 
  * about it. 
- *)
-
-(* 
+ *
  * The inverse of (repeater_from a F) is the minimum number of applications
  * of (inverse F) to the input to get a result less than or equal to a.
  *  This serves as motivation to contractions and countdown 
  *)
+
 
 Open Scope N_scope.
 

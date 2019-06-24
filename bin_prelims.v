@@ -16,13 +16,14 @@ Open Scope N_scope.
 =============================================================================
  *)
 
-(* The files named "bin_" constitue a parallel development of our
- * techniques, working in Coq's binary type N, as described in Section 6.
- *)
-
 (* 
  * This file contains recurrently useful results and definitions
- * that are used throughout the subsequent files 
+ * that are used throughout the subsequent files.
+ *
+ * We first discuss conversions between N (binary) and nat (unary) and 
+ * vice-versa.
+ * 
+ * Next, we present increasing functions when inputs are in N.
  *)
 
 Lemma le_antisym: forall m n : N, (m <= n) -> (n <= m) -> (m = n).

@@ -4,15 +4,11 @@ Require Import repeater.
 
 (*
 =============================================================================
-******* SECTION 3: INCREASING FUNCTIONS, UPPER INVERSE AND EXPANSIONS *******
+************* SECTION 3: INCREASING FUNCTIONS AND EXPANSIONS ****************
 =============================================================================
  *)
 
 (* 
- * We introduce "upper inverses" (upp_inv), and increasing functions 
- * and explain why we prefer to consider inverses of increasing functions only.
- * We prove several useful results about upper inverse and increasing functions.
- *
  * We introduce expansions and show how they are connected to 
  * increasing functions through repeater.
  * 
