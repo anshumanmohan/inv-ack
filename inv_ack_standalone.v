@@ -1,6 +1,6 @@
 Require Import Omega Program.Basics BinNat.
 
-(* ********** COUNTDOWN AND INVERSE ACKERMANN ON NAT ********** *)
+(* ********** COUNTDOWN AND INVERSE ACKERMANN ON nat (UNARY)  ********** *)
 
 (* Countdown worker function *)
 Fixpoint cdn_wkr (f : nat -> nat) (a n k : nat) : nat :=
@@ -44,6 +44,8 @@ Definition two_params_inv_ack (m n : nat) : nat :=
   let f := (fun x => x - 2) in
     let n' := (Nat.log2_up n) in
       1 + two_params_inv_ack_wkr f (f n') (Nat.div m n) n'.
+
+
 
 
 (* ********** COUNTDOWN AND INVERSE ACKERMANN ON N (BINARY) ********** *)

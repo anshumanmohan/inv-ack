@@ -41,9 +41,11 @@ bin_applications.vo: applications.vo bin_prelims.vo bin_inverse.vo bin_applicati
 bin_inv_ack.vo: inv_ack.vo bin_prelims.vo bin_repeater.vo bin_countdown.vo bin_inverse.vo bin_inv_ack.v
 	$(CC) bin_inv_ack.v
 
-.PHONY: paper
-paper:
-	cd paper; pdflatex inv-ack.tex; cd -
+.PHONY: test
+test:
+	ocamlc test_runtime_ocaml.ml -o test && ./test;
+	ocamlc bin_test_runtime_ocaml.ml -o test && ./test;
+	
 	
 .PHONY: clean
 clean:
