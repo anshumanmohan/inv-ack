@@ -129,18 +129,18 @@ are simpler than subtraction, division, and logarithm. Similarly, defining multi
 \begin{tabular}{@{}l@{}@{\qquad \qquad}l}
 \begin{lstlisting}
 Fixpoint mult a b :=
- match a with
- | 0 => 0
- | S a' => b + mult a' b
- end.
+  match a with
+  | 0 => 0
+  | S a' => b + mult a' b
+  end.
 \end{lstlisting}
 &
 \begin{lstlisting}
 Fixpoint div a b :=
- match a with
- | 0 => 0
- | _ => 1 + div (a - b) b
- end.
+  match a with
+  | 0 => 0
+  | _ => 1 + div (a - b) b
+  end.
 \end{lstlisting}
 \end{tabular} \\[5pt]
 \end{minipage}

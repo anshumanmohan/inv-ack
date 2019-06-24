@@ -4,8 +4,8 @@ the Ackermann function.
 The first hyperoperation (level 0) is simply successor, and
 every hyperoperation that follows is the repeated application of the previous.
 Level 1 is thus addition, and $b$ repetitions of addition
-gives level 2: multiplication. Next, $b$ repetitions of
-multiplication gives exponentiation, which is level 3.
+gives level 2, multiplication. Next, $b$ repetitions of
+multiplication gives level 3, exponentiation.
 There is a subtlety here: in the former case, we add $a$
 repeatedly to an \emph{initial value}, which should be the additive identity $0$.
 In the latter case, we multiply $a$ repeatedly to an initial value, which
@@ -43,8 +43,9 @@ input~$u$; $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times yields the identity)
 
 This insight helps us encode hyperoperations~(\ref{eq:hyper}) and
 Ackermann~(\ref{eq:ackermann}) in Coq.  Notice that the recursive case of hyperoperations --- and
-indeed, the third case of Ackermann --- is hard to encode in Coq due to
-deep nested recursion.  In the outer recursive call, the first argument is shrinking
+indeed, the third case of Ackermann --- feature deep nested recursion, 
+which makes our task tricky. 
+In the outer recursive call, the first argument is shrinking
 but the second is expanding explosively; in the inner recursive call, the first argument is
 constant but the second is shrinking. The elegant solution uses double recursion~\cite{bertotcast} as follows:
 \begin{lstlisting}
@@ -74,14 +75,14 @@ constant but the second is shrinking. The elegant solution uses double recursion
 Coq is satisfied since both recursive calls are on structurally smaller arguments.
 Moreover, our encoding makes the structural similarities
  readily apparent.  In fact, the only essential difference is the initial values
-(the second case of both definitions): the Ackermann function uses $\Ack(n-1,1)$, whereas
+(\emph{i.e.} the second case of both definitions): the Ackermann function uses $\Ack(n-1,1)$, whereas
 hyperoperations use the initial values given in Equation~\ref{eq:hyper}.
 
 Having noticed that the deep recursion in both notions is expressing the same idea
 of repeated application, we arrive at another useful idea. We can express the relationship
 between the $(\text{n+1})^{\text{th}}$ and $\text{n}^{\text{th}}$ levels in
 a \emph{functional} way via a higher-order function that transforms the latter level
-to the former. We employ a version of the well-known function iterator
+to the former. For this we employ a version of the well-known function iterator
 \li{iter}~\cite{bertotcast}:
 \begin{defn}
 $\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
@@ -100,7 +101,7 @@ a[n]b ~ \triangleq ~ \begin{cases}
 b + 1 & \text{when } n = 0 \\
 \rf{a[n-1]}{a_{n-1}}(b) & \text{otherwise}
 \end{cases}
-\qquad \text{ where } \ a_n ~ \triangleq ~ \begin{cases}
+\quad \text{ where } \ a_n ~ \triangleq ~ \begin{cases}
 a & \text{when } n = 0 \\
 0 & \text{when } n = 1 \\
 1 & \text{otherwise}
