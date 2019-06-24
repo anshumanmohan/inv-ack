@@ -42,8 +42,8 @@ where $f^{(k)}(u) \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ co
 input~$u$; $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times yields the identity).
 
 This insight helps us encode hyperoperations~(\ref{eq:hyper}) and
-Ackermann~(\ref{eq:ackermann}) in Coq.  Notice that the recursive case of hyperoperations--and
-indeed, the third case of Ackermann--is troublesome to encode in Coq due to
+Ackermann~(\ref{eq:ackermann}) in Coq.  Notice that the recursive case of hyperoperations --- and
+indeed, the third case of Ackermann --- is hard to encode in Coq due to
 deep nested recursion.  In the outer recursive call, the first argument is shrinking
 but the second is expanding explosively; in the inner recursive call, the first argument is
 constant but the second is shrinking. The elegant solution uses double recursion~\cite{bertotcast} as follows:

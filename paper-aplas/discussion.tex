@@ -44,6 +44,8 @@ it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 \begin{thm}
 	$\displaystyle \ackt(m, n) = 1 + \ackt^{\W}\left(\alpha_1, \alpha_1\big(\lceil\log_2n \rceil\big), \left\lfloor \frac{m}{n} \right\rfloor, \lceil\log_2n \rceil \right)$.
 \end{thm}
+We mechanize the above for both \note{unary} and \note{binary} inputs in our codebase.
+
 \hide{
 	\begin{proof}[Proof Sketch]
 		It is easy to prove in a similar fashion to \cref{lem: inv-ack-worker-intermediate} that for all $n, b, k$ and $i$, if $\alpha_i(n) > k$ and $b > i$, then

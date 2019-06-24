@@ -55,7 +55,7 @@ and it is her variant, usually called the Ackermann-Péter function,
 that computer scientists commonly care about.
 
 %\marginpar{\tiny \color{blue}implemented with }
-The inverse Ackermann
+\note[triple check their bounds]{The inverse Ackermann
 features in the time bound analyses of several algorithms.
 Tarjan \cite{tarjan} showed that the union-find data structure
 takes time $O(m\cdot\alpha(m,n))$ for a sequence of $m$ operations
@@ -66,13 +66,13 @@ involving no more than $n$ elements.
 %involving no more than $n$ elements.
 Chazelle \cite{chazelle} showed that the minimum spanning tree
 of a connected graph with $n$ vertices and $m$ edges
-can be found in time $O(m\cdot\alpha(m,n))$.
+can be found in time $O(m\cdot\alpha(m,n))$.}
 
 % http://gallium.inria.fr/~fpottier/publis/chargueraud-pottier-uf-sltc.pdf
 % http://gallium.inria.fr/~agueneau/publis/gueneau-chargueraud-pottier-coq-bigO.pdf
 % https://scholar.google.com.sg/scholar?start=0&hl=en&as_sdt=2005&sciodt=0,5&cites=6488308509111085774&scipsc=
-Gu\'eneau \emph{et al.}
-verified the time complexity of union-find in Coq~\cite{gueneauetal}.
+Chargu\'eraud and Pottier~\cite{charpott}
+verified the time complexity of union-find in Coq.
 They formalized a version of the Ackermann function, but not its inverse.
 %Others \cite{others2,others4,others3,others1}
 %have also checked bounds on the resources
