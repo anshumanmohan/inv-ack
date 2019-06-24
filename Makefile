@@ -43,8 +43,8 @@ bin_inv_ack.vo: inv_ack.vo bin_prelims.vo bin_repeater.vo bin_countdown.vo bin_i
 
 .PHONY: test
 test:
-	ocamlc test_runtime_ocaml.ml -o test && ./test;
-	ocamlc bin_test_runtime_ocaml.ml -o test && ./test;
+	ocamlc test_runtime_ocaml.ml -o test && ./test; 
+	ocamlc bin_test_runtime_ocaml.ml -o test && ./test
 	
 	
 .PHONY: clean
