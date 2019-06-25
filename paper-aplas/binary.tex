@@ -170,10 +170,14 @@ The inverse Ackermann has an extra hardcoded level.
 %             else let f := (bin_alpha 3) in
 %                  bin_inv_ack_worker f (f n) 3 (nat_size n).
 \noindent Note that, for $n > 7$, $n < \Ack\big(\lfloor \log_2n \rfloor + 1\big)$ $= \Ack\big(\li{nat_size}(n)\big)$, so a budget of $\li{nat_size}(n)$ suffices.
-We prove the correctness of \li{bin_inv_ack} in our codebase, and
-give a tidy standalone Coq definition in Appendix~\ref{apx:code_n}.
-As in Theorem~\ref{thm: inv-ack-hardcode-correct}, we show the time complexity
-by summing the runtime of each component:
+We show the
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L437-L472}
+{correctness} and
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_test.v#L14-L26}
+{speed}
+of \li{bin_inv_ack} in our codebase, and
+give a standalone Coq definition in Appendix~\ref{apx:code_n}.
+As in Theorem~\ref{thm: inv-ack-hardcode-correct}, the time complexity is the sum of each component's runtime:
 \begin{equation*}
 \runtime_\alpha(n) =
 \begin{aligned}
