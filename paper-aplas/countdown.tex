@@ -27,7 +27,7 @@ Even if $F$ strictly increases, as $a[n]$ does for every $a\ge 2$, notice that t
 Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower inverses in \cref{sec: discussion}.
 }%end hide
 \begin{thm}[a Galois connection] \label{thm: upp-inverse-rel}
-	If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L65-L77}{\coq} If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
 \end{thm}
 \begin{proof}
 Fix $n$. The sentence $\forall m.~ f(n)\le m \iff n\le F(m)$ implies: (1) $f(n)$ is a lower bound to $\{m: n \le F(m)\}$ and (2) $f(n)$ is itself in the set, since plugging in $m \triangleq f(n)$ yields $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we know $\forall m.~n\le F(m)\Rightarrow f(n)\le m$. Now, $\forall m \ge f(n)$.~$F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus completing the proof.

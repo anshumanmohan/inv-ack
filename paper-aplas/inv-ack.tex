@@ -4,7 +4,7 @@
 \usepackage{amsmath}
 %% The amsthm package provides extended theorem environments
 
-%\usepackage{amsthm}
+% \usepackage{amsthm}
 % AM commented out because it clashes with proof, etc
 
 %% The lineno packages adds line numbers. Start line numbering with
@@ -22,6 +22,9 @@
 \usepackage{stmaryrd}
 \usepackage{hyperref}
 %\usepackage{cleveref}
+\usepackage{hieroglf}
+\usepackage{scalerel}
+
 
 \hypersetup{ % play with these to change the look of hyperlinks
     colorlinks=true,
@@ -30,6 +33,8 @@
     urlcolor=blue,
     citecolor=black
 }
+
+\newcommand{\coq}{\scalebox{.6}{\textpmhg{\Ha}}}
 
 % required by LNCS
 \renewcommand\UrlFont{\color{blue}\rmfamily}
