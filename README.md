@@ -20,7 +20,9 @@ COQC bin_applications.v
 COQC bin_inv_ack.v
 ```
 
-In addition to this, we provide a minimal standalone file that demonstrates all the innovations we explain in the paper. This is `inv_ack_standalone.v`.
+In addition to this, we provide two minimal standalone files that show all our techniques independently of the rest of the development.
+- `inv_ack_standalone.v` independently demonstrates all our flavors of inverse Ackermann.
+- `inv_hyperop_standalone.v` does the same for the inverse hyperoperation hierarchy.
 
 We test the time bounds we claim in two ways. 
 - In `inv_ack_test.v`, we test our definitions in Gallina itself. We invite readers to open that file and click through it.

@@ -369,7 +369,7 @@ Lemma two_params_bin_inv_ack_wkr_intermediate :
 Proof.
   induction i; intros n k b Hin Hib.
   - rewrite N.add_0_l. f_equal. omega.
-  - rewrite IHi. Search N.log2_up.
+  - rewrite IHi.
     2: apply (N.lt_le_trans _ (bin_alpha (S (S (S i))) n) _ Hin),
                bin_alpha_decr_by_lvl. 
     2: omega.

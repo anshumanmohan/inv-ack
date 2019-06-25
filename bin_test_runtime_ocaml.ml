@@ -335,15 +335,15 @@ let bin_inv_ack n0 =
 let bignum1 =
   N.pow (Npos (XO XH)) (N.pow (Npos (XO XH)) (N.pow (Npos (XO XH)) (Npos (XO XH))))
 
-(* 4.3e9 *)
+(* 4.3 x 10^9 *)
 let bignum2 =
   N.pow bignum1 (Npos (XO XH))
 
-(* 2.0e19728 *)
+(* 2.0 x 10^19728 *)
 let bignum3 =
   N.pow (Npos (XO XH)) bignum1
 
-(* 4.0e39456 *)  
+(* 4.0x 10^39456 *)  
 let bignum4 =
   N.pow bignum3 (Npos (XO XH))
 
@@ -354,6 +354,6 @@ let time n f x =
 
 print_string "\nFor values encoded in binary: \n";;
 time "65536" bin_inv_ack bignum1;;
-time "4.3e9" bin_inv_ack bignum2;;
-time "2.0e19728" bin_inv_ack bignum3;;
-time "4.0e39456" bin_inv_ack bignum4;;
+time "4.3x10^9" bin_inv_ack bignum2;;
+time "2x10^19728" bin_inv_ack bignum3;;
+time "4x10^39456" bin_inv_ack bignum4;;
