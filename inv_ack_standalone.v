@@ -1,6 +1,6 @@
 Require Import Omega Program.Basics BinNat.
 
-(* ********** COUNTDOWN AND INVERSE ACKERMANN ON nat (UNARY)  ********** *)
+(* ***** UNARY  ***** *)
 
 (* Countdown worker function *)
 Fixpoint cdn_wkr (f : nat -> nat) (a n k : nat) : nat :=
@@ -12,6 +12,21 @@ Fixpoint cdn_wkr (f : nat -> nat) (a n k : nat) : nat :=
 
 (* Countdown *)
 Definition countdown_to f a n := cdn_wkr f a n n.
+
+(* Two parameters Inverse Ackerman worker function *)
+Fixpoint two_params_inv_ack_wkr (f : nat -> nat) (n k b : nat) : nat :=
+  match b with
+  | 0    => 0
+  | S b' => if (n <=? k) then 0
+              else let g := (countdown_to f 1) in
+                   S (two_params_inv_ack_wkr (compose g f) (g n) k b')
+  end.
+
+(* Two parameters Inverse Ackermann function *)
+Definition two_params_inv_ack (m n : nat) : nat :=
+  let f := (fun x => x - 2) in
+    let n' := (Nat.log2_up n) in
+      1 + two_params_inv_ack_wkr f (f n') (m / n) n'.
 
 (* Inverse Ackermann worker function *)
 Fixpoint inv_ack_wkr (f : nat -> nat) (n k b : nat) : nat :=
@@ -30,26 +45,9 @@ Definition inv_ack_linear n :=
   | _     => let f := (fun x => x - 2) in inv_ack_wkr f (f n) 1 (n - 1)
   end.
 
-(* Two parameters Inverse Ackerman worker function *)
-(* Two parameters Inverse Ackerman worker function *)
-Fixpoint two_params_inv_ack_wkr (f : nat -> nat) (n k b : nat) : nat :=
-  match b with
-  | 0    => 0
-  | S b' => if (n <=? k) then 0
-              else let g := (countdown_to f 1) in
-                   S (two_params_inv_ack_wkr (compose g f) (g n) k b')
-  end.
-
-(* Two parameters Inverse Ackermann function *)
-Definition two_params_inv_ack (m n : nat) : nat :=
-  let f := (fun x => x - 2) in
-    let n' := (Nat.log2_up n) in
-      1 + two_params_inv_ack_wkr f (f n') (m / n) n'.
 
 
-
-
-(* ********** COUNTDOWN AND INVERSE ACKERMANN ON N (BINARY) ********** *)
+(* ***** BINARY ***** *)
 
 Open Scope N_scope.
 
@@ -74,27 +72,8 @@ Fixpoint bin_cdn_wkr (f : N -> N) (a n : N) (b : nat) : N :=
   end.
 
 (* Countdown *)
-Definition bin_countdown_to (f : N -> N) (a n : N) : N
-  := bin_cdn_wkr f a n (nat_size (n - a)).
-
-(* Inverse Ackermann worker function *)
-Fixpoint bin_inv_ack_wkr (f : N -> N) (n k : N) (b : nat) : N :=
-  match b with
-  | 0%nat  => k
-  | S b' =>
-    if n <=? k then k
-      else let g := (bin_countdown_to f 1) in
-      bin_inv_ack_wkr (compose g f) (g n) (N.succ k) b'
-  end.
-
-(* Inverse Ackermann function *)
-(* Definition by hard-coding up to the fourth bin_alpha level, runtime O(log n) *)
-Definition bin_inv_ack n :=
-  if (n <=? 1) then 0
-  else if (n <=? 3) then 1
-  else if (n <=? 7) then 2
-  else let f := (fun x => N.log2 (x + 2) - 2) in
-        bin_inv_ack_wkr f (f n) 3 (nat_size n).
+Definition bin_countdown_to (f : N -> N) (a n : N) : N :=
+  bin_cdn_wkr f a n (nat_size (n - a)).
 
 (* Two parameters Inverse Ackerman worker function *)
 Fixpoint two_params_bin_inv_ack_wkr (f : N -> N) (n k : N) (b : nat) : N :=
@@ -110,3 +89,25 @@ Definition two_params_bin_inv_ack (m n : N) : N :=
   let f := (fun x => x - 2) in
     let n' := (N.log2_up n) in
     1 + two_params_bin_inv_ack_wkr f (f n') (N.div m n) (nat_size n).
+
+(* Inverse Ackermann worker function *)
+Fixpoint bin_inv_ack_wkr (f : N -> N) (n k : N) (b : nat) : N :=
+  match b with
+  | 0%nat  => k
+  | S b' =>
+    if n <=? k then k
+      else let g := (bin_countdown_to f 1) in
+      bin_inv_ack_wkr (compose g f) (g n) (N.succ k) b'
+  end.
+
+(* Inverse Ackermann function. 
+ * Definition by hard-coding up to the fourth bin_alpha level, 
+ * runtime O(log n) up to the magnitude of n 
+ * equivalent to O(b) where b = bitsize of n 
+ *)
+Definition bin_inv_ack n :=
+  if (n <=? 1) then 0
+  else if (n <=? 3) then 1
+  else if (n <=? 7) then 2
+  else let f := (fun x => N.log2 (x + 2) - 2) in
+        bin_inv_ack_wkr f (f n) 3 (nat_size n).

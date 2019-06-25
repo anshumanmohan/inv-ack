@@ -20,7 +20,7 @@ COQC bin_applications.v
 COQC bin_inv_ack.v
 ```
 
-In addition to this, we provide a minimal standalone file that demonstrates all the innovations we explain in the paper. This is `inv_ack_standalone.v`.
+In addition to this, we provide a minimal standalone file that demonstrates all the flavors of inverse Ackermann that we explain in the paper. This is `inv_ack_standalone.v`.
 
 We test the time bounds we claim in two ways. 
 - In `inv_ack_test.v`, we test our definitions in Gallina itself. We invite readers to open that file and click through it.
