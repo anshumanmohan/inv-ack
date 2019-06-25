@@ -1,4 +1,4 @@
-Require Import Omega Program.Basics BinNat.
+Require Import Omega Program.Basics.
 
 (* ***** UNARY  ***** *)
 
@@ -110,4 +110,6 @@ Definition bin_inv_ack n :=
   else if (n <=? 3) then 1
   else if (n <=? 7) then 2
   else let f := (fun x => N.log2 (x + 2) - 2) in
-        bin_inv_ack_wkr f (f n) 3 (nat_size n).
+       bin_inv_ack_wkr f (f n) 3 (nat_size n).
+
+Close Scope N_scope.
