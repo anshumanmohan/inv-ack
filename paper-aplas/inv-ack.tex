@@ -222,11 +222,12 @@
 \vspace{-2em}
 We implement in Gallina a hierarchy of functions that calculate
 the upper inverses to the hyperoperation/Ackermann hierarchy.
-We show that our functions run in $\bigO(b)$ for inputs expressed
-in both unary and binary ($b$ = bitlength). We use our inverses
-to define linear-time functions that compute the upper inverse of the diagonal
-Ackermann \linebreak[3] function~$\Ack(n)$ and show that these functions are consistent with the usual definition of the inverse
-Ackermann function~$\alpha(n)$.
+Our functions run in $\Theta(b)$ for inputs expressed
+in unary, and $\bigO(b^2)$ for inputs expressed in binary ($b$ = bitlength).
+We use our inverses to define linear-time functions---$\Theta(b)$ for both unary- 
+and binary-represented inputs---that compute the upper inverse of the 
+diagonal Ackermann %\linebreak[3]
+function~$\Ack(n)$ and show that these functions are consistent with the usual definition of the inverse Ackermann function~$\alpha(n)$.
 \keywords{Ackermann  \and hyperoperations \and Coq}
 \end{abstract}
 

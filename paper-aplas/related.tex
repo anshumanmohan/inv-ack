@@ -20,7 +20,7 @@ been integral to counting forever. The ancient Egyptian
 number system used glyphs denoting $1$, $10$, $100$, \emph{etc.},
 and expressed numbers using additive combinations of these.
 The Roman system is similar, but
-it combines glyphs using both addition and subtraction. 
+it combines glyphs using both addition and subtraction.
 This buys brevity and readability,
 since \emph{e.g.} $9_{\text{roman}}$ is two characters, ``one less than ten'',
 and not a series of nine $1$s.
@@ -84,9 +84,12 @@ They formalized a version of the Ackermann function, but not its inverse.
 \subsection{Conclusion}
 We have implemented a hierarchy of functions that calculate the upper inverses
 to the hyperoperation/Ackermann hierarchy and used these inverses
-to compute the inverse of the diagonal Ackermann function $\Ack(n)$.
-Our functions run in $O(b)$ time ($b$=bitlength) on both unary- and 
-binary-represented inputs.  Our functions are structurally recursive, 
+to compute the inverse of the diagonal Ackermann function~$\Ack(n)$.
+Our functions run in~$\Theta(b)$ time on unary-represented inputs.  On
+binary-represented inputs, our \mbox{base-2} hyperoperations and inverse Ackermann
+run in~$\Theta(b)$ time as well, where~$b$ is bitlength; our general binary 
+hyperoperations run in~$O(b^2)$.
+Our functions are structurally recursive,
 and thus easily satisfy Coq's termination checker.
 
 Every pearl starts with a grain of sand.  We had the benefit of two:
