@@ -99,7 +99,7 @@ Definition bin_inv_ack n :=
 (* Two parameters Inverse Ackerman worker function *)
 Fixpoint two_params_bin_inv_ack_wkr (f : N -> N) (n k : N) (b : nat) : N :=
   match b with
-  | 0%nat => k
+  | 0%nat => 0
   | S b'  => if (n <=? k) then 0
               else let g := (bin_countdown_to f 1) in
                    N.succ (two_params_bin_inv_ack_wkr (compose g f) (g n) k b')

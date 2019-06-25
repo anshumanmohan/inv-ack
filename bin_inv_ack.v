@@ -97,7 +97,7 @@ Proof.
   1, 2: rewrite N.leb_gt in Heqb; rewrite N.add_comm, <- IHp;
     symmetry; apply N.sub_add;
       rewrite N.le_ngt, N.lt_1_r, N.log2_null, <- N.lt_succ_r;
-      simpl; rewrite <- N.le_ngt, le_div_mul by lia; lia.
+      simpl; rewrite <- N.le_ngt, le_div_mul_N by lia; lia.
 Qed.
 
 
@@ -272,19 +272,23 @@ Open Scope nat_scope.
 
 Lemma ack_2 : forall n, repeater.ackermann 2 n = 2 * n + 3.
 Proof.
-  induction n; trivial. replace (repeater.ackermann 2 (S n)) with
-                            (repeater.ackermann 1 (repeater.ackermann 2 n)) by trivial.
+  induction n; trivial.
+  replace (repeater.ackermann 2 (S n)) with
+             (repeater.ackermann 1 (repeater.ackermann 2 n)) by trivial.
   rewrite IHn. rewrite inv_ack.ack_1. omega.
 Qed.
 
 Lemma ack_3 : forall n, repeater.ackermann 3 n = 2 ^ (n + 3) - 3.
 Proof.
-  induction n; trivial. replace (repeater.ackermann 3 (S n)) with
-                            (repeater.ackermann 2 (repeater.ackermann 3 n)) by trivial.
-  rewrite IHn. rewrite ack_2. replace (S n + 3) with (S (n + 3)) by trivial.
+  induction n; trivial.
+  replace (repeater.ackermann 3 (S n)) with
+            (repeater.ackermann 2 (repeater.ackermann 3 n)) by trivial.
+  rewrite IHn. rewrite ack_2.
+  replace (S n + 3) with (S (n + 3)) by trivial.
   replace (2 ^ (S (n+3))) with (2 * 2 ^ (n+3)) by trivial.
-  assert (3 <= 2 ^ (n+3)). { apply (Nat.le_trans _ (2^3) _); [simpl; omega|].
-                             apply Nat.pow_le_mono_r; omega. } omega.
+  assert (3 <= 2 ^ (n+3)).
+  { apply (Nat.le_trans _ (2^3) _); [simpl; omega|].
+    apply Nat.pow_le_mono_r; omega. } omega.
 Qed.
 
 Close Scope nat_scope.
@@ -311,11 +315,12 @@ Proof.
       rewrite ack_3. destruct n; simpl; [lia|].
       induction p; [| |simpl; lia]; simpl;
         [rewrite Pos2Nat.inj_xI|rewrite Pos2Nat.inj_xO];
-        assert (3 <= 2 ^ ((fix nat_pos_size (x : positive) : nat :=
-                             match x with
-                             | (y~1)%positive | (y~0)%positive => S (nat_pos_size y)
-                             | 1%positive => 1
-                             end) p + 3))%nat
+        assert (3 <=
+          2 ^ ((fix nat_pos_size (x : positive) : nat :=
+                 match x with
+                 | (y~1)%positive | (y~0)%positive => S (nat_pos_size y)
+                 | 1%positive => 1
+                 end) p + 3))%nat
           by (apply (Nat.le_trans _ (2^3) _); [simpl; omega|];
               apply Nat.pow_le_mono_r; omega); omega.
     + rewrite <- le_nat_N. rewrite Nat.le_ngt.
@@ -323,4 +328,111 @@ Proof.
       apply (increasing_expanding.incr_twoways _ (nat_size n) 3) in H.
       simpl in *. rewrite <- H. apply nat_size_incr in Hn.
       simpl in Hn. omega.
+Qed.
+
+(* ********* TWO PARAMETERS INVERSE ACKERMANN ************* *)
+
+(* Two parameters Binary Inverse Ackerman worker function *)
+Fixpoint two_params_bin_inv_ack_wkr (f : N -> N) (n k : N) (b : nat) : N :=
+  match b with
+  | 0%nat => 0
+  | S b'  => if (n <=? k) then 0
+              else let g := (bin_countdown_to f 1) in
+                   N.succ (two_params_bin_inv_ack_wkr (compose g f) (g n) k b')
+  end.
+
+(* Two parameters Binary Inverse Ackermann function *)
+Definition two_params_bin_inv_ack (m n : N) : N :=
+  let n' := (N.log2_up n) in
+    let m' := m / n in
+      if (n' - 2 <=? m') then 1
+        else if (N.div2 (n' - 2) <=? m') then 2
+          else let f := (fun x => N.log2 (x + 2) - 2) in
+            3 + two_params_bin_inv_ack_wkr f (f n') m' (nat_size n).
+
+(* Correctness proofs begin here *)
+
+(* Small helper lemma - alpha decreases by level *)
+Lemma bin_alpha_decr_by_lvl : forall i n, bin_alpha (S i) n <= bin_alpha i n.
+Proof.
+  intros i n. repeat rewrite bin_alpha_correct.
+  unfold to_N_func. rewrite <- le_nat_N.
+  apply inv_ack.alpha_decr_by_lvl.
+Qed.
+
+(* Lemma about worker function's inner working *)
+Lemma two_params_bin_inv_ack_wkr_intermediate :
+    forall i n k b, k < bin_alpha (S (S i)) n -> (i <= b)%nat ->
+      two_params_bin_inv_ack_wkr (bin_alpha 3) (bin_alpha 3 n) k b =
+        N.of_nat i + two_params_bin_inv_ack_wkr
+              (bin_alpha (S (S (S i)))) (bin_alpha (S (S (S i))) n) k (b - i).
+Proof.
+  induction i; intros n k b Hin Hib.
+  - rewrite N.add_0_l. f_equal. omega.
+  - rewrite IHi. Search N.log2_up.
+    2: apply (N.lt_le_trans _ (bin_alpha (S (S (S i))) n) _ Hin),
+               bin_alpha_decr_by_lvl. 
+    2: omega.
+    unfold two_params_bin_inv_ack_wkr at 1.
+    replace (b - i)%nat with (S (b - (S i)))%nat by omega.
+    rewrite <- N.leb_gt in Hin. rewrite Hin.
+    fold two_params_bin_inv_ack_wkr.
+    rewrite <- N.add_succ_comm. f_equal. lia.
+Qed.
+
+(* Upper Inverse theorem for two_params_inv_ack worker *)
+Theorem two_params_bin_inv_ack_upp_inv :
+    forall m n, two_params_bin_inv_ack m n =
+      1 + upp_inv (fun x => bin_ackermann (N.succ x) (m / n)) (N.log2_up n).
+Proof.
+  intros m n. unfold two_params_bin_inv_ack.
+  remember (N.log2_up n) as b. remember (m / n) as a.
+  fold (bin_alpha 2 b). fold (bin_alpha 1 b). fold (bin_alpha 3 b).
+  assert (increasing (fun x : N => bin_ackermann (N.succ x) a)) as HF.
+  { unfold increasing. intros x y. repeat rewrite bin_ackermann_correct.
+    rewrite <- lt_nat_N. repeat rewrite N2Nat.inj_succ.
+    rewrite lt_N_nat, Nat.succ_lt_mono. apply inv_ack.ack_incr_by_lvl.
+  }
+  assert (N.to_nat b <= nat_size n)%nat as Hb.
+  { rewrite Heqb, nat_size_log2_up, <- le_N_nat.
+    apply N.log2_up_le_mono. lia. }
+  remember (nat_size n) as t. clear Heqb Heqa Heqt m n.
+  remember (upp_inv (fun x : N => bin_ackermann (N.succ x) a) b) as q.
+  assert (upp_inv_rel (upp_inv (fun x : N => bin_ackermann (N.succ x) a))
+          (fun x : N => bin_ackermann (N.succ x) a)) as HfF.
+  { apply upp_inv_correct, HF. }
+  assert (bin_alpha (S (N.to_nat q)) b <= a) as Hq.
+  { apply bin_alpha_ackermann.
+    replace (N.of_nat _) with (N.succ q) by lia. apply HfF. lia. }
+  remember (N.to_nat q) as p. replace q with (N.of_nat p) in * by lia.
+  clear Heqp q. destruct p.
+  - rewrite <- N.leb_le in Hq. rewrite Hq. trivial.
+  - assert (a < bin_alpha (S p) b) as Hp.
+    { rewrite N.lt_nge, (bin_alpha_ackermann (S p) a b), Nat2N.inj_succ.
+      rewrite <- (HfF (N.of_nat p) b). lia. }
+    destruct p.
+    + rewrite <- N.leb_gt in Hp. rewrite Hp.
+      rewrite <- N.leb_le in Hq. rewrite Hq. trivial.
+    + assert (a < bin_alpha 2 b <= bin_alpha 1 b) as H12.
+      { split; [|apply bin_alpha_decr_by_lvl].
+        apply (N.lt_le_trans _ (bin_alpha (S (S p)) b) _ Hp).
+        clear Hq Hp Heqq. induction p; [lia|].
+        apply (N.le_trans _ (bin_alpha (S (S p)) b) _).
+        apply bin_alpha_decr_by_lvl. apply IHp. }
+      destruct H12 as [H2 H1]. apply (N.lt_le_trans _ _ _ H2) in H1.
+      rewrite <- N.leb_gt in H1. rewrite <- N.leb_gt in H2.
+      rewrite H1, H2. fold (bin_alpha 3).
+      replace (1 + N.of_nat (S (S p))) with (3 + (N.of_nat p)) by lia.
+      f_equal. rewrite (two_params_bin_inv_ack_wkr_intermediate p _ _ _ Hp).
+      * rewrite <- N.add_0_r. f_equal.
+        destruct (t - p)%nat; trivial. rewrite <- N.leb_le in Hq.
+        unfold two_params_bin_inv_ack_wkr. rewrite Hq. trivial.
+      * apply (Nat.le_trans _ (N.to_nat b) _); trivial.
+        rewrite N.lt_nge, (bin_alpha_ackermann (S (S p)) a b),
+          <- N.lt_nge, lt_N_nat in Hp.
+        apply (Nat.le_trans _ (N.to_nat (bin_ackermann (N.of_nat (S (S p))) a)) _);
+        [|lia]. rewrite bin_ackermann_correct. repeat rewrite Nat2N.id.
+        clear Hq Heqq Hp. induction p; [omega|]. rewrite Nat.le_succ_l.
+        apply (Nat.le_lt_trans _ _ _ IHp).
+        apply inv_ack.ack_incr_by_lvl. omega.
 Qed.

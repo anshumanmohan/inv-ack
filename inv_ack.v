@@ -271,24 +271,20 @@ Qed.
 
 (* Correctness theorem for two_params_inv_ack *)
 Theorem two_params_inv_ack_correct :
-    forall m n p, two_params_inv_ack m n <= S p
-      <-> Nat.log2_up n <= ackermann (S p) (m / n).
+    forall m n, two_params_inv_ack m n =
+      1 + upp_inv (fun x => ackermann (S x) (m / n)) (Nat.log2_up n).
 Proof.
-  intros m n p. unfold two_params_inv_ack.
+  intros m n. unfold two_params_inv_ack.
   remember (Nat.log2_up n) as b. remember (m / n) as a.
   replace (b - 2) with (alpha 1 b) by (rewrite alpha_1; trivial).
-  rewrite <- alpha_1, <- Nat.succ_le_mono. clear Heqb Heqa m n.
+  rewrite <- alpha_1. f_equal. clear Heqb Heqa m n.
   remember (fun x => two_params_inv_ack_wkr (alpha 1) (alpha 1 x) a x) as f.
   replace (two_params_inv_ack_wkr (alpha 1) (alpha 1 b) a b)
     with (f b) by (rewrite Heqf; trivial).
   remember (fun x => ackermann (S x) a) as F.
-  replace (ackermann (S p) a) with (F p) by (rewrite HeqF; trivial).
   assert (increasing F) as HF.
   { intros x y. rewrite HeqF. rewrite Nat.succ_lt_mono.
     apply ack_incr_by_lvl. }
-  generalize dependent b. generalize dependent p.
-  fold (upp_inv_rel f F). rewrite upp_inv_unique by apply HF.
-  apply functional_extensionality. intro b.
   remember (upp_inv F b) as p. destruct p.
   - assert (alpha 1 b <= a) as Hab.
     { destruct (alpha_correct 1) as [_ H]. rewrite (H a b).
@@ -302,6 +298,7 @@ Proof.
     rewrite <- (H a b), <- Nat.lt_nge in Hp. rewrite Heqf.
     rewrite (two_params_inv_ack_wkr_intermediate (S p) _ _ _ Hp).
     unfold two_params_inv_ack_wkr. destruct (b - S p); [omega|].
+    replace (ackermann (S p) a) with (F p) by (rewrite HeqF; trivial).
     replace (alpha (S (S p)) b <=? a) with true; [omega|].
     symmetry. rewrite Nat.leb_le.
     destruct (alpha_correct (S (S p))) as [_ H1]. rewrite (H1 a b).

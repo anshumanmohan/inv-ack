@@ -86,12 +86,12 @@ Lemma repeat_bin_contract_strict :
 Proof.
   intros a f n k [Hf Haf] Han. induction k.
   - simpl in *. apply div2_nat_size; [lia|]. apply Haf in Han.
-    rewrite le_div_mul; [rewrite le_div_mul in Han|]; lia.
+    rewrite le_div_mul_N; [rewrite le_div_mul_N in Han|]; lia.
   - apply (Nat.le_trans _ (S k + nat_size (repeat f (S k) n - a)) _).
     + simpl in *. rewrite <- Nat.add_succ_r.
       rewrite <- Nat.succ_le_mono, <- Nat.add_le_mono_l.
       apply div2_nat_size; [lia|]. apply Haf in Han.
-      rewrite le_div_mul; [rewrite le_div_mul in Han|]; lia.
+      rewrite le_div_mul_N; [rewrite le_div_mul_N in Han|]; lia.
     + assert (a < repeat f k n) as Han0.
       * apply (N.lt_le_trans _ (repeat f (S k) n) _); [apply Han| apply Hf].
       * apply (IHk Han0).
@@ -135,7 +135,7 @@ Proof.
     + rewrite <- N.lt_succ_r. simpl. rewrite Hax.
       apply (N.le_lt_trans _ ((N.succ a + a) / 2) _).
       * apply Haf. lia.
-      * rewrite N.lt_nge. rewrite le_div_mul; lia.
+      * rewrite N.lt_nge. rewrite le_div_mul_N; lia.
     + intros k Hk. assert (repeat f k n <= N.succ a) as H by lia.
       apply Haxn in H. destruct H; [lia| omega].
 Qed.
