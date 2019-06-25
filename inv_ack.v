@@ -24,9 +24,13 @@ Require Import applications.
  * Then we define a structurally terminating definition for the inverse
  * Ackermann function, and prove its correctness using the above theorem.
  *
- * We state and prove the correctness of the time-bound improvement, 
- * which runs in linear time.
+ * We digress briefly to discuss the two-parameter inverse Ackermann
+ * function, which some authors prefer. 
+ *
+ * Finally, we state and prove the correctness of the time-bound improvement, 
+ * on the single-argument inverse Ackermann, which runs in linear time.
  *)
+
 
 (* ****** INVERSE ACKERMANN HIERARCHY ****** *)
 
@@ -144,16 +148,21 @@ Qed.
 
 Fixpoint inv_ack_wkr (f : nat -> nat) (n k b : nat) : nat :=
   match b with
-  | 0      => k
+  | 0    => k
   | S b' => if (n <=? k) then k
               else let g := (countdown_to f 1) in
                    inv_ack_wkr (compose g f) (g n) (S k) b'
   end.
 
-(* Original defintion, runtime O(n^2) *)
+(* 
+ * IMPORTANT:
+ * A new computational definition of inverse Ackermann, runtime O(n^2) 
+ *)
 Definition inv_ack n := inv_ack_wkr (alpha 0) (alpha 0 n) 0 n.
 
-(* Intermediate lemma about inv_ack_wkr *)
+
+(* Proof of Correctness of the above: *)
+(* First, an intermediate lemma about inv_ack_wkr *)
 Lemma inv_ack_wkr_intermediate :
   forall i n b,
     i < alpha i n -> i < b ->
@@ -214,9 +223,92 @@ Proof.
     rewrite H1. trivial.
 Qed.
 
-(* ****** INVERSE ACKERMANN BY HARD-CODING SECOND LEVEL ************* *)
+(* ********* DIGRESSION: TWO PARAMETER INVERSE ACKERMANN ************* *)
 
-(* Definition by hard-coding the second alpha level, runtime O(n) *)
+(* Two parameter Inverse Ackerman worker function *)
+Fixpoint two_params_inv_ack_wkr (f : nat -> nat) (n k b : nat) : nat :=
+  match b with
+  | 0    => 0
+  | S b' => if (n <=? k) then 0
+              else let g := (countdown_to f 1) in
+                   S (two_params_inv_ack_wkr (compose g f) (g n) k b')
+  end.
+
+(* Two parameters Inverse Ackermann function *)
+Definition two_params_inv_ack (m n : nat) : nat :=
+  let f := (fun x => x - 2) in
+    let n' := (Nat.log2_up n) in
+      1 + two_params_inv_ack_wkr f (f n') (m / n) n'.
+
+(* Correctness proofs begin here *)
+(* First, a lemma about the worker function's inner working *)
+Lemma two_params_inv_ack_wkr_intermediate :
+    forall i n k b, k < alpha i n -> i <= b ->
+      two_params_inv_ack_wkr (alpha 1) (alpha 1 n) k b =
+        i + two_params_inv_ack_wkr (alpha (S i)) (alpha (S i) n) k (b - i).
+Proof.
+  induction i; intros n k b Hin Hib.
+  1: rewrite Nat.add_0_l; f_equal; omega.
+  rewrite IHi.
+  2: apply (Nat.lt_le_trans _ (alpha (S i) n) _ Hin), alpha_decr_by_lvl.
+  2: omega.
+  unfold two_params_inv_ack_wkr at 1.
+  replace (b - i) with (S (b - (S i))) by omega.
+  rewrite <- Nat.leb_gt in Hin. rewrite Hin.
+  fold two_params_inv_ack_wkr.
+  rewrite <- Nat.add_succ_comm. trivial.
+Qed.
+
+(* Correctness theorem for two_params_inv_ack *)
+Theorem two_params_inv_ack_correct :
+  forall m n p, two_params_inv_ack m n <= S p <->
+                Nat.log2_up n <= ackermann (S p) (m / n).
+Proof.
+  intros m n p. unfold two_params_inv_ack.
+  remember (Nat.log2_up n) as b. remember (m / n) as a.
+  replace (b - 2) with (alpha 1 b) by (rewrite alpha_1; trivial).
+  rewrite <- alpha_1, <- Nat.succ_le_mono. clear Heqb Heqa m n.
+  remember (fun x => two_params_inv_ack_wkr (alpha 1) (alpha 1 x) a x) as f.
+  replace (two_params_inv_ack_wkr (alpha 1) (alpha 1 b) a b) with (f b)
+    by (rewrite Heqf; trivial).
+  remember (fun x => ackermann (S x) a) as F.
+  replace (ackermann (S p) a) with (F p) by (rewrite HeqF; trivial).
+  assert (increasing F) as HF.
+  { intros x y. rewrite HeqF. rewrite Nat.succ_lt_mono.
+    apply ack_incr_by_lvl. }
+  generalize dependent b. generalize dependent p.
+  fold (upp_inv_rel f F). rewrite upp_inv_unique by apply HF.
+  apply functional_extensionality. intro b.
+  remember (upp_inv F b) as p. destruct p.
+  - assert (alpha 1 b <= a) as Hab.
+    { destruct (alpha_correct 1) as [_ H]. rewrite (H a b).
+      replace (ackermann 1 a) with (F 0) by (rewrite HeqF; trivial).
+      rewrite <- (upp_inv_correct F HF 0 b). omega. }
+    rewrite Heqf. rewrite <- Nat.leb_le in Hab.
+    unfold two_params_inv_ack_wkr. destruct b; [|rewrite Hab]; trivial.
+  - assert (~ b <= F p) as Hp by
+          (rewrite <- (upp_inv_correct F HF p b); omega). 
+    rewrite HeqF in Hp. destruct (alpha_correct (S p)) as [_ H].
+    rewrite <- (H a b), <- Nat.lt_nge in Hp. rewrite Heqf.
+    rewrite (two_params_inv_ack_wkr_intermediate (S p) _ _ _ Hp).
+    + unfold two_params_inv_ack_wkr. destruct (b - S p); [omega|].
+      replace (alpha (S (S p)) b <=? a) with true; [omega|].
+      symmetry. rewrite Nat.leb_le.
+      destruct (alpha_correct (S (S p))) as [_ H1]. rewrite (H1 a b).
+      replace (ackermann (S (S p)) a) with (F (S p)) by (rewrite HeqF; trivial).
+      rewrite <- (upp_inv_correct F HF (S p) b). omega.
+    + rewrite Nat.lt_nge, (H a b), <- Nat.lt_nge in Hp.
+      apply (Nat.le_trans _ (ackermann (S p) a) _); [|omega].
+      clear Heqp Hp H. induction (S p) as [|k]; [omega|].
+      rewrite Nat.le_succ_l. apply (Nat.le_lt_trans _ (ackermann k a) _ IHk).
+      apply ack_incr_by_lvl. omega.
+Qed.
+
+
+(* ***** LINEAR-TIME INVERSE ACKERMANN BY HARD-CODING SECOND LEVEL ***** *)
+
+(* IMPORTANT: A new computational definition for inverse Ackerman *)
+(* We hardcode the second 'alpha' level for runtime O(n). *)
 Definition inv_ack_linear n :=
   match n with
   | 0 | 1 => 0
@@ -233,83 +325,4 @@ Proof.
   rewrite alpha_1; trivial.
 Qed.
 
-(* ********* TWO PARAMETERS INVERSE ACKERMANN ************* *)
-
-(* Two parameters Inverse Ackerman worker function *)
-Fixpoint two_params_inv_ack_wkr (f : nat -> nat) (n k b : nat) : nat :=
-  match b with
-  | 0    => 0
-  | S b' => if (n <=? k) then 0
-              else let g := (countdown_to f 1) in
-                   S (two_params_inv_ack_wkr (compose g f) (g n) k b')
-  end.
-
-(* Two parameters Inverse Ackermann function *)
-Definition two_params_inv_ack (m n : nat) : nat :=
-  let f := (fun x => x - 2) in
-    let n' := (Nat.log2_up n) in
-      1 + two_params_inv_ack_wkr f (f n') (m / n) n'.
-
-(* Correctness proofs begin here *)
-(* Lemma about worker function's inner working *)
-Lemma two_params_inv_ack_wkr_intermediate :
-    forall i n k b, k < alpha i n -> i <= b ->
-      two_params_inv_ack_wkr (alpha 1) (alpha 1 n) k b =
-        i + two_params_inv_ack_wkr (alpha (S i)) (alpha (S i) n) k (b - i).
-Proof.
-  induction i; intros n k b Hin Hib.
-  - rewrite Nat.add_0_l. f_equal. omega.
-  - rewrite IHi.
-    2: apply (Nat.lt_le_trans _ (alpha (S i) n) _ Hin), alpha_decr_by_lvl.
-    2: omega.
-    unfold two_params_inv_ack_wkr at 1.
-    replace (b - i) with (S (b - (S i))) by omega.
-    rewrite <- Nat.leb_gt in Hin. rewrite Hin.
-    fold two_params_inv_ack_wkr.
-    rewrite <- Nat.add_succ_comm. f_equal.
-Qed.
-
-(* Correctness theorem for two_params_inv_ack *)
-Theorem two_params_inv_ack_correct :
-    forall m n p, two_params_inv_ack m n <= S p
-      <-> Nat.log2_up n <= ackermann (S p) (m / n).
-Proof.
-  intros m n p. unfold two_params_inv_ack.
-  remember (Nat.log2_up n) as b. remember (m / n) as a.
-  replace (b - 2) with (alpha 1 b) by (rewrite alpha_1; trivial).
-  rewrite <- alpha_1, <- Nat.succ_le_mono. clear Heqb Heqa m n.
-  remember (fun x => two_params_inv_ack_wkr (alpha 1) (alpha 1 x) a x) as f.
-  replace (two_params_inv_ack_wkr (alpha 1) (alpha 1 b) a b)
-    with (f b) by (rewrite Heqf; trivial).
-  remember (fun x => ackermann (S x) a) as F.
-  replace (ackermann (S p) a) with (F p) by (rewrite HeqF; trivial).
-  assert (increasing F) as HF.
-  { intros x y. rewrite HeqF. rewrite Nat.succ_lt_mono.
-    apply ack_incr_by_lvl. }
-  generalize dependent b. generalize dependent p.
-  fold (upp_inv_rel f F). rewrite upp_inv_unique by apply HF.
-  apply functional_extensionality. intro b.
-  remember (upp_inv F b) as p. destruct p.
-  - assert (alpha 1 b <= a) as Hab.
-    { destruct (alpha_correct 1) as [_ H]. rewrite (H a b).
-      replace (ackermann 1 a) with (F 0) by (rewrite HeqF; trivial).
-      rewrite <- (upp_inv_correct F HF 0 b). omega. }
-    rewrite Heqf. rewrite <- Nat.leb_le in Hab.
-    unfold two_params_inv_ack_wkr. destruct b; [|rewrite Hab]; trivial.
-  - assert (~ b <= F p) as Hp.
-    { rewrite <- (upp_inv_correct F HF p b). omega. }
-    rewrite HeqF in Hp. destruct (alpha_correct (S p)) as [_ H].
-    rewrite <- (H a b), <- Nat.lt_nge in Hp. rewrite Heqf.
-    rewrite (two_params_inv_ack_wkr_intermediate (S p) _ _ _ Hp).
-    unfold two_params_inv_ack_wkr. destruct (b - S p); [omega|].
-    replace (alpha (S (S p)) b <=? a) with true; [omega|].
-    symmetry. rewrite Nat.leb_le.
-    destruct (alpha_correct (S (S p))) as [_ H1]. rewrite (H1 a b).
-    replace (ackermann (S (S p)) a) with (F (S p)) by (rewrite HeqF; trivial).
-    rewrite <- (upp_inv_correct F HF (S p) b). omega.
-    rewrite Nat.lt_nge, (H a b), <- Nat.lt_nge in Hp.
-    apply (Nat.le_trans _ (ackermann (S p) a) _); [|omega].
-    clear Heqp Hp H. induction (S p) as [|k]; [omega|].
-      rewrite Nat.le_succ_l. apply (Nat.le_lt_trans _ (ackermann k a) _ IHk).
-      apply ack_incr_by_lvl. omega.
-Qed.
+(* Please see inv_ack_test.v for a demonstration of the time bound. *)
