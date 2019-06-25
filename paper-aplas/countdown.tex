@@ -115,13 +115,13 @@ This only works if each chainlink is strictly less than the previous,
 \end{defn}
 What kinds of functions have contractive inverses? Expansions, naturally:
 \begin{thm} \label{thm: expansion-inv-contraction}
-$\forall a\in \mathbb{N}.~F\in \repeatable_a \Rightarrow F^{-1}_+ \in \contract_a$.
+$\forall a\in \mathbb{N}.~F\in \repeatable_a \Rightarrow F^{-1} \in \contract_a$.
 \end{thm}
 \begin{proof}
-$\forall n.~F(n)\ge n \Rightarrow n \ge F^{-1}_+(n)$, so $F^{-1}_+ \in
+$\forall n.~F(n)\ge n \Rightarrow n \ge F^{-1}(n)$, so $F^{-1} \in
 \contract$. Note, $n > a \iff n-1\ge a$.
 Since $F\in \repeatable_a$, $F(n-1)\ge n$ holds.
-Finally, $n-1\ge F^{-1}_+(n) \Rightarrow n > F^{-1}_+(n)$.
+Finally, $n-1\ge F^{-1}(n) \Rightarrow n > F^{-1}(n)$.
 \end{proof}
 This clarifies the inverse relationship between expansions strict from some $a$ and contractions strict above that same $a$. The inverse of an expansion's
 repeater exists, and can be built from the expansion's inverse.
@@ -332,12 +332,12 @@ and mechanize it
 Theorem~\ref{thm: cdt-repeat} and (\ref{eq: rf-upp-inv}) establish the correctness of the Coq definitions of \emph{countdown worker} and \emph{countdown}, thereby justifying our budget of $n$ and our unification of
 Definitions \ref{defn: informal-countdown} and \ref{defn: countdown}. We wrap everything together with the following theorem:
 \begin{thm} \label{thm: cdt-inv-rf}
-	$\forall F\in \repeatable_a.~f\triangleq F^{-1}_+$ satisfies $f \in \contract_{a}$ and $\displaystyle \cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+$. Furthermore, if $a\ge 1$, then $\rf{F}{a}\ \in \repeatable_0$ and $\cdt{f}{a}\ \in \contract_0$.
+	$\forall F\in \repeatable_a.~f\triangleq F^{-1}$ satisfies $f \in \contract_{a}$ and $\displaystyle \cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}$. Furthermore, if $a\ge 1$, then $\rf{F}{a}\ \in \repeatable_0$ and $\cdt{f}{a}\ \in \contract_0$.
 \end{thm}
 \begin{proof}
-	By Theorem~\ref{thm: expansion-inv-contraction}, $f\triangleq F^{-1}_+ \in \contract_a$.
+	By Theorem~\ref{thm: expansion-inv-contraction}, $f\triangleq F^{-1} \in \contract_a$.
 	Equation \ref{eq: rf-upp-inv} and Corollary~\ref{col: cdt-repeat}
-	then show that $\cdt{f}{a}\ = \left(\rf{F}{a}\ \right)^{-1}_+$.
-	Now if $a\ge 1$, a simple induction shows that $F^{(n)}(a)\ge a + n\ge 1 + n$, so $\rf{F}{a}\ \in \repeatable_0$. Hence $\cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1}_+ \in \contract_0$ by Theorem~\ref{thm: expansion-inv-contraction}.
+	then show that $\cdt{f}{a}\ = \left(\rf{F}{a}\ \right)^{-1}$.
+	Now if $a\ge 1$, a simple induction shows that $F^{(n)}(a)\ge a + n\ge 1 + n$, so $\rf{F}{a}\ \in \repeatable_0$. Hence $\cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1} \in \contract_0$ by Theorem~\ref{thm: expansion-inv-contraction}.
 \end{proof}
 
