@@ -89,13 +89,13 @@ $\forall a \ge 1, a\angle{1} \in \contract_1$.
 we do care about, we have our inverse:
 \begin{thm} \label{thm: inv-hyperop-correct}
 When $n\le 1$, or $n \le 2 \wedge a\ge 1$, or $a\ge 2$, then
-$a\angle{n} = \left(a[n]\right)^{-1}_+$.
+$a\angle{n} = \left(a[n]\right)^{-1}$.
 \end{thm}
 \begin{proof}
 $\forall n \ge 2,~$ let $a_0 = a, a_1 = 0, a_n = 1$. Then define $P$ and $Q$ as:
 \begin{equation*}
 P(n) \triangleq  \Big(a[n] \in \repeatable_{a_n}\Big)\ \text{ and } \
-Q(n) \triangleq  \Big((a\angle{n} = \left(a[n]\right)^{-1}_+ \Big).
+Q(n) \triangleq  \Big((a\angle{n} = \left(a[n]\right)^{-1} \Big).
 \end{equation*}
 We have three goals:
 (1) $\forall a.~ Q(0) \wedge Q(1)$.
@@ -162,7 +162,7 @@ level $\alpha_i$ inverts the level $\Ack_i$.
 We know $\Ack_{i+1} = \rf{\Ack_i}{\Ack_i(1)}$, so the recursive
 rule $\alpha_{i+1} \triangleq \cdt{\alpha_i}{\Ack_i(1)}$ is tempting.
 But this approach is flawed because it still depends on $\Ack_i$.
-Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\big)^{-1}_+$ and $\alpha_{i+1} = \big(\Ack_{i+1}\big)^{-1}_+$. Then $\Ack_{i+1}(m) = \big(\Ack_{i}\big)^{(m)} \big(\Ack_{i}(1)\big)$. We then have:
+Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\big)^{-1}$ and $\alpha_{i+1} = \big(\Ack_{i+1}\big)^{-1}$. Then $\Ack_{i+1}(m) = \big(\Ack_{i}\big)^{(m)} \big(\Ack_{i}(1)\big)$. We then have:
 \begin{equation} \label{eq: inv-ack-hier-derive}
 \alpha_{i+1}(n)\le m \iff n\le \big(A_i\big)^{(m+1)}(1) \iff \big(\alpha_i\big)^{(m+1)}(n) \le 1
 \end{equation}

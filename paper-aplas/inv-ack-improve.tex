@@ -95,9 +95,9 @@ The runtime for $\alpha_2$ can thus be bounded to $\bigO(n)$ as follows:
 Note that the above bound only applies for $n\ge 2$. When $n\le 1$, the LHS is 1.
 \end{rem}
 
-This simple optimization has a cascading effect through the entire hierarchy:
+\noindent This simple optimization cascades through the entire hierarchy:
 we can now prove a bound of $\bigO(n)$ for every level.
-By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, we can compute the $i$th level of the inverse Ackermann hierarchy in \linebreak $\bigO\big(n + 2^i\log n  + i\big)$ time, \emph{i.e.} linear time for fixed $i$.
+Hardcoding $\alpha_1$ as $\lambda n.(n-2)$ gives the $i$th level of the inverse Ackermann hierarchy in $\bigO\big(n + 2^i\log n  + i\big)$ time.
 \begin{thm} \label{thm: inv-ack-hier-runtime-improved}
 	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$.
 \end{thm}
@@ -106,7 +106,8 @@ By hardcoding $\alpha_1$ as $\lambda n.(n-2)$, we can compute the $i$th level of
 
 A linear-time calculation of the inverse Ackermann hierarchy 
 leads to a similarly efficient calculation of the inverse Ackermann 
-function itself. We present $\tilde{\alpha}(n)$:
+function itself. We present $\tilde{\alpha}(n)$ below,  
+and also put a minimal standalone Coq definition for it in Appendix~\ref{apx:code}.
 \hide{
 We redefine $\alpha$ once again, hardcoding the output 
 when $n\le 1 = \Ack(0)$, and starting $\alpha^{\mathcal{W}}$ with 

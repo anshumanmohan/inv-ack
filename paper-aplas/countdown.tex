@@ -4,8 +4,10 @@ do not come as naturally.
 
 \subsection{Upper inverses, expansions, and repeatability}
 %; indeed, simply defining an inverse can be a little subtle.
+% Linked by Linh
 \begin{defn} \label{defn: inverse}
-The \emph{upper inverse} of $F$, written $F^{-1}$,
+The \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L28-L45}{
+\emph{upper inverse}} of $F$, written $F^{-1}$,
 % {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$}
 is $\lambda n. \min\{m : F(m)\ge n\}$.\end{defn}
 This is well-defined as long as $F$ is unbounded,
@@ -54,18 +56,24 @@ But if $F$ is strictly increasing,
 $\rf{F}{a}$ is not necessarily strictly increasing:
 \emph{e.g.} the identity function
 $\li{id}$ is strictly increasing, but $\rf{\li{id}}{a}(n) = (\li{id} \circ \ldots \circ \li{id}) (a) = a$ is a constant function.  We need a little more.
+% Linked by Linh
 \begin{defn}
-A function $F:\mathbb{N}\to\mathbb{N}$ is an \emph{expansion} if $\forall n.~ F(n)\ge n$. Further, given $a\in \mathbb{N}$, an expansion $F$ is \emph{strict from} $a$ if ~$\forall n \ge a.~ F(n) > n$.
+A function $F:\mathbb{N}\to\mathbb{N}$ is an
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L80-L86}{\emph{expansion}} if $\forall n.~ F(n)\ge n$. Further, given $a\in \mathbb{N}$, an expansion $F$ is
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L80-L86}{\emph{strict from}} $a$ if ~$\forall n \ge a.~ F(n) > n$.
 \end{defn}
 If $a\ge 1$ and $F$ is an expansion \emph{strict from} $a$, we quickly get:
 $\forall n.~ \rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$. That is, $\rf{F}{a} \ $ is itself an expansion strict from $0$.
 
+% Linked by Linh
 \begin{defn} \label{rem: repeatable-subset}
 $\forall a\ge 1$, if~$F$ is a strictly increasing function
 that is also a strict expansion from~$a$, then $\rf{F}{a}$
-enjoys an important property: $\rf{F}{a}$ ``preserves'' the properties of~$F$, 
+enjoys an important property: $\rf{F}{a}$
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L143-L145}{``preserves'' the properties} of~$F$, 
 albeit with $0$ substituted for $a$.
-We thus say that such a function $F$ is \emph{repeatable from} $a$, and denote the
+We thus say that such a function $F$ is
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L111-L112}{\emph{repeatable from}} $a$, and denote the
 set of functions repeatable from $a$ as $\repeatable_a$.
 It is straightforward to see that $\forall s,t.~ s \le t \Rightarrow \repeatable_s \subseteq \repeatable_t $.
 \end{defn}
@@ -97,9 +105,11 @@ In other words, count the length of the chain $\{n, f(n), f^{(2)}(n), \ldots\}$ 
 terminates as soon as we reach/pass $a$.
 This only works if each chainlink is strictly less than the previous,
 \emph{i.e.} $f$ is a \emph{contraction}.
+% Linked by Linh
 \begin{defn} \label{defn: contracting}
-	A function $f : \mathbb{N} \to \mathbb{N}$ is a \emph{contraction} if $\forall n.~ f(n) \le n$. Given an $a \ge 1$, a contraction $f$ is
-	\emph{strict above} $a$ if $\forall n > a.~n > f(n)$. We denote the set of contractions by $\contract$ and the set of contractions strict above $a$ by $\contract_a$. Analogously to our observation in
+	A function $f : \mathbb{N} \to \mathbb{N}$ is a
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L40-L42}{\emph{contraction}} if $\forall n.~ f(n) \le n$. Given an $a \ge 1$, a contraction $f$ is
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L44-L46}{\emph{strict above}} $a$ if $\forall n > a.~n > f(n)$. We denote the set of contractions by $\contract$ and the set of contractions strict above $a$ by $\contract_a$. Analogously to our observation in
 	Definition \ref{rem: repeatable-subset}, $\forall s\le t.~ \contract_s \subseteq \contract_t$.
 \end{defn}
 What kinds of functions have contractive inverses? Expansions, naturally:
@@ -178,8 +188,11 @@ structurally recursive and is thus more palatable to Coq, and to then
 prove that this worker correctly computes the countdown when it is 
 passed a contraction.
 
+% Linked by Linh
 \begin{defn} \label{defn: countdown-worker} \label{lem: cdt-init}
-For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the \emph{countdown worker} to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
+For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L101-L108}{\emph{countdown worker}}
+to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
 \begin{equation*}
 \cdw{f}{a}(n, b) = \begin{cases}
 0 & \text{if } b = 0 \vee n\le a \\ 1 +\cdw{f}{a}(f(n), b-1) & \text{if } b \ge 1 \wedge n > a
@@ -210,8 +223,11 @@ Budget is actually a refinement of gas because
 we always accompany its use with a method to calculate it in constant time.
 In fact, we will soon show that a budget of $n$ is sufficient in this case.
 This lets us define \emph{countdown} in Coq for the first time:
+% Linked by Linh
 \begin{defn} \label{defn: countdown}
-Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.
+Redefine $
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L110-L112}{\cdt{f}{a}(n)}
+\triangleq \cdw{f}{a}(n, n)$.
 % Linked by A
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L112}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
@@ -289,7 +305,9 @@ $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 	will return $0$ and add nothing to the result.
 	
 	Suppose $b = n$, and let $m \triangleq \min\big\{i : f^{(i)}(n)\le a\big\}$\footnote{We prove the existence
-		of the min in Coq’s intuitionistic logic {\color{red}here} in our codebase.}. Then $m \le n$ since $f^{(n)}(n)\le a$. Thus, before the budget is exhausted, the function reaches \linebreak the $m^{th}$ call. This is actually the last recursive call since $\big(f^{(m)}(n), n - m\big)$ satisfies the terminating condition $f^{(m)}(n)\le a$. This last call adds $0$ to the accumulated result, which is $m$ at the moment. Therefore $\cdw{f}{a}(n, n) = m$.
+		of the min in Coq’s intuitionistic logic
+		% Linked by Linh
+	  \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L129-L159}{here} in our codebase.}. Then $m \le n$ since $f^{(n)}(n)\le a$. Thus, before the budget is exhausted, the function reaches \linebreak the $m^{th}$ call. This is actually the last recursive call since $\big(f^{(m)}(n), n - m\big)$ satisfies the terminating condition $f^{(m)}(n)\le a$. This last call adds $0$ to the accumulated result, which is $m$ at the moment. Therefore $\cdw{f}{a}(n, n) = m$.
 %}%end hide
 \hide{
 	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.

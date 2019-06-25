@@ -116,7 +116,9 @@ We begin with a lemma demonstrating the internal working of \emph{countdown work
 Now we are ready to prove the correctness of the \emph{countdown} computation. \begin{proof}[of Theorem~\ref{thm: cdt-repeat}]
 	Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered,
 	\linebreak let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$.\footnote{We prove the existence
-		of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v\#L125-L150}{here} in our codebase.} Our goal becomes
+		of the min in Coq’s intuitionistic logic 
+		\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L129-L159}{here}
+		in our codebase.} Our goal becomes
 	$\cdt{f}{a}(n) = m$. Note that this setup gives us:
 	
 	\begin{equation} \label{eq: cdt-repeat-tmp}
