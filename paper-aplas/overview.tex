@@ -25,7 +25,7 @@ A\big(n-1, A(n, m-1)\big) & \text{ otherwise}
 \end{equation}
 \end{defn}
 
-The one-variable \emph{diagonal} Ackermann function $\Ack : \mathbb{N} \to \mathbb{N}$ is defined as $\Ack(n)~\triangleq~A(n, n)$.	
+The one-variable \emph{diagonal} Ackermann function $\Ack : \mathbb{N} \to \mathbb{N}$ is defined as $\Ack(n)~\triangleq~A(n, n)$.  
 The diagonal Ackermann function grows explosively: starting from $\Ack(0)$, the first four terms are $1, 3, 7, 61$.  The fifth term is $2^{2^{2^{65536}}}-3$, and the sixth dwarfs the fifth.
 %This explosive behavior is problematical when we turn our attention to the canonical definition of
 %the inverse Ackermann function\cite{blah}.
@@ -196,20 +196,21 @@ Finally, our techniques are compact: consider the 14 lines of code that invert t
 %\item[\S\ref{blah}] We discuss related work and give some closing thoughts.
 %\end{itemize}
 \begin{itemize}
-	\item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, present Coq encodings for hyperoperations and the Ackermann function, and discuss \emph{repeater}.
-	\item[\S\ref{sec: countdown}] We discuss upper inverses and show how to invert repeater with \emph{countdown}.
-	\item[\S\ref{sec: inv-hyperop}] We use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base. We then sketch a method to find the inverse Ackermann function.
-	\item[\S\ref{sec: inv-ack}] We give a computation for the inverse Ackermann function in $\bigO(n)$ time.
-	\item[\S\ref{sec: binary}] We extend to $\bigO(b)$, where $b$ is the bitlength
-	of the binary encoding of $n$.
-	\item[\S\ref{sec: discussion}] We discuss the value of linear time inverses for
-explosively growing functions, and extend to the two-argument inverse Ackermann function. %,
+    \item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, present Coq encodings for hyperoperations and the Ackermann function, and discuss \emph{repeater}.
+    \item[\S\ref{sec: countdown}] We discuss upper inverses and show how to invert repeater with \emph{countdown}.
+    \item[\S\ref{sec: inv-hyperop}] We use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base. We then sketch a method to find the inverse Ackermann function.
+    \item[\S\ref{sec: inv-ack}] We give a computation for the inverse Ackermann function in $\bigO(n)$ time.
+    \item[\S\ref{sec: binary}] We extend to $\bigO(b)$, where $b$ is the bitlength
+    of the binary encoding of $n$.
+    \item[\S\ref{sec: discussion}] We discuss the value of linear time inverses for
+explosively growing functions, and extend to the two-argument inverse Ackermann function. %, \note{other derivative functions such as foo bar doo dah,} and survey related work.
 \end{itemize}
 All our techniques are mechanized in Coq and our code is available
-online~\cite{inv-ack}. Further, definitions and theorems presented
-in this paper are \href{https://github.com/inv-ack/inv-ack}{hyperlinked}
-to appropriate points in our codebase. Interested readers are invited to also
-explore the proofs of correctness and associated lemmas that were elided in this paper.
+online at \href{https://github.com/inv-ack/inv-ack}{github.com/inv-ack/inv-ack}~\cite{inv-ack}. Further, definitions and theorems presented
+in this paper are linked directly to appropriate points in our codebase,
+represented using \href{https://github.com/inv-ack/inv-ack}{hyperlinks}
+and the symbol \href{https://github.com/inv-ack/inv-ack}{\coq} where appropriate.
+
 %, and
 %each theorem and definition is hyperlinked (in {\color{cyan}cyan}) to our Coq development for %browsing.
 

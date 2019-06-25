@@ -46,9 +46,7 @@ it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 \begin{thm}
 	$\displaystyle \ackt(m, n) = 1 + \ackt^{\W}\left(\alpha_1, \alpha_1\big(\lceil\log_2n \rceil\big), \left\lfloor \frac{m}{n} \right\rfloor, \lceil\log_2n \rceil \right)$.
 \end{thm}
-We mechanize the above for both
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L235-L248}{\note{unary}} and
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L212-L228}{\note{binary}} inputs in our codebase.
+We mechanize the above for both \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L245-L248}{unary} and \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L222-L228}{binary} inputs in our codebase.
 
 \hide{
 	\begin{proof}[Proof Sketch]
