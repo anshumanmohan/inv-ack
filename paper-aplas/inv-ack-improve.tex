@@ -140,9 +140,11 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 }%end hide
 %
 % EXPERIMENT: TRY TO PUT A DEFINITION FOR LINEAR TIME INV-ACK AND PROOF OF CORRECTNESS AND RUNTIME HERE
+% Linked by Linh
 \begin{defn} \label{defn: inv-ack-hardcode}
 	Define 
-	$\tilde{\alpha}(n) = \begin{cases}
+	$
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L321-L327}{\tilde{\alpha}(n)} = \begin{cases}
 	0 & \text{ if } n \le 1 \\ \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2
 	\end{cases}$
 \end{defn}

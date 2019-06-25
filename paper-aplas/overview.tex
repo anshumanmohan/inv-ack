@@ -46,7 +46,8 @@ $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 %\marginpar{\tiny \color{blue}cite the grit?}
 The Ackermann function is relatively easy to define, but hard to
 understand.  We see it as
-a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.A(n,b)$, where for each $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times, with a \note{\emph{kludge}}.
+a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.A(n,b)$, where for each $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times, with a 
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L161-L177}{\note{\emph{kludge}}}. %Linked by Linh
 
 %\marginpar{\tiny \color{blue}Moved Knuth to a footnote because we
 %don't discuss it much anymore. It's clear to see that Knuth

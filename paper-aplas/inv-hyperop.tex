@@ -6,8 +6,11 @@ Ackermann hierarchy.
 
 \subsection{The inverse hyperoperations, including \li{div}, \li{log}, and \li{log*}}
 
+% Linked by Linh
 \begin{defn} \label{defn: inv-hyperop}
-	The inverse hyperoperations, written $a\angle{n}b$, are defined as:
+	The
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L28-L33}{inverse hyperoperations},
+	written $a\angle{n}b$, are defined as:
 	\begin{equation}
 	a\angle{n}b \; \triangleq \; \begin{cases}
 	b - 1 & \hspace{-10pt} \quad \text{ if } n = 0 \\
@@ -126,8 +129,13 @@ a[2]\in \repeatable_0 \iff \forall b < c.~ab < ac \quad \wedge \quad \forall b \
 which is straightforward for $a\ge 2$. Induction on $n$ gives us the third goal.
 \end{proof}
 %With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^*$, as well as the whole inverse hyperoperation hierarchy.
+% Linked by Linh
 \begin{rem}
-Three early hyperoperations are $a[2]b = ab$, $a[3]b = a^b$ and \linebreak $a[4]b = \! ^ba$, so, by Theorem~\ref{thm: inv-hyperop-correct}, we can define their inverses $\left\lceil b/a \right\rceil$, $\left\lceil \log_a b \right\rceil$, and $\log^*_a b$ as $a\angle{2}b$, $a\angle{3}b$, and $a\angle{4}b$.
+Three early hyperoperations are $a[2]b = ab$, $a[3]b = a^b$ and \linebreak
+$a[4]b = \! ^ba$, so, by Theorem~\ref{thm: inv-hyperop-correct}, we can define their inverses $\left\lceil b/a \right\rceil$, $\left\lceil \log_a b \right\rceil$, and $\log^*_a b$ as
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L102-L113}{$a\angle{2}b$},
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L115-L124}{$a\angle{3}b$}, and
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L126-L128}{$a\angle{4}b$}.
 Note that the functions $\log_a b$ and $\log^*_a b$ are not in the Coq Standard Library.
 \end{rem}
 \hide{
@@ -178,8 +186,11 @@ Abracadabra! We can express $\alpha$ using the hierarchy \emph{without referring
 	$\forall n.~ \alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}$.
 \end{thm}
 All that remains is to provide a structurally-recursive function that computes $\alpha$.
+% Linked by Linh
 \begin{defn} \label{defn: inv-ack-worker}
-	The inverse Ackermann worker is a function $\alpha^{\W}$: %(\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
+	The
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L155-L161}{inverse Ackermann worker}
+	is a function $\alpha^{\W}$: %(\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
 	\begin{equation} \label{eq: inv-ack-worker-recursion}
 	\alpha^{\W}(f, n, k, b) = \begin{cases}
 	k & \text{if } b = 0 \vee n\le k \\ \alpha^{\W}(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k+1, b-1) & \text{if } b \ge 1 \wedge n \ge k+1

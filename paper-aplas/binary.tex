@@ -8,8 +8,13 @@ are encoded in binary\footnote{We put a further explanation of
 Coq's binary type \li{N} in Appendix~\ref{apx:bin_in_coq}.}.
 This advantage also extends to our techniques.
 
-Our codebase has binary versions of \note{hyperoperations, inverse hyperoperations,
-Ackermann, and inverse Ackermann}.
+Our codebase has binary versions of
+\note{
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_repeater.v\#L78-L87}{hyperoperations},
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_applications.v\#L30-L36}{inverse hyperoperations},
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_repeater.v\#L157-L175}{Ackermann}, and
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v\#L335-L342}{inverse Ackermann}
+}.
 Here we show how to compute inverse Ackermann for binary inputs in
 $\Theta(b)$ time, where $b$ is the bitlength,
 \emph{i.e.} logarithmic time in the input magnitude.
@@ -53,7 +58,9 @@ The key is to focus on functions that can bring their arguments below a threshol
 \li{bin\_cdn\_wkr}. Simply shrinking by~$1$ is no longer good enough;
 we need to halve the argument on every application as shown below:
 \begin{defn} \label{defn: bin-contraction}
-	$f\in \contract$ is \emph{binary strict above} $a\in \mathbb{N}$ if $\forall n > a, f(n) \le \lfloor \frac{n + a}{2} \rfloor$.
+	$f\in \contract$ is
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L37-L41}{\emph{binary strict above}}
+	$a\in \mathbb{N}$ if $\forall n > a, f(n) \le \lfloor \frac{n + a}{2} \rfloor$.
 \end{defn}
 The key advantage of binary strict contractions is that if a contraction $f$ is binary strict above some $a$, then
 $\forall n > a, \forall k.~f(n) \le \left\lfloor \frac{n - a}{2^k} \right\rfloor + a$.
