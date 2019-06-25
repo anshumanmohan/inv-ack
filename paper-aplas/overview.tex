@@ -47,7 +47,7 @@ $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 The Ackermann function is relatively easy to define, but hard to
 understand.  We see it as
 a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.A(n,b)$, where for each $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times, with a 
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L161-L177}{\note{\emph{kludge}}}. %Linked by Linh
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L161-L177}{\emph{kludge}}. %Linked by Linh
 
 %\marginpar{\tiny \color{blue}Moved Knuth to a footnote because we
 %don't discuss it much anymore. It's clear to see that Knuth
@@ -203,7 +203,7 @@ Finally, our techniques are compact: consider the 14 lines of code that invert t
 	\item[\S\ref{sec: binary}] We extend to $\bigO(b)$, where $b$ is the bitlength
 	of the binary encoding of $n$.
 	\item[\S\ref{sec: discussion}] We discuss the value of linear time inverses for
-explosively growing functions, and extend to the two-argument inverse Ackermann function. %, \note{other derivative functions such as foo bar doo dah,} and survey related work.
+explosively growing functions, and extend to the two-argument inverse Ackermann function. %,
 \end{itemize}
 All our techniques are mechanized in Coq and our code is available
 online~\cite{inv-ack}. Further, definitions and theorems presented

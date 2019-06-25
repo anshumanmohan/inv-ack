@@ -86,7 +86,9 @@ a \emph{functional} way via a higher-order function that transforms the latter l
 to the former. For this we employ a version of the well-known function iterator
 \li{iter}~\cite{bertotcast}:
 \begin{defn}
-$\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
+$\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L32-L36}{\emph{repeater from}}
+$a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 % Linked by A
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L32-L36}{Fixpoint repeater\_from}` (f : nat -> nat) (a n : nat) : nat :=

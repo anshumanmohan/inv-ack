@@ -111,10 +111,10 @@ function itself. We present $\tilde{\alpha}(n)$:
 We redefine $\alpha$ once again, hardcoding the output 
 when $n\le 1 = \Ack(0)$, and starting $\alpha^{\mathcal{W}}$ with 
 $f = \alpha_1$ and $n = \alpha_1(n)$.
-\note[If we have space, should turn into a definition]{For $n > 1$, $1\le \min\big\{n-1, \alpha_1(n)\big\}$. So
+For $n > 1$, $1\le \min\big\{n-1, \alpha_1(n)\big\}$. So
 $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big) =
 \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-~1\big)$.
-Thus $\tilde{\alpha}(n)$, defined below, equals $\alpha(n)$ and our alternate definition is reasonable.}
+Thus $\tilde{\alpha}(n)$, defined below, equals $\alpha(n)$ and our alternate definition is reasonable.
 
 \begin{equation*}
 \tilde{\alpha}(n) = \begin{cases}
@@ -122,7 +122,7 @@ Thus $\tilde{\alpha}(n)$, defined below, equals $\alpha(n)$ and our alternate de
 \end{cases}
 \end{equation*}
 
-\note[If we have space, should turn into a theorem and proof]{Let us consider the complexity of this definition.}
+Let us consider the complexity of this definition.
 At each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of the following computations. 
 Firstly, calculate $\cdt{\big(\alpha_k\big)}{1}(x)$ given $x\triangleq \alpha_k(n)$, taking time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ (by Lemma~\ref{lem: compose-runtime}). Next, calculate $\alpha_k(n) - k$, taking time $\bigO(k)$.
 
@@ -149,8 +149,15 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 	\end{cases}$
 \end{defn}
 
+% Linked by Linh
 \begin{thm} \label{thm: inv-ack-hardcode-correct}
-	$\forall n.~\tilde{\alpha}(n) = \alpha(n)$ \; and \; $\runtime_{\tilde{\alpha}}(n) = \bigO(n)$.
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L329-L337}{\coq
+	%\footnote{The link only contains the proof of correctness and not the running time}
+}
+	$\forall n.~\tilde{\alpha}(n) = \alpha(n)$
+	\; and \;
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_test.v#L5-L10}{\coq}
+	$\runtime_{\tilde{\alpha}}(n) = \bigO(n)$.
 \end{thm}
 
 \begin{proof}

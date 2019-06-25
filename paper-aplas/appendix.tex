@@ -77,13 +77,16 @@ Open Scope N_scope.
 
 \subsection{Countdown Worker}
 \label{apx:proof_correct_countdown_worker}
-This subsection provides the fully detailed proof of Theorem~\ref{thm: cdt-repeat}, which states that the function in Definition~\ref{defn: countdown} correctly computes the countdown value as defined in Definition~\ref{defn: informal-countdown}:
+This subsection provides the fully detailed proof of Theorem~\ref{thm: cdt-repeat}, which states that the function in Definition~\ref{defn: countdown} correctly computes the countdown value as defined in Definition~\ref{defn: informal-countdown}.
+% Linked by Linh
 \begin{usethmcounterof}{thm: cdt-repeat}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L162-L189}{\coq}
 	$	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 \end{usethmcounterof}
 We begin with a lemma demonstrating the internal working of \emph{countdown worker} at the $i^\text{th}$ recursive step, including the accumulated result $1+i$, the current \linebreak input $f^{(1+i)}(n)$, and the current budget $b-i-1$.
 
 \begin{lem} \label{lem: cdt-intermediate}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L162-L189}{\coq}
 	$\forall a, n, b, i \in \mathbb{N}.~\forall f \in \contract$.~such that $i < b$ and $a < f^{(i)}(n)$:~
 	\begin{equation}  \label{eq: cdt-intermediate}
 	\cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{(1+i)}(n), b - i - 1\right)
@@ -140,13 +143,15 @@ Now we are ready to prove the correctness of the \emph{countdown} computation. \
 \subsection{Inverse Ackermann Worker}
 \label{apx:proof_correct_inv_ack_worker}
 This subsection provides the fully detailed proof of Theorem~\ref{thm: inv-ack-worker-correct}, which states that given the appropriate arguments, the function \emph{inverse Ackermann worker} in Definition~\ref{defn: inv-ack-worker} correctly computes the value of the inverse Ackermann function as defined in 
-Theorem~\ref{thm: inv-ack-new}:
+Theorem~\ref{thm: inv-ack-new}.
 \begin{usethmcounterof}{thm: inv-ack-worker-correct}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L199-L231}{\coq}
 	$\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{usethmcounterof}
 First we state and prove the following lemma, which illustrates the working of \emph{inverse Ackermann worker} by examining each recursive call made during the execution of $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, b\big)$.
 
 \begin{lem} \label{lem: inv-ack-worker-intermediate}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L172-L195}{\coq}
 	$\forall n, b, k$ such that $k\le \min\big\{b, \alpha_{k-1}(n)\big\}$,
 	\begin{equation*}
 	\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)

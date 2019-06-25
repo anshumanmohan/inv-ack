@@ -6,10 +6,8 @@ Ackermann hierarchy.
 
 \subsection{The inverse hyperoperations, including \li{div}, \li{log}, and \li{log*}}
 
-% Linked by Linh
 \begin{defn} \label{defn: inv-hyperop}
-	The
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L28-L33}{inverse hyperoperations},
+	The inverse hyperoperations,
 	written $a\angle{n}b$, are defined as:
 	\begin{equation}
 	a\angle{n}b \; \triangleq \; \begin{cases}
@@ -64,7 +62,9 @@ where the Curried $a\angle{n{-}1}$ denotes the single-variable function
 $\lambda b.a\angle{n{-}1}b$.
 We now show that $a\angle{n}$ is the inverse to $a[n]$.
 First note that $a\angle{0}\in \contract_0$.~Then:
+% Linked by Linh
 \begin{lem}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L48-L62}{\coq}
 $\forall a.~\forall b.~a\angle{1}b = b - a$.
 \end{lem}
 \begin{proof}
@@ -90,7 +90,9 @@ $\forall a \ge 1, a\angle{1} \in \contract_1$.
 %Now we are ready to prove the correctness of the inverse hyperoperations.
 \textbf{N.B.} $a\angle{n}b$ is a total function, but it is never actually used for $a = 0$ when $n \ge 2$ or for $a=1$ when $n \ge 3$. For the values
 we do care about, we have our inverse:
+% Linked by Linh
 \begin{thm} \label{thm: inv-hyperop-correct}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L72-L98}{\coq}
 When $n\le 1$, or $n \le 2 \wedge a\ge 1$, or $a\ge 2$, then
 $a\angle{n} = \left(a[n]\right)^{-1}_+$.
 \end{thm}
@@ -187,10 +189,9 @@ Abracadabra! We can express $\alpha$ using the hierarchy \emph{without referring
 	$\forall n.~ \alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}$.
 \end{thm}
 All that remains is to provide a structurally-recursive function that computes $\alpha$.
-% Linked by Linh
+
 \begin{defn} \label{defn: inv-ack-worker}
-	The
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L155-L161}{inverse Ackermann worker}
+	The inverse Ackermann worker
 	is a function $\alpha^{\W}$: %(\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
 	\begin{equation} \label{eq: inv-ack-worker-recursion}
 	\alpha^{\W}(f, n, k, b) = \begin{cases}
@@ -207,7 +208,9 @@ The following theorem demonstrates that a budget of $n$ suffices.
 \noindent We are finally ready for a strategy to compute the inverse Ackermann function:
 }%end hide
 %formalizes a setting for $\W\alpha$ to work.
+% Linked by Linh
 \begin{thm} \label{thm: inv-ack-worker-correct}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L199-L231}{\coq}
 	$\forall n.~\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{thm}
 \begin{proof}[outline]
@@ -218,7 +221,9 @@ The following theorem demonstrates that a budget of $n$ suffices.
 	Let $m \triangleq \min\big\{k : \alpha_k(n) \le k \}$. Then $m\le n$ since $\alpha_n(n)\le n$. \eqref{eq: inv-ack-worker-intermediate} then implies:
 	$$ \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\W}\big(\alpha_m, \alpha_m(n), m, n - m\big) = m = \alpha(n) $$
 \end{proof}
-We put a more involved mathematical proof of correctness in Appendix~\ref{apx:proof_correct_inv_ack_worker}, and a mechanized proof \note{here}.
+We put a more involved mathematical proof of correctness in Appendix~\ref{apx:proof_correct_inv_ack_worker}, and a mechanized proof
+% Linked by Linh
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L163-L231}{here}.
 We thus have a (re-)definition of inverse Ackermann that is %computationally
 definable via a Coq-accepted worker, \emph{i.e.} $\alpha(n) \triangleq \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big)$. Below, we present the inverse
 Ackermann function in Gallina.

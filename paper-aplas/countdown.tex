@@ -35,6 +35,7 @@ Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower
 Fix $n$. The sentence $\forall m.~ f(n)\le m \iff n\le F(m)$ implies: (1) $f(n)$ is a lower bound to $\{m: n \le F(m)\}$ and (2) $f(n)$ is itself in the set, since plugging in $m \triangleq f(n)$ yields $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we know $\forall m.~n\le F(m)\Rightarrow f(n)\le m$. Now, $\forall m \ge f(n)$.~$F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus completing the proof.
 \end{proof}
 \begin{col}\label{col:inv_gives_id}
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L79-L90}{\coq}
 If $F$ is strictly increasing, then $F^{-1} \circ F$ is
 the identity function.
 \end{col}
@@ -59,8 +60,8 @@ $\li{id}$ is strictly increasing, but $\rf{\li{id}}{a}(n) = (\li{id} \circ \ldot
 % Linked by Linh
 \begin{defn}
 A function $F:\mathbb{N}\to\mathbb{N}$ is an
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L80-L86}{\emph{expansion}} if $\forall n.~ F(n)\ge n$. Further, given $a\in \mathbb{N}$, an expansion $F$ is
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L80-L86}{\emph{strict from}} $a$ if ~$\forall n \ge a.~ F(n) > n$.
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L80-L82}{\emph{expansion}} if $\forall n.~ F(n)\ge n$. Further, given $a\in \mathbb{N}$, an expansion $F$ is
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L84-L86}{\emph{strict from}} $a$ if ~$\forall n \ge a.~ F(n) > n$.
 \end{defn}
 If $a\ge 1$ and $F$ is an expansion \emph{strict from} $a$, we quickly get:
 $\forall n.~ \rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$. That is, $\rf{F}{a} \ $ is itself an expansion strict from $0$.
@@ -143,7 +144,9 @@ If $a \in \mathbb{N}$ and $f\in \contract_{a}$, then $\forall n, m.~ \cdt{f}{a}(
 %	For all $a\in \mathbb{N}$, if $f\in \contract_{a}$ is the upper inverse of $F: \mathbb{N}\to \mathbb{N}$, then $\cdt{f}{a}$ is the upper inverse of $\rf{F}{a}$.
 %\end{thm}
 Another useful result is the recursive formula for \emph{countdown}:
+% Linked by Linh
 \begin{thm} \label{thm: cdt-recursion}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L219-L245}{\coq}
 	$\forall a\in \mathbb{N}$ and $f\in \contract_{a}$, $\cdt{f}{a}$ satisfies:
 	\begin{equation*}
 	\cdt{f}{a}(n) = \begin{cases}
@@ -188,10 +191,9 @@ structurally recursive and is thus more palatable to Coq, and to then
 prove that this worker correctly computes the countdown when it is 
 passed a contraction.
 
-% Linked by Linh
 \begin{defn} \label{defn: countdown-worker} \label{lem: cdt-init}
 For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L101-L108}{\emph{countdown worker}}
+\emph{countdown worker}
 to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
 \begin{equation*}
 \cdw{f}{a}(n, b) = \begin{cases}
@@ -223,10 +225,8 @@ Budget is actually a refinement of gas because
 we always accompany its use with a method to calculate it in constant time.
 In fact, we will soon show that a budget of $n$ is sufficient in this case.
 This lets us define \emph{countdown} in Coq for the first time:
-% Linked by Linh
 \begin{defn} \label{defn: countdown}
-Redefine $
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L110-L112}{\cdt{f}{a}(n)}
+Redefine $\cdt{f}{a}(n)
 \triangleq \cdw{f}{a}(n, n)$.
 % Linked by A
 \begin{lstlisting}
@@ -292,7 +292,9 @@ Redefine $
 \noindent The computational~$\cdt{f}{a}(n)$
 finds the same value as the theoretical
 Definition~\ref{defn: informal-countdown}:
+% Linked by Linh
 \begin{thm} \label{thm: cdt-repeat}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L191-L217}{\coq}
 	$\forall a \in \mathbb{N}.~ \forall f\in \contract_{a}$, we have
 %	\begin{equation} \label{eq: cdt-minimum}
 $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
@@ -311,8 +313,7 @@ $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 %}%end hide
 \hide{
 	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.
-	\note[Can be further shortened for 2-3 lines, but I'll hold it for now]
-	{A simple induction on $i$ confirms that $\forall n, \forall a, \forall b$ and $f\in \contract_{a}$,
+	A simple induction on $i$ confirms that $\forall n, \forall a, \forall b$ and $f\in \contract_{a}$,
 	\begin{equation*}  %\label{eq: cdt-intermediate}
 	\text{If } i < b \text{ and } a < f^{(i)}(n) \text{, then } \cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{(1+i)}(n), b - i - 1\right)
 	\end{equation*}
@@ -321,12 +322,13 @@ of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-
 	\begin{equation*}
 	\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = m + \cdw{f}{a}\left(f^{(m)}(n), n-m\right) = m,
 	\end{equation*}
-where the last equality follows by applying Definition~\ref{defn: countdown-worker} given $f^{(m)}(n)\le a$}.
+where the last equality follows by applying Definition~\ref{defn: countdown-worker} given $f^{(m)}(n)\le a$.
 }%end hide
 \end{proof}
 We give an extended version of this proof in
 Appendix~\ref{apx:proof_correct_countdown_worker},
-and mechanize it \note{here}.
+and mechanize it
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L191-L217}{here}.
 Theorem~\ref{thm: cdt-repeat} and (\ref{eq: rf-upp-inv}) establish the correctness of the Coq definitions of \emph{countdown worker} and \emph{countdown}, thereby justifying our budget of $n$ and our unification of
 Definitions \ref{defn: informal-countdown} and \ref{defn: countdown}. We wrap everything together with the following theorem:
 \begin{thm} \label{thm: cdt-inv-rf}
