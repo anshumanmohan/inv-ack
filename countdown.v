@@ -55,7 +55,8 @@ Qed.
 (* Upper inverses of "strict-from-a expansions" themselves contract above a *)
 Theorem upp_inv_expand_contract_strict :
   forall a f F,
-    expand_strict_from a F -> upp_inv_rel f F -> contract_strict_above a f.
+    expand_strict_from a F ->
+      upp_inv_rel f F -> contract_strict_above a f.
 Proof.
   intros a f F HF HfF. destruct HF as [HF HaF].
   split.
@@ -142,7 +143,8 @@ Proof.
   generalize dependent a.
   induction m.
   - intros. exists 0.
-    simpl. split; [|split]; [|replace n with (S a) by omega; apply Ha|]; omega.
+    simpl. split; [|split];
+    [|replace n with (S a) by omega; apply Ha|]; omega.
   - intros. destruct (IHm (S a)); try omega.
     + intros p Hp. apply Haf. omega.
     + intros b Hab. apply Ha. omega.
@@ -152,7 +154,8 @@ Proof.
       2: split; [apply Ha|]; omega.
       apply (Nat.le_trans _ (S x + (repeat f (S x) n)) _);
                   [simpl; rewrite H1; omega|].
-      apply (repeat_contract_strict a f n x); [split; assumption | omega].
+      apply (repeat_contract_strict a f n x);
+      [split; assumption | omega].
 Qed.
 
 
@@ -175,8 +178,10 @@ Proof.
     rewrite Nat.lt_nge, <- Nat.leb_nle in Ha. rewrite Ha. trivial.
   }
   intros a f n k i Hf Hik Hai.
-  induction i; [simpl; apply case_0; trivial|]. rewrite IHi; [|omega|].
-  2: apply (Nat.le_trans _ (repeat f (S i) n) _); [trivial | apply Hf].
+  induction i; [simpl; apply case_0; trivial|].
+  rewrite IHi; [|omega|].
+  2: apply (Nat.le_trans _ (repeat f (S i) n) _);
+     [trivial | apply Hf].
   simpl. remember (f (repeat f i n)) as m. remember (k - S i) as l.
   replace (k - S(S i)) with (l - 1) by omega.
   rewrite case_0; [omega | trivial | omega|].
@@ -187,12 +192,14 @@ Qed.
    Correctness theorem for this countdown defintion *)
 Theorem countdown_repeat :
   forall a f n k,
-    contract_strict_above a f -> countdown_to f a n <= k <-> repeat f k n <= a.
+    contract_strict_above a f ->
+      countdown_to f a n <= k <-> repeat f k n <= a.
 Proof.
   intros a f n k Haf. inversion Haf as [Hf _].
   unfold countdown_to; split.
   - intro. rewrite not_lt. intro.
-    rewrite (countdown_intermediate a f n n k Hf) in H; [omega | trivial..].
+    rewrite (countdown_intermediate a f n n k Hf) in H;
+      [omega | trivial..].
     apply (Nat.le_trans _ (S k + (repeat f (S k) n)) _); [omega|].
     apply (repeat_contract_strict a f n k Haf H0). 
   - intro. destruct k.
@@ -231,14 +238,16 @@ Proof.
   assert (countdown_to f a (f n) <= countdown_to f a n - 1).
   { rewrite countdown_repeat by apply Hf.
     rewrite <- repeat_S_comm.
-    replace (S (countdown_to f a n - 1)) with (countdown_to f a n) by omega.
+    replace (S (countdown_to f a n - 1)) with
+              (countdown_to f a n) by omega.
     rewrite <- countdown_repeat by apply Hf. trivial. }
   omega.
 Qed.
 
 Corollary countdown_antirecursion :
   forall a f n,
-    contract_strict_above a f -> countdown_to f a (f n) = countdown_to f a n - 1.
+    contract_strict_above a f ->
+      countdown_to f a (f n) = countdown_to f a n - 1.
 Proof.
   intros a f n Haf.
   assert (H := Haf).
@@ -260,12 +269,14 @@ Theorem countdown_contract_strict :
     contract_strict_above t (countdown_to f a).
 Proof.
   intros a f t Ha Haf. split.
-  - intro n. rewrite countdown_repeat by apply Haf. rewrite not_lt. intro.
+  - intro n. rewrite countdown_repeat by apply Haf.
+    rewrite not_lt. intro.
     apply repeat_contract_strict in H; [omega | apply Haf..].
   - intros n Hn. destruct n; [omega|]. rewrite <- lt_S_le.
     rewrite countdown_repeat by apply Haf. destruct n;  trivial.
     remember (repeat f n (S (S n)) - a) as m. destruct m.
-    1: apply (Nat.le_trans _ (repeat f n (S (S n))) _); [apply Haf | omega]. 
+    1: apply (Nat.le_trans _ (repeat f n (S (S n))) _);
+       [apply Haf | omega]. 
     assert (S n + repeat f (S n) (S (S n)) <= (S n) + a)
       by (apply (Nat.le_trans _ (S (S n)) _);
           [apply (repeat_contract_strict a _ _ _ Haf)|]; omega).

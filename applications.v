@@ -51,10 +51,13 @@ Proof.
   intros a b. rewrite inv_hyperop_recursion. remember (b - a) as m.
   generalize dependent b. induction m.
   - intros b Hb. apply countdown_recursion.
-    1: apply inv_hyperop_0_contract_strict. unfold hyperop_init; omega.
+    1: apply inv_hyperop_0_contract_strict.
+       unfold hyperop_init; omega.
   - intros b Hb. remember (m + a) as n. rewrite <- (IHm n) by omega.
-    replace n with (inv_hyperop a 0 b) by (simpl; unfold hyperop_init; omega).
-    apply countdown_recursion. 1: apply inv_hyperop_0_contract_strict.
+    replace n with (inv_hyperop a 0 b)
+        by (simpl; unfold hyperop_init; omega).
+    apply countdown_recursion.
+    1: apply inv_hyperop_0_contract_strict.
     unfold hyperop_init; omega.
 Qed.
 
@@ -81,7 +84,8 @@ Proof.
       try split; try intros u v; omega.
     destruct m; try destruct m.
     1, 3: try replace (hyperop a (S (S (S m)))) with
-        (repeater_from (hyperop a (S (S m))) (hyperop_init a (S (S m)))) by trivial;
+            (repeater_from (hyperop a (S (S m)))
+               (hyperop_init a (S (S m)))) by trivial;
       apply repeater_repeatable; simpl; try omega; assumption.
     rewrite repeatable_simpl. split; [|simpl; omega].
     intros u v. repeat rewrite hyperop_2. intros.
@@ -89,7 +93,8 @@ Proof.
   }
   induction n.
   1: simpl. intros u v. omega.
-  destruct (H n) as [_ Hn]. apply countdown_repeater_upp_inverse; assumption.
+  destruct (H n) as [_ Hn].
+  apply countdown_repeater_upp_inverse; assumption.
 Qed.
 
 (* ****** DIVISION AND LOGARITHM ********************************* *)
@@ -102,7 +107,8 @@ Theorem divc_correct :
 Proof.
   intros a b m Ha. destruct a; [omega|].
   unfold divc. rewrite inv_hyperop_recursion.
-  rewrite countdown_repeat by (split; intro n; rewrite inv_hyperop_1; omega).
+  rewrite countdown_repeat
+      by (split; intro n; rewrite inv_hyperop_1; omega).
   rewrite inv_hyperop_1_repeat. unfold hyperop_init. omega.
 Qed.
 

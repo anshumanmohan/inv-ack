@@ -85,16 +85,21 @@ Qed.
  *  (2) Serves to prove base case for "ack_incr_by_lvl"  
  *)
 Lemma ack_1 : forall n, ackermann 1 n = (S (S n)).
-Proof. induction n; [|rewrite ackermann_recursion; rewrite IHn]; trivial. Qed.
+Proof.
+  induction n; [|rewrite ackermann_recursion; rewrite IHn]; trivial.
+Qed.
 
 (* Alpha at level 1. Used in hard-coding the second level for linear runtime *)
 Lemma alpha_1 : alpha 1 = (fun n => n - 2).
 Proof.
-  assert (upp_inv_rel (alpha 1) (ackermann 1)) as H by apply alpha_correct.
+  assert (upp_inv_rel (alpha 1) (ackermann 1)) as H
+      by apply alpha_correct.
   assert (upp_inv_rel (fun n => n - 2) (ackermann 1)) as H'
       by (intros n m; rewrite ack_1; omega). 
-  rewrite upp_inv_unique in H by (intros n m; repeat rewrite ack_1; omega).
-  rewrite upp_inv_unique in H' by (intros n m; repeat rewrite ack_1; omega).
+  rewrite upp_inv_unique in H
+      by (intros n m; repeat rewrite ack_1; omega).
+  rewrite upp_inv_unique in H'
+      by (intros n m; repeat rewrite ack_1; omega).
   now rewrite H'. 
 Qed.
 
@@ -110,7 +115,8 @@ Lemma ack_incr_by_lvl : forall n, increasing (fun i => ackermann i n).
 Proof.
   intro n. rewrite incr_S. intro i. generalize dependent n.
   induction i; intro n. 1: rewrite ack_1; simpl; omega.
-  remember (S i) as p. destruct n. 1: simpl; apply ack_repeatable; omega.
+  remember (S i) as p. destruct n. 1: simpl;
+  apply ack_repeatable; omega.
   rewrite ackermann_recursion. apply ack_repeatable.
   assert (Hi := IHi).
   rewrite Heqp in IHi. specialize (IHi (S n)).
@@ -198,7 +204,8 @@ Proof.
              upp_inv (fun k : nat => ackermann k k) N <= n
              <-> alpha n N <= n) as H.
   { intros n N.
-    rewrite (upp_inv_correct (fun k : nat => ackermann k k) diag_ack_incr n N).
+    rewrite (upp_inv_correct (fun k : nat => ackermann k k)
+                                diag_ack_incr n N).
     destruct (alpha_correct n) as [_ Hm]. symmetry. apply Hm. }
   apply functional_extensionality. intro n.
   remember (upp_inv (fun k : nat => ackermann k k) n) as m.
@@ -250,7 +257,8 @@ Proof.
   induction i; intros n k b Hin Hib.
   1: rewrite Nat.add_0_l; f_equal; omega.
   rewrite IHi.
-  2: apply (Nat.lt_le_trans _ (alpha (S i) n) _ Hin), alpha_decr_by_lvl.
+  2: apply (Nat.lt_le_trans _ (alpha (S i) n) _ Hin),
+              alpha_decr_by_lvl.
   2: omega.
   unfold two_params_inv_ack_wkr at 1.
   replace (b - i) with (S (b - (S i))) by omega.
@@ -268,9 +276,10 @@ Proof.
   remember (Nat.log2_up n) as b. remember (m / n) as a.
   replace (b - 2) with (alpha 1 b) by (rewrite alpha_1; trivial).
   rewrite <- alpha_1. f_equal. clear Heqb Heqa m n.
-  remember (fun x => two_params_inv_ack_wkr (alpha 1) (alpha 1 x) a x) as f.
-  replace (two_params_inv_ack_wkr (alpha 1) (alpha 1 b) a b) with (f b)
-    by (rewrite Heqf; trivial).
+  remember (fun x => two_params_inv_ack_wkr
+                       (alpha 1) (alpha 1 x) a x) as f.
+  replace (two_params_inv_ack_wkr (alpha 1) (alpha 1 b) a b)
+              with (f b) by (rewrite Heqf; trivial).
   remember (fun x => ackermann (S x) a) as F.
   assert (increasing F) as HF.
   { intros x y. rewrite HeqF. rewrite Nat.succ_lt_mono.
@@ -281,7 +290,8 @@ Proof.
       replace (ackermann 1 a) with (F 0) by (rewrite HeqF; trivial).
       rewrite <- (upp_inv_correct F HF 0 b). omega. }
     rewrite Heqf. rewrite <- Nat.leb_le in Hab.
-    unfold two_params_inv_ack_wkr. destruct b; [|rewrite Hab]; trivial.
+    unfold two_params_inv_ack_wkr. destruct b;
+      [|rewrite Hab]; trivial.
   - assert (~ b <= F p) as Hp by
           (rewrite <- (upp_inv_correct F HF p b); omega). 
     rewrite HeqF in Hp. destruct (alpha_correct (S p)) as [_ H].
@@ -289,16 +299,19 @@ Proof.
     rewrite (two_params_inv_ack_wkr_intermediate (S p) _ _ _ Hp).
 
     + unfold two_params_inv_ack_wkr. destruct (b - S p); [omega|].
-      replace (ackermann (S p) a) with (F p) by (rewrite HeqF; trivial).
+      replace (ackermann (S p) a) with (F p)
+          by (rewrite HeqF; trivial).
       replace (alpha (S (S p)) b <=? a) with true; [omega|].
       symmetry. rewrite Nat.leb_le.
       destruct (alpha_correct (S (S p))) as [_ H1]. rewrite (H1 a b).
-      replace (ackermann (S (S p)) a) with (F (S p)) by (rewrite HeqF; trivial).
+      replace (ackermann (S (S p)) a) with (F (S p))
+          by (rewrite HeqF; trivial).
       rewrite <- (upp_inv_correct F HF (S p) b). omega.
     + rewrite Nat.lt_nge, (H a b), <- Nat.lt_nge in Hp.
       apply (Nat.le_trans _ (ackermann (S p) a) _); [|omega].
       clear Heqp Hp H. induction (S p) as [|k]; [omega|].
-      rewrite Nat.le_succ_l. apply (Nat.le_lt_trans _ (ackermann k a) _ IHk).
+      rewrite Nat.le_succ_l.
+      apply (Nat.le_lt_trans _ (ackermann k a) _ IHk).
       apply ack_incr_by_lvl. omega.
 Qed.
 

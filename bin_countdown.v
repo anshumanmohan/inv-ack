@@ -93,7 +93,8 @@ Proof.
       apply div2_nat_size; [lia|]. apply Haf in Han.
       rewrite le_div_mul_N; [rewrite le_div_mul_N in Han|]; lia.
     + assert (a < repeat f k n) as Han0.
-      * apply (N.lt_le_trans _ (repeat f (S k) n) _); [apply Han| apply Hf].
+      * apply (N.lt_le_trans _ (repeat f (S k) n) _);
+          [apply Han| apply Hf].
       * apply (IHk Han0).
 Qed.
 
@@ -151,7 +152,7 @@ Qed.
 Lemma bin_countdown_intermediate : forall f a n b i,
     bin_contracting f -> ((S i) <= b)%nat -> (a < repeat f i n)
     -> bin_cdn_wkr f a n b =
-       N.of_nat (S i) + bin_cdn_wkr f a (repeat f (S i) n) (b - (S i)).
+         N.of_nat (S i) + bin_cdn_wkr f a (repeat f (S i) n) (b - (S i)).
 Proof.
   intros f a n b i Hf.
   generalize dependent b. generalize dependent n.
@@ -201,7 +202,8 @@ Qed.
    strict binary contractions *)
 Theorem bin_countdown_correct : forall f a,
     bin_contract_strict_above a f ->
-     bin_countdown_to f a = to_N_func (countdown.countdown_to (to_nat_func f) (N.to_nat a)).
+      bin_countdown_to f a =
+        to_N_func (countdown.countdown_to (to_nat_func f) (N.to_nat a)).
 Proof.
   intros f a Haf. apply functional_extensionality. intro n.
   assert (countdown.contract_strict_above (N.to_nat a) (to_nat_func f))
@@ -222,11 +224,13 @@ Corollary bin_countdown_recursion : forall f a n,
     bin_countdown_to f a n = if n <=? a then 0
                               else 1 + bin_countdown_to f a (f n).
 Proof.
-  intros f a n Haf. rewrite bin_countdown_correct by apply Haf. unfold to_N_func.
+  intros f a n Haf.
+  rewrite bin_countdown_correct by apply Haf. unfold to_N_func.
   rewrite N.add_1_l, <- Nat2N.inj_succ, <- (N2Nat.id 0).
   destruct (N.le_gt_cases n a) as [Hna|Hna]; assert (T:=Hna);
   [rewrite <- N.leb_le in T|rewrite <- N.leb_gt in T]; rewrite T;
-  generalize Hna; rewrite Nat2N.inj_iff; [rewrite le_N_nat|rewrite lt_N_nat];
+  generalize Hna; rewrite Nat2N.inj_iff;
+    [rewrite le_N_nat|rewrite lt_N_nat];
   replace (N.to_nat (f n)) with ((to_nat_func f) (N.to_nat n))
     by (unfold to_nat_func; rewrite N2Nat.id; trivial);
   apply countdown.countdown_recursion, bin_contract_strict_Nnat, Haf.

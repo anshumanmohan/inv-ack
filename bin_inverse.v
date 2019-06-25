@@ -32,7 +32,8 @@ Proof.
   intros f F. unfold upp_inv_rel. unfold inverse.upp_inv_rel.
   unfold to_nat_func. split; intros H n m.
   - repeat rewrite le_nat_N. repeat rewrite N2Nat.id. apply H.
-  - specialize (H (N.to_nat n) (N.to_nat m)). repeat rewrite le_nat_N in H.
+  - specialize (H (N.to_nat n) (N.to_nat m)).
+    repeat rewrite le_nat_N in H.
     repeat rewrite N2Nat.id in H. apply H.
 Qed.
 
@@ -52,8 +53,10 @@ Qed.
 Theorem upp_inv_unique :
     forall f F, increasing F -> (upp_inv_rel f F <-> f = upp_inv F).
 Proof.
-  intros f F. rewrite to_nat_func_incr, upp_inv_rel_correct.
-  unfold upp_inv. intro HF. rewrite inverse.upp_inv_unique by apply HF.
+  intros f F.
+  rewrite to_nat_func_incr, upp_inv_rel_correct.
+  unfold upp_inv. intro HF.
+  rewrite inverse.upp_inv_unique by apply HF.
   split; intro. 
   - rewrite <- H. apply N_nat_func_id.
   - rewrite H. symmetry. apply nat_N_func_id.

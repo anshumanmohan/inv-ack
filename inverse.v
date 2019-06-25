@@ -58,7 +58,8 @@ Proof.
   - rewrite Nat.eqb_neq in Heqb.
     assert (N < F m) as HNm by omega.
     split; rewrite IHN; [|omega].
-    rewrite <- IHN; rewrite not_lt; rewrite incr_twoways by apply HF; omega.
+    rewrite <- IHN; rewrite not_lt;
+    rewrite incr_twoways by apply HF; omega.
 Qed.
 
 (* Proof that upper inverse is unique *)
@@ -66,7 +67,8 @@ Theorem upp_inv_unique :
     forall f F, increasing F -> (upp_inv_rel f F <-> f = upp_inv F).
 Proof.
   intros f F HF.
-  assert (upp_inv_rel (upp_inv F) F) as H by (apply upp_inv_correct; apply HF).
+  assert (upp_inv_rel (upp_inv F) F) as H
+      by (apply upp_inv_correct; apply HF).
   split; intro; [|rewrite H0; trivial].
   apply functional_extensionality. intro N.
   assert (f N <= upp_inv F N) by now rewrite (H0 _ N), <- (H _ N). 

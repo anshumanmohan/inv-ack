@@ -81,14 +81,17 @@ Qed.
 
 (* A handy theorem to transform goals involving hyperops *)
 Theorem hyperop_recursion :
-  forall n a b, hyperop a (S n) (S b) = hyperop a n (hyperop a (S n) b).
+  forall n a b,
+    hyperop a (S n) (S b) = hyperop a n (hyperop a (S n) b).
 Proof. trivial. Qed.
 
 (* The first few functions in the hyperops. 
    Useful for pointing out their inverse specifically *)
 
 Lemma hyperop_1 : forall a b, hyperop a 1 b = b + a.
-Proof. intro a. induction b; [|rewrite hyperop_recursion, IHb]; trivial. Qed.
+Proof.
+  intro a. induction b; [|rewrite hyperop_recursion, IHb]; trivial.
+Qed.
 
 Lemma hyperop_2 : forall a b, hyperop a 2 b = b * a.
 Proof.
@@ -151,7 +154,8 @@ Proof. trivial. Qed.
 
 (* Handy lemma to transform goals involving ackermann function *)
 Lemma ackermann_recursion :
-  forall m n, ackermann (S m) (S n) = ackermann m (ackermann (S m) n).
+  forall m n,
+    ackermann (S m) (S n) = ackermann m (ackermann (S m) n).
 Proof. trivial. Qed.
 
 (* A quick demonstration that the Ackermann "kludge" 

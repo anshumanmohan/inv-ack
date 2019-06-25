@@ -33,12 +33,13 @@ Open Scope N_scope.
 Definition bin_repeater_from (f : N -> N) (a : N) (n : N) : N :=
   match n with
   | 0      => a
-  | Npos p => let fix bin_repeater_pos (g : N -> N) (p : positive) (a' : N) : N :=
-               match p with
-               | xH    => g a'
-               | xO p' => let g' := bin_repeater_pos g p' in g' (g' a')
-               | xI p' => let g' := bin_repeater_pos g p' in g (g' (g' a'))
-               end in bin_repeater_pos f p a
+  | Npos p =>
+      let fix bin_repeater_pos (g : N -> N) (p : positive) (a' : N) : N :=
+        match p with
+        | xH    => g a'
+        | xO p' => let g' := bin_repeater_pos g p' in g' (g' a')
+        | xI p' => let g' := bin_repeater_pos g p' in g (g' (g' a'))
+        end in bin_repeater_pos f p a
   end.
 
 (* Repeater is a functional way to look at repeat.
@@ -49,20 +50,26 @@ Proof.
   intros a f n. destruct n; trivial. simpl.
   generalize dependent a.
   induction p; intro a; [ | |trivial];
-  [replace (Pos.to_nat p~1) with (S (Pos.to_nat p + Pos.to_nat p))%nat by lia|
-  replace (Pos.to_nat p~0) with (Pos.to_nat p + Pos.to_nat p)%nat by lia];
-    simpl; f_equal; rewrite repeat_plus; repeat rewrite IHp; trivial.
+  [replace (Pos.to_nat p~1) with
+    (S (Pos.to_nat p + Pos.to_nat p))%nat by lia|
+  replace (Pos.to_nat p~0) with
+    (Pos.to_nat p + Pos.to_nat p)%nat by lia];
+    simpl; f_equal; rewrite repeat_plus;
+      repeat rewrite IHp; trivial.
 Qed.
 
 (* Repeater on N is consistent with its counterpart on nat *)
 Theorem bin_repeater_Nnat : 
     forall a f n, bin_repeater_from f a n =
-    N.of_nat (repeater.repeater_from (to_nat_func f) (N.to_nat a) (N.to_nat n)).
+      N.of_nat (repeater.repeater_from
+                  (to_nat_func f) (N.to_nat a) (N.to_nat n)).
 Proof.
   intros a f n. rewrite bin_repeater_repeat.
   rewrite repeater.repeater_from_repeat.
-  remember (N.to_nat n) as m. clear Heqm. unfold to_nat_func.
-  induction m; simpl; [ |rewrite <- IHm]; rewrite N2Nat.id; trivial.
+  remember (N.to_nat n) as m. clear Heqm.
+  unfold to_nat_func.
+  induction m; simpl; [ |rewrite <- IHm];
+    rewrite N2Nat.id; trivial.
 Qed.
 
 
@@ -123,9 +130,12 @@ Qed.
 Lemma bin_hyperop_3 : forall a b, bin_hyperop a 3 b = a ^ b.
 Proof.
   intros. rewrite bin_hyperop_correct. rewrite repeater.hyperop_3.
-  remember (N.to_nat a) as a0. replace a with (N.of_nat a0) by lia. clear Heqa0.
-  remember (N.to_nat b) as b0. replace b with (N.of_nat b0) by lia. clear Heqb0.
-  induction b0; trivial. replace (N.of_nat (S b0)) with (1 + N.of_nat b0) by lia.
+  remember (N.to_nat a) as a0. replace a with (N.of_nat a0) by lia.
+  clear Heqa0.
+  remember (N.to_nat b) as b0. replace b with (N.of_nat b0) by lia.
+  clear Heqb0.
+  induction b0; trivial.
+  replace (N.of_nat (S b0)) with (1 + N.of_nat b0) by lia.
   rewrite N.pow_add_r. rewrite N.pow_1_r. simpl. rewrite <- IHb0. lia.
 Qed.
 
@@ -134,7 +144,8 @@ Qed.
  * Used in the proof of the theorem "ack_bin_hyperop",
  *  which is also included just for completeness 
  *)
-Lemma bin_hyperop_n_1 : forall n a, (2 <= n)%nat -> bin_hyperop a n 1 = a.
+Lemma bin_hyperop_n_1 :
+    forall n a, (2 <= n)%nat -> bin_hyperop a n 1 = a.
 Proof.
   intros n a Hn. do 2 (destruct n; [omega|]).
   clear Hn. induction n; trivial.
@@ -153,7 +164,8 @@ Definition bin_ackermann (n m : N) : N :=
 
 (* Proof that the above are the same *)
 Theorem bin_ackermann_correct : forall n m,
-  bin_ackermann n m = N.of_nat (repeater.ackermann (N.to_nat n) (N.to_nat m)).
+    bin_ackermann n m =
+      N.of_nat (repeater.ackermann (N.to_nat n) (N.to_nat m)).
 Proof.
   intros n m. unfold bin_ackermann. unfold repeater.ackermann.
   generalize dependent m. induction (N.to_nat n); intro m; [lia| ].

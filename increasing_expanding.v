@@ -123,7 +123,8 @@ Qed.
 
 (* Repeatability is monotonic *)
 Lemma repeatable_monotone :
-    forall a b f, a <= b -> repeatable_from a f -> repeatable_from b f.
+    forall a b f, a <= b ->
+      repeatable_from a f -> repeatable_from b f.
 Proof.
   intros a b f Hab Haf. rewrite repeatable_simpl.
   split; apply Haf; omega.
@@ -140,7 +141,8 @@ Qed.
  * which are all preserved through repeater, as proved below 
  *)
 Lemma repeater_repeatable :
-    forall a b f, 0 < a -> repeatable_from a f -> repeatable_from b (repeater_from f a).
+    forall a b f, 0 < a ->
+      repeatable_from a f -> repeatable_from b (repeater_from f a).
 Proof.
   intros a b f Ha. intro.
   apply (repeatable_monotone 0 _ _); [omega|].
