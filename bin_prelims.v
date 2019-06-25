@@ -55,12 +55,23 @@ Proof.
   rewrite Nat2N.inj_compare. apply N.compare_lt_iff.
 Qed.
 
-Lemma le_div_mul : forall a b q : N, b <> 0 -> (q <= a / b) <-> (b * q <= a).
+(* LEMMAS ABOUT DIV THAT ARE NOT IN STANDARD LIBRARY *)
+
+Lemma le_div_mul_N : forall a b q : N, b <> 0 -> (q <= a / b) <-> (b * q <= a).
 Proof.
   intros a b q Hb. split; intro H.
   - rewrite N.le_ngt. intro contra.
     apply N.div_lt_upper_bound in contra; [lia | trivial].
   - apply N.div_le_lower_bound; trivial.
+Qed.
+
+Lemma le_div_mul_nat : forall a b q : nat,
+    (b <> 0)%nat -> (q <= a / b)%nat <-> (b * q <= a)%nat.
+Proof.
+  intros a b q Hb. split; intro H.
+  - rewrite Nat.le_ngt. intro contra.
+    apply Nat.div_lt_upper_bound in contra; [omega | trivial].
+  - apply Nat.div_le_lower_bound; trivial.
 Qed.
 
 Lemma div_sub : forall a b c, c <> 0 -> (a - c * b) / c = a / c - b.
@@ -71,6 +82,17 @@ Proof.
     rewrite <- N.sub_0_le in H. rewrite H. apply N.div_0_l, Hc.
   - replace a with (a - c * b + b * c) at 2 by lia.
     rewrite N.div_add by trivial. lia.
+Qed.
+
+Lemma div_nat_N : forall m n,
+    m / n = N.of_nat (N.to_nat m / N.to_nat n).
+Proof.
+  intros m n. destruct n; [destruct m|]; trivial.
+  apply le_antisym.
+  - rewrite le_N_nat, Nat2N.id, le_div_mul_nat,
+    <- N2Nat.inj_mul, <- le_N_nat, <- le_div_mul_N; lia.
+  - rewrite le_div_mul_N, <- (N2Nat.id (Npos p)), <- Nat2N.inj_mul,
+    Nat2N.id, <- N2Nat.id, <- le_nat_N, <- le_div_mul_nat; lia.
 Qed.
 
 (* ****** REPEATED APPLICATION ************ *)
@@ -142,6 +164,20 @@ Qed.
 
 Lemma nat_size_contract : forall n, (nat_size n <= N.to_nat n)%nat.
 Proof. destruct n; trivial. simpl. induction p; simpl; lia. Qed.
+
+Lemma nat_size_log2_up : forall n,
+    nat_size n = N.to_nat (N.log2_up (N.succ n)).
+Proof.
+  destruct n; trivial. unfold N.log2_up.
+  assert (1 < N.succ (N.pos p)) by lia.
+  rewrite <- N.compare_lt_iff in H. rewrite H, N.pred_succ.
+  clear H.
+  induction p; trivial; rewrite N2Nat.inj_succ;
+  [replace (Npos p~1) with (2 * Npos p + 1) at 2 by lia|
+   replace (Npos p~0) with (2 * Npos p ) at 2 by lia];
+  [rewrite N.log2_succ_double by lia|rewrite N.log2_double by lia];
+  rewrite <- IHp; trivial.
+Qed.
 
 
 (* ****** NAT TO N CONVERSION ************ *)

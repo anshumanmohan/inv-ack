@@ -48,7 +48,7 @@ Theorem upp_inv_bin_hyperop_2 : forall a,
 Proof.
   intros a Ha b c. unfold inv_bin_hyperop. rewrite bin_hyperop_2.
   repeat rewrite N.le_ngt. repeat rewrite <- N.le_succ_l.
-  rewrite le_div_mul by lia. repeat rewrite <- N.add_1_l. lia.
+  rewrite le_div_mul_N by lia. repeat rewrite <- N.add_1_l. lia.
 Qed.
 
 Theorem inv_bin_hyperop_0_correct : forall a b,
@@ -98,7 +98,7 @@ Lemma inv_bin_hyperop_bin_contract : forall a n,
 Proof.
   intros a n Ha Hn. destruct n as [|[|n]]; try omega. clear Hn. induction n.
   - simpl. split; intro b; [destruct b|intro Hb];
-    rewrite N.le_ngt, <- N.le_succ_l, le_div_mul. 1,2,4,6: lia.
+    rewrite N.le_ngt, <- N.le_succ_l, le_div_mul_N. 1,2,4,6: lia.
     + remember (N.pos p - 1) as b. replace (N.succ _) with (N.succ b + 1) by lia.
       replace (_ - 1) with (b + a) by lia. rewrite N.mul_add_distr_l, N.mul_1_r,
       <- N.add_le_mono_r, <- N.lt_nge, <- N.le_succ_l, <- N.mul_1_l at 1.
@@ -109,7 +109,7 @@ Proof.
       assert (2 * (c/2 + 1) <= c) as contra.
       { apply (N.le_trans _ (a * (c/2 + 1)) _); trivial.
         apply N.mul_le_mono_r. apply Ha. }
-      rewrite <- le_div_mul in contra; lia. replace (_ - 1) with ((b + 1)/2) by lia.
+      rewrite <- le_div_mul_N in contra; lia. replace (_ - 1) with ((b + 1)/2) by lia.
       replace (b + 1) with (c + 1 * 2) by lia. symmetry. apply N.div_add. lia.
   - replace (inv_bin_hyperop _ _) with
         (bin_countdown_to (inv_bin_hyperop a (S (S n))) 1) by trivial.

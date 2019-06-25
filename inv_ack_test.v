@@ -15,10 +15,10 @@ Time Compute inv_ack_linear 100000.
 
 Require Import BinNat. Open Scope N.
 
-Definition bignum1 := 2^2^2^2.   (*   65536   *)
-Definition bignum2 := bignum1^2. (*   4.3e9   *)
-Definition bignum3 := 2^bignum1. (* 2.0e19728 *)
-Definition bignum4 := bignum3^2. (* 4.0e39456 *)
+Definition bignum1 := 2^2^2^2.   (* 65536 *)
+Definition bignum2 := bignum1^2. (* 4.3 x 10^9 *)
+Definition bignum3 := 2^bignum1. (* 2.0 x 10^19728 *)
+Definition bignum4 := bignum3^2. (* 4.0 x 10^39456 *)
 
 Time Compute (bin_inv_ack bignum1).
 Time Compute (bin_inv_ack bignum2).
