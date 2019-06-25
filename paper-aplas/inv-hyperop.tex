@@ -132,7 +132,11 @@ which is straightforward for $a\ge 2$. Induction on $n$ gives us the third goal.
 \end{proof}
 %With this theorem, we have proved the correctness of $\divc$, $\logc$ and $\log^*$, as well as the whole inverse hyperoperation hierarchy.
 \begin{rem}
-Three early hyperoperations are $a[2]b = ab$, $a[3]b = a^b$ and \linebreak $a[4]b = \! ^ba$, so, by Theorem~\ref{thm: inv-hyperop-correct}, we can define their inverses $\left\lceil b/a \right\rceil$, $\left\lceil \log_a b \right\rceil$, and $\log^*_a b$ as $a\angle{2}b$, $a\angle{3}b$, and $a\angle{4}b$.
+Three early hyperoperations are $a[2]b = ab$, $a[3]b = a^b$ and \linebreak 
+$a[4]b = \! ^ba$, so, by Theorem~\ref{thm: inv-hyperop-correct}, we can define their inverses $\left\lceil b/a \right\rceil$, $\left\lceil \log_a b \right\rceil$, and $\log^*_a b$ as	
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L102-L113}{$a\angle{2}b$},	
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L115-L124}{$a\angle{3}b$}, and	
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L126-L128}{$a\angle{4}b$}.
 Note that the functions $\log_a b$ and $\log^*_a b$ are not in the Coq Standard Library.
 \end{rem}
 \hide{
