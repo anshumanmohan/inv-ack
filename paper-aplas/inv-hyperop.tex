@@ -172,7 +172,7 @@ rule $\alpha_{i+1} \triangleq \cdt{\alpha_i}{\Ack_i(1)}$ is tempting.
 But this approach is flawed because it still depends on $\Ack_i$.
 Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\big)^{-1}$ and $\alpha_{i+1} = \big(\Ack_{i+1}\big)^{-1}$. Then $\Ack_{i+1}(m) = \big(\Ack_{i}\big)^{(m)} \big(\Ack_{i}(1)\big)$. We then have:
 \begin{equation} \label{eq: inv-ack-hier-derive}
-\alpha_{i+1}(n)\le m \iff n\le \big(A_i\big)^{(m+1)}(1) \iff \big(\alpha_i\big)^{(m+1)}(n) \le 1
+\alpha_{i+1}(n)\le m \iff n\le \big(\mathcal{A}_i\big)^{(m+1)}(1) \iff \big(\alpha_i\big)^{(m+1)}(n) \le 1
 \end{equation}
 Equivalently, $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\big\}$, or $\alpha_{i+1}(n) = \cdt{\alpha_i}{1}\big(\alpha_i(n)\big)$. From Equation \ref{eq: inv-ack-hier-derive} we can thus define the inverse Ackermann hierarchy:
 \begin{defn} \label{defn: inv-ack-hier}
