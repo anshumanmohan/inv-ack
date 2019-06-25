@@ -48,11 +48,12 @@ which makes our task tricky.
 In the outer recursive call, the first argument is shrinking
 but the second is expanding explosively; in the inner recursive call, the first argument is
 constant but the second is shrinking. The elegant solution uses double recursion~\cite{bertotcast} as follows:
+% Linked by A
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L39-L40}{Definition hyperop\_init}` (a n : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L51-L52}{Definition hyperop\_init}` (a n : nat) : nat :=
   match n with 0 => a | 1 => 0 | _ => 1 end.
 
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L43-L52}{Fixpoint hyperop\_original}` (a n b : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L55-L64}{Fixpoint hyperop\_original}` (a n b : nat) : nat :=
   match n with
   | 0    => 1 + b
   | S n' => let fix hyperop' (b : nat) :=
@@ -62,7 +63,7 @@ constant but the second is shrinking. The elegant solution uses double recursion
               end in hyperop' b
   end.
 
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L107-L116}{Fixpoint ackermann\_original}` (m n : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L123-L132}{Fixpoint ackermann\_original}` (m n : nat) : nat :=
   match m with
   | 0    => 1 + n
   | S m' => let fix ackermann' (n : nat) : nat :=
@@ -86,8 +87,9 @@ to the former. For this we employ a version of the well-known function iterator
 \li{iter}~\cite{bertotcast}:
 \begin{defn}
 $\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the \emph{repeater from} $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
+% Linked by A
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L21-L25}{Fixpoint repeater\_from}` (f : nat -> nat) (a n : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L32-L36}{Fixpoint repeater\_from}` (f : nat -> nat) (a n : nat) : nat :=
   match n with 0 => a | S n' => f (repeater_from f a n') end.
 \end{lstlisting}
 \end{defn}
@@ -107,8 +109,9 @@ a & \text{when } n = 0 \\
 1 & \text{otherwise}
 \end{cases}
 \end{equation*}
-\begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L55-L59}{Fixpoint hyperop}` (a n b : nat) : nat :=
+% Linked by Anshuman
+\begin{lstlisting} 
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L67-L71}{Fixpoint hyperop}` (a n b : nat) : nat :=
   match n with
   | 0    => 1 + b
   | S n' => repeater_from (hyperop a n') (hyperop_init a n') b
@@ -122,8 +125,9 @@ m + 1 & \text{when } n = 0 \\
 \end{cases} \qquad \qquad \qquad \qquad \qquad \qquad \qquad ~ 
 %\end{array}
 \end{equation*}
+% Linked by A
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/repeater.v#L119-L123}{Fixpoint ackermann}` (n m : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L135-L139}{Fixpoint ackermann}` (n m : nat) : nat :=
   match n with
   | 0    => S m
   | S n' => repeater_from (ackermann n') (ackermann n' 1) m

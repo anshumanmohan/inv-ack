@@ -192,8 +192,9 @@ the \emph{true argument} $n$, for which we want to simulate
 and the \emph{budget} $b$, the maximum number of times we shall attempt
 to compositionally apply $f$ on the input before giving up.
 If the input goes below or equals $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n)~\le~a$, we return the count $k$. If the budget is exhausted (\emph{i.e.} $b = 0$) while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but the point is that it can clearly be written as a Coq \li{Fixpoint}:
+% Linked by A
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L94-L100}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L103-L108}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
   match b with 0 => 0 | S b' =>
     if (n <=? a) then 0 else S (cdn_wkr f a (f n) k')
   end.
@@ -211,8 +212,9 @@ In fact, we will soon show that a budget of $n$ is sufficient in this case.
 This lets us define \emph{countdown} in Coq for the first time:
 \begin{defn} \label{defn: countdown}
 Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.
+% Linked by A
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v#L104}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L112}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
 \end{lstlisting}
 \vspace{-0.8em}
 \end{defn}
@@ -287,7 +289,7 @@ $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 	will return $0$ and add nothing to the result.
 	
 	Suppose $b = n$, and let $m \triangleq \min\big\{i : f^{(i)}(n)\le a\big\}$\footnote{We prove the existence
-		of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v\#L125-L150}{here} in our codebase.}. Then $m \le n$ since $f^{(n)}(n)\le a$. Thus, before the budget is exhausted, the function reaches \linebreak the $m^{th}$ call. This is actually the last recursive call since $\big(f^{(m)}(n), n - m\big)$ satisfies the terminating condition $f^{(m)}(n)\le a$. This last call adds $0$ to the accumulated result, which is $m$ at the moment. Therefore $\cdw{f}{a}(n, n) = m$.
+		of the min in Coq’s intuitionistic logic {\color{red}here} in our codebase.}. Then $m \le n$ since $f^{(n)}(n)\le a$. Thus, before the budget is exhausted, the function reaches \linebreak the $m^{th}$ call. This is actually the last recursive call since $\big(f^{(m)}(n), n - m\big)$ satisfies the terminating condition $f^{(m)}(n)\le a$. This last call adds $0$ to the accumulated result, which is $m$ at the moment. Therefore $\cdw{f}{a}(n, n) = m$.
 %}%end hide
 \hide{
 	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.

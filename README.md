@@ -26,4 +26,4 @@ In addition to this, we provide two minimal standalone files that show all our t
 
 We test the time bounds we claim in two ways. 
 - In `inv_ack_test.v`, we test our definitions in Gallina itself. We invite readers to open that file and click through it.
-- In the files `test_runtime_ocaml.ml` and `bin_test_runtime_ocaml.ml`, we extract our key contributions to OCaml and then run the same benchmarks on them. Readers can build and run them using our Makefile ("make test") or using ocamlc.
+- In the files `test_runtime_ocaml.ml` and `bin_test_runtime_ocaml.ml`, we extract our key contributions to OCaml and then run the same benchmarks on them. Readers can build and run them using our Makefile ("make test") or by hand, using their OCaml compilers of choice.
