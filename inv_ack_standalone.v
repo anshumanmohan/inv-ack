@@ -116,3 +116,5 @@ Definition bin_inv_ack n :=
        bin_inv_ack_wkr f (f n) 3 (nat_size n).
 
 Close Scope N_scope.
+
+(* Please see inv_ack_test.v for a brief demonstration of the time bounds. *)
