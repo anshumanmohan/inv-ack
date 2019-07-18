@@ -15,9 +15,9 @@
 countdown_repeater_old.v
 inv-ack.pdf
 presentation/presentation.pdf
-presentation/*.nav
-presentation/*.snm
-presentation/*.toc
-presentation/*.vrb
+*.nav
+*.snm
+*.toc
+*.vrb
 *.vtc
 .lia.cache

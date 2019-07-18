@@ -326,7 +326,6 @@ function~$\Ack(n)$ and show that these functions are consistent with the usual d
 
 
 \section*{Roadmap}
-
 \begin{frame}
 \frametitle{Roadmap}
 \textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.
@@ -362,9 +361,42 @@ function~$\Ack(n)$ and show that these functions are consistent with the usual d
 \label{sec: countdown}
 \input{countdown.tex}
 
-\section{Inverting Hyperoperations and Ackermann}
-\label{sec: inv-hyperop}
+%\section{Inverting Hyperoperations and Ackermann}
+%\label{sec: inv-hyperop}
 %\input{inv-hyperop.tex}
+
+\section*{Roadmap}
+\begin{frame}
+\frametitle{Roadmap}
+\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.
+
+\bigskip
+
+\textcolor<1-2>{gray}{\textbf{Step 1.} Explore the hyperoperations/Ackermann function hierarchical structure: Connect consecutive levels with \textbf{Repeater}.}
+
+\bigskip
+
+{\color<1-2>{gray} \textbf{Step 2.} Invert each level in both hierarchies:
+	{ \small
+		\begin{itemize}\itemsep0em
+			\color<1-2>{gray}
+			\item \emph{What is inverse?} Upper inverse and increasing functions.
+			\item \emph{Can Repeater preserve Invertibility?} Repeatable functions.
+			\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
+			\item Invert each level in hyperoperations/Ackermann hierarchies.
+		\end{itemize}
+	}
+}
+
+\bigskip
+
+\textcolor<2>{red}{\textbf{Step 3.} Implement the Inverse Ackermann function via the inverse Ackermann hierarchy.}
+
+\bigskip
+
+\textbf{Step 4.} Optimize its time complexity.
+\end{frame}
+
 
 \section{Time Bound of Our Inverses in Unary Encoding}
 \label{sec: inv-ack}

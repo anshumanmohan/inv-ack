@@ -168,52 +168,70 @@ Thus the proof is complete.
 
 
 \begin{frame}[fragile]
-\frametitle{A Countdown computation in Coq type \texttt{nat}}
+\frametitle{A Countdown computation in Coq type \texttt{nat} 1}
 \textbf{Idea.} To compute $\cdt{f}{a}(n)$, starting from $n$, repeatedly apply $f$ to get the chain $\{n, f(n), f^{(2)}(n), \ldots \}$. Stops when $f^{(k)}(n)\le a$. Returns $k$.
-
-\smallskip
-
-\textbf{Key issue.} Coq needs a known terminating point, i.e. an explicit decreasing argument. How to know when to terminate beforehand?
 
 \bigskip
 
-\textbf{The worker function.} A worker function takes $f, a, n$ and a budget $b$ and compute the chain $\{n, f(n), \ldots, f^{(b)}(n)\}$. It stops before reaching $b$ if $f^{(k)}(n)\le a$.
+\textbf{Primary issue.} Coq needs a known terminating point, i.e. an explicit decreasing argument. How to know when to terminate beforehand?
+
+\smallskip
+
+\textbf{Secondary issue.} It's hard to define a Coq definition of Countdown for contractions only. Defining a computation for \emph{all functions} that actually computes Countdown on contractions is easier.
+
+\bigskip
+
+\textbf{The worker function.} A worker function takes $f, a, n$ and a budget $b$ and compute the chain $\{n, f(n), \ldots, f^{(b)}(n)\}$. It stops before reaching $f^{(b)}(n)$ upon encountering $k$ such that $f^{(k)}(n)\le a$.
+
+\bigskip
+
+\textbf{Primary issue.} How to determine a sufficient budget?
 \end{frame}
 
 
+\begin{frame}[fragile]
+\frametitle{A Countdown computation in Coq type \texttt{nat} 2}
+
+\textbf{The worker function.} For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the
+\emph{countdown worker}
+to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
+\begin{equation*}
+\cdw{f}{a}(n, b) = \begin{cases}
+0 & \text{if } b = 0 \vee n\le a \\ 1 +\cdw{f}{a}(f(n), b-1) & \text{if } b \ge 1 \wedge n > a
+\end{cases}
+\end{equation*}
+
+% Linked by A
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L103-L108}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
+  match b with 0 => 0 | S b' =>
+    if (n <=? a) then 0 else S (cdn_wkr f a (f n) k')
+end.
+\end{lstlisting}
+
+\textbf{The Countdown computation.} We choose a budget equals to $n$, which is sufficient.
+Redefine $\cdt{f}{a}(n)
+\triangleq \cdw{f}{a}(n, n)$.
+% Linked by A
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L112}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
+\end{lstlisting}
+\end{frame}
+
+
+
+
+\subsection*{}
 \begin{frame}
-\frametitle{}
+\frametitle{Step 2: Inverting the hierarchies via countdown\\ Roadmap}
+\begin{enumerate}\itemsep2em
+	\item \textcolor<1-2>{gray}{\emph{What is inverse?} Upper inverse and increasing functions.}
+	\item \textcolor<1-2>{gray}{\emph{Can Repeater preserve Invertibility?} Repeatable functions.}
+	\item \textcolor<1-2>{gray}{\emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.}
+	\item \textcolor<2>{red}{Invert each level in hyperoperations/Ackermann hierarchies.}
+\end{enumerate}
 \end{frame}
 
 
-\begin{frame}
-\frametitle{}
-\end{frame}
-
-
-\subsection{A structurally recursive computation of countdown}
-
-
-\begin{frame}
-\frametitle{}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{}
-\end{frame}
+\subsection{Inverting the hyperoperations/Ackermann hierarchies}
+\input{inv_hyperop.tex}
