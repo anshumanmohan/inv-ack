@@ -1,0 +1,117 @@
+\subsection*{The Ackermann and Inverse Ackermann functions}
+\begin{frame}
+\frametitle{The Ackermann and Inverse Ackermann functions}
+\label{defn: ack}
+	The Ackermann-P\'eter function (hereafter just
+	``the'' Ackermann function) is
+	written $A : \mathbb{N}^2 \to \mathbb{N}$ and defined as follows:
+	\begin{equation}
+	\label{eq:ackermann}
+	A(n, m) \triangleq \begin{cases}
+	m + 1 & \text{ when } n = 0 \\
+	A(n-1, 1) & \text{ when } n > 0, m = 0 \\
+	A\big(n-1, A(n, m-1)\big) & \text{ otherwise}
+	\end{cases}
+	%A(m, n) \triangleq \begin{cases}
+	%n + 1 & \text{ if } m = 0 \\
+	%A(m-1, 1) & \text{ if } m > 0, n = 0 \\
+	%A(m-1, A(m, n-1)) & \text{ if } m > 0, n > 0
+	%\end{cases}
+	\end{equation}
+	The one-variable \emph{diagonal} Ackermann function $\Ack : \mathbb{N} \to \mathbb{N}$ is defined as $\Ack(n)~\triangleq~A(n, n)$.\\[5pt]
+	
+	The inverse Ackermann function $\alpha(n)$ is the smallest~$k$ for
+	which $n \le \Ack(k)$, \emph{i.e.}
+	\begin{equation*}
+	\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}
+	\end{equation*}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Initial values for $\Ack(n)$ and $\alpha(n)$}
+\begin{columns}[T]
+	\begin{column}{0.5\textwidth}
+		TODO: Value table for $\Ack(n)$
+		
+		Grows astronomically fast!
+	\end{column}
+
+  \begin{column}{0.5\textwidth}
+  	TODO: Value table for $\alpha(n)$
+  	
+  	Grows astronomically slow!
+  \end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Computing $\alpha(n)$}
+Despite growing extremely slow, $\alpha(n)$ is difficult to compute for large $n$ due to the explosive growth of $\Ack(k)$.
+
+\bigskip
+
+\textbf{The Naive Approach:} start at $k=0$, calculate $\Ack(k)$,
+compare~it~to~$n$, and increment $k$ until $n \le \Ack(k)$.
+
+\bigskip
+
+\textbf{Time complexity:} $\Omega(\Ack(\alpha(n)))$,
+so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ in this way requires
+$\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
+\end{frame}
+
+\subsection*{The hyperoperation/Ackermann hierarchy}
+
+\begin{frame}
+\frametitle{The hierarchy of Ackermann levels}
+The Ackermann function is easy to define, but hard to
+understand.
+
+We see it as
+a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.A(n,b)$, where for each $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times,
+
+with a
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{\emph{kludge}}. %Linked by Linh
+
+\bigskip
+
+To better understand the Ackermann function as a hierarchy and this kludge, we explore the closely-related hyperoperations.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{The Ackermann hierarchy and hyperoperations}
+TODO: Polish, add names of levels to this table without overflowing the page
+
+\begin{table}[t]
+	\begin{centermath}
+		\begin{array}{c@{\hskip 0.5em}|@{\hskip 1em}c@{\hskip 1em}c@{\hskip 1em}|@{\hskip 1em}c@{\hskip 1em}c}
+			n & a [n] b & \Ack_n(b) & a \angle{n} b & \alpha_n(b)\\
+			\hline
+			0 & 1 + b & 1 + b & b - 1 & b - 1 \\
+			1 & a + b & 2 + b & b - a & b - 2 \\
+			2 & a \cdot b & 2b + 3 & \left\lceil \frac{b}{a} \right\rceil & \left\lceil \frac{b-3}{2} \right\rceil \\
+			3 & a^b & 2^{b + 3} - 3 & \left\lceil \log_a ~ b \right\rceil & \left\lceil \log_2 ~ (b + 3)\right\rceil - 3 \\
+			[2pt]
+			4 & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \log^*_a ~ b & \log^*_2 ~ (b + 3) - 3
+		\end{array}
+	\end{centermath}
+	\label{table: hyperop-ack-inv}
+\end{table}
+
+The kludge: $\Ack_n(b) = 2[n](b+3) - 3$ and $\alpha_n(b) = 2\angle{n}(b+3) - 3$.
+
+\end{frame}
+
+
+%\begin{frame}
+%\frametitle{}
+%\end{frame}
+%
+%
+%\begin{frame}
+%\frametitle{}
+%\end{frame}

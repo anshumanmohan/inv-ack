@@ -1,0 +1,169 @@
+\subsection{The repeated application pattern}
+
+\begin{frame}
+\frametitle{Repeated Application}
+
+Let $X$ be any set and $f: X\to X$ be a function on $X$. Define the notation:
+\begin{equation*}
+f^{(k)}(u) \triangleq ~ (f\circ f\circ \cdots \circ f)(u),
+\end{equation*}
+which denotes $k$ compositional applications of a function~$f$ to an
+input~$u$.
+
+\bigskip
+
+The following recursive rule applies:
+\begin{enumerate}
+	\item $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times yields the identity).
+	\item $f^{(k+1)}(u) = f \left(f^{(k)}(u)\right)$.
+\end{enumerate}
+
+\bigskip
+
+Repeated application plays a vital role in both hyperoperations and Ackermann hierarchy.
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{The hyperoperation formal definition}
+\begin{equation*}
+\begin{array}{lrcl}
+\textit{1. 0$^{\textit{th}}$ level: } & a[0]b & ~ \triangleq ~ & b + 1 \\
+\textit{2. Initial values: } & a[n+1]0 & ~ \triangleq ~ &
+\begin{cases}
+a & \text{when } n = 0 \\
+0 & \text{when } n = 1 \\
+1 & \text{otherwise}
+\end{cases} \\
+\textit{3. Recursive rule: } \quad & a[n+1](b+1) & ~ \triangleq ~ & a[n]\big(a[n+1]b\big)
+\end{array}
+\end{equation*}
+
+Via the recursive rule:
+\begin{equation*}
+\begin{aligned}
+& a[n+1]b \\
+& = ~ a[n]\big(a[n+1](b-1)\big) ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \\
+& = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ \big(a[n]\big)^{(b)}\underbrace{\big(a[n+1]0\big)}_{\text{init value}}
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{The Ackermann hierarchy formal definition}
+\begin{equation*}
+\begin{array}{lrcl}
+\textit{1. 0$^{\textit{th}}$ level: } & \Ack_0(b) & ~ \triangleq ~ & b + 1 \\
+\textit{2. Initial values: } & \Ack_{n+1}(0) & ~ \triangleq ~ & \Ack_n(1) \\
+\textit{3. Recursive rule: } \quad & \Ack_{n+1}(b+1) & ~ \triangleq ~ & \Ack_n\big(\Ack_{n+1}(b)\big)
+\end{array}
+\end{equation*}
+
+Via the recursive rule:
+\begin{equation*}
+\begin{aligned}
+& \Ack_{n+1}(b) \\
+& = ~ \Ack_n\big(\Ack_{n+1}(b-1)\big) ~ = ~ \Ack_n\big(\Ack_n\big(\Ack_{n+1}(b-2)\big)\big) \\
+& = ~ \underbrace{\big( \Ack_n\circ \Ack_n\circ \cdots \circ \Ack_n \big)}_{b \text{ times}} \big(\Ack_{n+1}(0)\big)  ~ = ~ \big(\Ack_n\big)^{(b)}\underbrace{\big(\Ack_{n+1}(0)\big)}_{\text{init value}}
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+
+
+\subsection{The repeater operation}
+
+
+\begin{frame}[fragile]
+\frametitle{From repeated application to Repeater}
+The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to an initial value.
+
+\bigskip
+
+We can abstract the concept of repeated application in a higher-order function called \emph{repeater}:
+
+\smallskip
+
+$\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L32-L36}{\emph{repeater from}}
+$a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
+
+% Linked by A
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L32-L36}{Fixpoint repeater\_from}` (f : nat -> nat) (a n : nat) : nat :=
+match n with 0 => a | S n' => f (repeater_from f a n') end.
+\end{lstlisting}
+
+\smallskip
+
+Functional-to-function recursive rule:
+$\begin{cases}
+\displaystyle a[n+1] & = \rf{\big(a[n]\big)}{a[n+1]0} \\[5pt]
+\Ack_{n+1} & = \rf{\big(\Ack_n\big)}{\Ack_{n+1}(0)}
+\end{cases}$.
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Hyperoperations Coq definitions}
+Without Repeater (via double recursion):
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L51-L52}{Definition hyperop\_init}` (a n : nat) : nat :=
+  match n with 0 => a | 1 => 0 | _ => 1 end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L55-L64}{Fixpoint hyperop\_original}` (a n b : nat) : nat :=
+  match n with
+  | 0    => 1 + b
+  | S n' => let fix hyperop' (b : nat) := match b with
+              | 0    => hyperop_init a n'
+              | S b' => hyperop_original a n' (hyperop' b')
+              end in hyperop' b
+  end.
+\end{lstlisting}
+
+With Repeater:
+% Linked by Anshuman
+\begin{lstlisting} 
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L67-L71}{Fixpoint hyperop}` (a n b : nat) : nat :=
+  match n with
+  | 0    => 1 + b
+  | S n' => repeater_from (hyperop a n') (hyperop_init a n') b
+  end.
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Ackermann hierarchy Coq definitions}
+Without Repeater (via double recursion):
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L123-L132}{Fixpoint ackermann\_original}` (m n : nat) : nat :=
+  match m with
+  | 0    => 1 + n
+  | S m' => let fix ackermann' (n : nat) : nat := match n with
+              | 0    => ackermann_original m' 1
+              | S n' => ackermann_original m' (ackermann' n')
+              end in ackermann' n
+  end.
+\end{lstlisting}
+
+With Repeater:
+% Linked by A
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L135-L139}{Fixpoint ackermann}` (n m : nat) : nat :=
+  match n with
+  | 0    => S m
+  | S n' => repeater_from (ackermann n') (ackermann n' 1) m
+  end.
+\end{lstlisting}
+\end{frame}
+
+%
+%\begin{frame}
+%\frametitle{}
+%\end{frame}

@@ -1,0 +1,10 @@
+\frametitle{A Countdown computation in Coq type \texttt{nat}}
+\textbf{Idea.} To compute $\cdt{f}{a}(n)$, starting from $n$, repeatedly apply $f$ to get the chain $\{n, f(n), f^{(2)}(n), \ldots \}$. Stops when $f^{(k)}(n)\le a$. Returns $k$.
+
+\smallskip
+
+\textbf{Key issue.} Coq needs a known terminating point, i.e. an explicit decreasing argument. How to know when to terminate beforehand?
+
+\bigskip
+
+\textbf{The worker function.} A worker function takes $f, a, n$ and a budget $b$ and compute the chain $\{n, f(n), \ldots, f^{(b)}(n)\}$. It stops before reaching $b$ if $f^{(k)}(n)\le a$.

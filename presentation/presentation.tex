@@ -1,0 +1,389 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beamer Presentation
+% LaTeX Template
+% Version 1.0 (10/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+
+\documentclass[10pt]{beamer}
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+\usetheme{Antibes}  %Good
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}  %Good
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+%\usetheme{Madrid}  %Good
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}  %Good
+%\usetheme{Singapore}  %Good
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+\usecolortheme{dolphin}  %Good
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}  %Good
+%\usecolortheme{rose}  %Good
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}  %Good
+%\usecolortheme{whale}  %Good
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+%\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{courier}           % for the courier font (optional)
+\usepackage{multicol}          % for two equations side by side
+\usepackage{centernot}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{stmaryrd}
+\usepackage{hieroglf}
+\usepackage{scalerel}
+
+%\hypersetup{ % play with these to change the look of hyperlinks
+%	colorlinks=true,
+%	linkcolor=black,
+%	filecolor=magenta,
+%	urlcolor=blue,
+%	citecolor=black
+%}
+
+%\setbeamertemplate{bibliography item}{\insertbiblabel}
+
+
+%------------------------------------------------------------------------------------------
+%    ENVIRONMENT SETTINGS
+%------------------------------------------------------------------------------------------
+
+\setbeamertemplate{theorems}[numbered]
+
+\makeatletter
+\renewcommand{\itemize}[1][]{%
+  \beamer@ifempty{#1}{}{\def\beamer@defaultospec{#1}}%
+  \ifnum \@itemdepth >2\relax\@toodeep\else
+    \advance\@itemdepth\@ne
+    \beamer@computepref\@itemdepth% sets \beameritemnestingprefix
+    \usebeamerfont{itemize/enumerate \beameritemnestingprefix body}%
+    \usebeamercolor[fg]{itemize/enumerate \beameritemnestingprefix body}%
+    \usebeamertemplate{itemize/enumerate \beameritemnestingprefix body begin}%
+    \list
+      {\usebeamertemplate{itemize \beameritemnestingprefix item}}
+      {\setlength\itemsep{1em}% NEW
+        \def\makelabel##1{%
+          {%
+            \hss\llap{{%
+                \usebeamerfont*{itemize \beameritemnestingprefix item}%
+                \usebeamercolor[fg]{itemize \beameritemnestingprefix item}##1}}%
+          }%
+        }%
+      }
+  \fi%
+  \beamer@cramped%
+  \raggedright%
+  %\beamer@firstlineitemizeunskip%
+}
+\makeatother
+
+\lstdefinestyle{myStyle}{
+	%	language=Coq,
+	keywords={Inductive,Require,Import,Definition,Fixpoint,match,with,end,let,in,fix},
+	basicstyle=\normalfont\footnotesize\tt,
+	keywordstyle=\color{green}, % Blue clashes with the cyan links. Change if you want.
+	stepnumber=1,
+	tabsize=2,
+	numbers=none,
+	numberstyle=\tiny,
+	numbersep=5pt,
+	showspaces=false,
+	escapechar=`,
+	showstringspaces=false
+}
+%basicstyle=\fontsize{10}{11}\selectfont\ttfamily,
+
+\lstdefinestyle{myTinyStyle}{
+	%   language=Coq,
+	keywords={Inductive,Require,Import,Definition,Fixpoint,match,with,end,let,in,fix},
+	basicstyle=\normalfont\fontsize{8.2}{8.5}\tt,
+	keywordstyle=\color{green}, % Blue clashes with the cyan links. Change if you want.
+	stepnumber=1,
+	tabsize=2,
+	numbers=none,
+	numberstyle=\tiny,
+	numbersep=5pt,
+	showspaces=false,
+	escapechar=`,
+	showstringspaces=false
+}
+
+\lstset{style=myStyle}
+\makeatletter
+\newlength{\@mli}
+\newcommand{\mli}[1]{%
+	\settowidth{\@mli}{\lstinline/#1/}
+	\hspace{-.5ex}\begin{minipage}[t]{\@mli}\lstinline/#1/\end{minipage}}
+\makeatother
+\newcommand{\li}[1]{\ifmmode\mbox{\mli{#1}}\else\mbox{\lstinline/#1/}\fi}
+
+
+\newcommand{\coq}{\scalebox{.6}{\textpmhg{\Ha}}}
+
+\newcommand{\cdt}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{\mathcal{C}}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
+
+\newcommand{\cdw}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{\mathcal{CW}}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
+
+\newcommand{\cds}[2]{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{\mathcal{CS}}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}
+
+\newcommand{\rf}[2]{{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{\mathcal{R}}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}}
+
+\newcommand{\invhyper}{I}
+\renewcommand{\angle}[1]{\langle #1\rangle}
+
+\newcommand{\W}{\mathcal{W}}
+\newcommand{\contract}{\text{\scshape{cont}}}
+\newcommand{\repeatable}{\text{\scshape{rept}}}
+
+\newcommand{\divc}{\text{divc}}
+\newcommand{\logc}{\text{logc}}
+\newcommand{\logstarc}{\text{logc*}}
+
+\newcommand{\runtime}{\mathcal{T}}
+\newcommand{\Texp}{\runtime_{\li{exp}}}
+\newcommand{\Tmul}{\runtime_{\li{mul}}}
+\newcommand{\Tleb}{\runtime_{\li{leb}}}
+\newcommand{\Tsucc}{\runtime_{\li{succ}}}
+\newcommand{\bigO}{\text{O}}
+
+\newcommand{\Ack}{\ensuremath{\mathcal{A}}}
+\newcommand{\CA}{\ensuremath{\text{C}}}
+%\renewcommand{\S}{\ensuremath{\text{S}}}
+\newcommand{\CR}{\ensuremath{\text{CR}}}
+\newcommand{\CRH}{\ensuremath{\text{CRH}}}
+\newcommand{\wt}[1]{\ensuremath{\widetilde{#1}}}
+\newcommand{\IAR}{\ensuremath{\text{IAR}}}
+\newcommand{\IARH}{\ensuremath{\text{IARH}}}
+
+\newcommand\hide[1]{}
+\newenvironment{centermath}
+{\begin{center}$\displaystyle}
+	{$\end{center}}
+\renewcommand{\note}[2][polish]{{\color{red} #2}{\marginpar{\tiny \color{blue} #1}}}
+\renewcommand{\implies}{\Rightarrow}
+\renewcommand{\iff}{\Leftrightarrow}
+
+\AtBeginSection[]{
+	\begin{frame}
+	\vfill
+	\centering
+	\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+		\Huge{\insertsectionhead}\par%
+	\end{beamercolorbox}
+	\vfill
+	\end{frame}
+}
+
+%\AtBeginSection[*]{
+%	\begin{frame}
+%	\vfill
+%	\centering
+%	\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+%		\Huge{\insertsectionhead}\par%
+%	\end{beamercolorbox}
+%	\vfill
+%\end{frame}
+%}
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[Inverting the Ackermann Hierarchy]{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Aquinas Hobor\\
+Anshuman Mohan\\
+Linh Tran
+} % Your name
+\institute[NUS] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{
+National University of Singapore % Your institution for the title page
+}
+\date{\today} % Date, can be changed to a custom date
+
+\begin{document}
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+
+\begin{frame}
+\frametitle{Abstract}
+We implement in Gallina a hierarchy of functions that calculate
+the upper inverses to the hyperoperation/Ackermann hierarchy.
+Our functions run in $\Theta(b)$ for inputs expressed
+in unary, and $\bigO(b^2)$ for inputs expressed in binary ($b$ = bitlength).
+We use our inverses to define linear-time functions---$\Theta(b)$ for both unary- 
+and binary-represented inputs---that compute the upper inverse of the 
+diagonal Ackermann %\linebreak[3]
+function~$\Ack(n)$ and show that these functions are consistent with the usual definition of the inverse Ackermann function~$\alpha(n)$.
+\keywords{Ackermann  \and hyperoperations \and Coq}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+% ============================================================================
+% OVERVIEW
+% ============================================================================
+
+\section*{Overview}
+\label{sec: overview}
+\input{overview.tex}
+
+\section*{Roadmap}
+
+\begin{frame}
+\frametitle{Roadmap}
+
+%TODO: think of a better way to make the roadmap i.e. diagram or something
+
+\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.
+
+\bigskip
+
+{\color<2>[rgb]{1, 0, 0}\textbf{Step 1.} Explore the hyperoperations/Ackermann function hierarchical structure: Connect consecutive levels with \textbf{Repeater}.}
+
+\bigskip
+
+\textbf{Step 2.} Invert each level in both hierarchies:
+{ \small
+\begin{itemize}\itemsep0em 
+	\item \emph{What is inverse?} Upper inverse and increasing functions.
+	\item \emph{Can Repeater preserve Invertibility?} Repeatable functions.
+	\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
+	\item Invert each level in hyperoperations/Ackermann hierarchies.
+\end{itemize}
+}
+
+\bigskip
+
+\textbf{Step 3.} Implement the Inverse Ackermann function via the inverse Ackermann hierarchy.
+
+\bigskip
+
+\textbf{Step 4.} Optimize its time complexity.
+\end{frame}
+
+\section{Step 1: Hyperoperations and Ackermann via Repeater}
+\label{sec: countdown-repeater}
+\input{hierarchy.tex}
+
+
+\section*{Roadmap}
+
+\begin{frame}
+\frametitle{Roadmap}
+\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.
+
+\bigskip
+
+\textcolor<1-2>{gray}{\textbf{Step 1.} Explore the hyperoperations/Ackermann function hierarchical structure: Connect consecutive levels with \textbf{Repeater}.}
+
+\bigskip
+
+{\color<2>{red} \textbf{Step 2.} Invert each level in both hierarchies:
+	{ \small
+	\begin{itemize}\itemsep0em
+		\color<2>{red}
+		\item \emph{What is inverse?} Upper inverse and increasing functions.
+		\item \emph{Can Repeater preserve Invertibility?} Repeatable functions.
+		\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
+		\item Invert each level in hyperoperations/Ackermann hierarchies.
+	\end{itemize}
+}
+}
+
+\bigskip
+
+\textbf{Step 3.} Implement the Inverse Ackermann function via the inverse Ackermann hierarchy.
+
+\bigskip
+
+\textbf{Step 4.} Optimize its time complexity.
+\end{frame}
+
+\section{Step 2: Inverting the hyperoperations/Ackermman hierarchies via Countdown}
+\label{sec: countdown}
+\input{countdown.tex}
+
+\section{Inverting Hyperoperations and Ackermann}
+\label{sec: inv-hyperop}
+%\input{inv-hyperop.tex}
+
+\section{Time Bound of Our Inverses in Unary Encoding}
+\label{sec: inv-ack}
+%\input{inv-ack-improve.tex}
+
+\section{Performance Improvement With Binary Encoding}
+\label{sec: binary}
+%\input{binary.tex}
+
+\section{Further Discussion}
+\label{sec: discussion}
+%\input{discussion.tex}
+
+%\section{Thank you for listening !!!}
+%\begin{frame}[allowframebreaks]
+%\frametitle{References}
+%\bibliographystyle{amsalpha}
+%\bibliography{inv_ack}
+%\end{frame}
+
+
+\end{document}

@@ -14,5 +14,10 @@
 *.gz
 countdown_repeater_old.v
 inv-ack.pdf
+presentation/presentation.pdf
+presentation/*.nav
+presentation/*.snm
+presentation/*.toc
+presentation/*.vrb
 *.vtc
 .lia.cache
