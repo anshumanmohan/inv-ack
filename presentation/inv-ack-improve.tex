@@ -1,0 +1,44 @@
+\subsection{Implementations}
+\begin{frame}
+\frametitle{Implementation idea}
+\textbf{Redefinition.}
+$
+\alpha(n) = \min\{k: n\le A(k, k) \} \triangleq \min\{k: \alpha_k(n)\le k \}
+$
+
+\bigskip
+
+\textbf{The worker function.} Given a budget $b$, computes the decreasing chain $\big\{\alpha_0(n), \alpha_1(n), \ldots, \alpha_b(n) \big\}$, stops prematurely upon a $k$ s.t. $\alpha_k(n)\le k$.
+
+\bigskip
+
+\textbf{Advantage.} $\alpha_{i+1}(n) = \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)$ $\implies$ next element is computable from the previous.
+
+\bigskip
+
+\textbf{Budget choice.} Any $b$ such that $\alpha_b(n) \le b$ suffices. Simplest choice is $b \triangleq n$.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{The worker function}
+
+$\displaystyle 	\alpha^{\W}(f, n, k, b) = \begin{cases}
+k & \text{if } b = 0 \vee n\le k \\ \alpha^{\W}(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k+1, b-1) & \text{if } b \ge 1 \wedge n \ge k+1
+\end{cases}$
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L155-L161} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
+match b with 0 => 0 | S b' =>
+if (n <=? k) then k else let g := (countdown_to f 1) in
+inv_ack_wkr (compose g f) (g n) (S k) b
+end.
+\end{lstlisting}
+
+\textbf{Observation.}  when $\alpha_i(n) > i$ and $b > i$, we have
+$$\alpha^{\W}\big(\alpha_i, \alpha_i(n), i, b - i\big)
+= \alpha^{\W}\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$$
+
+$\implies$ $\alpha^{\W}$ moves to next element, while decreasing budget by 1. Stops at the first time $\alpha_i(n)\le i$ or when budget reaches $0$.
+
+\end{frame}
