@@ -2,9 +2,7 @@
 \begin{frame}
 \frametitle{The Ackermann and Inverse Ackermann functions}
 \label{defn: ack}
-	The Ackermann-P\'eter function (hereafter just
-	``the'' Ackermann function) is
-	written $A : \mathbb{N}^2 \to \mathbb{N}$ and defined as follows:
+	The Ackermann-P\'eter function is defined as follows:
 	\begin{equation}
 	\label{eq:ackermann}
 	A(n, m) \triangleq \begin{cases}
@@ -18,10 +16,10 @@
 	%A(m-1, A(m, n-1)) & \text{ if } m > 0, n > 0
 	%\end{cases}
 	\end{equation}
-	The one-variable \emph{diagonal} Ackermann function $\Ack : \mathbb{N} \to \mathbb{N}$ is defined as $\Ack(n)~\triangleq~A(n, n)$.\\[5pt]
+	The one-variable \emph{diagonal} Ackermann function is $\Ack(n)~\triangleq~A(n, n)$.\\[5pt]
 	
-	The inverse Ackermann function $\alpha(n)$ is the smallest~$k$ for
-	which $n \le \Ack(k)$, \emph{i.e.}
+	Its \emph{inverse}, $\alpha(n)$, is the smallest~$k$ for
+	which~$n \le \Ack(k)$, \emph{i.e}:
 	\begin{equation*}
 	\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}
 	\end{equation*}
@@ -40,7 +38,7 @@
   \begin{column}{0.5\textwidth}
   	TODO: Value table for $\alpha(n)$
   	
-  	Grows astronomically slow!
+  	Grows astronomically slowlys!
   \end{column}
 \end{columns}
 \end{frame}
@@ -48,11 +46,11 @@
 
 \begin{frame}
 \frametitle{Computing $\alpha(n)$}
-Despite growing extremely slow, $\alpha(n)$ is difficult to compute for large $n$ due to the explosive growth of $\Ack(k)$.
+Despite growing extremely slowly, $\alpha(n)$ is hard to compute for large $n$ due to the explosive growth of $\Ack(k)$.
 
 \bigskip
 
-\textbf{The Naive Approach:} start at $k=0$, calculate $\Ack(k)$,
+\textbf{The Naive Approach:} starting at $k=0$, calculate $\Ack(k)$,
 compare~it~to~$n$, and increment $k$ until $n \le \Ack(k)$.
 
 \bigskip
