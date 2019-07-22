@@ -399,15 +399,82 @@ function~$\Ack(n)$ and show that these functions are consistent with the usual d
 \label{sec: inv-ack}
 \input{inv-ack-improve.tex}
 
+
+\section*{Roadmap}
+\begin{frame}
+\frametitle{Roadmap}
+\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.
+
+\bigskip
+
+\textcolor<1-2>{gray}{\textbf{Step 1.} Explore the hyperoperations/Ackermann function hierarchical structure: Connect consecutive levels with \textbf{Repeater}.}
+
+\bigskip
+
+{\color<1-2>{gray} \textbf{Step 2.} Invert each level in both hierarchies:
+	{ \small
+		\begin{itemize}\itemsep0em
+			\color<1-2>{gray}
+			\item \emph{What is inverse?} Upper inverse and increasing functions.
+			\item \emph{Can Repeater preserve Invertibility?} Repeatable functions.
+			\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
+			\item Invert each level in hyperoperations/Ackermann hierarchies.
+		\end{itemize}
+	}
+}
+
+\bigskip
+
+\textcolor<1-2>{gray}{\textbf{Step 3.} Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy.}
+
+\bigskip
+
+\textcolor<2>{red}{\textbf{Step 4.} Improve its time efficiency with binary encoding system.}
+\end{frame}
+
+
 \section{Step 4: The Inverse Ackermann function in logarithmic time for binary encoding system}
 \label{sec: binary}
-%\input{binary.tex}
+\input{binary.tex}
+
+
+\section*{Roadmap}
+\begin{frame}
+\frametitle{Roadmap}
+\textcolor<2>{gray}{\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.} \uncover<2>{{\Large \checkmark}}
+
+\bigskip
+
+\textcolor<1->{gray}{\textbf{Step 1.} Explore the hyperoperations/Ackermann function hierarchical structure: Connect consecutive levels with \textbf{Repeater}.}
+
+\bigskip
+
+{\color<1->{gray} \textbf{Step 2.} Invert each level in both hierarchies:
+	{ \small
+		\begin{itemize}\itemsep0em
+			\color<1-2>{gray}
+			\item \emph{What is inverse?} Upper inverse and increasing functions.
+			\item \emph{Can Repeater preserve Invertibility?} Repeatable functions.
+			\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
+			\item Invert each level in hyperoperations/Ackermann hierarchies.
+		\end{itemize}
+	}
+}
+
+\bigskip
+
+\textcolor<1->{gray}{\textbf{Step 3.} Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy.}
+
+\bigskip
+
+\textcolor<1->{gray}{\textbf{Step 4.} Improve its time efficiency with binary encoding system.}
+\end{frame}
 
 \section{Further Discussion}
 \label{sec: discussion}
-%\input{discussion.tex}
+\input{discussion.tex}
 
-%\section{Thank you for listening !!!}
+\section{Thank you for listening !!!}
 %\begin{frame}[allowframebreaks]
 %\frametitle{References}
 %\bibliographystyle{amsalpha}

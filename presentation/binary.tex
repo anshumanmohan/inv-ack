@@ -1,0 +1,199 @@
+
+\subsection{Overview}
+
+\begin{frame}
+\frametitle{The binary encoding system}
+
+\begin{tabular}{l|c|c}
+	Attribute & Unary & Binary Encoding \\ \hline
+	Type in Coq & \texttt{nat} & \texttt{N} \\[7pt]
+	Number $n$ & $n$ bits & $\lfloor \log_2n \rfloor + 1$ bits \\[7pt]
+	Compare $x$ and $y$ & $\min\{x, y\}$ time & $\min\{\lfloor \log_2x \rfloor, \lfloor \log_2y \rfloor\} + 1$ bits \\[9pt]
+	$\lambda x. (x + 1)$ & 1 time step & Worse case: $\lfloor \log_2x \rfloor + 1$ steps \\
+	                     &             & Amortized: $< 3$ time steps \\
+	                    
+\end{tabular}
+
+\bigskip
+
+Binary Encoding provides faster computations for many operations.
+
+\smallskip
+
+What about inverse Ackermann? Goal: $\bigO \big(\log_2n\big)$.
+
+\end{frame}
+
+
+\subsection{Countdown in binary}
+
+
+\begin{frame}[fragile]
+\frametitle{Translating Countdown}
+
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L104-L109}{Fixpoint bin\_cdn\_wkr}` (f : N -> N) (a n : N) (b : nat) : N :=
+  match b with O => 0 | S b' =>
+    if (n <=? a) then 0 else 1 + bin_cdn_wkr f a (f n) b'
+  end.
+\end{lstlisting}
+
+\bigskip
+
+\textbf{Observation.} Recursive argument is budget $b$, each step decreases by 1.
+
+$\implies$ $b$ should still be in \texttt{nat}.
+
+\bigskip
+
+\textbf{Issue.} $b$ cannot be $n$ due to slow binary-unary conversion.
+
+\bigskip
+
+\textbf{Solution.} Use $b$ around $\log_2n$ and use contractions that ``contracts'' fast enough $\implies$ Shrinks input 2 times every application.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Binary Contractions and Countdown}
+
+\textbf{Binary contractions.} $f$ is a binary contraction strict above $a$ if $\forall n, f(n)\le n$ and $f(n)\le \lfloor \frac{n+ a}{2} \rfloor$ when $n > a$.
+
+\smallskip
+
+$f$ shrinks $n$ pass $a$ within $\lfloor\log_2(n - a) \rfloor + 1$ steps.
+
+\bigskip
+
+New Countdown computation:
+% Linked by A
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L111-L112}{Definition bin\_countdown\_to}` (f : N -> N) (a n : N) : N :=
+bin_cdn_wkr f a n (nat_size (n - a)).
+\end{lstlisting}
+
+where \texttt{nat\_size x} computes $\lfloor \log_2x \rfloor + 1$ as a \texttt{nat}.
+
+\bigskip
+
+Applicable for all $\alpha_i$ for $i \ge 3$.
+ 
+\end{frame}
+
+
+\subsection{Inverse Ackermann in Binary}
+
+\begin{frame}[fragile]
+\frametitle{Translating the $\alpha$ hierarchy}
+
+Must start with a strict binary contraction.
+
+$\implies$ More hard-coding.
+
+\bigskip
+
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L55-L60}{Fixpoint bin\_alpha}` (m : nat) (x : N) : N :=
+match m with
+  | 0%nat => x - 1          
+  | 1%nat => x - 2
+  | 2%nat => N.div2 (x - 2) 
+  | 3%nat => N.log2 (x + 2) - 2
+  | S m'  => bin_countdown_to (bin_alpha m') 1 (bin_alpha m' x)
+end.
+\end{lstlisting}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Translating the Inverse Ackermann function}
+
+Worker function:
+
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L326-L333}{Fixpoint bin\_inv\_ack\_wkr}` (f : N -> N) (n k : N) (b : nat) : N :=
+match b with 0%nat  => k | S b' => if n <=? k then k else
+  let g := (bin_countdown_to f 1) in
+    bin_inv_ack_wkr (compose g f) (g n) (N.succ k) b'
+  end.
+\end{lstlisting}
+
+
+Same idea: use logarithmic size budget. More hard-coding.
+
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L335-L342}{Definition bin\_inv\_ack}` (n : N) : N :=
+if      (n <=? 1) then 0
+else if (n <=? 3) then 1
+else if (n <=? 7) then 2
+else let f := (fun x => N.log2 (x + 2) - 2)
+       in bin_inv_ack_wkr f (f n) 3 (nat_size n).
+\end{lstlisting}
+
+\end{frame}
+
+
+\subsection{Time complexity: $\bigO (\log_2n)$}
+
+
+\begin{frame}
+\frametitle{Running time of each $\alpha_i$ - Precise bounds}
+
+Countdown running time:
+\begin{equation*}
+\runtime_{\cdt{f}{a}}(n) \le \sum_{i=0}^{\cdt{f}{a}(n) - 1} \hspace{-6pt}
+\runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \ + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
+\end{equation*}
+
+$\alpha_3$ running time: $\runtime_{\alpha_3}(n) \le 2\log_2n + \log_2\log_2n + 3$.
+
+\bigskip
+
+$\alpha_i$ running time:
+$
+%\begin{equation*}
+\runtime_{\alpha_{i+1}}(n) \le
+\sum_{k=0}^{\alpha_{i+1}(n)}\runtime_{\alpha_i}\big(\alpha_i^{(k)}(n)\big)
++ 6\log_2\log_2n + 3.
+%\end{equation*}
+$
+
+\bigskip
+
+\textbf{Theorem.} $\forall i. \runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i = \bigO(\log_2n)$, when hard-coding up to $\alpha_3$.
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Running time of the inverse Ackermann function}
+
+\begin{equation*}
+\begin{array}{l|llllllll}
+Step & \multicolumn{2}{l}{Initial \ Arguments} &  &  \big(\alpha_3, & \alpha_3(n), & 3, & b - 0 \big) \\
+1 & b - 0 > 0, & \alpha_3(n) > 3 & \to & \big(\alpha_4, & \alpha_4(n), & 4, & b - 1\big) \\
+2 & b - 1 > 0, & \alpha_4(n) > 4 & \to  & \big(\alpha_5, & \alpha_5(n), & 5, & b - 2\big) \\
+\cdots & \cdots &\cdots & \cdots & \cdots & \cdots & \cdots \\
+%b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
+k & b - k > 0, & {\color{red} \alpha_{k}(n) \le k} & \to  & \multicolumn{4}{l}{k = \alpha(n)} \\ \hline
+SUM & \Theta(k) & \Theta\big(\sum_{i=1}^{k}\log_2i\big) & & \multicolumn{3}{r}{\sum_{i=1}^{k-1} \runtime_{\cdt{\alpha_i}{1}} (\alpha_i(n))} & \Theta(k) \\[3pt]
+= & \Theta(k) & \Theta(k\log_2k) & \multicolumn{4}{r}{\sum_{i=1}^{k-1} \big(\runtime_{\alpha_{i+1}}(n) - \runtime_{\alpha_i}(n) \big)} & \Theta(k)
+\end{array}
+\end{equation*}
+
+\smallskip
+
+Therefore
+\begin{equation*}
+\begin{aligned}
+\runtime_{\alpha}(n)
+& = \runtime_{\alpha_{\alpha(n)}}(n) - \runtime_{\alpha_3}(n) + \Theta\left(\alpha(n)\log_2 \alpha(n)\right) + \runtime_{\alpha_3}(n) \\
+& = \bigO \left(\log_2n + 2^{\alpha(n)}\log_2\log_2n + \alpha(n)\log_2\alpha(n) \right) = \bigO (\log_2n)
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+

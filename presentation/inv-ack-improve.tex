@@ -8,37 +8,215 @@ $
 
 \bigskip
 
-\textbf{The worker function.} Given a budget $b$, computes the decreasing chain $\big\{\alpha_0(n), \alpha_1(n), \ldots, \alpha_b(n) \big\}$, stops prematurely upon a $k$ s.t. $\alpha_k(n)\le k$.
+\textbf{The worker function.}
+\begin{itemize}
+	\item Budget $b$: Maximum $b$ steps.
+	\item Step $i$: Computes $\alpha_i(n)$.
+	\item Stops when budget reaches $0$ or $\alpha_i(n) \le i$.
+\end{itemize}
 
 \bigskip
 
-\textbf{Advantage.} $\alpha_{i+1}(n) = \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)$ $\implies$ next element is computable from the previous.
-
-\bigskip
-
-\textbf{Budget choice.} Any $b$ such that $\alpha_b(n) \le b$ suffices. Simplest choice is $b \triangleq n$.
+\textbf{Advantage.} $\alpha_{i+1}(n) = \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)$ $\implies$ next step is computable from the previous.
 \end{frame}
-
 
 
 \begin{frame}[fragile]
 \frametitle{The worker function}
 
-$\displaystyle 	\alpha^{\W}(f, n, k, b) = \begin{cases}
+\uncover<1->{$\displaystyle 	\alpha^{\W}(f, n, k, b) = \begin{cases}
 k & \text{if } b = 0 \vee n\le k \\ \alpha^{\W}(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k+1, b-1) & \text{if } b \ge 1 \wedge n \ge k+1
-\end{cases}$
-\begin{lstlisting}
+\end{cases}$}
+
+\bigskip
+
+\begin{onlyenv}<2->
+	\begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L155-L161} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
 match b with 0 => 0 | S b' =>
-if (n <=? k) then k else let g := (countdown_to f 1) in
-inv_ack_wkr (compose g f) (g n) (S k) b
+  if (n <=? k) then k else let g := (countdown_to f 1) in
+                      inv_ack_wkr (compose g f) (g n) (S k) b
 end.
 \end{lstlisting}
+\end{onlyenv}
 
-\textbf{Observation.}  when $\alpha_i(n) > i$ and $b > i$, we have
-$$\alpha^{\W}\big(\alpha_i, \alpha_i(n), i, b - i\big)
-= \alpha^{\W}\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$$
+\end{frame}
 
-$\implies$ $\alpha^{\W}$ moves to next element, while decreasing budget by 1. Stops at the first time $\alpha_i(n)\le i$ or when budget reaches $0$.
+
+
+\begin{frame}
+\frametitle{The worker function}
+
+\textbf{Observation.}
+\begin{equation*}
+\begin{array}{lllllll}
+Initial \ Arguments & & \big(\alpha_i, & \alpha_i(n), & i, & b - i \big) \\[5pt]
+b - i > 0, \ \alpha_i(n) > i & \to & \big(\cdt{\alpha_i}{1}\circ \alpha_i, & \cdt{\alpha_i}{1}(\alpha_i(n)), & i + 1, & b - i - 1\big) \\[5pt]
+{\color{blue} b > i}, \ \hspace{15pt} \alpha_i(n) > i & \to  & \big({\color{blue} \alpha_{i+1}}, & {\color{blue} \alpha_{i+1}(n)}, & i + 1, & {\color{blue} b - (i + 1)}\big) \\
+\end{array}
+\end{equation*}
+
+\textbf{Execution.}
+\begin{equation*}
+\begin{array}{l|lllllll}
+Step & Initial \ Arguments &  &  \big(\alpha_0, & \alpha_0(n), & 0, & b - 0 \big) \\
+0 & b > 0, \ \alpha_0(n) > 0 & \to & \big(\alpha_1, & \alpha_1(n), & 1, & b - 1\big) \\
+1 & b > 1, \ \alpha_1(n) > 1 & \to  & \big(\alpha_2, & \alpha_2(n), & 2, & b - 2\big) \\
+\cdots & \cdots & \cdots & \cdots & \cdots & \cdots \\
+%b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
+k & b > k, \ {\color{red} \alpha_{k}(n) \le k} & \to  & k = \alpha(n)
+\end{array}
+\end{equation*}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{The inverse Ackermann function}
+Any budget $b \ge \alpha(n)$ suffices $\implies$ choose $b := n$.
+
+\bigskip
+
+\textbf{First version.}
+\begin{equation*}
+\alpha(n) = \alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big)
+= \alpha^{\mathcal{W}}\big(\lambda n(n - 1), n - 1, 0, n\big)
+\end{equation*}
+
+\smallskip
+
+\textbf{Faster version.}
+\begin{equation*}
+\begin{aligned}
+\alpha(n) & = \begin{cases}
+\alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n - 1\big) & \hspace{3em}\text{ when } n > \Ack(0) \\
+0 & \hspace{3em}\text{ when } n \le \Ack(0)
+\end{cases} \\[5pt]
+& = \begin{cases}
+\alpha^{\mathcal{W}}\big(\lambda n(n - 2), n - 2, 1, n - 1\big) & \text{ when } n > 1 \\
+0 & \text{ when } n \le 1
+\end{cases}
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+
+
+\subsection{Time Complexity: $\bigO(n)$}
+
+\begin{frame}
+\frametitle{Running time of Countdown}
+
+\textbf{Sum by component in each recursive step.}
+\begin{equation*}
+\begin{array}{l|llllll}
+Step & \multicolumn{2}{c}{Initial \ Arguments} &  & \big(f^{(0)}(n), & n - 0 \big) &  \\
+0    & n - 0 > 0,     & f^{(0)}(n) > a & \to & \big(f^{(1)}(n), & n - 1\big) & + 1 \\
+1    & n - 1 > 0, & f^{(1)}(n) > a & \to & \big(f^{(2)}(n), & n - 2\big) & + 2 \\
+\cdots & \cdots & \cdots & \cdots & \cdots & \cdots & \cdots \\
+k-1  & n - (k-1) > 0, & f^{(k-1)}(n) > a & \to & \big(f^{(k)}(n), & n - k\big) & + k \\
+k & n - k \mathrel{?} 0, & {\color{red} f^{(k)}(n) \le a}  &\to & \multicolumn{2}{c}{0} &  \\ \hline
+SUM & \Theta(k), & \Theta((a+1)k) & & \multicolumn{2}{c}{\sum_{i=0}^{k-1}\runtime_f\big(f^{i}(n)\big)} & \Theta(k)
+\end{array}
+\end{equation*}
+
+%TODO: Increase vertical space after \hline
+
+Substitute $k = \cdt{f}{a}(n)$:
+%\begin{equation*}
+$\displaystyle
+\runtime_{\cdt{f}{a}}(n) = \sum_{i=0}^{\cdt{f}{a}(n)-1}\runtime_f\big(f^{i}(n)\big)
++ \Theta\left((a+1)\cdt{f}{a}(n)\right).
+$
+%\end{equation*}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Running time of each $\alpha_i$ - Asymptotic bounds}
+
+\begin{equation*}
+\alpha_{i+1} = \cdt{\big(\alpha_i\big)}{1}\circ \alpha_i
+\quad \implies \quad \runtime_{\alpha_{i+1}}(n) = \runtime_{\alpha_i}(n) + \runtime_{\cdt{\alpha_i}{1}}\big(\alpha_i(n)\big)
+\end{equation*}
+\begin{equation*}
+\boxed{
+	\runtime_{\alpha_{i+1}}(n) = \runtime_{\alpha_i}(n) + 
+\sum_{i=0}^{\cdt{\alpha_i}{1}(\alpha_i(n)) - 1} \runtime_{\alpha_i}\left(\alpha_i^{(i+1)}(n)\right) + \Theta\left(\cdt{\alpha_i}{1}(\alpha_i(n)) \right)
+}
+\end{equation*}
+
+Substitute $\cdt{\alpha_i}{1}(\alpha_i(n))$ for $\alpha_{i+1}(n)$:
+
+\begin{equation*}
+\runtime_{\alpha_{i+1}}(n)
+  = \runtime_{\alpha_i}(n) + 
+  \sum_{i=0}^{\alpha_{i+1}(n) - 1} \runtime_{\alpha_i}\left(\alpha_i^{(i+1)}(n)\right) + \Theta\left(\alpha_{i+1}(n) \right)
+\end{equation*}
+
+\begin{equation*}
+\boxed{\runtime_{\alpha_{i+1}}(n)
+	= \sum_{i=0}^{\alpha_{i+1}(n)} \runtime_{\alpha_i}\left(\alpha_i^{(i)}(n)\right) + \Theta\left(\alpha_{i+1}(n) \right)}
+\end{equation*}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Running time of each $\alpha_i$ - Precise bounds}
+
+Countdown running time:
+\begin{equation*}
+\textstyle \runtime_{\cdt{f}{a}}(n) =
+\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
++ (a + 2)\cdt{f}{a}(n) + f^{\left(\cdt{f}{a}(n)\right)}(n) + 1
+\end{equation*}
+
+\smallskip
+
+$\alpha_2$ and $\alpha_3$ running time: $\runtime_{\alpha_2}(n) \le 2n - 2$ and $\runtime_{\alpha_3}(n) \le 4n + 4$.
+
+\bigskip 
+
+$\alpha_i$ running time:
+\begin{equation*}
+\textstyle \runtime_{\alpha_{i+1}}(n) \le \sum_{k=0}^{\alpha_{i+1}(n)}\runtime_{\alpha_i}\left( \alpha_i^{(k)}(n)\right) + 3\alpha_{i+1}(n) + 3
+\end{equation*}
+
+\smallskip
+
+\textbf{Theorem.} $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$, when using $\alpha_1 \triangleq \lambda n. (n-2)$.
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Running time of the inverse Ackermann function}
+
+\begin{equation*}
+\begin{array}{l|llllllll}
+Step & \multicolumn{2}{l}{Initial \ Arguments} &  &  \big(\alpha_1, & \alpha_1(n), & 1, & b - 1 \big) \\
+1 & b - 1 > 0, & \alpha_1(n) > 1 & \to & \big(\alpha_2, & \alpha_2(n), & 2, & b - 2\big) \\
+2 & b - 2 > 0, & \alpha_2(n) > 2 & \to  & \big(\alpha_3, & \alpha_3(n), & 3, & b - 3\big) \\
+\cdots & \cdots &\cdots & \cdots & \cdots & \cdots & \cdots \\
+%b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
+k & b - k > 0, & {\color{red} \alpha_{k}(n) \le k} & \to  & \multicolumn{4}{l}{k = \alpha(n)} \\ \hline
+SUM & \Theta(k) & \Theta\big(\sum_{i=1}^{k}i\big) & & \multicolumn{3}{r}{\sum_{i=1}^{k-1} \runtime_{\cdt{\alpha_i}{1}} (\alpha_i(n))} & \Theta(k) \\[3pt]
+= & \Theta(k) & \Theta(k^2) & \multicolumn{4}{r}{\sum_{i=1}^{k-1} \big(\runtime_{\alpha_{i+1}}(n) - \runtime_{\alpha_i}(n) \big)} & \Theta(k)
+\end{array}
+\end{equation*}
+
+\smallskip
+
+Therefore
+\begin{equation*}
+\begin{aligned}
+\runtime_{\alpha}(n)
+& = \runtime_{\alpha_{\alpha(n)}}(n) - \runtime_{\alpha_1}(n) + \Theta\left(\alpha(n)^2\right) + \runtime_{\alpha_1}(n) \\
+& = \bigO \left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2 \right) = \bigO (n)
+\end{aligned}
+\end{equation*}
 
 \end{frame}
