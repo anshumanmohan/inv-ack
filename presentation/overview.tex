@@ -1,92 +1,196 @@
 \subsection*{The Ackermann and Inverse Ackermann functions}
 \begin{frame}
-\frametitle{The Ackermann and Inverse Ackermann functions}
+\frametitle{Introduction}
+%\frametitle{The Ackermann and Inverse Ackermann functions}
 \label{defn: ack}
-	The Ackermann-P\'eter function is defined as follows:
-	\begin{equation}
-	\label{eq:ackermann}
+	\uncover<1->{
+		The Ackermann-P\'eter function is defined as follows:
+	\begin{equation*}
 	A(n, m) \triangleq \begin{cases}
 	m + 1 & \text{ when } n = 0 \\
 	A(n-1, 1) & \text{ when } n > 0, m = 0 \\
 	A\big(n-1, A(n, m-1)\big) & \text{ otherwise}
 	\end{cases}
-	%A(m, n) \triangleq \begin{cases}
-	%n + 1 & \text{ if } m = 0 \\
-	%A(m-1, 1) & \text{ if } m > 0, n = 0 \\
-	%A(m-1, A(m, n-1)) & \text{ if } m > 0, n > 0
-	%\end{cases}
-	\end{equation}
-	The one-variable \emph{diagonal} Ackermann function is $\Ack(n)~\triangleq~A(n, n)$.\\[5pt]
+	\end{equation*}
+  }
 	
+	\uncover<2->{The one-variable \emph{diagonal} Ackermann function is $\Ack(n)~\triangleq~A(n, n)$.}
+	
+	\bigskip
+	
+	\uncover<3->{
 	Its \emph{inverse}, $\alpha(n)$, is the smallest~$k$ for
 	which~$n \le \Ack(k)$, \emph{i.e}:
 	\begin{equation*}
 	\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}
 	\end{equation*}
+}
 \end{frame}
 
 
+%\begin{frame}
+%\frametitle{Initial values for $\Ack(n)$ and $\alpha(n)$}
+%\begin{columns}[T]
+%	\begin{column}{0.4\textwidth}
+%		
+%		\begin{equation*}
+%		\begin{array}{|ll|}
+%		n & \Ack(n) \\
+%		0 & 1 \\
+%		1 & 3 \\
+%		2 & 7 \\
+%		3 & 61 \\
+%		4 & 2^{2^{2^{65536}}} - 3
+%		\end{array}
+%		\end{equation*}
+%		
+%		Grows astronomically fast!
+%	\end{column}
+%
+%  \begin{column}{0.5\textwidth}
+%  	
+%  	\begin{equation*}
+%  	\begin{array}{|ll|}
+%  	n & \alpha(n) \\
+%  	0, 1 & 0 \\
+%  	2, 3 & 1 \\
+%  	4, 5, 6, 7 & 2 \\
+%  	8, 9, \ldots, 61 & 3 \\
+%  	62, \ldots, 2^{2^{2^{65536}}} - 3 & 4
+%  	\end{array}
+%  	\end{equation*}
+%  	
+%  	Grows astronomically slowly!
+%  \end{column}
+%\end{columns}
+%\end{frame}
+
+
 \begin{frame}
-\frametitle{Initial values for $\Ack(n)$ and $\alpha(n)$}
-\begin{columns}[T]
-	\begin{column}{0.5\textwidth}
-		TODO: Value table for $\Ack(n)$
+\frametitle{Introduction}
+
+ First few values of $\Ack(n)$ and $\alpha(n)$:
 		
-		Grows astronomically fast!
-	\end{column}
+%		\begin{equation*}
+%		\begin{array}{|ll|c|ll|}
+%		n & \Ack(n) & \hspace{3em} & n & \alpha(n) \\[3pt]
+%		0 & 1 & & 0, 1 & 0 \\[3pt]
+%		1 & 3 & & 2, 3 & 1 \\[3pt]
+%		2 & 7 & & 4, 5, 6, 7 & 2 \\[3pt]
+%		3 & 61 & & 8, 9, \ldots, 61 & 3 \\[3pt]
+%		4 & 2^{2^{2^{65536}}} - 3 & & 62, 63 \ldots, 2^{2^{2^{65536}}} - 3 & 4 \\[5pt]
+%		\multicolumn{2}{|l|}{\text{Grows astronomically fast!}} & & \multicolumn{2}{|l|}{\text{Grows astronomically slow!}}
+%		\end{array}
+%		\end{equation*}
+		
+		\begin{tikzpicture}
+		\begin{axis}[
+%		symbolic x coords={a small bar,a medium bar,a large bar},
+    yticklabels={,,},
+		xtick=data]
+		\addplot coordinates {
+			(0, 1)
+			(1, 3)
+			(2, 7)
+			(3, 61)
+			(4, 9999999)
+			
+		};
+		\end{axis}
+		\end{tikzpicture}
 
-  \begin{column}{0.5\textwidth}
-  	TODO: Value table for $\alpha(n)$
-  	
-  	Grows astronomically slowlys!
-  \end{column}
-\end{columns}
+%TODO Fix this graph? Graph for alpha? Figure with caption?
+
 \end{frame}
 
 
 \begin{frame}
-\frametitle{Computing $\alpha(n)$}
-Despite growing extremely slowly, $\alpha(n)$ is hard to compute for large $n$ due to the explosive growth of $\Ack(k)$.
+\frametitle{Introduction: Computing $\alpha(n)$}
+\uncover<1->{
+	Despite growing extremely slowly, $\alpha(n)$ is hard to compute for large $n$ due to the explosive growth of $\Ack(k)$.
+}
 
 \bigskip
 
-\textbf{The Naive Approach:} starting at $k=0$, calculate $\Ack(k)$,
+\uncover<2->{
+\textbf{Naive Approach:} starting at $k=0$, calculate $\Ack(k)$,
 compare~it~to~$n$, and increment $k$ until $n \le \Ack(k)$.
+}
 
 \bigskip
 
+\uncover<3->{
 \textbf{Time complexity:} $\Omega(\Ack(\alpha(n)))$,
 so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ in this way requires
 $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
-\end{frame}
-
-\subsection*{The hyperoperation/Ackermann hierarchy}
-
-\begin{frame}
-\frametitle{The hierarchy of Ackermann levels}
-The Ackermann function is easy to define, but hard to
-understand.
-
-We see it as
-a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.A(n,b)$, where for each $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times,
-
-with a
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{\emph{kludge}}. %Linked by Linh
+}
 
 \bigskip
 
-To better understand the Ackermann function as a hierarchy and this kludge, we explore the closely-related hyperoperations.
+\uncover<4->{
+\imppar{\text{\textbf{Final Goal.} Compute $\alpha(n)$ without computing $\Ack$.}}
+}
+
+\end{frame}
+
+\subsection*{Relation to hyperoperations}
+
+%\begin{frame}
+%\frametitle{Introduction: Ackermann \emph{vs} Hyperoperations}
+%The Ackermann function is easy to define, but hard to
+%understand.
+%
+%We see it as
+%a sequence of $n$-indexed functions $\Ack_n \triangleq \lambda b.A(n,b)$, where for each $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times.
+%
+%%with a
+%%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{\emph{kludge}}. %Linked by Linh
+%
+%\bigskip
+%
+%The hierarchical structure resembles that of \emph{hyperoperations}.
+%
+%%To better understand the Ackermann function as a hierarchy and this kludge, we explore the closely-related hyperoperations.
+%
+%\end{frame}
+
+
+\begin{frame}
+\frametitle{Introduction: Ackermann \emph{vs} Hyperoperations}
+\uncover<1->{
+The Ackermann function is easy to define, but hard to
+understand.
+}
+
+\bigskip
+
+\uncover<2->{
+Let's treat the first argument as an ``index'': define $\Ack_n \triangleq \lambda b.A(n,b)$, then for $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times.
+}
+
+%with a
+%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{\emph{kludge}}. %Linked by Linh
+
+\bigskip
+
+\uncover<3->{
+The hierarchical structure resembles that of \textcolor{red}{\emph{hyperoperations}}.
+}
+
+%To better understand the Ackermann function as a hierarchy and this kludge, we explore the closely-related hyperoperations.
 
 \end{frame}
 
 
 \begin{frame}
-\frametitle{The Ackermann hierarchy and hyperoperations}
-TODO: Polish, add names of levels to this table without overflowing the page
+\frametitle{Introduction: Ackermann \emph{vs} Hyperoperations}
+
+The hyperoperations, Ackermann levels, and their \emph{inverses}:
 
 \begin{table}[t]
 	\begin{centermath}
 		\begin{array}{c@{\hskip 0.5em}|@{\hskip 1em}c@{\hskip 1em}c@{\hskip 1em}|@{\hskip 1em}c@{\hskip 1em}c}
+%			  & \multicolumn{2}{|@{\hskip 0.5em}c@{\hskip 0.5em}|}{\text{Main hierarchies}} & \multicolumn{2}{|@{\hskip 0.5em}c@{\hskip 0.5em}|}{\text{Inverses hierarchies}} \\
 			n & a [n] b & \Ack_n(b) & a \angle{n} b & \alpha_n(b)\\
 			\hline
 			0 & 1 + b & 1 + b & b - 1 & b - 1 \\
@@ -100,7 +204,13 @@ TODO: Polish, add names of levels to this table without overflowing the page
 	\label{table: hyperop-ack-inv}
 \end{table}
 
-The kludge: $\Ack_n(b) = 2[n](b+3) - 3$ and $\alpha_n(b) = 2\angle{n}(b+3) - 3$.
+\pause
+
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{Connection!}
+\pause
+$\Ack_n(b) = 2[n](b+3) - 3$
+\pause
+, \quad $\alpha_n(b) = 2\angle{n}(b+3) - 3$.
 
 \end{frame}
 

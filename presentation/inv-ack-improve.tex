@@ -9,6 +9,7 @@ $
 \bigskip
 
 \textbf{The worker function.}
+\bigskip
 \begin{itemize}
 	\item Budget $b$: Maximum $b$ steps.
 	\item Step $i$: Computes $\alpha_i(n)$.
@@ -30,6 +31,7 @@ k & \text{if } b = 0 \vee n\le k \\ \alpha^{\W}(\cdt{f}{1}\circ f , \cdt{f}{1}(n
 
 \bigskip
 
+\begin{overlayarea}{\linewidth}{3cm}
 \begin{onlyenv}<2->
 	\begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L155-L161} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
@@ -39,6 +41,7 @@ match b with 0 => 0 | S b' =>
 end.
 \end{lstlisting}
 \end{onlyenv}
+\end{overlayarea}
 
 \end{frame}
 
@@ -47,24 +50,32 @@ end.
 \begin{frame}
 \frametitle{The worker function}
 
+\pause
 \textbf{Observation.}
 \begin{equation*}
 \begin{array}{lllllll}
 Initial \ Arguments & & \big(\alpha_i, & \alpha_i(n), & i, & b - i \big) \\[5pt]
-b - i > 0, \ \alpha_i(n) > i & \to & \big(\cdt{\alpha_i}{1}\circ \alpha_i, & \cdt{\alpha_i}{1}(\alpha_i(n)), & i + 1, & b - i - 1\big) \\[5pt]
+\pause
+b - i > 0, \ \alpha_i(n) > i & \pause \to & \big(\cdt{\alpha_i}{1}\circ \alpha_i, & \cdt{\alpha_i}{1}(\alpha_i(n)), & i + 1, & b - i - 1\big) \\[5pt]
+\pause
 {\color{blue} b > i}, \ \hspace{15pt} \alpha_i(n) > i & \to  & \big({\color{blue} \alpha_{i+1}}, & {\color{blue} \alpha_{i+1}(n)}, & i + 1, & {\color{blue} b - (i + 1)}\big) \\
 \end{array}
 \end{equation*}
 
+\pause
 \textbf{Execution.}
 \begin{equation*}
 \begin{array}{l|lllllll}
-Step & Initial \ Arguments &  &  \big(\alpha_0, & \alpha_0(n), & 0, & b - 0 \big) \\
-0 & b > 0, \ \alpha_0(n) > 0 & \to & \big(\alpha_1, & \alpha_1(n), & 1, & b - 1\big) \\
-1 & b > 1, \ \alpha_1(n) > 1 & \to  & \big(\alpha_2, & \alpha_2(n), & 2, & b - 2\big) \\
-\cdots & \cdots & \cdots & \cdots & \cdots & \cdots \\
+Step & Initial \ Arguments &  &  \big(\alpha_0, & \alpha_0(n), & 0, & b - 0 \big) \\[3pt]
+\pause
+0 & b > 0, \ \alpha_0(n) > 0 & \pause \to & \big(\alpha_1, & \alpha_1(n), & 1, & b - 1\big) \\[3pt]
+\pause
+1 & b > 1, \ \alpha_1(n) > 1 & \pause \to  & \big(\alpha_2, & \alpha_2(n), & 2, & b - 2\big) \\[3pt]
+\pause
+\cdots & \cdots & \cdots & \multicolumn{4}{l}{\cdots} \\
 %b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
-k & b > k, \ {\color{red} \alpha_{k}(n) \le k} & \to  & k = \alpha(n)
+\pause
+k & b > k, \ {\color{red} \alpha_{k}(n) \le k} & \pause \to  & \multicolumn{4}{l}{\impinline{$k = \alpha(n)$}}
 \end{array}
 \end{equation*}
 \end{frame}
@@ -73,11 +84,15 @@ k & b > k, \ {\color{red} \alpha_{k}(n) \le k} & \to  & k = \alpha(n)
 
 \begin{frame}
 \frametitle{The inverse Ackermann function}
-Any budget $b \ge \alpha(n)$ suffices $\implies$ choose $b := n$.
+
+\pause
+Any budget $b \ge \alpha(n)$ suffices, so we can choose $b := n$.
 
 \bigskip
 
-\textbf{First version.}
+\pause
+\textbf{First version:} $\bigO(n^2)$.
+\pause
 \begin{equation*}
 \alpha(n) = \alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big)
 = \alpha^{\mathcal{W}}\big(\lambda n(n - 1), n - 1, 0, n\big)
@@ -85,14 +100,16 @@ Any budget $b \ge \alpha(n)$ suffices $\implies$ choose $b := n$.
 
 \smallskip
 
-\textbf{Faster version.}
+\pause
+\textbf{Simple improvement:} $\bigO(n)$.
+\pause
 \begin{equation*}
 \begin{aligned}
 \alpha(n) & = \begin{cases}
-\alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n - 1\big) & \hspace{3em}\text{ when } n > \Ack(0) \\
+\alpha^{\mathcal{W}}\big(\alpha_{{\color{red} 1}}, \alpha_{{\color{red} 1}}(n), {{\color{red} 1}}, n - {{\color{red} 1}}\big) & \hspace{3em}\text{ when } n > \Ack(0) \\
 0 & \hspace{3em}\text{ when } n \le \Ack(0)
 \end{cases} \\[5pt]
-& = \begin{cases}
+\pause & = \begin{cases}
 \alpha^{\mathcal{W}}\big(\lambda n(n - 2), n - 2, 1, n - 1\big) & \text{ when } n > 1 \\
 0 & \text{ when } n \le 1
 \end{cases}
@@ -107,27 +124,29 @@ Any budget $b \ge \alpha(n)$ suffices $\implies$ choose $b := n$.
 \begin{frame}
 \frametitle{Running time of Countdown}
 
+\pause
 \textbf{Sum by component in each recursive step.}
 \begin{equation*}
 \begin{array}{l|llllll}
-Step & \multicolumn{2}{c}{Initial \ Arguments} &  & \big(f^{(0)}(n), & n - 0 \big) &  \\
-0    & n - 0 > 0,     & f^{(0)}(n) > a & \to & \big(f^{(1)}(n), & n - 1\big) & + 1 \\
-1    & n - 1 > 0, & f^{(1)}(n) > a & \to & \big(f^{(2)}(n), & n - 2\big) & + 2 \\
-\cdots & \cdots & \cdots & \cdots & \cdots & \cdots & \cdots \\
-k-1  & n - (k-1) > 0, & f^{(k-1)}(n) > a & \to & \big(f^{(k)}(n), & n - k\big) & + k \\
-k & n - k \mathrel{?} 0, & {\color{red} f^{(k)}(n) \le a}  &\to & \multicolumn{2}{c}{0} &  \\ \hline
-SUM & \Theta(k), & \Theta((a+1)k) & & \multicolumn{2}{c}{\sum_{i=0}^{k-1}\runtime_f\big(f^{i}(n)\big)} & \Theta(k)
+Step & \multicolumn{2}{l}{Initial \ Arguments} &  & \big(f^{(0)}(n), & n - 0 \big) &  \\[3pt]
+\pause 0    & n - 0 > 0,     & f^{(0)}(n) > a & \to & \big(f^{(1)}(n), & n - 1\big) & + 1 \\[3pt]
+\pause 1    & n - 1 > 0, & f^{(1)}(n) > a & \to & \big(f^{(2)}(n), & n - 2\big) & + 2 \\[3pt]
+\pause \cdots & \cdots & \cdots & \cdots & \cdots & \cdots & \cdots \\
+k-1  & n - (k-1) > 0, & f^{(k-1)}(n) > a & \to & \big(f^{(k)}(n), & n - k\big) & + k \\[3pt]
+\pause k & n - k \mathrel{?} 0, & {\color{red} f^{(k)}(n) \le a}  &\to & \multicolumn{2}{l}{0} &  \\[3pt] \hline
+SUM & \pause \Theta(k) & \pause \Theta((a+1)k) \pause & &  \multicolumn{2}{c}{\sum_{i=0}^{k-1}\runtime_f\big(f^{i}(n)\big)} & \pause \Theta(k)
 \end{array}
 \end{equation*}
 
 %TODO: Increase vertical space after \hline
 
+\pause
 Substitute $k = \cdt{f}{a}(n)$:
 %\begin{equation*}
-$\displaystyle
+\imppar{$\displaystyle
 \runtime_{\cdt{f}{a}}(n) = \sum_{i=0}^{\cdt{f}{a}(n)-1}\runtime_f\big(f^{i}(n)\big)
 + \Theta\left((a+1)\cdt{f}{a}(n)\right).
-$
+$}
 %\end{equation*}
 \end{frame}
 
@@ -136,29 +155,37 @@ $
 \begin{frame}
 \frametitle{Running time of each $\alpha_i$ - Asymptotic bounds}
 
-\begin{equation*}
+$\displaystyle
 \alpha_{i+1} = \cdt{\big(\alpha_i\big)}{1}\circ \alpha_i
 \quad \implies \quad \runtime_{\alpha_{i+1}}(n) = \runtime_{\alpha_i}(n) + \runtime_{\cdt{\alpha_i}{1}}\big(\alpha_i(n)\big)
-\end{equation*}
-\begin{equation*}
-\boxed{
-	\runtime_{\alpha_{i+1}}(n) = \runtime_{\alpha_i}(n) + 
+$
+
+\smallskip
+\imppar{
+$\displaystyle
+\runtime_{\alpha_{i+1}}(n) = \runtime_{\alpha_i}(n) + 
 \sum_{i=0}^{\cdt{\alpha_i}{1}(\alpha_i(n)) - 1} \runtime_{\alpha_i}\left(\alpha_i^{(i+1)}(n)\right) + \Theta\left(\cdt{\alpha_i}{1}(\alpha_i(n)) \right)
+$
 }
-\end{equation*}
+
+\bigskip
 
 Substitute $\cdt{\alpha_i}{1}(\alpha_i(n))$ for $\alpha_{i+1}(n)$:
+\bigskip
 
-\begin{equation*}
+$ \displaystyle 
 \runtime_{\alpha_{i+1}}(n)
   = \runtime_{\alpha_i}(n) + 
   \sum_{i=0}^{\alpha_{i+1}(n) - 1} \runtime_{\alpha_i}\left(\alpha_i^{(i+1)}(n)\right) + \Theta\left(\alpha_{i+1}(n) \right)
-\end{equation*}
+$
 
-\begin{equation*}
-\boxed{\runtime_{\alpha_{i+1}}(n)
-	= \sum_{i=0}^{\alpha_{i+1}(n)} \runtime_{\alpha_i}\left(\alpha_i^{(i)}(n)\right) + \Theta\left(\alpha_{i+1}(n) \right)}
-\end{equation*}
+\smallskip
+\imppar{
+$\displaystyle 
+\runtime_{\alpha_{i+1}}(n)
+	= \sum_{i=0}^{\alpha_{i+1}(n)} \runtime_{\alpha_i}\left(\alpha_i^{(i)}(n)\right) + \Theta\left(\alpha_{i+1}(n) \right)
+$
+}
 
 \end{frame}
 
@@ -185,8 +212,10 @@ $\alpha_i$ running time:
 \end{equation*}
 
 \smallskip
-
-\textbf{Theorem.} $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$, when using $\alpha_1 \triangleq \lambda n. (n-2)$.
+\imppar{
+\begin{minipage}{\linewidth}
+	\textbf{Theorem.} $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$, when using $\alpha_1 \triangleq \lambda n. (n-2)$.
+\end{minipage}}
 
 \end{frame}
 
@@ -195,28 +224,30 @@ $\alpha_i$ running time:
 \begin{frame}
 \frametitle{Running time of the inverse Ackermann function}
 
+\pause
 \begin{equation*}
 \begin{array}{l|llllllll}
-Step & \multicolumn{2}{l}{Initial \ Arguments} &  &  \big(\alpha_1, & \alpha_1(n), & 1, & b - 1 \big) \\
-1 & b - 1 > 0, & \alpha_1(n) > 1 & \to & \big(\alpha_2, & \alpha_2(n), & 2, & b - 2\big) \\
+Step & \multicolumn{2}{l}{Initial \ Arguments} &  &  \big(\alpha_1, & \alpha_1(n), & 1, & b - 1 \big) \\[3pt]
+\pause 1 & b - 1 > 0, & \alpha_1(n) > 1 & \to & \big(\alpha_2, & \alpha_2(n), & 2, & b - 2\big) \\[3pt]
 2 & b - 2 > 0, & \alpha_2(n) > 2 & \to  & \big(\alpha_3, & \alpha_3(n), & 3, & b - 3\big) \\
 \cdots & \cdots &\cdots & \cdots & \cdots & \cdots & \cdots \\
 %b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
-k & b - k > 0, & {\color{red} \alpha_{k}(n) \le k} & \to  & \multicolumn{4}{l}{k = \alpha(n)} \\ \hline
-SUM & \Theta(k) & \Theta\big(\sum_{i=1}^{k}i\big) & & \multicolumn{3}{r}{\sum_{i=1}^{k-1} \runtime_{\cdt{\alpha_i}{1}} (\alpha_i(n))} & \Theta(k) \\[3pt]
-= & \Theta(k) & \Theta(k^2) & \multicolumn{4}{r}{\sum_{i=1}^{k-1} \big(\runtime_{\alpha_{i+1}}(n) - \runtime_{\alpha_i}(n) \big)} & \Theta(k)
+k & b - k > 0, & {\color{red} \alpha_{k}(n) \le k} & \to  & \multicolumn{4}{l}{k = \alpha(n)} \\[3pt] \hline
+\pause SUM & \pause \Theta(k) & \pause \Theta\big(\sum_{i=1}^{k}i\big) \pause & & \multicolumn{4}{l}{\sum_{i=1}^{k-1} \runtime_{\cdt{\alpha_i}{1}} (\alpha_i(n))} \\[3pt]
+\pause = & \Theta(k) & \Theta(k^2) & & \multicolumn{4}{l}{\sum_{i=1}^{k-1} \big(\runtime_{\alpha_{i+1}}(n) - \runtime_{\alpha_i}(n) \big)}
 \end{array}
 \end{equation*}
 
 \smallskip
 
-Therefore
-\begin{equation*}
+\pause
+Therefore, 
+\imppar{$\displaystyle
 \begin{aligned}
 \runtime_{\alpha}(n)
 & = \runtime_{\alpha_{\alpha(n)}}(n) - \runtime_{\alpha_1}(n) + \Theta\left(\alpha(n)^2\right) + \runtime_{\alpha_1}(n) \\
 & = \bigO \left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2 \right) = \bigO (n)
 \end{aligned}
-\end{equation*}
+$}
 
 \end{frame}

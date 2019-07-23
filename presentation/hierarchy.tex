@@ -1,27 +1,34 @@
 \subsection{The repeated application pattern}
 
 \begin{frame}
-\frametitle{Repeated Application}
+\frametitle{Repeated Application via \texttt{iter}}
 
-Let $X$ be any set and $f: X\to X$ be a function on $X$. Define the notation:
+Let $X$ be any set and any function $f: X\to X$. Define the notation:
 \begin{equation*}
 f^{(k)}(u) \triangleq ~ (f\circ f\circ \cdots \circ f)(u),
 \end{equation*}
-which denotes $k$ compositional applications of a function~$f$ to an
-input~$u$.
+which denotes $k$ compositional applications of $f$ to an
+input~$u\in X$.
 
 \bigskip
 
-The following recursive rule applies:
-\begin{enumerate}
-	\item $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times yields the identity).
-	\item $f^{(k+1)}(u) = f \left(f^{(k)}(u)\right)$.
-\end{enumerate}
+Coq's standard library function \texttt{iter} supports repeated application:
+$f^{(k)}(u) = \texttt{iter}(k, f, u).$
 
 \bigskip
 
-Repeated application plays a vital role in both hyperoperations and Ackermann hierarchy.
+The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to an initial value.
 
+
+%The following recursive rule applies:
+%\begin{enumerate}
+%	\item $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times yields the identity).
+%	\item $f^{(k+1)}(u) = f \left(f^{(k)}(u)\right)$.
+%\end{enumerate}
+%
+%\bigskip
+%
+%Repeated application plays a vital role in both hyperoperations and Ackermann hierarchy.
 
 \end{frame}
 
@@ -30,22 +37,22 @@ Repeated application plays a vital role in both hyperoperations and Ackermann hi
 \frametitle{The hyperoperation formal definition}
 \begin{equation*}
 \begin{array}{lrcl}
-\textit{1. 0$^{\textit{th}}$ level: } & a[0]b & ~ \triangleq ~ & b + 1 \\
+\textit{1. 0$^{\textit{th}}$ level: } & a[0]b & ~ \triangleq ~ & b + 1 \\[3pt]
 \textit{2. Initial values: } & a[n+1]0 & ~ \triangleq ~ &
-\begin{cases}
+\small \begin{cases}
 a & \text{when } n = 0 \\
 0 & \text{when } n = 1 \\
 1 & \text{otherwise}
-\end{cases} \\
+\end{cases} \\[15pt]
 \textit{3. Recursive rule: } \quad & a[n+1](b+1) & ~ \triangleq ~ & a[n]\big(a[n+1]b\big)
 \end{array}
 \end{equation*}
 
-Via the recursive rule:
 \begin{equation*}
 \begin{aligned}
 & a[n+1]b \\
 & = ~ a[n]\big(a[n+1](b-1)\big) ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \\
+& = ~ \big(a[n]\circ a[n]\big)\big(a[n+1](b-2)\big) ~ = ~ \ldots \\
 & = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ \big(a[n]\big)^{(b)}\underbrace{\big(a[n+1]0\big)}_{\text{init value}}
 \end{aligned}
 \end{equation*}
@@ -57,17 +64,19 @@ Via the recursive rule:
 \frametitle{The Ackermann hierarchy formal definition}
 \begin{equation*}
 \begin{array}{lrcl}
-\textit{1. 0$^{\textit{th}}$ level: } & \Ack_0(b) & ~ \triangleq ~ & b + 1 \\
-\textit{2. Initial values: } & \Ack_{n+1}(0) & ~ \triangleq ~ & \Ack_n(1) \\
+\textit{1. 0$^{\textit{th}}$ level: } & \Ack_0(b) & ~ \triangleq ~ & b + 1 \\[3pt]
+\textit{2. Initial values: } & \Ack_{n+1}(0) & ~ \triangleq ~ & \Ack_n(1) \\[3pt]
 \textit{3. Recursive rule: } \quad & \Ack_{n+1}(b+1) & ~ \triangleq ~ & \Ack_n\big(\Ack_{n+1}(b)\big)
 \end{array}
 \end{equation*}
 
-Via the recursive rule:
+\bigskip
+
 \begin{equation*}
 \begin{aligned}
 & \Ack_{n+1}(b) \\
 & = ~ \Ack_n\big(\Ack_{n+1}(b-1)\big) ~ = ~ \Ack_n\big(\Ack_n\big(\Ack_{n+1}(b-2)\big)\big) \\
+& = ~ \big(\Ack_n\circ \Ack_n\big) \big(\Ack_{n+1}(b-2)\big) ~ = ~ \ldots \\
 & = ~ \underbrace{\big( \Ack_n\circ \Ack_n\circ \cdots \circ \Ack_n \big)}_{b \text{ times}} \big(\Ack_{n+1}(0)\big)  ~ = ~ \big(\Ack_n\big)^{(b)}\underbrace{\big(\Ack_{n+1}(0)\big)}_{\text{init value}}
 \end{aligned}
 \end{equation*}
@@ -79,18 +88,31 @@ Via the recursive rule:
 
 
 \begin{frame}[fragile]
-\frametitle{From repeated application to Repeater}
-The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to an initial value.
+\frametitle{From \texttt{iter} to Repeater}
+%The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to an initial value.
+%
+%\bigskip
+%
+%We can abstract the concept of repeated application in a higher-order function called \emph{repeater}:
+%
+%\smallskip
+
+Writing $a[n+1]b = \big(a[n]\big)^{(b)}\big(a[n+1]0\big)$ or $\Ack_{n+1}(b) = \big(\Ack_n\big)^{(b)}\big(\Ack_{n+1}(0)\big)$ is clumsy since $b$ is no longer the main argument.
 
 \bigskip
 
-We can abstract the concept of repeated application in a higher-order function called \emph{repeater}:
+\textbf{Repeater.} A rearranged form of \texttt{iter}, where $b$ becomes the main argument:
+\impinline{$\rf{f}{u}(b) \triangleq \texttt{iter}(b, f, u) = f^{(b)}(u)$}.
 
 \smallskip
 
-$\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L32-L36}{\emph{repeater from}}
-$a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
+We call $\rf{f}{a}$ the \emph{repeater from} $a$ of $f$.
+
+\smallskip
+
+%$\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the
+%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L32-L36}{\emph{repeater from}}
+%$a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 
 % Linked by A
 \begin{lstlisting}
@@ -100,7 +122,10 @@ match n with 0 => a | S n' => f (repeater_from f a n') end.
 
 \smallskip
 
-Functional-to-function recursive rule:
+\begin{minipage}{0.4\linewidth}
+	Drop $b$ to form a function-to-function recursive rule:
+\end{minipage}
+\quad 
 $\begin{cases}
 \displaystyle a[n+1] & = \rf{\big(a[n]\big)}{a[n+1]0} \\[5pt]
 \Ack_{n+1} & = \rf{\big(\Ack_n\big)}{\Ack_{n+1}(0)}
@@ -110,7 +135,7 @@ $\begin{cases}
 
 
 \begin{frame}[fragile]
-\frametitle{Hyperoperations Coq definitions}
+\frametitle{Hyperoperations via Repeater}
 Without Repeater (via double recursion):
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L51-L52}{Definition hyperop\_init}` (a n : nat) : nat :=
@@ -139,7 +164,7 @@ With Repeater:
 
 
 \begin{frame}[fragile]
-\frametitle{Ackermann hierarchy Coq definitions}
+\frametitle{Ackermann hierarchy via Repeater}
 Without Repeater (via double recursion):
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L123-L132}{Fixpoint ackermann\_original}` (m n : nat) : nat :=

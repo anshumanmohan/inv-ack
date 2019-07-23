@@ -1,10 +1,22 @@
 \begin{frame}
 \frametitle{Step 2: Inverting the hierarchies via countdown\\ Roadmap}
-\begin{enumerate}\itemsep2em
-	\item \textcolor<2>{red}{\emph{What is inverse?} Upper inverse and increasing functions.}
-	\item \emph{Can Repeater preserve Invertibility?} Repeatable functions.
-	\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
-	\item Invert each level in hyperoperations/Ackermann hierarchies.
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{local structure}{fg=black}
+
+\begin{enumerate}[\bfseries 1.]
+	\itemsep 3ex
+	\pause
+	\item<come@6->
+	\emph{What is inverse?} \textbf{Upper inverse and increasing functions}.
+	
+	\item<3->
+	\emph{Can Repeater preserve Invertibility?} \textbf{Repeatable functions}.
+	
+	\item<4->
+	\emph{Computing inverse with inverse:} \textbf{Contractions and Countdown}.
+	
+	\item<5->
+	\textbf{Invert each level in hyperoperations/Ackermann hierarchies}.
 \end{enumerate}
 \end{frame}
 
@@ -12,36 +24,51 @@
 \subsection{Upper inverses and increasing functions}
 
 \begin{frame}
-\frametitle{Upper inverses of increasing, unbounded functions}
+\frametitle{Upper inverses and increasing functions}
 The \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L28-L45}{
 	\emph{upper inverse}} of $F$, written $F^{-1}$,
 % {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$}
-is $\lambda n. \min\{m : F(m)\ge n\}$.
+is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 
-Note that $F^{-1}$ is a total function when $F$ is unbounded.
+%Note that $F^{-1}$ is a total function when $F$ is unbounded.
 
 \bigskip
 
-\textbf{Analogue of inverse of injections:} The \emph{upper inverse} makes sense for \emph{strictly increasing} (hereafter referred to simply as \emph{increasing}). Increasingness parallels injectivity.
+\textbf{Increasing functions.} $F^{-1}$ makes sense and is total for \emph{strictly increasing} $F$. (hereafter referred to simply as \emph{increasing})
 
-\smallskip
-Note: Increasing functions are trivially unbounded.
+\bigskip
+
+\textbf{Analogy with inverse of injections:} $\begin{cases}
+\text{Increasing} & \hspace{-0.5em}\leftrightarrow \text{Injective} \\
+\text{Upper Inverse} & \hspace{-0.5em}\leftrightarrow \text{Inverse}
+\end{cases}$
 
 \bigskip
 
 \textbf{Logical equivalence (more useful):}
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L65-L77}{\coq} If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L65-L77}{\coq} If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ iff \impinline{$\forall n, m.~ f(n)\le m \iff n \le F(m)$}.
 
 \end{frame}
 
 \subsection*{}
 \begin{frame}
 \frametitle{Step 2: Inverting the hierarchies via countdown\\ Roadmap}
-\begin{enumerate}\itemsep2em
-	\item \textcolor<1-2>{gray}{\emph{What is inverse?} Upper inverse and increasing functions.}
-	\item \textcolor<2>{red}{\emph{Can Repeater preserve Invertibility?} Repeatable functions.}
-	\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
-	\item Invert each level in hyperoperations/Ackermann hierarchies.
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{local structure}{fg=black}
+
+\begin{enumerate}[\bfseries 1.]
+	\itemsep 3ex
+	\item<done@1->
+	\emph{What is inverse?} \textbf{Upper inverse and increasing functions}.
+	
+	\item<come@2->
+	\emph{Can Repeater preserve Invertibility?} \textbf{Repeatable functions}.
+	
+	\item
+	\emph{Computing inverse with inverse:} \textbf{Contractions and Countdown}.
+	
+	\item
+	\textbf{Invert each level in hyperoperations/Ackermann hierarchies}.
 \end{enumerate}
 \end{frame}
 
@@ -49,49 +76,84 @@ Note: Increasing functions are trivially unbounded.
 \subsection{Expansions and Repeatable functions}
 
 \begin{frame}
-\frametitle{Expansions and Repeatable functions 1}
+\frametitle{Invertibility of the Hierarchies}
 
-\textbf{Observation:} Every function in the hyperoperations (when $a\ge 2$) and the Ackermann hierarchy is increasing. How do they become that?
-
-\smallskip
-
-\textbf{Generalization:} What properties ensure increasing-ness is preserved by Repeater?
+\textbf{Observation:} The first few functions in the hyperoperations ($a\ge 2$) and the Ackermann hierarchy are increasing, thus \emph{invertible}.
 
 \bigskip
 
-\textbf{Repeatability:} a property that encompasses increasing-ness that is preserved through Repeater.
+\textbf{Generalization:} Does this hold forever?
+
+\bigskip
+
+\imppar{\textbf{Key question:} How can Repeater preserve increasing-ness?}
+
+%\bigskip
+%
+%\textbf{Repeatability:} a property that encompasses increasing-ness that is preserved through Repeater.
+%\begin{equation*}
+%Repeatable = Increasing + Strict \ Expanding
+%\end{equation*}
+%
+%\textbf{Expansions:} A function $F:\mathbb{N}\to\mathbb{N}$ is an
+%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L80-L82}{\emph{expansion}} if $\forall n.~ F(n)\ge n$. Further, for $a\in \mathbb{N}$, an expansion $F$ is
+%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L84-L86}{\emph{strict from}} $a$ if ~$\forall n \ge a.~ F(n) > n$.
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Expansions and Repeatable functions 2}
+
+%\textbf{Observation:} The first few functions in the hyperoperations ($a\ge 2$) and the Ackermann hierarchy are increasing. Does this hold forever?
+%
+%\smallskip
+%
+%\textbf{Generalization:} How can Repeater preserve increasing-ness?
+%
+%\bigskip
+
+%\textbf{Repeatability:} a property that encompasses increasing-ness that is preserved through Repeater.
+Repeater preserves a stronger property!
 \begin{equation*}
-Repeatable = Increasing + Strict \ Expanding
+Repeatable \triangleq Increasing + Strict \ Expanding
 \end{equation*}
 
 \textbf{Expansions:} A function $F:\mathbb{N}\to\mathbb{N}$ is an
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L80-L82}{\emph{expansion}} if $\forall n.~ F(n)\ge n$. Further, for $a\in \mathbb{N}$, an expansion $F$ is
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L84-L86}{\emph{strict from}} $a$ if ~$\forall n \ge a.~ F(n) > n$.
-\end{frame}
 
+\bigskip
 
-\begin{frame}
-\frametitle{Expansion and Repeatable functions 2}
-\label{frame:repeatable2}
 \textbf{Repeatability:} An increasing function $f$ is \emph{repeatable} from $a$ if $f$ is also an expansion that is strict from $a$.
 
 \smallskip
 
 The set of functions repeatable from $a$ is denoted by $\repeatable_a$.
 
-\smallskip
+\end{frame}
 
-\textbf{Observation.} If $a\le b$, $\repeatable_a\subseteq \repeatable_b$.
+
+\begin{frame}
+\frametitle{Invertibility Preservation with Repeater}
+\label{frame:repeatable2}
+
+\imppar{
+\begin{minipage}{0.9\linewidth}
+	\textbf{Repeatability Preservation Theorem.} $\forall a\ge 1$, if $f \in \repeatable_a$, then $\rf{f}{a} \in \repeatable_0$, meaning $\rf{f}{a}$~~is repeatable from any $b$.
+\end{minipage}
+}
 
 \bigskip
 
-\textbf{Repeatability Preservation Theorem.} $\forall a\ge 1$, if $f \in \repeatable_a$, then $\rf{f}{a} \in \repeatable_0$, meaning $\rf{f}{a}$ is repeatable from any $b$.
+The levels $0, 1, 2$ in the hyperoperations (when $a\ge 2$) and level $0$ in the Ackermann hierarchy are repeatable from their initial values.
 
 \bigskip
 
-Every level in the hyperoperations (when $a\ge 2$) and Ackermann hierarchies are repeatable from their respective initial values.
+By induction, every hyperoperations (when $a\ge 2$)/Ackermann level is repeatable from their respective initial values.
 
-$\implies$ All invertible.
+\bigskip
+
+Our hunch is correct! Every level of both hierarchies is invertible.
 
 \end{frame}
 
@@ -99,11 +161,22 @@ $\implies$ All invertible.
 \subsection*{}
 \begin{frame}
 \frametitle{Step 2: Inverting the hierarchies via countdown\\ Roadmap}
-\begin{enumerate}\itemsep2em
-	\item \textcolor<1-2>{gray}{\emph{What is inverse?} Upper inverse and increasing functions.}
-	\item \textcolor<1-2>{gray}{\emph{Can Repeater preserve Invertibility?} Repeatable functions.}
-	\item \textcolor<2>{red}{\emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.}
-	\item Invert each level in hyperoperations/Ackermann hierarchies.
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{local structure}{fg=black}
+
+\begin{enumerate}[\bfseries 1.]
+	\itemsep 3ex
+	\item<done@1->
+	\emph{What is inverse?} \textbf{Upper inverse and increasing functions}.
+	
+	\item<done@1->
+	\emph{Can Repeater preserve Invertibility?} \textbf{Repeatable functions}.
+	
+	\item<come@2->
+	\emph{Computing inverse with inverse:} \textbf{Contractions and Countdown}.
+	
+	\item
+	\textbf{Invert each level in hyperoperations/Ackermann hierarchies}.
 \end{enumerate}
 \end{frame}
 
@@ -112,7 +185,7 @@ $\implies$ All invertible.
 
 
 \begin{frame}
-\frametitle{Definitions}
+\frametitle{Contractions and Countdown: Definitions}
 \textbf{Contractions.} A function $f : \mathbb{N} \to \mathbb{N}$ is a
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L40-L42}{\emph{contraction}} if $\forall n.~ f(n) \le n$.
 
@@ -121,12 +194,7 @@ Given an $a \ge 1$, a contraction $f$ is
 
 \bigskip
 
-\textbf{Notations.} Set of contractions: $\contract$. Set of contractions strict above $a$: $\contract_a$.
-
-\bigskip
-
-\textbf{Observations.} Analogously to
-\nameref{frame:repeatable2}, $\forall s\le t.~ \contract_s \subseteq \contract_t$.
+\textbf{Notation.} Set of contractions strict above $a$: $\contract_a$.
 
 \bigskip
 
@@ -140,48 +208,68 @@ $n$ for the answer to equal or go below $a$. \emph{i.e.},
 
 
 \begin{frame}
-\frametitle{The importance of Countdown}
+\frametitle{Countdown as the inverse of Repeater}
+\setlength{\leftmargini}{3.8em}
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{local structure}{fg=black}
+
 \textbf{Theorem.} $\forall a$, $\forall F\in \repeatable_a$, define $f\triangleq F^{-1}$. 
 \\ Then $f\in \contract_a$ and $\cdt{f}{a}~ = \left(\rf{F}{a}\ \right)^{-1}$.
 
 \bigskip
 
 \textbf{Proof.}
-\emph{Step 1.} $f\in \contract_a$:
 
-Since $F$ is an expansion, $n \le F(n)\implies f(n)\le n$.
-Take $n> a$, Since $F$ is strict from $a$, $n-1 < F(n-1) \implies n\ge F(n-1)$ $\implies f(n)\le n - 1 \implies f(n) < n$.
-
-\bigskip
-
-\emph{Step 2.} $\cdt{f}{a}~ = \left(\rf{F}{a}\ \right)^{-1}$. We have
-\begin{equation*} \label{eq: rf-upp-inv}
-\begin{aligned}
-& \cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a \iff f^{(m-1)}(n)\le F(a) \iff \ldots \\
-&  \iff f(n)\le F^{(m-1)}(a) \iff n\le F^{(m)}(a) \iff n\le \rf{F}{a}(m)
-\end{aligned}
-\vspace{-0.5em}
-\end{equation*}
-Thus the proof is complete.
+\begin{enumerate}[\itshape Step 1.]
+	\item $f$ \textit{is a contraction.} Since $F$ is an expansion, $n \le F(n)\implies f(n)\le n$.
+	
+	\item $f\in \contract_a$. Take $n> a$, since $F$ is strict from $a$, $n-1 < F(n-1) \implies n\ge F(n-1)$ $\implies f(n)\le n - 1 \implies f(n) < n$.
+	
+	\item $\cdt{f}{a}~ = \left(\rf{F}{a}\ \right)^{-1}$. We have
+	\begin{equation*} \label{eq: rf-upp-inv}
+	\begin{aligned}
+	& \cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a \iff f^{(m-1)}(n)\le F(a) \iff \ldots \\
+	&  \iff f(n)\le F^{(m-1)}(a) \iff n\le F^{(m)}(a) \iff n\le \rf{F}{a}(m)
+	\end{aligned}
+	\vspace{-0.5em}
+	\end{equation*}
+\end{enumerate}
+\qed
 
 \end{frame}
 
 
 \begin{frame}[fragile]
 \frametitle{A Countdown computation in Coq type \texttt{nat} 1}
-\textbf{Idea.} To compute $\cdt{f}{a}(n)$, starting from $n$, repeatedly apply $f$ to get the chain $\{n, f(n), f^{(2)}(n), \ldots \}$. Stops when $f^{(k)}(n)\le a$. Returns $k$.
+\textbf{Idea.} %To compute $\cdt{f}{a}(n)$,
+Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
 
 \bigskip
 
-\textbf{Primary issue.} Coq needs a known terminating point, i.e. an explicit decreasing argument. How to know when to terminate beforehand?
-
-\smallskip
-
-\textbf{Secondary issue.} It's hard to define a Coq definition of Countdown for contractions only. Defining a computation for \emph{all functions} that actually computes Countdown on contractions is easier.
+\textbf{Primary issue.} Termination in Coq.
+%Coq needs a known terminating point, i.e. an explicit decreasing argument. How to know when to terminate beforehand?
 
 \bigskip
 
-\textbf{The worker function.} A worker function takes $f, a, n$ and a budget $b$ and compute the chain $\{n, f(n), \ldots, f^{(b)}(n)\}$. It stops before reaching $f^{(b)}(n)$ upon encountering $k$ such that $f^{(k)}(n)\le a$.
+\textbf{Secondary issue.} It's hard to restrict $f$ to contractions only.
+%It's hard to define a Coq definition of Countdown for contractions only. Defining a computation for \emph{all functions} that actually computes Countdown on contractions is easier.
+
+\bigskip
+
+\textbf{The worker function.} $\begin{cases}
+\text{Budget } b: & \hspace{-1em}\text{Maximum } b \text{ steps. } \\
+\text{Step } i: & \hspace{-1em}\text{Compute } f^{(i)}(n). \\
+\text{Stops when: } & \hspace{-1em}\text{budget reaches } 0 \text{ or } f^{(i)}(n) \le a.
+\end{cases}$
+%\bigskip
+%\begin{itemize}
+%	\item Budget $b$: Maximum $b$ steps.
+%	\item Step $i$: Computes $\alpha_i(n)$.
+%	\item Stops when budget reaches $0$ or $\alpha_i(n) \le i$.
+%\end{itemize}
+
+%A worker function takes $f, a, n$ and a budget $b$ and compute the chain $\{n, f(n), \ldots, f^{(b)}(n)\}$. It stops before reaching $f^{(b)}(n)$ upon encountering $k$ such that $f^{(k)}(n)\le a$.
+%%TODO: Use bullet points
 
 \bigskip
 
@@ -192,9 +280,12 @@ Thus the proof is complete.
 \begin{frame}[fragile]
 \frametitle{A Countdown computation in Coq type \texttt{nat} 2}
 
-\textbf{The worker function.} For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the
-\emph{countdown worker}
-to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
+\textbf{The worker.}
+%For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the
+%\emph{countdown worker}
+%to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
+The \emph{countdown worker}
+to $a$ of $f$ is a function $\cdw{f}{a}$~~:
 \begin{equation*}
 \cdw{f}{a}(n, b) = \begin{cases}
 0 & \text{if } b = 0 \vee n\le a \\ 1 +\cdw{f}{a}(f(n), b-1) & \text{if } b \ge 1 \wedge n > a
@@ -209,9 +300,10 @@ to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that
 end.
 \end{lstlisting}
 
-\textbf{The Countdown computation.} We choose a budget equals to $n$, which is sufficient.
-Redefine $\cdt{f}{a}(n)
-\triangleq \cdw{f}{a}(n, n)$.
+\bigskip
+
+\textbf{The Countdown.} We choose a budget $b$ equals to $n$, which is sufficient.
+\impinline{Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.}
 % Linked by A
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L112}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
@@ -224,11 +316,22 @@ Redefine $\cdt{f}{a}(n)
 \subsection*{}
 \begin{frame}
 \frametitle{Step 2: Inverting the hierarchies via countdown\\ Roadmap}
-\begin{enumerate}\itemsep2em
-	\item \textcolor<1-2>{gray}{\emph{What is inverse?} Upper inverse and increasing functions.}
-	\item \textcolor<1-2>{gray}{\emph{Can Repeater preserve Invertibility?} Repeatable functions.}
-	\item \textcolor<1-2>{gray}{\emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.}
-	\item \textcolor<2>{red}{Invert each level in hyperoperations/Ackermann hierarchies.}
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{local structure}{fg=black}
+
+\begin{enumerate}[\bfseries 1.]
+	\itemsep 3ex
+	\item<done@1->
+	\emph{What is inverse?} \textbf{Upper inverse and increasing functions}.
+	
+	\item<done@1->
+	\emph{Can Repeater preserve Invertibility?} \textbf{Repeatable functions}.
+	
+	\item<done@1->
+	\emph{Computing inverse with inverse:} \textbf{Contractions and Countdown}.
+	
+	\item<come@2->
+	\textbf{Invert each level in hyperoperations/Ackermann hierarchies}.
 \end{enumerate}
 \end{frame}
 

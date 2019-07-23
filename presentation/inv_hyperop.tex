@@ -23,37 +23,49 @@ a & \hspace{-7pt}\text{ if } n = 1 \\
 \smallskip
 
 Interesting individual levels:
-$\left\lceil b/a \right\rceil = \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L102-L113}{a\angle{2}b}$,
-$\left\lceil \log_a b \right\rceil =
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L115-L124}{a\angle{3}b}$, and
-$\log^*_a b =
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L126-L128}{a\angle{4}b}$.
+$\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L102-L113}{a\angle{2}b}
+= \left\lceil b/a \right\rceil$,
+$\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L115-L124}{a\angle{3}b}
+= \left\lceil \log_a b \right\rceil$, and
+$\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L126-L128}{a\angle{4}b}
+= \log^*_a b$ (not currently in CSL).
 \end{frame}
 
 
 \begin{frame}[fragile]
 \frametitle{The Inverse Ackermann hierarchy}
-\textbf{Naive approach.} $\Ack_{i+1} = \rf{\big(\Ack_i\big)}{\Ack_i(1)}\ $, so we can define $\alpha_{i+1} \triangleq \cdt{\big(\alpha_i\big)}{\Ack_i(1)}\ $.\\ \smallskip
-\textbf{Flaw.} $\alpha_{i+1}$ still depends on $\Ack_i$.
+\pause
+\textbf{Naive approach.} $\Ack_{i+1} = \rf{\big(\Ack_i\big)}{{\color<4>{red} \Ack_i(1)}}\ $.
+\pause
+Thus $\alpha_{i+1} \triangleq \cdt{\big(\alpha_i\big)}{{\color<4>{red} \Ack_i(1)}}\ $?\\ 
+
+\smallskip
+
+\pause
+\textcolor{red}{\textbf{Flaw!}} $\alpha_{i+1}$ depends on {\color{red}$\Ack_i$}.
 
 \bigskip
 
-\textbf{Observation.} $\Ack_{i+1}(n) = \Ack_i^{(n)}(\Ack_i(1)) = \Ack_i^{(n+1)}(1)$. Thus $\forall m$,
+\textbf{Observation.} $\Ack_{i+1}(n) = \Ack_i^{(n)}(\Ack_i(1)) = \Ack_i^{(n+1)}(1)$. Thus
 \vspace{-0.7em}
 \begin{equation*}
-\alpha_{i+1}(m) \le n \iff m \le \Ack_{i+1}(n) \iff m \le \Ack_i^{(n+1)}(1)
-\iff \alpha_i^{(n+1)}(m) \le 1,
+\begin{aligned}
+\alpha_{i+1}(n) & = \min\left\{m : n\le \Ack_i^{m+1}(1)\right\}
+= \min\left\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\right\} \\
+& = \min\left\{m : \big( \alpha_i \big)^{(m)}\big(\alpha_i(n)\big)\le 1\right\} = \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)
+\end{aligned}
 \end{equation*}
-Thus $\alpha_{i+1}(n) = \min\left\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\right\} = \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)$. Redefine:
-\vspace{-1em}
-\begin{equation*}
+\textbf{Redefine:}
+$
 \alpha_i \triangleq
 \begin{cases}
-\lambda n.(n - 1) & \text{if } i = 0
-\\ \big(\cdt{\alpha_{i-1}}{1}\big)\circ \alpha_{i-1} & \text{if } i\ge 1
-\end{cases}
-\end{equation*}
-\vspace{-1em}
+\lambda n.(n - 1) & \text{when } i = 0
+\\ \big(\cdt{\alpha_{i-1}}{1}\big)\circ \alpha_{i-1} & \text{when } i\ge 1
+\end{cases}.
+$
+
+\smallskip
+
 % Linked by A
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L37-L41}{Fixpoint alpha}` (m x : nat) : nat :=

@@ -8,7 +8,7 @@
 	Attribute & Unary & Binary Encoding \\ \hline
 	Type in Coq & \texttt{nat} & \texttt{N} \\[7pt]
 	Number $n$ & $n$ bits & $\lfloor \log_2n \rfloor + 1$ bits \\[7pt]
-	Compare $x$ and $y$ & $\min\{x, y\}$ time & $\min\{\lfloor \log_2x \rfloor, \lfloor \log_2y \rfloor\} + 1$ bits \\[9pt]
+	Compare $x$ and $y$ & $\min\{x, y\}$ time & $\min\{\lfloor \log_2x \rfloor, \lfloor \log_2y \rfloor\} + 1$ time \\[9pt]
 	$\lambda x. (x + 1)$ & 1 time step & Worse case: $\lfloor \log_2x \rfloor + 1$ steps \\
 	                     &             & Amortized: $< 3$ time steps \\
 	                    
@@ -16,11 +16,11 @@
 
 \bigskip
 
-Binary Encoding provides faster computations for many operations.
+Binary encoding provides faster computations for many operations.
 
 \smallskip
 
-What about inverse Ackermann? Goal: $\bigO \big(\log_2n\big)$.
+What about inverse Ackermann? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
 
 \end{frame}
 
@@ -50,7 +50,7 @@ $\implies$ $b$ should still be in \texttt{nat}.
 
 \bigskip
 
-\textbf{Solution.} Use $b$ around $\log_2n$ and use contractions that ``contracts'' fast enough $\implies$ Shrinks input 2 times every application.
+\textbf{Solution.} Use $b \approx \log_2n$ and contractions that ``contract'' fast enough. \emph{i.e.} Those that halve the input.
 \end{frame}
 
 
@@ -173,12 +173,12 @@ $
 
 \begin{equation*}
 \begin{array}{l|llllllll}
-Step & \multicolumn{2}{l}{Initial \ Arguments} &  &  \big(\alpha_3, & \alpha_3(n), & 3, & b - 0 \big) \\
-1 & b - 0 > 0, & \alpha_3(n) > 3 & \to & \big(\alpha_4, & \alpha_4(n), & 4, & b - 1\big) \\
+Step & \multicolumn{2}{l}{Initial \ Arguments} &  &  \big(\alpha_3, & \alpha_3(n), & 3, & b - 0 \big) \\[3pt]
+1 & b - 0 > 0, & \alpha_3(n) > 3 & \to & \big(\alpha_4, & \alpha_4(n), & 4, & b - 1\big) \\[3pt]
 2 & b - 1 > 0, & \alpha_4(n) > 4 & \to  & \big(\alpha_5, & \alpha_5(n), & 5, & b - 2\big) \\
 \cdots & \cdots &\cdots & \cdots & \cdots & \cdots & \cdots \\
 %b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
-k & b - k > 0, & {\color{red} \alpha_{k}(n) \le k} & \to  & \multicolumn{4}{l}{k = \alpha(n)} \\ \hline
+k & b - k > 0, & {\color{red} \alpha_{k}(n) \le k} & \to  & \multicolumn{4}{l}{k = \alpha(n)} \\[3pt] \hline
 SUM & \Theta(k) & \Theta\big(\sum_{i=1}^{k}\log_2i\big) & & \multicolumn{3}{r}{\sum_{i=1}^{k-1} \runtime_{\cdt{\alpha_i}{1}} (\alpha_i(n))} & \Theta(k) \\[3pt]
 = & \Theta(k) & \Theta(k\log_2k) & \multicolumn{4}{r}{\sum_{i=1}^{k-1} \big(\runtime_{\alpha_{i+1}}(n) - \runtime_{\alpha_i}(n) \big)} & \Theta(k)
 \end{array}

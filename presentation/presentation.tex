@@ -88,14 +88,22 @@
 \usepackage{stmaryrd}
 \usepackage{hieroglf}
 \usepackage{scalerel}
+\usepackage{enumerate}
 
-%\hypersetup{ % play with these to change the look of hyperlinks
-%	colorlinks=true,
-%	linkcolor=black,
-%	filecolor=magenta,
-%	urlcolor=blue,
+\usepackage{pgfplots}
+
+\hypersetup{ % play with these to change the look of hyperlinks
+	colorlinks=true,
+%	linkcolor=white,
+%	filecolor=white,
+  allcolors=.,
+	urlcolor=blue,
 %	citecolor=black
-%}
+}
+
+
+
+
 
 %\setbeamertemplate{bibliography item}{\insertbiblabel}
 
@@ -133,6 +141,11 @@
 }
 \makeatother
 
+% ENUMERATE COLOR SETTINGS
+\newenvironment{doneenv}{\only{\setbeamercolor{local structure}{fg=gray}\color{gray}}}{}
+\newenvironment{comeenv}{\only{\setbeamercolor{local structure}{fg=red}\color{red}}}{}
+
+% LSTLISTING SETTINGS
 \lstdefinestyle{myStyle}{
 	%	language=Coq,
 	keywords={Inductive,Require,Import,Definition,Fixpoint,match,with,end,let,in,fix},
@@ -172,7 +185,6 @@
 	\hspace{-.5ex}\begin{minipage}[t]{\@mli}\lstinline/#1/\end{minipage}}
 \makeatother
 \newcommand{\li}[1]{\ifmmode\mbox{\mli{#1}}\else\mbox{\lstinline/#1/}\fi}
-
 
 \newcommand{\coq}{\scalebox{.6}{\textpmhg{\Ha}}}
 
@@ -219,16 +231,25 @@
 \renewcommand{\implies}{\Rightarrow}
 \renewcommand{\iff}{\Leftrightarrow}
 
-\AtBeginSection[]{
-	\begin{frame}
-	\vfill
-	\centering
-	\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-		\Huge{\insertsectionhead}\par%
-	\end{beamercolorbox}
-	\vfill
-	\end{frame}
-}
+
+% DARKENED COLORS
+\colorlet{red}{red!80!black}
+\colorlet{blue}{blue!80!black}
+
+% FBOX SETTINGS
+\newcommand{\imppar}[1]{{\setlength{\fboxrule}{1pt}\fcolorbox{red}{white}{#1}}}
+\newcommand{\impinline}[1]{{\setlength{\fboxrule}{1pt}\setlength{\fboxsep}{2pt}\fcolorbox{white}{gray!30!white}{#1}}}
+
+%\AtBeginSection[]{
+%	\begin{frame}
+%	\vfill
+%	\centering
+%	\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+%		\Huge{\insertsectionhead}\par%
+%	\end{beamercolorbox}
+%	\vfill
+%	\end{frame}
+%}
 
 %\AtBeginSection[*]{
 %	\begin{frame}
@@ -259,19 +280,6 @@ National University of Singapore % Your institution for the title page
 \titlepage % Print the title page as the first slide
 \end{frame}
 
-\begin{frame}
-\frametitle{Abstract}
-We implement in Gallina a hierarchy of functions that calculate
-the upper inverses to the hyperoperation/Ackermann hierarchy.
-Our functions run in $\Theta(b)$ for inputs expressed
-in unary, and $\bigO(b^2)$ for inputs expressed in binary ($b$ = bitlength).
-We use our inverses to define linear-time functions---$\Theta(b)$ for both unary- 
-and binary-represented inputs---that compute the upper inverse of the 
-diagonal Ackermann %\linebreak[3]
-function~$\Ack(n)$ and show that these functions are consistent with the usual definition of the inverse Ackermann function~$\alpha(n)$.
-\keywords{Ackermann  \and hyperoperations \and Coq}
-\end{frame}
-
 %----------------------------------------------------------------------------------------
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
@@ -279,43 +287,40 @@ function~$\Ack(n)$ and show that these functions are consistent with the usual d
 % OVERVIEW
 % ============================================================================
 
-\section*{Overview}
+\section*{Introduction}
 \label{sec: overview}
 \input{overview.tex}
 
-\section*{Roadmap}
-
-\begin{frame}
-\frametitle{Roadmap}
-
 %TODO: think of a better way to make the roadmap i.e. diagram or something
 
-\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.
+\section*{Roadmap}
+\begin{frame}
+\frametitle{Roadmap}
+\setlength{\leftmargini}{3.8em}
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{local structure}{fg=black}
+
+\imppar{\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.}
 
 \bigskip
 
-{\color<2>[rgb]{1, 0, 0}\textbf{Step 1.} Explore the hyperoperations/Ackermann function hierarchical structure: Connect consecutive levels with \textbf{Repeater}.}
-
-\bigskip
-
-\textbf{Step 2.} Invert each level in both hierarchies:
-{ \small
-\begin{itemize}\itemsep0em 
-	\item \emph{What is inverse?} Upper inverse and increasing functions.
-	\item \emph{Can Repeater preserve Invertibility?} Repeatable functions.
-	\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
-	\item Invert each level in hyperoperations/Ackermann hierarchies.
-\end{itemize}
-}
-
-\bigskip
-
-\textbf{Step 3.} Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy.
-
-\bigskip
-
-\textbf{Step 4.} Improve its time efficiency with binary encoding system.
+\begin{enumerate}[\bfseries Step 1.]
+  \itemsep 2ex
+  \pause
+	\item<come@6>
+	Build the hyperoperations/Ackermann hierarchies via \textbf{Repeater}, a flavor of \emph{iter}.
+	
+	\item<3->
+	Build inverses of the hyperoperations/Ackermann hierarchies via \textbf{Countdown}, the inverse of \emph{Repeater}.
+	
+	\item<4->
+	Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy: $\bigO (n)$.
+	
+	\item<5-> [\textbf{Bonus.}]
+	Improve its efficiency with binary encoding: $\bigO (\log_2n)$.	
+\end{enumerate}
 \end{frame}
+
 
 \section{Step 1: Hyperoperations and Ackermann via Repeater}
 \label{sec: countdown-repeater}
@@ -325,34 +330,30 @@ function~$\Ack(n)$ and show that these functions are consistent with the usual d
 \section*{Roadmap}
 \begin{frame}
 \frametitle{Roadmap}
-\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.
+\setlength{\leftmargini}{3.8em}
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{local structure}{fg=black}
+
+\imppar{\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.}
 
 \bigskip
 
-\textcolor<1-2>{gray}{\textbf{Step 1.} Explore the hyperoperations/Ackermann function hierarchical structure: Connect consecutive levels with \textbf{Repeater}.}
-
-\bigskip
-
-{\color<2>{red} \textbf{Step 2.} Invert each level in both hierarchies:
-	{ \small
-	\begin{itemize}\itemsep0em
-		\color<2>{red}
-		\item \emph{What is inverse?} Upper inverse and increasing functions.
-		\item \emph{Can Repeater preserve Invertibility?} Repeatable functions.
-		\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
-		\item Invert each level in hyperoperations/Ackermann hierarchies.
-	\end{itemize}
-}
-}
-
-\bigskip
-
-\textbf{Step 3.} Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy.
-
-\bigskip
-
-\textbf{Step 4.} Improve its time efficiency with binary encoding system.
+\begin{enumerate}[\bfseries Step 1.]
+	\itemsep 2ex
+	\item<done@1->
+	Build the hyperoperations/Ackermann hierarchies via \textbf{Repeater}, a flavor of \emph{iter}.
+	
+	\item<come@2->
+	Build inverses of the hyperoperations/Ackermann hierarchies via \textbf{Countdown}, the inverse of \emph{Repeater}.
+	
+	\item
+	Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy: $\bigO (n)$.
+	
+	\item [\textbf{Bonus.}]
+	Improve its efficiency with binary encoding: $\bigO (\log_2n)$.	
+\end{enumerate}
 \end{frame}
+
 
 \section{Step 2: Inverting the hyperoperations/Ackermman hierarchies via Countdown}
 \label{sec: countdown}
@@ -365,33 +366,28 @@ function~$\Ack(n)$ and show that these functions are consistent with the usual d
 \section*{Roadmap}
 \begin{frame}
 \frametitle{Roadmap}
-\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.
+\setlength{\leftmargini}{3.8em}
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{local structure}{fg=black}
+
+\imppar{\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.}
 
 \bigskip
 
-\textcolor<1-2>{gray}{\textbf{Step 1.} Explore the hyperoperations/Ackermann function hierarchical structure: Connect consecutive levels with \textbf{Repeater}.}
-
-\bigskip
-
-{\color<1-2>{gray} \textbf{Step 2.} Invert each level in both hierarchies:
-	{ \small
-		\begin{itemize}\itemsep0em
-			\color<1-2>{gray}
-			\item \emph{What is inverse?} Upper inverse and increasing functions.
-			\item \emph{Can Repeater preserve Invertibility?} Repeatable functions.
-			\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
-			\item Invert each level in hyperoperations/Ackermann hierarchies.
-		\end{itemize}
-	}
-}
-
-\bigskip
-
-\textcolor<2>{red}{\textbf{Step 3.} Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy.}
-
-\bigskip
-
-\textbf{Step 4.} Improve its time efficiency with binary encoding system.
+\begin{enumerate}[\bfseries Step 1.]
+	\itemsep 2ex
+	\item<done@1->
+	Build the hyperoperations/Ackermann hierarchies via \textbf{Repeater}, a flavor of \emph{iter}.
+	
+	\item<done@1->
+	Build inverses of the hyperoperations/Ackermann hierarchies via \textbf{Countdown}, the inverse of \emph{Repeater}.
+	
+	\item<come@2->
+	Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy: $\bigO (n)$.
+	
+	\item [\textbf{Bonus.}]
+	Improve its efficiency with binary encoding: $\bigO (\log_2n)$.	
+\end{enumerate}
 \end{frame}
 
 
@@ -403,37 +399,32 @@ function~$\Ack(n)$ and show that these functions are consistent with the usual d
 \section*{Roadmap}
 \begin{frame}
 \frametitle{Roadmap}
-\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.
+\setlength{\leftmargini}{3.8em}
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{local structure}{fg=black}
+
+\imppar{\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.}
 
 \bigskip
 
-\textcolor<1-2>{gray}{\textbf{Step 1.} Explore the hyperoperations/Ackermann function hierarchical structure: Connect consecutive levels with \textbf{Repeater}.}
-
-\bigskip
-
-{\color<1-2>{gray} \textbf{Step 2.} Invert each level in both hierarchies:
-	{ \small
-		\begin{itemize}\itemsep0em
-			\color<1-2>{gray}
-			\item \emph{What is inverse?} Upper inverse and increasing functions.
-			\item \emph{Can Repeater preserve Invertibility?} Repeatable functions.
-			\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
-			\item Invert each level in hyperoperations/Ackermann hierarchies.
-		\end{itemize}
-	}
-}
-
-\bigskip
-
-\textcolor<1-2>{gray}{\textbf{Step 3.} Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy.}
-
-\bigskip
-
-\textcolor<2>{red}{\textbf{Step 4.} Improve its time efficiency with binary encoding system.}
+\begin{enumerate}[\bfseries Step 1.]
+	\itemsep 2ex
+	\item<done@1->
+	Build the hyperoperations/Ackermann hierarchies via \textbf{Repeater}, a flavor of \emph{iter}.
+	
+	\item<done@1->
+	Build inverses of the hyperoperations/Ackermann hierarchies via \textbf{Countdown}, the inverse of \emph{Repeater}.
+	
+	\item<done@1->
+	Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy: $\bigO (n)$.
+	
+	\item<come@2-> [\textbf{Bonus.}]
+	Improve its efficiency with binary encoding: $\bigO (\log_2n)$.	
+\end{enumerate}
 \end{frame}
 
 
-\section{Step 4: The Inverse Ackermann function in logarithmic time for binary encoding system}
+\section{Bonus: The Inverse Ackermann function in logarithmic time for binary encoding system}
 \label{sec: binary}
 \input{binary.tex}
 
@@ -441,38 +432,56 @@ function~$\Ack(n)$ and show that these functions are consistent with the usual d
 \section*{Roadmap}
 \begin{frame}
 \frametitle{Roadmap}
-\textcolor<2>{gray}{\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.} \uncover<2>{{\Large \checkmark}}
+\setlength{\leftmargini}{3.8em}
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{local structure}{fg=black}
+
+\imppar{\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.}
 
 \bigskip
 
-\textcolor<1->{gray}{\textbf{Step 1.} Explore the hyperoperations/Ackermann function hierarchical structure: Connect consecutive levels with \textbf{Repeater}.}
-
-\bigskip
-
-{\color<1->{gray} \textbf{Step 2.} Invert each level in both hierarchies:
-	{ \small
-		\begin{itemize}\itemsep0em
-			\color<1-2>{gray}
-			\item \emph{What is inverse?} Upper inverse and increasing functions.
-			\item \emph{Can Repeater preserve Invertibility?} Repeatable functions.
-			\item \emph{Computing inverse with inverse:} Contractions and \textbf{Countdown}.
-			\item Invert each level in hyperoperations/Ackermann hierarchies.
-		\end{itemize}
-	}
-}
-
-\bigskip
-
-\textcolor<1->{gray}{\textbf{Step 3.} Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy.}
-
-\bigskip
-
-\textcolor<1->{gray}{\textbf{Step 4.} Improve its time efficiency with binary encoding system.}
+\begin{enumerate}[\bfseries Step 1.]
+	\itemsep 2ex
+	\item<done@1->
+	Build the hyperoperations/Ackermann hierarchies via \textbf{Repeater}, a flavor of \emph{iter}.
+	
+	\item<done@1->
+	Build inverses of the hyperoperations/Ackermann hierarchies via \textbf{Countdown}, the inverse of \emph{Repeater}.
+	
+	\item<done@1->
+	Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy: $\bigO (n)$.
+	
+	\item<done@1-> [\textbf{Bonus.}]
+	Improve its efficiency with binary encoding: $\bigO (\log_2n)$.	
+\end{enumerate}
 \end{frame}
 
-\section{Further Discussion}
-\label{sec: discussion}
-\input{discussion.tex}
+%\section{Further Discussion}
+%\label{sec: discussion}
+%\input{discussion.tex}
+
+
+
+\begin{frame}
+\frametitle{Conclusion}
+%\frametitle{Abstract}
+%TODO: Past tense
+We implemented in Gallina a hierarchy of functions that calculate
+the upper inverses to the hyperoperation/Ackermann hierarchy.
+
+\bigskip
+
+Our functions run in $\Theta(b)$ for inputs expressed
+in unary, and $\bigO(b^2)$ for inputs expressed in binary ($b$ = bitlength).
+
+\bigskip
+
+We used our inverses to define linear-time functions---$\Theta(b)$ for both unary- 
+and binary-represented inputs---that compute the upper inverse of the 
+diagonal Ackermann %\linebreak[3]
+function~$\Ack(n)$ and showed that these functions are consistent with the usual definition of the inverse Ackermann function~$\alpha(n)$.
+\keywords{Ackermann  \and hyperoperations \and Coq}
+\end{frame}
 
 \section{Thank you for listening !!!}
 %\begin{frame}[allowframebreaks]
