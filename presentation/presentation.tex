@@ -113,7 +113,12 @@
 %    ENVIRONMENT SETTINGS
 %------------------------------------------------------------------------------------------
 
+% TEMPLATE SETTINGS
 \setbeamertemplate{theorems}[numbered]
+\setbeamertemplate{sidebar right}{}
+\setbeamertemplate{footline}{%
+	\hspace{1em}\small\insertframenumber{}/\inserttotalframenumber
+	\hfill\usebeamertemplate***{navigation symbols}}
 
 \makeatletter
 \renewcommand{\itemize}[1][]{%
@@ -168,7 +173,7 @@
 \lstdefinestyle{myTinyStyle}{
 	%   language=Coq,
 	keywords={Inductive,Require,Import,Definition,Fixpoint,match,with,end,let,in,fix},
-	basicstyle=\normalfont\fontsize{8.2}{8.5}\tt,
+	basicstyle=\normalfont\fontsize{8}{8.3}\tt,
 	keywordstyle=\color{green}, % Blue clashes with the cyan links. Change if you want.
 	stepnumber=1,
 	tabsize=2,
@@ -233,6 +238,11 @@
 \renewcommand{\note}[2][polish]{{\color{red} #2}{\marginpar{\tiny \color{blue} #1}}}
 \renewcommand{\implies}{\Rightarrow}
 \renewcommand{\iff}{\Leftrightarrow}
+
+
+% TABLE, ARRAY SETTINGS
+\newcommand{\topspace}[1]{\rule{0pt}{2.6ex+#1}}        % = `top' strut
+\newcommand{\botspace}[1]{\rule[-0.9ex-#1]{0pt}{0pt}}   % = `bottom' strut
 
 
 % DARKENED COLORS

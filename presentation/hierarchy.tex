@@ -1,41 +1,42 @@
 \subsection{The repeated application pattern}
 
-\begin{frame}
-\frametitle{Review: Repeated Application via \texttt{iter}}
-
-\pause 
-Let $X$ be any set and any function $f: X\to X$. Define the notation:
-\begin{equation*}
-f^{(k)}(u) \triangleq ~ \underbrace{(f\circ f\circ \cdots \circ f)}_{\text{$k$ times}}(u),
-\end{equation*}
-
-\smallskip
-
-\pause 
-Coq's standard library has \texttt{iter}. \quad $f^{(k)}(u) = \texttt{iter}(k, f, u).$
-
-\bigskip
-
-\pause 
-The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to some \emph{initial value}.
-
-
-%The following recursive rule applies:
-%\begin{enumerate}
-%	\item $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times yields the identity).
-%	\item $f^{(k+1)}(u) = f \left(f^{(k)}(u)\right)$.
-%\end{enumerate}
+%\begin{frame}
+%\frametitle{Review: Repeated Application via \texttt{iter}}
+%
+%\pause 
+%Let $X$ be any set and any function $f: X\to X$. Define the notation:
+%\begin{equation*}
+%f^{(k)}(u) \triangleq ~ \underbrace{(f\circ f\circ \cdots \circ f)}_{\text{$k$ times}}(u),
+%\end{equation*}
+%
+%\smallskip
+%
+%\pause 
+%Coq's standard library has \texttt{iter}. \quad $f^{(k)}(u) = \texttt{iter}(k, f, u).$
 %
 %\bigskip
 %
-%Repeated application plays a vital role in both hyperoperations and Ackermann hierarchy.
-
-\end{frame}
+%\pause 
+%The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to some \emph{initial value}.
+%
+%
+%%The following recursive rule applies:
+%%\begin{enumerate}
+%%	\item $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times yields the identity).
+%%	\item $f^{(k+1)}(u) = f \left(f^{(k)}(u)\right)$.
+%%\end{enumerate}
+%%
+%%\bigskip
+%%
+%%Repeated application plays a vital role in both hyperoperations and Ackermann hierarchy.
+%
+%\end{frame}
 
 
 \begin{frame}
 \frametitle{Formal Definition of Hyperoperation Hierarchy}
 
+\vspace{-1.5ex}
 \begin{equation*}
 \begin{array}{lrcl}
 \textit{1. 0$^{\textit{th}}$ level: } & \uncover<2->{a[0]b & ~ \triangleq ~ & b + 1} \\[3pt]
@@ -49,12 +50,16 @@ a & \text{when } n = 0 \\
 \end{array}
 \end{equation*}
 
+\vspace{-1ex}
+
 \begin{equation*}
 \begin{aligned}
 & a[n+1]b \\
 & \uncover<5->{= ~ a[n]\big(a[n+1](b-1)\big) ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big)} \\
 & \uncover<6->{= ~ \big(a[n]\circ a[n]\big)\big(a[n+1](b-2)\big) ~ = ~ \ldots} \\
-& \uncover<7->{= ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ \big(a[n]\big)^{(b)}\underbrace{\big(a[n+1]0\big)}_{\text{initial value}}}
+& \uncover<7->{= ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ 
+\underbrace{\big(a[n]\big)^{(b)}}_{\substack{\text{repeated} \\ \text{applications}}}
+\underbrace{\big(a[n+1]0\big)}_{\text{initial value}}}
 \end{aligned}
 \end{equation*}
 
@@ -78,7 +83,9 @@ a & \text{when } n = 0 \\
 & \Ack_{n+1}(b) \\
 & \uncover<3->{= ~ \Ack_n\big(\Ack_{n+1}(b-1)\big) ~ = ~ \Ack_n\big(\Ack_n\big(\Ack_{n+1}(b-2)\big)\big) \\
 & = ~ \big(\Ack_n\circ \Ack_n\big) \big(\Ack_{n+1}(b-2)\big) ~ = ~ \ldots \\
-& = ~ \underbrace{\big( \Ack_n\circ \Ack_n\circ \cdots \circ \Ack_n \big)}_{b \text{ times}} \big(\Ack_{n+1}(0)\big)  ~ = ~ \big(\Ack_n\big)^{(b)}\underbrace{\big(\Ack_{n+1}(0)\big)}_{\text{initial value}}}
+& = ~ \underbrace{\big( \Ack_n\circ \Ack_n\circ \cdots \circ \Ack_n \big)}_{b \text{ times}} \big(\Ack_{n+1}(0)\big)  ~ = ~ 
+\underbrace{\big(\Ack_n\big)^{(b)}}_{\substack{\text{repeated} \\ \text{applications}}}
+\underbrace{\big(\Ack_{n+1}(0)\big)}_{\text{initial value}}}
 \end{aligned}
 \end{equation*}
 
@@ -89,7 +96,7 @@ a & \text{when } n = 0 \\
 
 
 \begin{frame}[fragile]
-\frametitle{Notation: From \texttt{iter} to Repeater}
+\frametitle{From repeated applications and \texttt{iter} to Repeater}
 %The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to an initial value.
 %
 %\bigskip
@@ -98,24 +105,34 @@ a & \text{when } n = 0 \\
 %
 %\smallskip
 
-Writing $a[n+1]b = \big(a[n]\big)^{(b)}\big(a[n+1]0\big)$ or $\Ack_{n+1}(b) = \big(\Ack_n\big)^{(b)}\big(\Ack_{n+1}(0)\big)$ is clumsy since $b$ is no longer the main argument.
+%Writing $a[n+1]b = \big(a[n]\big)^{(b)}\big(a[n+1]0\big)$ or $\Ack_{n+1}(b) = \big(\Ack_n\big)^{(b)}\big(\Ack_{n+1}(0)\big)$ is clumsy since $b$ is no longer the main argument.
 
-\bigskip
+\vspace{-2ex}
+\begin{equation*}
+\begin{array}{l|l|l}
+\text{Expression} & \text{Repeated Applications} & \text{CSL } \texttt{iter} \\ \hline
+a[n+1]b & \big(a[n]\big)^{(b)}\big(a[n+1]0\big) & \texttt{iter}\big(b, a[n], a[n+1]0\big) \topspace{2pt} \botspace{2pt} \\
+\Ack_{n+1}(b) & \big(\Ack_n\big)^{(b)}\big(\Ack_{n+1}(0)\big) & \texttt{iter}\big(b, \Ack_n, \Ack_{n+1}(0)\big) \topspace{2pt}
+\end{array}
+\end{equation*}
+\\ \vspace{-0.5ex}
+The writing is clumsy since $b$ is no longer the main argument.
+
+\smallskip
 
 \pause 
-\textbf{Repeater.} A rearranged form of \texttt{iter}, where $b$ becomes the main argument:
-\impinline{$\rf{f}{u}(b) \triangleq \texttt{iter}(b, f, u) = f^{(b)}(u)$}.
+%\textbf{Repeater.} A rearranged form of \texttt{iter}, where $b$ becomes the main argument:
+%\impinline{$\rf{f}{u}(b) \triangleq \texttt{iter}(b, f, u) = f^{(b)}(u)$}.
+\textbf{Repeater.} A rearranged \texttt{iter}:
+\impinline{$\rf{f}{u}(b) \triangleq \texttt{iter}(b, f, u) = f^{(b)}(u)$}, where $b$ is the main argument. \pause Read $\rf{f}{a}$ \ as ``the \emph{repeater from} $a$ of $f$''.
 
-\smallskip
-
-Read $\rf{f}{a}$ \ as ``the \emph{repeater from} $a$ of $f$''.
-
-\smallskip
+%\smallskip
 
 %$\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the
 %\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L32-L36}{\emph{repeater from}}
 %$a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 
+\pause
 % Linked by A
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L32-L36}{Fixpoint repeater\_from}` (f : nat -> nat) (a n : nat) : nat :=
@@ -131,7 +148,7 @@ match n with 0 => a | S n' => f (repeater_from f a n') end.
 \begin{minipage}{0.4\linewidth}
 	Drop $b$ to form higher-order \\ recursive rule between levels:
 \end{minipage}
-\pause \quad 
+\quad 
 $\begin{cases}
 \displaystyle a[n+1] & = \rf{\big(a[n]\big)}{a[n+1]0} \\[5pt]
 \Ack_{n+1} & = \rf{\big(\Ack_n\big)}{\Ack_{n+1}(0)}

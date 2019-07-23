@@ -40,7 +40,10 @@ is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 \bigskip
 
 \pause 
-\textbf{Analogy with inverse of injections:} $\begin{cases}
+\begin{minipage}{0.4\linewidth}
+	Analogy with inverse of \\
+		     injections on real numbers:
+\end{minipage} \ $\begin{cases}
 \text{Increasing} & \hspace{-0.5em}\leftrightarrow \text{Injective} \\
 \text{Upper Inverse} & \hspace{-0.5em}\leftrightarrow \text{Inverse}
 \end{cases}$
@@ -49,7 +52,8 @@ is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 
 \pause 
 \textbf{Logical equivalence (more useful):}
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L65-L77}{\coq} If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ iff \impinline{$\forall n, m.~ f(n)\le m \iff n \le F(m)$}.
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L65-L77}{\coq} If $F:\mathbb{N}\to \mathbb{N}$ is increasing, \\
+then $f = F^{-1}$ iff \impinline{$\forall n, m.~ f(n)\le m \iff n \le F(m)$}.
 
 \end{frame}
 
@@ -236,21 +240,22 @@ $n$ for the answer to equal or go below $a$. \emph{i.e.},
 
 \begin{enumerate}[\itshape Step 1.]
 	\pause 
-	\item $f\in \contract$. \pause  Since $F$ is an expansion, $n \le F(n)\implies f(n)\le n$.
+	\item $f\in \contract$. \pause  $\forall n$, $F$ is an expansion $\implies n \le F(n)\implies f(n)\le n$.
 	
 	\smallskip
 	
 	\pause 
-	\item $f\in \contract_a$. \pause Take $n> a$, since $F$ is strict from $a$, \pause 
+	\item $f\in \contract_a$. \pause Take $n> a$, since $F$ is strict from $a$, \pause
+	\vspace{-1ex}
 	\begin{equation*}
 	\displayindent0pt
 	\displaywidth\textwidth
 	n-1 < F(n-1) \pause \implies n\le F(n-1) \pause \implies f(n)\le n - 1 \pause \implies f(n) < n.
 	\end{equation*}
-	\vspace{-2em}
-	
+	\vspace{-3.5ex}
 	\pause 
 	\item $\cdt{f}{a}~ = \left(\rf{F}{a}\ \right)^{-1}$. \pause  We have
+	\vspace{-1.5ex}
 	\begin{equation*}
 	\displayindent0pt
 	\displaywidth\textwidth
@@ -258,7 +263,6 @@ $n$ for the answer to equal or go below $a$. \emph{i.e.},
 	& \cdt{f}{a}(n)\le m \pause & \iff f^{(m)}(n)\le a \pause & \iff f^{(m-1)}(n)\le F(a) \pause & \iff \ldots \\
     \pause \iff & f(n)\le F^{(m-1)}(a) \pause & \iff n\le F^{(m)}(a) \pause & \iff n\le \rf{F}{a}(m) & \qed
 	\end{array}
-	\vspace{-0.5em}
 	\end{equation*}
 \end{enumerate}
 
