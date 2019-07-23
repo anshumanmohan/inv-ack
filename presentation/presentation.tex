@@ -89,6 +89,7 @@
 \usepackage{hieroglf}
 \usepackage{scalerel}
 \usepackage{enumerate}
+\usepackage{courier}
 
 \usepackage{pgfplots}
 
@@ -149,7 +150,7 @@
 \lstdefinestyle{myStyle}{
 	%	language=Coq,
 	keywords={Inductive,Require,Import,Definition,Fixpoint,match,with,end,let,in,fix},
-	basicstyle=\normalfont\footnotesize\tt,
+	basicstyle=\footnotesize\ttfamily,
 	keywordstyle=\color{green}, % Blue clashes with the cyan links. Change if you want.
 	stepnumber=1,
 	tabsize=2,
@@ -160,6 +161,8 @@
 	escapechar=`,
 	showstringspaces=false
 }
+
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true}
 %basicstyle=\fontsize{10}{11}\selectfont\ttfamily,
 
 \lstdefinestyle{myTinyStyle}{
@@ -308,16 +311,16 @@ National University of Singapore % Your institution for the title page
   \itemsep 2ex
   \pause
 	\item<come@6>
-	Build the hyperoperations/Ackermann hierarchies via \textbf{Repeater}, a flavor of \emph{iter}.
+	Build the hyperoperations/Ackermann hierarchies via \textbf{Repeater}.
 	
 	\item<3->
-	Build inverses of the hyperoperations/Ackermann hierarchies via \textbf{Countdown}, the inverse of \emph{Repeater}.
+	Build inverses of the hyperoperations/Ackermann hierarchies \\ via \textbf{Countdown}, the inverse of \emph{Repeater}.
 	
 	\item<4->
-	Implement the Inverse Ackermann function for unary encoding system via the inverse Ackermann hierarchy: $\bigO (n)$.
+	Use the hierarchy to implement the inverse Ackermann function \\ for inputs encoded in unary. $\bigO (n)$.
 	
 	\item<5-> [\textbf{Bonus.}]
-	Improve its efficiency with binary encoding: $\bigO (\log_2n)$.	
+	Improve efficiency for inputs encoded in binary. $\bigO (\log_2n)$.	
 \end{enumerate}
 \end{frame}
 
@@ -479,7 +482,11 @@ in unary, and $\bigO(b^2)$ for inputs expressed in binary ($b$ = bitlength).
 We used our inverses to define linear-time functions---$\Theta(b)$ for both unary- 
 and binary-represented inputs---that compute the upper inverse of the 
 diagonal Ackermann %\linebreak[3]
-function~$\Ack(n)$ and showed that these functions are consistent with the usual definition of the inverse Ackermann function~$\alpha(n)$.
+function~$\Ack(n)$. 
+
+\bigskip
+
+We showed that these functions are consistent with the usual definition of the inverse Ackermann function~$\alpha(n)$.
 \keywords{Ackermann  \and hyperoperations \and Coq}
 \end{frame}
 

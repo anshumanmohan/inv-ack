@@ -1,10 +1,10 @@
 \subsection*{The Ackermann and Inverse Ackermann functions}
 \begin{frame}
-\frametitle{Introduction}
+\frametitle{Introduction: $A(n, m)$, $\Ack(n)$, and $\alpha(n)$}
 %\frametitle{The Ackermann and Inverse Ackermann functions}
 \label{defn: ack}
 	\uncover<1->{
-		The Ackermann-P\'eter function is defined as follows:
+		The Ackermann-P\'eter function is defined as:
 	\begin{equation*}
 	A(n, m) \triangleq \begin{cases}
 	m + 1 & \text{ when } n = 0 \\
@@ -67,7 +67,7 @@
 
 
 \begin{frame}
-\frametitle{Introduction}
+\frametitle{Introduction: Growth Patterns}
 
  First few values of $\Ack(n)$ and $\alpha(n)$:
 		
@@ -107,28 +107,35 @@
 \begin{frame}
 \frametitle{Introduction: Computing $\alpha(n)$}
 \uncover<1->{
-	Despite growing extremely slowly, $\alpha(n)$ is hard to compute for large $n$ due to the explosive growth of $\Ack(k)$.
+	Although it grows slowly, $\alpha(n)$ is hard to \emph{compute} for large $n$ \\
+	because it is entangled with the explosively-growing $\Ack(k)$.
 }
 
 \bigskip
 
 \uncover<2->{
 \textbf{Naive Approach:} starting at $k=0$, calculate $\Ack(k)$,
-compare~it~to~$n$, and increment $k$ until $n \le \Ack(k)$.
+compare it to $n$, \\ and increment $k$ until $n \le \Ack(k)$.
 }
 
 \bigskip
 
 \uncover<3->{
-\textbf{Time complexity:} $\Omega(\Ack(\alpha(n)))$,
-so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ in this way requires
+\textbf{Time complexity:} $\Omega(\Ack(\alpha(n)))$.
+\\ Computing $\alpha(100) \mapsto^{*} 4$ requires
 $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 }
 
 \bigskip
 
 \uncover<4->{
-\imppar{\text{\textbf{Final Goal.} Compute $\alpha(n)$ without computing $\Ack$.}}
+\textbf{Unsatisfying workaround:} Hardcode. Return $4$ for most inputs.
+}
+
+\bigskip
+
+\uncover<5->{
+\imppar{\text{\textbf{Our Goal.} Compute $\alpha(n)$ without computing $\Ack$.}}
 }
 
 \end{frame}
@@ -156,7 +163,7 @@ $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 
 
 \begin{frame}
-\frametitle{Introduction: Ackermann \emph{vs} Hyperoperations}
+\frametitle{Introduction: Ackermann \emph{vs} Hyperoperation}
 \uncover<1->{
 The Ackermann function is easy to define, but hard to
 understand.
@@ -164,8 +171,10 @@ understand.
 
 \bigskip
 
-\uncover<2->{
-Let's treat the first argument as an ``index'': define $\Ack_n \triangleq \lambda b.A(n,b)$, then for $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times.
+\uncover<2->{	
+Let's treat the first argument as an ``index''. 
+\\Define $\Ack_n \triangleq \lambda b.A(n,b)$. 
+\\Then, for $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times.
 }
 
 %with a
@@ -183,7 +192,7 @@ The hierarchical structure resembles that of \textcolor{red}{\emph{hyperoperatio
 
 
 \begin{frame}
-\frametitle{Introduction: Ackermann \emph{vs} Hyperoperations}
+\frametitle{Introduction: Ackermann \emph{vs} Hyperoperation}
 
 The hyperoperations, Ackermann levels, and their \emph{inverses}:
 
@@ -205,12 +214,12 @@ The hyperoperations, Ackermann levels, and their \emph{inverses}:
 \end{table}
 
 \pause
-
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{Connection!}
+Connection?
 \pause
-$\Ack_n(b) = 2[n](b+3) - 3$
+\\ \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{Aha!} 
+$\Ack_n(b) = {\color{red}2}[n](b{\color{red}+3}) {\color{red}- 3}$
 \pause
-, \quad $\alpha_n(b) = 2\angle{n}(b+3) - 3$.
+\quad and \quad $\alpha_n(b) = {\color{red}2}\angle{n}(b{\color{red}+3}) {\color{red}- 3}$.
 
 \end{frame}
 

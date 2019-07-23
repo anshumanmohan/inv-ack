@@ -1,5 +1,5 @@
 \begin{frame}
-\frametitle{Step 2: Inverting the hierarchies via countdown\\ Roadmap}
+\frametitle{Step 2: Inverting the Hierarchies via \textbf{Countdown}}
 \setbeamertemplate{enumerate items}[default]
 \setbeamercolor{local structure}{fg=black}
 
@@ -34,7 +34,7 @@ is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 
 \bigskip
 
-\textbf{Increasing functions.} $F^{-1}$ makes sense and is total for \emph{strictly increasing} $F$. (hereafter referred to simply as \emph{increasing})
+\textbf{Increasing functions.} $F^{-1}$ makes sense and is total for \emph{strictly increasing} $F$ (hereafter referred to simply as \emph{increasing}).
 
 \bigskip
 
@@ -52,7 +52,7 @@ is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 
 \subsection*{}
 \begin{frame}
-\frametitle{Step 2: Inverting the hierarchies via countdown\\ Roadmap}
+\frametitle{Step 2: Inverting the Hierarchies via \textbf{Countdown}}
 \setbeamertemplate{enumerate items}[default]
 \setbeamercolor{local structure}{fg=black}
 
@@ -78,7 +78,7 @@ is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 \begin{frame}
 \frametitle{Invertibility of the Hierarchies}
 
-\textbf{Observation:} The first few functions in the hyperoperations ($a\ge 2$) and the Ackermann hierarchy are increasing, thus \emph{invertible}.
+\textbf{Observation:} The first few hyperoperations (for $a\ge 2$) and \\ the first few levels of the Ackermann hierarchy are increasing. \\This means they are \emph{invertible}.
 
 \bigskip
 
@@ -86,7 +86,7 @@ is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 
 \bigskip
 
-\imppar{\textbf{Key question:} How can Repeater preserve increasing-ness?}
+\imppar{\textbf{Key question:} Does Repeater preserve increasing-ness?}
 
 %\bigskip
 %
@@ -102,7 +102,7 @@ is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 
 
 \begin{frame}
-\frametitle{Expansions and Repeatable functions 2}
+\frametitle{Expansions and Repeatable Functions}
 
 %\textbf{Observation:} The first few functions in the hyperoperations ($a\ge 2$) and the Ackermann hierarchy are increasing. Does this hold forever?
 %
@@ -115,7 +115,7 @@ is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 %\textbf{Repeatability:} a property that encompasses increasing-ness that is preserved through Repeater.
 Repeater preserves a stronger property!
 \begin{equation*}
-Repeatable \triangleq Increasing + Strict \ Expanding
+Repeatable \quad \triangleq \quad Increasing~~+~~Strict \ Expanding
 \end{equation*}
 
 \textbf{Expansions:} A function $F:\mathbb{N}\to\mathbb{N}$ is an
@@ -124,7 +124,7 @@ Repeatable \triangleq Increasing + Strict \ Expanding
 
 \bigskip
 
-\textbf{Repeatability:} An increasing function $f$ is \emph{repeatable} from $a$ if $f$ is also an expansion that is strict from $a$.
+\textbf{Repeatability:} An increasing function $f$ is \emph{repeatable} from $a$ \\provided that $f$ is also an expansion that is strict from $a$.
 
 \smallskip
 
@@ -134,7 +134,7 @@ The set of functions repeatable from $a$ is denoted by $\repeatable_a$.
 
 
 \begin{frame}
-\frametitle{Invertibility Preservation with Repeater}
+\frametitle{Repeater Preserves Invertibility}
 \label{frame:repeatable2}
 
 \imppar{
@@ -145,22 +145,23 @@ The set of functions repeatable from $a$ is denoted by $\repeatable_a$.
 
 \bigskip
 
-The levels $0, 1, 2$ in the hyperoperations (when $a\ge 2$) and level $0$ in the Ackermann hierarchy are repeatable from their initial values.
+The levels $0, 1, 2$ in the hyperoperations (when $a\ge 2$) are repeatable from their initial values.\\
+So is level $0$ of the Ackermann hierarchy. 
 
 \bigskip
 
-By induction, every hyperoperations (when $a\ge 2$)/Ackermann level is repeatable from their respective initial values.
+By induction, every hyperoperation level (when $a\ge 2$) and every Ackermann level is repeatable from its respective initial value.
 
 \bigskip
 
-Our hunch is correct! Every level of both hierarchies is invertible.
+Our hunch is correct! In both hierarchies, every level is invertible.
 
 \end{frame}
 
 
 \subsection*{}
 \begin{frame}
-\frametitle{Step 2: Inverting the hierarchies via countdown\\ Roadmap}
+\frametitle{Step 2: Inverting the Hierarchies via \textbf{Countdown}}
 \setbeamertemplate{enumerate items}[default]
 \setbeamercolor{local structure}{fg=black}
 
@@ -185,8 +186,8 @@ Our hunch is correct! Every level of both hierarchies is invertible.
 
 
 \begin{frame}
-\frametitle{Contractions and Countdown: Definitions}
-\textbf{Contractions.} A function $f : \mathbb{N} \to \mathbb{N}$ is a
+\frametitle{Some Definitions}
+\textbf{Contraction.} A function $f : \mathbb{N} \to \mathbb{N}$ is a
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L40-L42}{\emph{contraction}} if $\forall n.~ f(n) \le n$.
 
 Given an $a \ge 1$, a contraction $f$ is
@@ -194,12 +195,11 @@ Given an $a \ge 1$, a contraction $f$ is
 
 \bigskip
 
-\textbf{Notation.} Set of contractions strict above $a$: $\contract_a$.
+\textbf{Notation.} Set of contractions strict above $a$ is denoted $\contract_a$.
 
 \bigskip
 
-\textbf{Countdown.} Let $f\in \contract_a$. The \textit{countdown to} $a$ of $f$, written
-$\cdt{f}{a}(n)$, is the smallest number of times $f$ needs to be applied to
+\textbf{Countdown.} Let $f\in \contract_a$. The \textit{countdown to} $a$ of $f$, written~$\cdt{f}{a}(n)$, is the smallest number of times $f$ needs to be compositionally applied to
 $n$ for the answer to equal or go below $a$. \emph{i.e.},
 \begin{equation*}
 \cdt{f}{a}(n) \triangleq \min\{m: f^{(m)}(n)\le a \}.
@@ -208,7 +208,7 @@ $n$ for the answer to equal or go below $a$. \emph{i.e.},
 
 
 \begin{frame}
-\frametitle{Countdown as the inverse of Repeater}
+\frametitle{Countdown as the Inverse of Repeater}
 \setlength{\leftmargini}{3.8em}
 \setbeamertemplate{enumerate items}[default]
 \setbeamercolor{local structure}{fg=black}
@@ -240,7 +240,7 @@ $n$ for the answer to equal or go below $a$. \emph{i.e.},
 
 
 \begin{frame}[fragile]
-\frametitle{A Countdown computation in Coq type \texttt{nat} 1}
+\frametitle{A Coq Computation of Countdown}
 \textbf{Idea.} %To compute $\cdt{f}{a}(n)$,
 Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
 
@@ -278,7 +278,7 @@ Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
 
 
 \begin{frame}[fragile]
-\frametitle{A Countdown computation in Coq type \texttt{nat} 2}
+\frametitle{A Coq Computation of Countdown}
 
 \textbf{The worker.}
 %For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the
@@ -302,7 +302,7 @@ end.
 
 \bigskip
 
-\textbf{The Countdown.} We choose a budget $b$ equals to $n$, which is sufficient.
+\textbf{The Countdown.} Budget $b = n$ is sufficient.
 \impinline{Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.}
 % Linked by A
 \begin{lstlisting}
@@ -315,7 +315,7 @@ end.
 
 \subsection*{}
 \begin{frame}
-\frametitle{Step 2: Inverting the hierarchies via countdown\\ Roadmap}
+\frametitle{Step 2: Inverting the Hierarchies via \textbf{Countdown}}
 \setbeamertemplate{enumerate items}[default]
 \setbeamercolor{local structure}{fg=black}
 

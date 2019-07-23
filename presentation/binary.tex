@@ -2,7 +2,7 @@
 \subsection{Overview}
 
 \begin{frame}
-\frametitle{The binary encoding system}
+\frametitle{Review: Binary Encoding System}
 
 \begin{tabular}{l|c|c}
 	Attribute & Unary & Binary Encoding \\ \hline
@@ -40,17 +40,16 @@ What about inverse Ackermann? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
 
 \bigskip
 
-\textbf{Observation.} Recursive argument is budget $b$, each step decreases by 1.
-
-$\implies$ $b$ should still be in \texttt{nat}.
+\textbf{Observation.} Recursive argument is budget $b$, \\which should still be in \texttt{nat}.
 
 \bigskip
 
-\textbf{Issue.} $b$ cannot be $n$ due to slow binary-unary conversion.
+\textbf{Issue.} $b$ cannot be $n$ due to slow binary $\rightarrow$ unary conversion.
 
 \bigskip
 
-\textbf{Solution.} Use $b \approx \log_2n$ and contractions that ``contract'' fast enough. \emph{i.e.} Those that halve the input.
+\textbf{Solution.} Use $b \approx \log_2n$ and contractions that contract ``fast enough''. 
+\pause \emph{i.e.} Functions that halve their inputs.
 \end{frame}
 
 
@@ -62,7 +61,7 @@ $\implies$ $b$ should still be in \texttt{nat}.
 
 \smallskip
 
-$f$ shrinks $n$ pass $a$ within $\lfloor\log_2(n - a) \rfloor + 1$ steps.
+$f$ shrinks $n$ past $a$ within $\lfloor\log_2(n - a) \rfloor + 1$ steps.
 
 \bigskip
 
@@ -85,11 +84,11 @@ Applicable for all $\alpha_i$ for $i \ge 3$.
 \subsection{Inverse Ackermann in Binary}
 
 \begin{frame}[fragile]
-\frametitle{Translating the $\alpha$ hierarchy}
+\frametitle{Translating the $\alpha$ Hierarchy}
 
 Must start with a strict binary contraction.
 
-$\implies$ More hard-coding.
+More hard-coding to skip those that are not fast enough.
 
 \bigskip
 
@@ -108,7 +107,7 @@ end.
 
 
 \begin{frame}[fragile]
-\frametitle{Translating the Inverse Ackermann function}
+\frametitle{Translating the Inverse Ackermann Function}
 
 Worker function:
 
@@ -139,7 +138,7 @@ else let f := (fun x => N.log2 (x + 2) - 2)
 
 
 \begin{frame}
-\frametitle{Running time of each $\alpha_i$ - Precise bounds}
+\frametitle{Runtime of Each $\alpha_i$ - Precise Bounds}
 
 Countdown running time:
 \begin{equation*}
@@ -169,7 +168,7 @@ $
 
 
 \begin{frame}
-\frametitle{Running time of the inverse Ackermann function}
+\frametitle{Runtime of the Inverse Ackermann Function}
 
 \begin{equation*}
 \begin{array}{l|llllllll}

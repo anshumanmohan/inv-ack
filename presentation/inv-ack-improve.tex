@@ -1,6 +1,6 @@
 \subsection{Implementations}
 \begin{frame}
-\frametitle{Implementation idea}
+\frametitle{Implementation Idea}
 \textbf{Redefinition.}
 $
 \alpha(n) = \min\{k: n\le A(k, k) \} \triangleq \min\{k: \alpha_k(n)\le k \}
@@ -23,7 +23,7 @@ $
 
 
 \begin{frame}[fragile]
-\frametitle{The worker function}
+\frametitle{The Worker Function}
 
 \uncover<1->{$\displaystyle 	\alpha^{\W}(f, n, k, b) = \begin{cases}
 k & \text{if } b = 0 \vee n\le k \\ \alpha^{\W}(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k+1, b-1) & \text{if } b \ge 1 \wedge n \ge k+1
@@ -48,7 +48,7 @@ end.
 
 
 \begin{frame}
-\frametitle{The worker function}
+\frametitle{The Worker Function}
 
 \pause
 \textbf{Observation.}
@@ -83,7 +83,7 @@ k & b > k, \ {\color{red} \alpha_{k}(n) \le k} & \pause \to  & \multicolumn{4}{l
 
 
 \begin{frame}
-\frametitle{The inverse Ackermann function}
+\frametitle{The Inverse Ackermann Function}
 
 \pause
 Any budget $b \ge \alpha(n)$ suffices, so we can choose $b := n$.
@@ -122,7 +122,7 @@ Any budget $b \ge \alpha(n)$ suffices, so we can choose $b := n$.
 \subsection{Time Complexity: $\bigO(n)$}
 
 \begin{frame}
-\frametitle{Running time of Countdown}
+\frametitle{Runtime of Countdown}
 
 \pause
 \textbf{Sum by component in each recursive step.}
@@ -153,7 +153,7 @@ $}
 
 
 \begin{frame}
-\frametitle{Running time of each $\alpha_i$ - Asymptotic bounds}
+\frametitle{Runtime of Each $\alpha_i$ - Asymptotic Bounds}
 
 $\displaystyle
 \alpha_{i+1} = \cdt{\big(\alpha_i\big)}{1}\circ \alpha_i
@@ -191,7 +191,7 @@ $
 
 
 \begin{frame}
-\frametitle{Running time of each $\alpha_i$ - Precise bounds}
+\frametitle{Runtime of Each $\alpha_i$ - Precise Bounds}
 
 Countdown running time:
 \begin{equation*}
@@ -222,7 +222,7 @@ $\alpha_i$ running time:
 
 
 \begin{frame}
-\frametitle{Running time of the inverse Ackermann function}
+\frametitle{Runtime of Inverse Ackermann}
 
 \pause
 \begin{equation*}

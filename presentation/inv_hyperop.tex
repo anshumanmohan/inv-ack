@@ -1,5 +1,5 @@
 \begin{frame}[fragile]
-\frametitle{The Inverse Hyperoperations}
+\frametitle{The Inverse Hyperoperation Hierarchy}
 The inverse hyperoperations, written $a\angle{n}b$, are defined as:
 \begin{equation*}
 a\angle{n}b \; \triangleq \; \begin{cases}
@@ -28,12 +28,12 @@ $\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb
 $\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L115-L124}{a\angle{3}b}
 = \left\lceil \log_a b \right\rceil$, and
 $\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L126-L128}{a\angle{4}b}
-= \log^*_a b$ (not currently in CSL).
+= \log^*_a b$ (not currently in Coq Standard Library).
 \end{frame}
 
 
 \begin{frame}[fragile]
-\frametitle{The Inverse Ackermann hierarchy}
+\frametitle{The Inverse Ackermann Hierarchy}
 \pause
 \textbf{Naive approach.} $\Ack_{i+1} = \rf{\big(\Ack_i\big)}{{\color<4>{red} \Ack_i(1)}}\ $.
 \pause

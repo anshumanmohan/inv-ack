@@ -1,23 +1,20 @@
 \subsection{The repeated application pattern}
 
 \begin{frame}
-\frametitle{Repeated Application via \texttt{iter}}
+\frametitle{Review: Repeated Application via \texttt{iter}}
 
 Let $X$ be any set and any function $f: X\to X$. Define the notation:
 \begin{equation*}
-f^{(k)}(u) \triangleq ~ (f\circ f\circ \cdots \circ f)(u),
+f^{(k)}(u) \triangleq ~ \underbrace{(f\circ f\circ \cdots \circ f)}_{\text{$k$ times}}(u),
 \end{equation*}
-which denotes $k$ compositional applications of $f$ to an
-input~$u\in X$.
 
 \bigskip
 
-Coq's standard library function \texttt{iter} supports repeated application:
-$f^{(k)}(u) = \texttt{iter}(k, f, u).$
+Coq's standard library has \texttt{iter}. \quad $f^{(k)}(u) = \texttt{iter}(k, f, u).$
 
 \bigskip
 
-The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to an initial value.
+The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to some \emph{initial value}.
 
 
 %The following recursive rule applies:
@@ -34,7 +31,7 @@ The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ c
 
 
 \begin{frame}
-\frametitle{The hyperoperation formal definition}
+\frametitle{Formal Definition of Hyperoperation Hierarchy}
 \begin{equation*}
 \begin{array}{lrcl}
 \textit{1. 0$^{\textit{th}}$ level: } & a[0]b & ~ \triangleq ~ & b + 1 \\[3pt]
@@ -53,7 +50,7 @@ a & \text{when } n = 0 \\
 & a[n+1]b \\
 & = ~ a[n]\big(a[n+1](b-1)\big) ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \\
 & = ~ \big(a[n]\circ a[n]\big)\big(a[n+1](b-2)\big) ~ = ~ \ldots \\
-& = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ \big(a[n]\big)^{(b)}\underbrace{\big(a[n+1]0\big)}_{\text{init value}}
+& = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ \big(a[n]\big)^{(b)}\underbrace{\big(a[n+1]0\big)}_{\text{initial value}}
 \end{aligned}
 \end{equation*}
 
@@ -61,7 +58,7 @@ a & \text{when } n = 0 \\
 
 
 \begin{frame}
-\frametitle{The Ackermann hierarchy formal definition}
+\frametitle{Formal Definition of Ackermann Hierarchy}
 \begin{equation*}
 \begin{array}{lrcl}
 \textit{1. 0$^{\textit{th}}$ level: } & \Ack_0(b) & ~ \triangleq ~ & b + 1 \\[3pt]
@@ -77,7 +74,7 @@ a & \text{when } n = 0 \\
 & \Ack_{n+1}(b) \\
 & = ~ \Ack_n\big(\Ack_{n+1}(b-1)\big) ~ = ~ \Ack_n\big(\Ack_n\big(\Ack_{n+1}(b-2)\big)\big) \\
 & = ~ \big(\Ack_n\circ \Ack_n\big) \big(\Ack_{n+1}(b-2)\big) ~ = ~ \ldots \\
-& = ~ \underbrace{\big( \Ack_n\circ \Ack_n\circ \cdots \circ \Ack_n \big)}_{b \text{ times}} \big(\Ack_{n+1}(0)\big)  ~ = ~ \big(\Ack_n\big)^{(b)}\underbrace{\big(\Ack_{n+1}(0)\big)}_{\text{init value}}
+& = ~ \underbrace{\big( \Ack_n\circ \Ack_n\circ \cdots \circ \Ack_n \big)}_{b \text{ times}} \big(\Ack_{n+1}(0)\big)  ~ = ~ \big(\Ack_n\big)^{(b)}\underbrace{\big(\Ack_{n+1}(0)\big)}_{\text{initial value}}
 \end{aligned}
 \end{equation*}
 
@@ -88,7 +85,7 @@ a & \text{when } n = 0 \\
 
 
 \begin{frame}[fragile]
-\frametitle{From \texttt{iter} to Repeater}
+\frametitle{Notation: From \texttt{iter} to Repeater}
 %The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to an initial value.
 %
 %\bigskip
@@ -106,7 +103,7 @@ Writing $a[n+1]b = \big(a[n]\big)^{(b)}\big(a[n+1]0\big)$ or $\Ack_{n+1}(b) = \b
 
 \smallskip
 
-We call $\rf{f}{a}$ the \emph{repeater from} $a$ of $f$.
+Read $\rf{f}{a}$ as ``the \emph{repeater from} $a$ of $f$''.
 
 \smallskip
 
@@ -122,8 +119,8 @@ match n with 0 => a | S n' => f (repeater_from f a n') end.
 
 \smallskip
 
-\begin{minipage}{0.4\linewidth}
-	Drop $b$ to form a function-to-function recursive rule:
+\begin{minipage}{0.25\linewidth}
+	Drop $b$ to form \\ a recursive rule:
 \end{minipage}
 \quad 
 $\begin{cases}
@@ -164,7 +161,7 @@ With Repeater:
 
 
 \begin{frame}[fragile]
-\frametitle{Ackermann hierarchy via Repeater}
+\frametitle{Ackermann via Repeater}
 Without Repeater (via double recursion):
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L123-L132}{Fixpoint ackermann\_original}` (m n : nat) : nat :=
