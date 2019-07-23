@@ -135,7 +135,7 @@ $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 \bigskip
 
 \uncover<5->{
-\imppar{\text{\textbf{Our Goal.} Compute $\alpha(n)$ without computing $\Ack$.}}
+\imppar{\text{\textbf{Our Goal.} Compute $\alpha$ for \emph{all inputs} without computing $\Ack$.}}
 }
 
 \end{frame}
@@ -164,27 +164,25 @@ $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 
 \begin{frame}
 \frametitle{Introduction: Ackermann \emph{vs} Hyperoperation}
-\uncover<1->{
+
+\pause 
 The Ackermann function is easy to define, but hard to
 understand.
-}
 
 \bigskip
 
-\uncover<2->{	
+\pause 	
 Let's treat the first argument as an ``index''. 
 \\Define $\Ack_n \triangleq \lambda b.A(n,b)$. 
 \\Then, for $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times.
-}
 
 %with a
 %\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{\emph{kludge}}. %Linked by Linh
 
 \bigskip
 
-\uncover<3->{
+\pause 
 The hierarchical structure resembles that of \textcolor{red}{\emph{hyperoperations}}.
-}
 
 %To better understand the Ackermann function as a hierarchy and this kludge, we explore the closely-related hyperoperations.
 

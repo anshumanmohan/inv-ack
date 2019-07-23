@@ -8,17 +8,27 @@ $
 
 \bigskip
 
-\textbf{The worker function.}
-\bigskip
-\begin{itemize}
-	\item Budget $b$: Maximum $b$ steps.
-	\item Step $i$: Computes $\alpha_i(n)$.
-	\item Stops when budget reaches $0$ or $\alpha_i(n) \le i$.
-\end{itemize}
+\pause 
+\textbf{The worker function.} $\begin{cases}
+\text{Budget } b: & \hspace{-1em}\text{Maximum } b \text{ steps. } \\
+\text{Step } i: & \hspace{-1em}\text{Compute } \alpha_i(n). \\
+\text{Stops when: } & \hspace{-1em}\text{budget reaches } 0 \text{ or } \alpha_i(n) \le i.
+\end{cases}$
+
+%\textbf{The worker function.}
+%\bigskip
+%\begin{itemize}
+%	\item Budget $b$: Maximum $b$ steps.
+%	\item Step $i$: Computes $\alpha_i(n)$.
+%	\item Stops when budget reaches $0$ or $\alpha_i(n) \le i$.
+%\end{itemize}
 
 \bigskip
 
-\textbf{Advantage.} $\alpha_{i+1}(n) = \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)$ $\implies$ next step is computable from the previous.
+\pause 
+\textbf{Advantage.} $\alpha_{i+1}(n) = \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)$\\
+\smallskip
+$\implies$ next step is computable from the previous.
 \end{frame}
 
 
@@ -50,7 +60,6 @@ end.
 \begin{frame}
 \frametitle{The Worker Function}
 
-\pause
 \textbf{Observation.}
 \begin{equation*}
 \begin{array}{lllllll}
@@ -85,7 +94,6 @@ k & b > k, \ {\color{red} \alpha_{k}(n) \le k} & \pause \to  & \multicolumn{4}{l
 \begin{frame}
 \frametitle{The Inverse Ackermann Function}
 
-\pause
 Any budget $b \ge \alpha(n)$ suffices, so we can choose $b := n$.
 
 \bigskip
@@ -124,7 +132,6 @@ Any budget $b \ge \alpha(n)$ suffices, so we can choose $b := n$.
 \begin{frame}
 \frametitle{Runtime of Countdown}
 
-\pause
 \textbf{Sum by component in each recursive step.}
 \begin{equation*}
 \begin{array}{l|llllll}
@@ -161,6 +168,7 @@ $\displaystyle
 $
 
 \smallskip
+\pause 
 \imppar{
 $\displaystyle
 \runtime_{\alpha_{i+1}}(n) = \runtime_{\alpha_i}(n) + 
@@ -170,6 +178,7 @@ $
 
 \bigskip
 
+\pause 
 Substitute $\cdt{\alpha_i}{1}(\alpha_i(n))$ for $\alpha_{i+1}(n)$:
 \bigskip
 
@@ -179,6 +188,7 @@ $ \displaystyle
   \sum_{i=0}^{\alpha_{i+1}(n) - 1} \runtime_{\alpha_i}\left(\alpha_i^{(i+1)}(n)\right) + \Theta\left(\alpha_{i+1}(n) \right)
 $
 
+\pause 
 \smallskip
 \imppar{
 $\displaystyle 
@@ -202,16 +212,20 @@ Countdown running time:
 
 \smallskip
 
+\pause 
 $\alpha_2$ and $\alpha_3$ running time: $\runtime_{\alpha_2}(n) \le 2n - 2$ and $\runtime_{\alpha_3}(n) \le 4n + 4$.
 
 \bigskip 
 
+\pause 
 $\alpha_i$ running time:
 \begin{equation*}
 \textstyle \runtime_{\alpha_{i+1}}(n) \le \sum_{k=0}^{\alpha_{i+1}(n)}\runtime_{\alpha_i}\left( \alpha_i^{(k)}(n)\right) + 3\alpha_{i+1}(n) + 3
 \end{equation*}
 
 \smallskip
+
+\pause 
 \imppar{
 \begin{minipage}{\linewidth}
 	\textbf{Theorem.} $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$, when using $\alpha_1 \triangleq \lambda n. (n-2)$.
@@ -224,7 +238,6 @@ $\alpha_i$ running time:
 \begin{frame}
 \frametitle{Runtime of Inverse Ackermann}
 
-\pause
 \begin{equation*}
 \begin{array}{l|llllllll}
 Step & \multicolumn{2}{l}{Initial \ Arguments} &  &  \big(\alpha_1, & \alpha_1(n), & 1, & b - 1 \big) \\[3pt]

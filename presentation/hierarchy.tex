@@ -3,17 +3,20 @@
 \begin{frame}
 \frametitle{Review: Repeated Application via \texttt{iter}}
 
+\pause 
 Let $X$ be any set and any function $f: X\to X$. Define the notation:
 \begin{equation*}
 f^{(k)}(u) \triangleq ~ \underbrace{(f\circ f\circ \cdots \circ f)}_{\text{$k$ times}}(u),
 \end{equation*}
 
-\bigskip
+\smallskip
 
+\pause 
 Coq's standard library has \texttt{iter}. \quad $f^{(k)}(u) = \texttt{iter}(k, f, u).$
 
 \bigskip
 
+\pause 
 The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to some \emph{initial value}.
 
 
@@ -32,25 +35,26 @@ The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ c
 
 \begin{frame}
 \frametitle{Formal Definition of Hyperoperation Hierarchy}
+
 \begin{equation*}
 \begin{array}{lrcl}
-\textit{1. 0$^{\textit{th}}$ level: } & a[0]b & ~ \triangleq ~ & b + 1 \\[3pt]
-\textit{2. Initial values: } & a[n+1]0 & ~ \triangleq ~ &
+\textit{1. 0$^{\textit{th}}$ level: } & \uncover<2->{a[0]b & ~ \triangleq ~ & b + 1} \\[3pt]
+\textit{2. Initial values: } & \uncover<3->{a[n+1]0 & ~ \triangleq ~ &
 \small \begin{cases}
 a & \text{when } n = 0 \\
 0 & \text{when } n = 1 \\
 1 & \text{otherwise}
-\end{cases} \\[15pt]
-\textit{3. Recursive rule: } \quad & a[n+1](b+1) & ~ \triangleq ~ & a[n]\big(a[n+1]b\big)
+\end{cases}} \\[15pt]
+\textit{3. Recursive rule: } \quad & \uncover<4->{a[n+1](b+1) & ~ \triangleq ~ & a[n]\big(a[n+1]b\big)}
 \end{array}
 \end{equation*}
 
 \begin{equation*}
 \begin{aligned}
 & a[n+1]b \\
-& = ~ a[n]\big(a[n+1](b-1)\big) ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \\
-& = ~ \big(a[n]\circ a[n]\big)\big(a[n+1](b-2)\big) ~ = ~ \ldots \\
-& = ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ \big(a[n]\big)^{(b)}\underbrace{\big(a[n+1]0\big)}_{\text{initial value}}
+& \uncover<5->{= ~ a[n]\big(a[n+1](b-1)\big) ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big)} \\
+& \uncover<6->{= ~ \big(a[n]\circ a[n]\big)\big(a[n+1](b-2)\big) ~ = ~ \ldots} \\
+& \uncover<7->{= ~ \underbrace{\big( a[n]\circ a[n]\circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big)  ~ = ~ \big(a[n]\big)^{(b)}\underbrace{\big(a[n+1]0\big)}_{\text{initial value}}}
 \end{aligned}
 \end{equation*}
 
@@ -61,9 +65,9 @@ a & \text{when } n = 0 \\
 \frametitle{Formal Definition of Ackermann Hierarchy}
 \begin{equation*}
 \begin{array}{lrcl}
-\textit{1. 0$^{\textit{th}}$ level: } & \Ack_0(b) & ~ \triangleq ~ & b + 1 \\[3pt]
-\textit{2. Initial values: } & \Ack_{n+1}(0) & ~ \triangleq ~ & \Ack_n(1) \\[3pt]
-\textit{3. Recursive rule: } \quad & \Ack_{n+1}(b+1) & ~ \triangleq ~ & \Ack_n\big(\Ack_{n+1}(b)\big)
+\textit{1. 0$^{\textit{th}}$ level: } & \uncover<2->{\Ack_0(b) & ~ \triangleq ~ & b + 1} \\[5pt]
+\textit{2. Initial values: } & \uncover<2->{\Ack_{n+1}(0) & ~ \triangleq ~ & \Ack_n(1)} \\[5pt]
+\textit{3. Recursive rule: } \quad & \uncover<2->{\Ack_{n+1}(b+1) & ~ \triangleq ~ & \Ack_n\big(\Ack_{n+1}(b)\big)}
 \end{array}
 \end{equation*}
 
@@ -72,9 +76,9 @@ a & \text{when } n = 0 \\
 \begin{equation*}
 \begin{aligned}
 & \Ack_{n+1}(b) \\
-& = ~ \Ack_n\big(\Ack_{n+1}(b-1)\big) ~ = ~ \Ack_n\big(\Ack_n\big(\Ack_{n+1}(b-2)\big)\big) \\
+& \uncover<3->{= ~ \Ack_n\big(\Ack_{n+1}(b-1)\big) ~ = ~ \Ack_n\big(\Ack_n\big(\Ack_{n+1}(b-2)\big)\big) \\
 & = ~ \big(\Ack_n\circ \Ack_n\big) \big(\Ack_{n+1}(b-2)\big) ~ = ~ \ldots \\
-& = ~ \underbrace{\big( \Ack_n\circ \Ack_n\circ \cdots \circ \Ack_n \big)}_{b \text{ times}} \big(\Ack_{n+1}(0)\big)  ~ = ~ \big(\Ack_n\big)^{(b)}\underbrace{\big(\Ack_{n+1}(0)\big)}_{\text{initial value}}
+& = ~ \underbrace{\big( \Ack_n\circ \Ack_n\circ \cdots \circ \Ack_n \big)}_{b \text{ times}} \big(\Ack_{n+1}(0)\big)  ~ = ~ \big(\Ack_n\big)^{(b)}\underbrace{\big(\Ack_{n+1}(0)\big)}_{\text{initial value}}}
 \end{aligned}
 \end{equation*}
 
@@ -98,12 +102,13 @@ Writing $a[n+1]b = \big(a[n]\big)^{(b)}\big(a[n+1]0\big)$ or $\Ack_{n+1}(b) = \b
 
 \bigskip
 
+\pause 
 \textbf{Repeater.} A rearranged form of \texttt{iter}, where $b$ becomes the main argument:
 \impinline{$\rf{f}{u}(b) \triangleq \texttt{iter}(b, f, u) = f^{(b)}(u)$}.
 
 \smallskip
 
-Read $\rf{f}{a}$ as ``the \emph{repeater from} $a$ of $f$''.
+Read $\rf{f}{a}$ \ as ``the \emph{repeater from} $a$ of $f$''.
 
 \smallskip
 
@@ -119,10 +124,14 @@ match n with 0 => a | S n' => f (repeater_from f a n') end.
 
 \smallskip
 
-\begin{minipage}{0.25\linewidth}
-	Drop $b$ to form \\ a recursive rule:
+%\begin{minipage}{0.25\linewidth}
+%	Drop $b$ to form \\ a recursive rule:
+%\end{minipage}
+\pause 
+\begin{minipage}{0.4\linewidth}
+	Drop $b$ to form higher-order \\ recursive rule between levels:
 \end{minipage}
-\quad 
+\pause \quad 
 $\begin{cases}
 \displaystyle a[n+1] & = \rf{\big(a[n]\big)}{a[n+1]0} \\[5pt]
 \Ack_{n+1} & = \rf{\big(\Ack_n\big)}{\Ack_{n+1}(0)}
@@ -148,6 +157,7 @@ Without Repeater (via double recursion):
   end.
 \end{lstlisting}
 
+\pause 
 With Repeater:
 % Linked by Anshuman
 \begin{lstlisting} 
@@ -174,6 +184,7 @@ Without Repeater (via double recursion):
   end.
 \end{lstlisting}
 
+\pause 
 With Repeater:
 % Linked by A
 \begin{lstlisting}

@@ -20,6 +20,7 @@ Binary encoding provides faster computations for many operations.
 
 \smallskip
 
+\pause 
 What about inverse Ackermann? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
 
 \end{frame}
@@ -31,6 +32,7 @@ What about inverse Ackermann? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
 \begin{frame}[fragile]
 \frametitle{Translating Countdown}
 
+\textbf{The worker.}
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L104-L109}{Fixpoint bin\_cdn\_wkr}` (f : N -> N) (a n : N) (b : nat) : N :=
   match b with O => 0 | S b' =>
@@ -38,8 +40,9 @@ What about inverse Ackermann? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
   end.
 \end{lstlisting}
 
-\bigskip
+\smallskip
 
+\pause 
 \textbf{Observation.} Recursive argument is budget $b$, \\which should still be in \texttt{nat}.
 
 \bigskip
@@ -48,8 +51,9 @@ What about inverse Ackermann? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
 
 \bigskip
 
+\pause 
 \textbf{Solution.} Use $b \approx \log_2n$ and contractions that contract ``fast enough''. 
-\pause \emph{i.e.} Functions that halve their inputs.
+\emph{i.e.} Functions that halve their inputs.
 \end{frame}
 
 
@@ -65,6 +69,7 @@ $f$ shrinks $n$ past $a$ within $\lfloor\log_2(n - a) \rfloor + 1$ steps.
 
 \bigskip
 
+\pause 
 New Countdown computation:
 % Linked by A
 \begin{lstlisting}
@@ -76,6 +81,7 @@ where \texttt{nat\_size x} computes $\lfloor \log_2x \rfloor + 1$ as a \texttt{n
 
 \bigskip
 
+\pause 
 Applicable for all $\alpha_i$ for $i \ge 3$.
  
 \end{frame}
@@ -88,10 +94,13 @@ Applicable for all $\alpha_i$ for $i \ge 3$.
 
 Must start with a strict binary contraction.
 
+\smallskip
+
 More hard-coding to skip those that are not fast enough.
 
 \bigskip
 
+\pause 
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L55-L60}{Fixpoint bin\_alpha}` (m : nat) (x : N) : N :=
 match m with
@@ -119,9 +128,10 @@ match b with 0%nat  => k | S b' => if n <=? k then k else
   end.
 \end{lstlisting}
 
-
+\pause 
 Same idea: use logarithmic size budget. More hard-coding.
 
+\pause 
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L335-L342}{Definition bin\_inv\_ack}` (n : N) : N :=
 if      (n <=? 1) then 0
@@ -146,10 +156,12 @@ Countdown running time:
 \runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \ + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
 \end{equation*}
 
+\pause 
 $\alpha_3$ running time: $\runtime_{\alpha_3}(n) \le 2\log_2n + \log_2\log_2n + 3$.
 
 \bigskip
 
+\pause 
 $\alpha_i$ running time:
 $
 %\begin{equation*}
@@ -161,6 +173,7 @@ $
 
 \bigskip
 
+\pause 
 \textbf{Theorem.} $\forall i. \runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i = \bigO(\log_2n)$, when hard-coding up to $\alpha_3$.
 
 \end{frame}
@@ -173,26 +186,27 @@ $
 \begin{equation*}
 \begin{array}{l|llllllll}
 Step & \multicolumn{2}{l}{Initial \ Arguments} &  &  \big(\alpha_3, & \alpha_3(n), & 3, & b - 0 \big) \\[3pt]
-1 & b - 0 > 0, & \alpha_3(n) > 3 & \to & \big(\alpha_4, & \alpha_4(n), & 4, & b - 1\big) \\[3pt]
+\pause 1 & b - 0 > 0, & \alpha_3(n) > 3 & \to & \big(\alpha_4, & \alpha_4(n), & 4, & b - 1\big) \\[3pt]
 2 & b - 1 > 0, & \alpha_4(n) > 4 & \to  & \big(\alpha_5, & \alpha_5(n), & 5, & b - 2\big) \\
 \cdots & \cdots &\cdots & \cdots & \cdots & \cdots & \cdots \\
 %b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
 k & b - k > 0, & {\color{red} \alpha_{k}(n) \le k} & \to  & \multicolumn{4}{l}{k = \alpha(n)} \\[3pt] \hline
-SUM & \Theta(k) & \Theta\big(\sum_{i=1}^{k}\log_2i\big) & & \multicolumn{3}{r}{\sum_{i=1}^{k-1} \runtime_{\cdt{\alpha_i}{1}} (\alpha_i(n))} & \Theta(k) \\[3pt]
-= & \Theta(k) & \Theta(k\log_2k) & \multicolumn{4}{r}{\sum_{i=1}^{k-1} \big(\runtime_{\alpha_{i+1}}(n) - \runtime_{\alpha_i}(n) \big)} & \Theta(k)
+SUM & \pause \Theta(k) & \pause \Theta\big(\sum_{i=1}^{k}\log_2i\big) \pause & & \multicolumn{3}{r}{\sum_{i=1}^{k-1} \runtime_{\cdt{\alpha_i}{1}} (\alpha_i(n))} \pause & \Theta(k) \\[3pt]
+\pause = & \Theta(k) & \Theta(k\log_2k) & \multicolumn{4}{r}{\sum_{i=1}^{k-1} \big(\runtime_{\alpha_{i+1}}(n) - \runtime_{\alpha_i}(n) \big)} & \Theta(k)
 \end{array}
 \end{equation*}
 
 \smallskip
 
-Therefore
-\begin{equation*}
+\pause 
+\imppar{
+$\displaystyle
 \begin{aligned}
 \runtime_{\alpha}(n)
 & = \runtime_{\alpha_{\alpha(n)}}(n) - \runtime_{\alpha_3}(n) + \Theta\left(\alpha(n)\log_2 \alpha(n)\right) + \runtime_{\alpha_3}(n) \\
-& = \bigO \left(\log_2n + 2^{\alpha(n)}\log_2\log_2n + \alpha(n)\log_2\alpha(n) \right) = \bigO (\log_2n)
+\pause & = \bigO \left(\log_2n + 2^{\alpha(n)}\log_2\log_2n + \alpha(n)\log_2\alpha(n) \right) = \bigO (\log_2n)
 \end{aligned}
-\end{equation*}
+$}
 
 \end{frame}
 

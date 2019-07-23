@@ -12,7 +12,9 @@ a & \hspace{-7pt}\text{ if } n = 1 \\
 1 & \hspace{-7pt}\text{ if } n \ge 3
 \end{cases}
 \end{equation*}
+\vspace{-1em}
 % linked by A
+\pause 
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L28-L33}{Fixpoint inv\_hyperop}` (a n b : nat) : nat :=
   match n with 0 => b - 1 | S n' =>
@@ -22,6 +24,7 @@ a & \hspace{-7pt}\text{ if } n = 1 \\
 
 \smallskip
 
+\pause 
 Interesting individual levels:
 $\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L102-L113}{a\angle{2}b}
 = \left\lceil b/a \right\rceil$,
@@ -34,10 +37,10 @@ $\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb
 
 \begin{frame}[fragile]
 \frametitle{The Inverse Ackermann Hierarchy}
+
+\textbf{Naive approach.} $\Ack_{i+1} = \rf{\big(\Ack_i\big)}{{\color<4->{red} \Ack_i(1)}}\ $.
 \pause
-\textbf{Naive approach.} $\Ack_{i+1} = \rf{\big(\Ack_i\big)}{{\color<4>{red} \Ack_i(1)}}\ $.
-\pause
-Thus $\alpha_{i+1} \triangleq \cdt{\big(\alpha_i\big)}{{\color<4>{red} \Ack_i(1)}}\ $?\\ 
+Thus $\alpha_{i+1} \triangleq \cdt{\big(\alpha_i\big)}{{\color<4->{red} \Ack_i(1)}}\ $?\\ 
 
 \smallskip
 
@@ -46,15 +49,18 @@ Thus $\alpha_{i+1} \triangleq \cdt{\big(\alpha_i\big)}{{\color<4>{red} \Ack_i(1)
 
 \bigskip
 
-\textbf{Observation.} $\Ack_{i+1}(n) = \Ack_i^{(n)}(\Ack_i(1)) = \Ack_i^{(n+1)}(1)$. Thus
+\pause 
+\textbf{Observation.} $\Ack_{i+1}(n) = \Ack_i^{(n)}(\Ack_i(1)) = \Ack_i^{(n+1)}(1)$. \pause Thus
 \vspace{-0.7em}
 \begin{equation*}
 \begin{aligned}
-\alpha_{i+1}(n) & = \min\left\{m : n\le \Ack_i^{m+1}(1)\right\}
-= \min\left\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\right\} \\
-& = \min\left\{m : \big( \alpha_i \big)^{(m)}\big(\alpha_i(n)\big)\le 1\right\} = \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)
+\alpha_{i+1}(n) & = \min\left\{m : n\le \Ack_i^{m+1}(1)\right\} \pause 
+= \min\left\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\right\} \pause \\
+& = \min\left\{m : \big( \alpha_i \big)^{(m)}\big(\alpha_i(n)\big)\le 1\right\} \pause
+= \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)
 \end{aligned}
 \end{equation*}
+\pause 
 \textbf{Redefine:}
 $
 \alpha_i \triangleq
@@ -66,6 +72,7 @@ $
 
 \smallskip
 
+\pause 
 % Linked by A
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L37-L41}{Fixpoint alpha}` (m x : nat) : nat :=

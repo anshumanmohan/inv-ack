@@ -34,10 +34,12 @@ is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 
 \bigskip
 
+\pause 
 \textbf{Increasing functions.} $F^{-1}$ makes sense and is total for \emph{strictly increasing} $F$ (hereafter referred to simply as \emph{increasing}).
 
 \bigskip
 
+\pause 
 \textbf{Analogy with inverse of injections:} $\begin{cases}
 \text{Increasing} & \hspace{-0.5em}\leftrightarrow \text{Injective} \\
 \text{Upper Inverse} & \hspace{-0.5em}\leftrightarrow \text{Inverse}
@@ -45,6 +47,7 @@ is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 
 \bigskip
 
+\pause 
 \textbf{Logical equivalence (more useful):}
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L65-L77}{\coq} If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ iff \impinline{$\forall n, m.~ f(n)\le m \iff n \le F(m)$}.
 
@@ -82,10 +85,12 @@ is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 
 \bigskip
 
+\pause 
 \textbf{Generalization:} Does this hold forever?
 
 \bigskip
 
+\pause 
 \imppar{\textbf{Key question:} Does Repeater preserve increasing-ness?}
 
 %\bigskip
@@ -118,12 +123,14 @@ Repeater preserves a stronger property!
 Repeatable \quad \triangleq \quad Increasing~~+~~Strict \ Expanding
 \end{equation*}
 
+\pause 
 \textbf{Expansions:} A function $F:\mathbb{N}\to\mathbb{N}$ is an
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L80-L82}{\emph{expansion}} if $\forall n.~ F(n)\ge n$. Further, for $a\in \mathbb{N}$, an expansion $F$ is
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L84-L86}{\emph{strict from}} $a$ if ~$\forall n \ge a.~ F(n) > n$.
 
 \bigskip
 
+\pause 
 \textbf{Repeatability:} An increasing function $f$ is \emph{repeatable} from $a$ \\provided that $f$ is also an expansion that is strict from $a$.
 
 \smallskip
@@ -145,15 +152,18 @@ The set of functions repeatable from $a$ is denoted by $\repeatable_a$.
 
 \bigskip
 
+\pause 
 The levels $0, 1, 2$ in the hyperoperations (when $a\ge 2$) are repeatable from their initial values.\\
 So is level $0$ of the Ackermann hierarchy. 
 
 \bigskip
 
+\pause 
 By induction, every hyperoperation level (when $a\ge 2$) and every Ackermann level is repeatable from its respective initial value.
 
 \bigskip
 
+\pause 
 Our hunch is correct! In both hierarchies, every level is invertible.
 
 \end{frame}
@@ -187,6 +197,8 @@ Our hunch is correct! In both hierarchies, every level is invertible.
 
 \begin{frame}
 \frametitle{Some Definitions}
+
+\pause 
 \textbf{Contraction.} A function $f : \mathbb{N} \to \mathbb{N}$ is a
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L40-L42}{\emph{contraction}} if $\forall n.~ f(n) \le n$.
 
@@ -199,6 +211,7 @@ Given an $a \ge 1$, a contraction $f$ is
 
 \bigskip
 
+\pause 
 \textbf{Countdown.} Let $f\in \contract_a$. The \textit{countdown to} $a$ of $f$, written~$\cdt{f}{a}(n)$, is the smallest number of times $f$ needs to be compositionally applied to
 $n$ for the answer to equal or go below $a$. \emph{i.e.},
 \begin{equation*}
@@ -209,7 +222,7 @@ $n$ for the answer to equal or go below $a$. \emph{i.e.},
 
 \begin{frame}
 \frametitle{Countdown as the Inverse of Repeater}
-\setlength{\leftmargini}{3.8em}
+\setlength{\leftmargini}{3.5em}
 \setbeamertemplate{enumerate items}[default]
 \setbeamercolor{local structure}{fg=black}
 
@@ -218,23 +231,36 @@ $n$ for the answer to equal or go below $a$. \emph{i.e.},
 
 \bigskip
 
+\pause 
 \textbf{Proof.}
 
 \begin{enumerate}[\itshape Step 1.]
-	\item $f$ \textit{is a contraction.} Since $F$ is an expansion, $n \le F(n)\implies f(n)\le n$.
+	\pause 
+	\item $f\in \contract$. \pause  Since $F$ is an expansion, $n \le F(n)\implies f(n)\le n$.
 	
-	\item $f\in \contract_a$. Take $n> a$, since $F$ is strict from $a$, $n-1 < F(n-1) \implies n\ge F(n-1)$ $\implies f(n)\le n - 1 \implies f(n) < n$.
+	\smallskip
 	
-	\item $\cdt{f}{a}~ = \left(\rf{F}{a}\ \right)^{-1}$. We have
-	\begin{equation*} \label{eq: rf-upp-inv}
-	\begin{aligned}
-	& \cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a \iff f^{(m-1)}(n)\le F(a) \iff \ldots \\
-	&  \iff f(n)\le F^{(m-1)}(a) \iff n\le F^{(m)}(a) \iff n\le \rf{F}{a}(m)
-	\end{aligned}
+	\pause 
+	\item $f\in \contract_a$. \pause Take $n> a$, since $F$ is strict from $a$, \pause 
+	\begin{equation*}
+	\displayindent0pt
+	\displaywidth\textwidth
+	n-1 < F(n-1) \pause \implies n\le F(n-1) \pause \implies f(n)\le n - 1 \pause \implies f(n) < n.
+	\end{equation*}
+	\vspace{-2em}
+	
+	\pause 
+	\item $\cdt{f}{a}~ = \left(\rf{F}{a}\ \right)^{-1}$. \pause  We have
+	\begin{equation*}
+	\displayindent0pt
+	\displaywidth\textwidth
+	\begin{array}{lllll}
+	& \cdt{f}{a}(n)\le m \pause & \iff f^{(m)}(n)\le a \pause & \iff f^{(m-1)}(n)\le F(a) \pause & \iff \ldots \\
+    \pause \iff & f(n)\le F^{(m-1)}(a) \pause & \iff n\le F^{(m)}(a) \pause & \iff n\le \rf{F}{a}(m) & \qed
+	\end{array}
 	\vspace{-0.5em}
 	\end{equation*}
 \end{enumerate}
-\qed
 
 \end{frame}
 
@@ -246,6 +272,7 @@ Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
 
 \bigskip
 
+\pause 
 \textbf{Primary issue.} Termination in Coq.
 %Coq needs a known terminating point, i.e. an explicit decreasing argument. How to know when to terminate beforehand?
 
@@ -256,6 +283,7 @@ Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
 
 \bigskip
 
+\pause 
 \textbf{The worker function.} $\begin{cases}
 \text{Budget } b: & \hspace{-1em}\text{Maximum } b \text{ steps. } \\
 \text{Step } i: & \hspace{-1em}\text{Compute } f^{(i)}(n). \\
@@ -273,6 +301,7 @@ Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
 
 \bigskip
 
+\pause 
 \textbf{Primary issue.} How to determine a sufficient budget?
 \end{frame}
 
@@ -302,6 +331,7 @@ end.
 
 \bigskip
 
+\pause 
 \textbf{The Countdown.} Budget $b = n$ is sufficient.
 \impinline{Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.}
 % Linked by A
