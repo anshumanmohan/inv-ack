@@ -142,3 +142,38 @@ else let f := (fun x => N.log2 (x + 2) - 2)
 \end{lstlisting}
 
 \end{frame}
+
+
+\begin{frame}
+\frametitle{Time Complexity of Binary $\alpha$: A Sketch}
+
+Similar to $\alpha$ on unary inputs, $\runtime_{\alpha}(n) \approx \runtime_{\alpha_k}(n)$ for $k\triangleq \alpha(n)$.
+\pause
+\begin{equation*}
+\begin{aligned}
+& \runtime_{\alpha_{i+1}}(n) \ \lessapprox \ 4n + \bigO\big(\log_2n\big) + 4\log_2n + \bigO\big(\log_2^{(2)}n\big) + \ldots \\
+& \quad = 4n + \bigO\left(\log_2n + \log_2^{(2)}n + \log_2^{(3)}n + \ldots\right)
+= 4n + \bigO\big(\log_2n\big)
+\end{aligned}
+\end{equation*}
+
+\smallskip
+
+\pause
+Manual computation: $\runtime_{\alpha_3}(n)\le 2\log_2n + \log_2\log_2n + 3$.
+
+\smallskip
+
+\pause
+Suppose $\runtime_{\alpha_i}(n) \le 2\log_2n + \bigO\left(\log_2^{(2)}n\right)$. \pause Then
+\begin{equation*}
+\begin{aligned}
+& \runtime_{\alpha_{i+1}}(n) \ \lessapprox \ 2\log_2n + \bigO\left(\log_2^{(2)}n\right) + 2\log_2^{(2)}n + \bigO\big(\log_2^{(3)}n\big) + \ldots \\
+& \ = 2\log_2n + \bigO\left(\log_2^{(2)}n + \log_2^{(3)}n + \log_2^{(4)}n + \ldots\right)
+= 2\log_2n + \bigO\left(\log_2^{(2)}n\right)
+\end{aligned}
+\end{equation*}
+\pause
+By induction, $\runtime_{\alpha_i}(n) \lessapprox 2\log_2n + \bigO\left(\log_2^{(2)}n\right)$ for each $i$, and so is $\runtime_{\alpha}(n)$.
+
+\end{frame}

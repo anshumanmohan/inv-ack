@@ -81,7 +81,7 @@ Step & Initial \ Arguments &  &  \big(\alpha_0, & \alpha_0(n), & 0, & b - 0 \big
 \pause
 1 & b > 1, \ \alpha_1(n) > 1 & \pause \to  & \big(\alpha_2, & \alpha_2(n), & 2, & b - 2\big) \\[3pt]
 \pause
-\cdots & \cdots & \cdots & \multicolumn{4}{l}{\cdots} \\
+\vdots & \vdots & \vdots & & \multicolumn{3}{l}{\vdots} \\
 %b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
 \pause
 k & b > k, \ {\color{red} \alpha_{k}(n) \le k} & \pause \to  & \multicolumn{4}{l}{\impinline{$k = \alpha(n)$}}
@@ -123,5 +123,95 @@ Any budget $b \ge \alpha(n)$ suffices, so we can choose $b = n$.
 \end{cases}
 \end{aligned}
 \end{equation*}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Time Complexity of $\alpha$: A Sketch}
+
+$
+{\color{green}\alpha_{i+1}} = \cdt{\big({\color{blue}\alpha_{i}}\big)}{1}\circ {\color{blue}\alpha_i} \quad \text{ and } \quad {\color{green} \alpha_{i+1}(n)} = \cdt{\big({\color{blue}\alpha_{i}}\big)}{1}\big({\color{red}\alpha_{i}(n)}\big).
+$
+
+\bigskip
+
+$ \displaystyle
+\begin{aligned}
+\alpha^{\mathcal{W}}\big({\color{blue}\alpha_i}, \ {\color{red}\alpha_i(n)}, \ i, \ b\big)
+& = \alpha^{\mathcal{W}}\left(
+\cdt{{\color{blue}\alpha_i}}{1}\circ {\color{blue}\alpha_i},  \
+\cdt{{\color{blue}\alpha_i}}{1}\big({\color{red}\alpha_i(n)}\big), \
+i+1, \ b - 1\right) \\
+& = \alpha^{\mathcal{W}}\left(
+{\color{green}\alpha_{i+1}}, \ \ \ \
+{\color{green}\alpha_{i+1}(n)}, \ \ \ \ \
+i+1, \ b - 1\right).
+\end{aligned}
+$
+
+\bigskip
+
+The recursive formula of $\alpha^{\mathcal{W}}$ contains the recursive formula of $\alpha_i$.
+
+%The computation $\alpha(n)$ up to step $i$ incorporates the computation of $\alpha_i(n)$, plus some minor computations.
+
+\bigskip
+
+Thus, most of $\alpha(n)$'s running time is to compute $\alpha_k(n)$, where $k \triangleq \alpha(n)$.
+
+\bigskip
+
+Similarly, for each $i$, most of $\alpha_i(n)$'s running time is to compute the chain $\alpha_i(n), \alpha_i^{(2)}(n), \alpha_i^{(3)}(n) \ldots, $ until reaching $1$.
+
+%\begin{equation*}
+%\begin{array}{l|lllllll}
+%Step & Initial \ Arguments &  &  \big(\alpha_0, & \alpha_0(n), & 0, & b - 0 \big) \\[3pt]
+%0 & b > 0, \ \alpha_0(n) > 0 & \to & \big(\alpha_1, & \alpha_1(n), & 1, & b - 1\big) \\[3pt]
+%1 & b > 1, \ \alpha_1(n) > 1 & \to  & \big(\alpha_2, & \alpha_2(n), & 2, & b - 2\big) \\[3pt]
+%\vdots & \vdots & \vdots & & \multicolumn{3}{l}{\vdots} \\
+%%b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
+%k & b > k, \ \alpha_{k}(n) \le k & \to  & \multicolumn{4}{l}{k = \alpha(n)}
+%\end{array}
+%\end{equation*}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Time Complexity of $\alpha$: A Sketch}
+
+Let $\runtime_f(n)$ denotes the running time of computing $f(n)$ given $f$ and $n$.
+\pause
+\begin{equation*}
+\runtime_{\alpha_{i+1}}(n) \approx
+\runtime_{\alpha_i}(n) + \runtime_{\alpha_i}\big(\alpha_i(n)\big)
++ \runtime_{\alpha_i}\big(\alpha_i^{(2)}(n)\big) + \ldots (\text{until 1})
+\end{equation*}
+
+\smallskip
+
+\pause
+Manual computation: $\runtime_{\alpha_3}(n)\le 4n + 4$.
+
+\smallskip
+
+\pause
+Suppose $\runtime_{\alpha_i}(n) \le 4n + \bigO\big(\log_2n\big)$. \pause Then
+\begin{equation*}
+\begin{aligned}
+& \runtime_{\alpha_{i+1}}(n) \ \lessapprox \ 4n + \bigO\big(\log_2n\big) + 4\log_2n + \bigO\big(\log_2^{(2)}n\big) + \ldots \\
+& \quad = 4n + \bigO\left(\log_2n + \log_2^{(2)}n + \log_2^{(3)}n + \ldots\right)
+ = 4n + \bigO\big(\log_2n\big)
+\end{aligned}
+\end{equation*}
+\pause
+Thus by induction, $\runtime_{\alpha_i}(n) \lessapprox 4n + \bigO\big(\log_2n\big)$ for each $i$.
+
+\bigskip
+
+\pause
+So $T_{\alpha}(n) \approx T_{\alpha_k}(n) \lessapprox \Theta(n)$. Detailed proof in our paper.
 
 \end{frame}

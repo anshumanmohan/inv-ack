@@ -90,7 +90,7 @@
 \usepackage{scalerel}
 \usepackage{enumerate}
 \usepackage{courier}
-%\usepackage{appendixnumberbeamer}
+\usepackage{appendixnumberbeamer}
 \usepackage{pgfplots}
 \usepackage{mdframed} %nice frames
 
@@ -104,9 +104,6 @@
 }
 
 
-
-
-
 %\setbeamertemplate{bibliography item}{\insertbiblabel}
 
 
@@ -115,11 +112,10 @@
 %------------------------------------------------------------------------------------------
 
 % TEMPLATE SETTINGS
-\def\inserttotalframenumber{40} % Remove this line if want correct frame number
 \setbeamertemplate{theorems}[numbered]
 \setbeamertemplate{sidebar right}{}
 \setbeamertemplate{footline}{%
-	\hspace{1em}\small\insertframenumber/40%\inserttotalframenumber
+	\hspace{1em}\small\insertframenumber/\inserttotalframenumber
 	\hfill\usebeamertemplate***{navigation symbols}}
 
 \makeatletter
@@ -505,7 +501,18 @@ We showed that these functions are consistent with the usual definition of the i
 \keywords{Ackermann  \and hyperoperations \and Coq}
 \end{frame}
 
+\newcounter{totalframenumber}
+\setcounter{totalframenumber}{\inserttotalframenumber}
+
 \appendix
+
+
+\addtocounter{framenumber}{\value{totalframenumber}}
+
+\setbeamertemplate{footline}{%
+	\hspace{1em}\small\arabic{framenumber}/\arabic{totalframenumber}
+	\hfill\usebeamertemplate***{navigation symbols}}
+
 \input{apx_time_bound.tex}
 
 %\begin{frame}[allowframebreaks]
