@@ -1,4 +1,4 @@
-\subsection{The repeated application pattern}
+\subsection{Repeated Application}
 
 %\begin{frame}
 %\frametitle{Review: Repeated Application via \texttt{iter}}
@@ -92,11 +92,11 @@ a & \text{when } n = 0 \\
 \end{frame}
 
 
-\subsection{The repeater operation}
+\subsection{Introducing Repeater}
 
 
 \begin{frame}[fragile]
-\frametitle{From repeated applications and \texttt{iter} to Repeater}
+\frametitle{Mechanizing Our Observations}
 %The next level in the hyperoperations/Ackermann hierarchy is the result of $b$ compositional applications of the current level to an initial value.
 %
 %\bigskip
@@ -107,24 +107,25 @@ a & \text{when } n = 0 \\
 
 %Writing $a[n+1]b = \big(a[n]\big)^{(b)}\big(a[n+1]0\big)$ or $\Ack_{n+1}(b) = \big(\Ack_n\big)^{(b)}\big(\Ack_{n+1}(0)\big)$ is clumsy since $b$ is no longer the main argument.
 
-\vspace{-2ex}
-\begin{equation*}
-\begin{array}{l|l|l}
-\text{Expression} & \text{Repeated Applications} & \text{CSL } \texttt{iter} \\ \hline
-a[n+1]b & \big(a[n]\big)^{(b)}\big(a[n+1]0\big) & \texttt{iter}\big(b, a[n], a[n+1]0\big) \topspace{2pt} \botspace{2pt} \\
-\Ack_{n+1}(b) & \big(\Ack_n\big)^{(b)}\big(\Ack_{n+1}(0)\big) & \texttt{iter}\big(b, \Ack_n, \Ack_{n+1}(0)\big) \topspace{2pt}
-\end{array}
-\end{equation*}
-\\ \vspace{-0.5ex}
-The writing is clumsy since $b$ is no longer the main argument.
+% \vspace{-2ex}
+% \begin{equation*}
+% \begin{array}{l|l|l}
+% \text{Expression} & \text{Repeated Applications} & \text{CSL } \texttt{iter} \\ \hline
+% a[n+1]b & \big(a[n]\big)^{(b)}\big(a[n+1]0\big) & \texttt{iter}\big(b, a[n], a[n+1]0\big) \topspace{2pt} \botspace{2pt} \\
+% \Ack_{n+1}(b) & \big(\Ack_n\big)^{(b)}\big(\Ack_{n+1}(0)\big) & \texttt{iter}\big(b, \Ack_n, \Ack_{n+1}(0)\big) \topspace{2pt}
+% \end{array}
+% \end{equation*}
+% \\ \vspace{-0.5ex}
+% The writing is clumsy since $b$ is no longer the main argument.
 
-\smallskip
+% \smallskip
 
-\pause 
+% \pause 
 %\textbf{Repeater.} A rearranged form of \texttt{iter}, where $b$ becomes the main argument:
 %\impinline{$\rf{f}{u}(b) \triangleq \texttt{iter}(b, f, u) = f^{(b)}(u)$}.
-\textbf{Repeater.} A rearranged \texttt{iter}:
-\impinline{$\rf{f}{u}(b) \triangleq \texttt{iter}(b, f, u) = f^{(b)}(u)$}, where $b$ is the main argument. \pause Read $\rf{f}{a}$ \ as ``the \emph{repeater from} $a$ of $f$''.
+\textbf{Repeater.} %A rearranged \texttt{iter}:
+\impinline{$\rf{f}{u}(b)~~=~~f^{(b)}(u)~~\approx~~\texttt{iter}(b, f, u)$}.
+\pause \\Read $\rf{f}{a}$ \ as ``the \emph{repeater from} $a$ of $f$''.
 
 %\smallskip
 
@@ -133,6 +134,7 @@ The writing is clumsy since $b$ is no longer the main argument.
 %$a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 
 \pause
+\bigskip
 % Linked by A
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L32-L36}{Fixpoint repeater\_from}` (f : nat -> nat) (a n : nat) : nat :=

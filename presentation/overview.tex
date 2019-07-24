@@ -1,8 +1,6 @@
-\subsection*{The Ackermann and Inverse Ackermann functions}
 \begin{frame}
-\frametitle{Introduction: Ackermann function}
+\frametitle{The Ackermann Function}
 	
-	\pause 
 	The Ackermann-P\'eter function is defined as:
 	\begin{equation*}
 	A(n, m) \triangleq \begin{cases}
@@ -13,7 +11,7 @@
 	\end{equation*}
 	
 	\pause 
-	The one-variable \emph{diagonal} Ackermann function is $\Ack(n)~\triangleq~A(n, n)$.
+	The \emph{diagonal} Ackermann function is $\Ack(n)~\triangleq~A(n, n)$.
 	
 	\bigskip
 	
@@ -22,15 +20,15 @@
 	
   \begin{minipage}{0.5\linewidth}
 		\begin{equation*}
-	\begin{array}{l|lllll}
+	\begin{array}{r|ccccc}
 	 n & 0 & 1 & 2 & 3 & 4 \\ \hline
 	 \Ack(n) & 1 & 3 & 7 & 61 & 2^{2^{2^{65536}}} - 3 \topspace{3pt}
 	\end{array}
 	\end{equation*}
   \end{minipage}
   \quad \pause 
-  \begin{minipage}{0.2\linewidth}
-  	\textcolor{red}{Astronomical \\ growth!}
+  \begin{minipage}{0.4\linewidth}
+  	\textcolor{red}{Astronomical growth!}
   \end{minipage}
 
 \end{frame}
@@ -74,55 +72,55 @@
 %\end{frame}
 
 
-\begin{frame}
-\frametitle{Introduction: Growth Patterns}
+% \begin{frame}
+% \frametitle{Introduction: Growth Patterns}
 
- First few values of $\Ack(n)$ and $\alpha(n)$:
+%  First few values of $\Ack(n)$ and $\alpha(n)$:
 		
-%		\begin{equation*}
-%		\begin{array}{|ll|c|ll|}
-%		n & \Ack(n) & \hspace{3em} & n & \alpha(n) \\[3pt]
-%		0 & 1 & & 0, 1 & 0 \\[3pt]
-%		1 & 3 & & 2, 3 & 1 \\[3pt]
-%		2 & 7 & & 4, 5, 6, 7 & 2 \\[3pt]
-%		3 & 61 & & 8, 9, \ldots, 61 & 3 \\[3pt]
-%		4 & 2^{2^{2^{65536}}} - 3 & & 62, 63 \ldots, 2^{2^{2^{65536}}} - 3 & 4 \\[5pt]
-%		\multicolumn{2}{|l|}{\text{Grows astronomically fast!}} & & \multicolumn{2}{|l|}{\text{Grows astronomically slow!}}
-%		\end{array}
-%		\end{equation*}
+% %		\begin{equation*}
+% %		\begin{array}{|ll|c|ll|}
+% %		n & \Ack(n) & \hspace{3em} & n & \alpha(n) \\[3pt]
+% %		0 & 1 & & 0, 1 & 0 \\[3pt]
+% %		1 & 3 & & 2, 3 & 1 \\[3pt]
+% %		2 & 7 & & 4, 5, 6, 7 & 2 \\[3pt]
+% %		3 & 61 & & 8, 9, \ldots, 61 & 3 \\[3pt]
+% %		4 & 2^{2^{2^{65536}}} - 3 & & 62, 63 \ldots, 2^{2^{2^{65536}}} - 3 & 4 \\[5pt]
+% %		\multicolumn{2}{|l|}{\text{Grows astronomically fast!}} & & \multicolumn{2}{|l|}{\text{Grows astronomically slow!}}
+% %		\end{array}
+% %		\end{equation*}
 		
-		\begin{tikzpicture}
-		\begin{axis}[
-%		symbolic x coords={a small bar,a medium bar,a large bar},
-    yticklabels={,,},
-		xtick=data]
-		\addplot coordinates {
-			(0, 1)
-			(1, 3)
-			(2, 7)
-			(3, 61)
-			(4, 9999999)
+% 		\begin{tikzpicture}
+% 		\begin{axis}[
+% %		symbolic x coords={a small bar,a medium bar,a large bar},
+%     yticklabels={,,},
+% 		xtick=data]
+% 		\addplot coordinates {
+% 			(0, 1)
+% 			(1, 3)
+% 			(2, 7)
+% 			(3, 61)
+% 			(4, 9999999)
 			
-		};
-		\end{axis}
-		\end{tikzpicture}
+% 		};
+% 		\end{axis}
+% 		\end{tikzpicture}
 
-%TODO Fix this graph? Graph for alpha? Figure with caption?
+% %TODO Fix this graph? Graph for alpha? Figure with caption?
 
-\end{frame}
+% \end{frame}
 
 
 \begin{frame}
-\frametitle{Introduction: The Inverse Ackermann function}
+\frametitle{The Inverse Ackermann Function}
 
 The \emph{inverse Ackermann function}, $\alpha$, maps $n$ to the smallest~$k$ for
 which~$n \le \Ack(k)$, \emph{i.e} \impinline{$\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}$}.
 
-\bigskip
+\smallskip
 
 \pause 
-$\alpha(n)$ grows slowly but hard to \emph{compute} for large $n$
-because it is entangled with the explosively-growing $\Ack(k)$.
+$\alpha(n)$ grows slowly but is hard to \emph{compute} for large $n$
+\\ because it is entangled with the explosively-growing $\Ack(k)$.
 
 \bigskip
 
@@ -130,27 +128,25 @@ because it is entangled with the explosively-growing $\Ack(k)$.
 %\textbf{Naive Approach:} starting at $k=0$, calculate $\Ack(k)$,
 %compare it to $n$, \\ and increment $k$ until $n \le \Ack(k)$.
 \pause 
-\textbf{Naive Approach:} Subsequently compute $\Ack(0), \Ack(1), \ldots$ until $n\le \Ack(k)$.
-
-\smallskip
-
-\pause 
-\textbf{Time complexity:} $\Omega(\Ack(\alpha(n)))$.
-\\ Computing $\alpha(100) \mapsto^{*} 4$ requires at least
-$\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
+\textbf{Naive Approach:} Compute $\Ack(0), \Ack(1), \ldots$ until $n\le \Ack(k)$. Return $k$.
 
 \bigskip
 
 \pause 
-\textbf{Engineering hack:} Hardcode. Return $4$ for most inputs.
+\textbf{Time complexity:} $\Omega(\Ack(\alpha(n)))$.
+\\ Computing $\alpha(100) \mapsto^{*} 4$ requires at least
+$\Ack(4) = 2^{2^{2^{65536}}}$ steps!
+
+\bigskip
+
+\pause 
+\textbf{Engineering hack:} Hardcode. Return $4$ for all $n > 61$.
 
 \bigskip
 
 \pause 
 \imppar{\text{\textbf{Our Goal.} Compute $\alpha$ for \emph{all inputs} without computing $\Ack$.}}
 \end{frame}
-
-\subsection*{Relation to hyperoperations}
 
 %\begin{frame}
 %\frametitle{Introduction: Ackermann \emph{vs} Hyperoperations}
@@ -173,11 +169,12 @@ $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 
 
 \begin{frame}[fragile]
-\frametitle{Introduction: Code sneak peek}
+\frametitle{Our Solution}
 
 \vspace{-1em}
 \lstset{style=myTinyStyle}
 % Linked by A
+\begin{mdframed}[backgroundcolor=lightgray, roundcorner=10pt,leftmargin=0, rightmargin=0, innerleftmargin=0, innertopmargin=-5,innerbottommargin=-5, outerlinewidth=0, linecolor=lightgray]
 \begin{lstlisting}
 Require Import Omega Program.Basics.
 
@@ -199,11 +196,12 @@ end.
     let f := (fun x => x - 2) in inv_ack_wkr f (f n) 1 (n - 1)
 end.
 \end{lstlisting}
+\end{mdframed} 
 \end{frame}
 
 
 \begin{frame}
-\frametitle{Introduction: Ackermann \emph{vs} Hyperoperation}
+\frametitle{Ackermann \emph{vs} Hyperoperation}
 
 The Ackermann function is easy to define, but hard to
 understand.
@@ -211,7 +209,7 @@ understand.
 \bigskip
 
 \pause 	
-Let's treat the first argument as an ``index''. \\ \smallskip
+Let's index by the first argument. \\ \smallskip
 Define $\Ack_n \triangleq \lambda b.A(n,b)$. \\ \smallskip
 Then, for $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times.
 

@@ -90,8 +90,9 @@
 \usepackage{scalerel}
 \usepackage{enumerate}
 \usepackage{courier}
-
+\usepackage{appendixnumberbeamer}
 \usepackage{pgfplots}
+\usepackage{mdframed} %nice frames
 
 \hypersetup{ % play with these to change the look of hyperlinks
 	colorlinks=true,
@@ -117,7 +118,7 @@
 \setbeamertemplate{theorems}[numbered]
 \setbeamertemplate{sidebar right}{}
 \setbeamertemplate{footline}{%
-	\hspace{1em}\small\insertframenumber{}/\inserttotalframenumber
+	\hspace{1em}\small\insertframenumber/\inserttotalframenumber
 	\hfill\usebeamertemplate***{navigation symbols}}
 
 \makeatletter
@@ -164,7 +165,8 @@
 	numbersep=5pt,
 	showspaces=false,
 	escapechar=`,
-	showstringspaces=false
+	showstringspaces=false,
+	backgroundcolor = \color{lightgray},
 }
 
 \lstset{basicstyle=\ttfamily\footnotesize,breaklines=true}
@@ -248,10 +250,12 @@
 % DARKENED COLORS
 \colorlet{red}{red!80!black}
 \colorlet{blue}{blue!80!black}
+\colorlet{green}{green!50!black}
+\colorlet{lightgray}{gray!30!white}
 
 % FBOX SETTINGS
 \newcommand{\imppar}[1]{{\setlength{\fboxrule}{1pt}\fcolorbox{red}{white}{#1}}}
-\newcommand{\impinline}[1]{{\setlength{\fboxrule}{1pt}\setlength{\fboxsep}{2pt}\fcolorbox{white}{gray!30!white}{#1}}}
+\newcommand{\impinline}[1]{{\setlength{\fboxrule}{1pt}\setlength{\fboxsep}{2pt}\fcolorbox{white}{lightgray}{#1}}}
 
 %\AtBeginSection[]{
 %	\begin{frame}
@@ -289,7 +293,7 @@ National University of Singapore % Your institution for the title page
 
 \begin{document}
 
-\begin{frame}
+\begin{frame}[plain]
 \titlepage % Print the title page as the first slide
 \end{frame}
 
@@ -368,7 +372,7 @@ National University of Singapore % Your institution for the title page
 \end{frame}
 
 
-\section{Step 2: Inverting the hyperoperations/Ackermman hierarchies via Countdown}
+\section{Step 2: Inverting the Hierarchies via Countdown}
 \label{sec: countdown}
 \input{countdown.tex}
 
@@ -500,12 +504,13 @@ We showed that these functions are consistent with the usual definition of the i
 \keywords{Ackermann  \and hyperoperations \and Coq}
 \end{frame}
 
-\section{Thank you for listening !!!}
+\appendix
+\input{apx_time_bound.tex}
+
 %\begin{frame}[allowframebreaks]
 %\frametitle{References}
 %\bibliographystyle{amsalpha}
 %\bibliography{inv_ack}
 %\end{frame}
-
 
 \end{document}

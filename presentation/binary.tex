@@ -26,7 +26,7 @@ What about inverse Ackermann? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
 \end{frame}
 
 
-\subsection{Countdown in binary}
+\subsection{Countdown in Binary}
 
 
 \begin{frame}[fragile]
@@ -142,71 +142,3 @@ else let f := (fun x => N.log2 (x + 2) - 2)
 \end{lstlisting}
 
 \end{frame}
-
-
-\subsection{Time complexity: $\bigO (\log_2n)$}
-
-
-\begin{frame}
-\frametitle{Runtime of Each $\alpha_i$ - Precise Bounds}
-
-Countdown running time:
-\begin{equation*}
-\runtime_{\cdt{f}{a}}(n) \le \sum_{i=0}^{\cdt{f}{a}(n) - 1} \hspace{-6pt}
-\runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \ + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
-\end{equation*}
-
-\pause 
-$\alpha_3$ running time: $\runtime_{\alpha_3}(n) \le 2\log_2n + \log_2\log_2n + 3$.
-
-\bigskip
-
-\pause 
-$\alpha_i$ running time:
-$
-%\begin{equation*}
-\runtime_{\alpha_{i+1}}(n) \le
-\sum_{k=0}^{\alpha_{i+1}(n)}\runtime_{\alpha_i}\big(\alpha_i^{(k)}(n)\big)
-+ 6\log_2\log_2n + 3.
-%\end{equation*}
-$
-
-\bigskip
-
-\pause 
-\textbf{Theorem.} $\forall i. \runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i = \bigO(\log_2n)$, when hard-coding up to $\alpha_3$.
-
-\end{frame}
-
-
-
-\begin{frame}
-\frametitle{Runtime of the Inverse Ackermann Function}
-
-\begin{equation*}
-\begin{array}{l|llllllll}
-Step & \multicolumn{2}{l}{Initial \ Arguments} &  &  \big(\alpha_3, & \alpha_3(n), & 3, & b - 0 \big) \\[3pt]
-\pause 1 & b - 0 > 0, & \alpha_3(n) > 3 & \to & \big(\alpha_4, & \alpha_4(n), & 4, & b - 1\big) \\[3pt]
-2 & b - 1 > 0, & \alpha_4(n) > 4 & \to  & \big(\alpha_5, & \alpha_5(n), & 5, & b - 2\big) \\
-\cdots & \cdots &\cdots & \cdots & \cdots & \cdots & \cdots \\
-%b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
-k & b - k > 0, & {\color{red} \alpha_{k}(n) \le k} & \to  & \multicolumn{4}{l}{k = \alpha(n)} \\[3pt] \hline
-SUM & \pause \Theta(k) & \pause \Theta\big(\sum_{i=1}^{k}\log_2i\big) \pause & & \multicolumn{3}{r}{\sum_{i=1}^{k-1} \runtime_{\cdt{\alpha_i}{1}} (\alpha_i(n))} \pause & \Theta(k) \\[3pt]
-\pause = & \Theta(k) & \Theta(k\log_2k) & \multicolumn{4}{r}{\sum_{i=1}^{k-1} \big(\runtime_{\alpha_{i+1}}(n) - \runtime_{\alpha_i}(n) \big)} & \Theta(k)
-\end{array}
-\end{equation*}
-
-\smallskip
-
-\pause 
-\imppar{
-$\displaystyle
-\begin{aligned}
-\runtime_{\alpha}(n)
-& = \runtime_{\alpha_{\alpha(n)}}(n) - \runtime_{\alpha_3}(n) + \Theta\left(\alpha(n)\log_2 \alpha(n)\right) + \runtime_{\alpha_3}(n) \\
-\pause & = \bigO \left(\log_2n + 2^{\alpha(n)}\log_2\log_2n + \alpha(n)\log_2\alpha(n) \right) = \bigO (\log_2n)
-\end{aligned}
-$}
-
-\end{frame}
-

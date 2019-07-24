@@ -1,4 +1,4 @@
-\subsection{Implementations}
+\subsection{Using the Hierarchy to Implement $\alpha(n)$}
 \begin{frame}
 \frametitle{Implementation Idea}
 \textbf{Redefinition.}
@@ -28,7 +28,7 @@ $
 \pause 
 \textbf{Advantage.} $\alpha_{i+1}(n) = \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)$\\
 \smallskip
-$\implies$ next step is computable from the previous.
+So the next step is computable from the previous.
 \end{frame}
 
 
@@ -94,7 +94,7 @@ k & b > k, \ {\color{red} \alpha_{k}(n) \le k} & \pause \to  & \multicolumn{4}{l
 \begin{frame}
 \frametitle{The Inverse Ackermann Function}
 
-Any budget $b \ge \alpha(n)$ suffices, so we can choose $b := n$.
+Any budget $b \ge \alpha(n)$ suffices, so we can choose $b = n$.
 
 \bigskip
 
@@ -123,144 +123,5 @@ Any budget $b \ge \alpha(n)$ suffices, so we can choose $b := n$.
 \end{cases}
 \end{aligned}
 \end{equation*}
-
-\end{frame}
-
-
-\subsection{Time Complexity: $\bigO(n)$}
-
-\begin{frame}
-\frametitle{Runtime of Countdown}
-
-\textbf{Sum by component in each recursive step.}
-\begin{equation*}
-\begin{array}{l|llllll}
-Step & \multicolumn{2}{l}{Initial \ Arguments} &  & \big(f^{(0)}(n), & n - 0 \big) &  \\[3pt]
-\pause 0    & n - 0 > 0,     & f^{(0)}(n) > a & \to & \big(f^{(1)}(n), & n - 1\big) & + 1 \\[3pt]
-\pause 1    & n - 1 > 0, & f^{(1)}(n) > a & \to & \big(f^{(2)}(n), & n - 2\big) & + 2 \\[3pt]
-\pause \cdots & \cdots & \cdots & \cdots & \cdots & \cdots & \cdots \\
-k-1  & n - (k-1) > 0, & f^{(k-1)}(n) > a & \to & \big(f^{(k)}(n), & n - k\big) & + k \\[3pt]
-\pause k & n - k \mathrel{?} 0, & {\color{red} f^{(k)}(n) \le a}  &\to & \multicolumn{2}{l}{0} &  \\[3pt] \hline
-SUM & \pause \Theta(k) & \pause \Theta((a+1)k) \pause & &  \multicolumn{2}{c}{\sum_{i=0}^{k-1}\runtime_f\big(f^{i}(n)\big)} & \pause \Theta(k)
-\end{array}
-\end{equation*}
-
-%TODO: Increase vertical space after \hline
-
-\pause
-Substitute $k = \cdt{f}{a}(n)$:
-%\begin{equation*}
-\imppar{$\displaystyle
-\runtime_{\cdt{f}{a}}(n) = \sum_{i=0}^{\cdt{f}{a}(n)-1}\runtime_f\big(f^{i}(n)\big)
-+ \Theta\left((a+1)\cdt{f}{a}(n)\right).
-$}
-%\end{equation*}
-\end{frame}
-
-
-
-\begin{frame}
-\frametitle{Runtime of Each $\alpha_i$ - Asymptotic Bounds}
-
-$\displaystyle
-\alpha_{i+1} = \cdt{\big(\alpha_i\big)}{1}\circ \alpha_i
-\quad \implies \quad \runtime_{\alpha_{i+1}}(n) = \runtime_{\alpha_i}(n) + \runtime_{\cdt{\alpha_i}{1}}\big(\alpha_i(n)\big)
-$
-
-\smallskip
-\pause 
-\imppar{
-$\displaystyle
-\runtime_{\alpha_{i+1}}(n) = \runtime_{\alpha_i}(n) + 
-\sum_{i=0}^{\cdt{\alpha_i}{1}(\alpha_i(n)) - 1} \runtime_{\alpha_i}\left(\alpha_i^{(i+1)}(n)\right) + \Theta\left(\cdt{\alpha_i}{1}(\alpha_i(n)) \right)
-$
-}
-
-\bigskip
-
-\pause 
-Substitute $\cdt{\alpha_i}{1}(\alpha_i(n))$ for $\alpha_{i+1}(n)$:
-\bigskip
-
-$ \displaystyle 
-\runtime_{\alpha_{i+1}}(n)
-  = \runtime_{\alpha_i}(n) + 
-  \sum_{i=0}^{\alpha_{i+1}(n) - 1} \runtime_{\alpha_i}\left(\alpha_i^{(i+1)}(n)\right) + \Theta\left(\alpha_{i+1}(n) \right)
-$
-
-\pause 
-\smallskip
-\imppar{
-$\displaystyle 
-\runtime_{\alpha_{i+1}}(n)
-	= \sum_{i=0}^{\alpha_{i+1}(n)} \runtime_{\alpha_i}\left(\alpha_i^{(i)}(n)\right) + \Theta\left(\alpha_{i+1}(n) \right)
-$
-}
-
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Runtime of Each $\alpha_i$ - Precise Bounds}
-
-Countdown running time:
-\begin{equation*}
-\textstyle \runtime_{\cdt{f}{a}}(n) =
-\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
-+ (a + 2)\cdt{f}{a}(n) + f^{\left(\cdt{f}{a}(n)\right)}(n) + 1
-\end{equation*}
-
-\smallskip
-
-\pause 
-$\alpha_2$ and $\alpha_3$ running time: $\runtime_{\alpha_2}(n) \le 2n - 2$ and $\runtime_{\alpha_3}(n) \le 4n + 4$.
-
-\bigskip 
-
-\pause 
-$\alpha_i$ running time:
-\begin{equation*}
-\textstyle \runtime_{\alpha_{i+1}}(n) \le \sum_{k=0}^{\alpha_{i+1}(n)}\runtime_{\alpha_i}\left( \alpha_i^{(k)}(n)\right) + 3\alpha_{i+1}(n) + 3
-\end{equation*}
-
-\smallskip
-
-\pause 
-\imppar{
-\begin{minipage}{\linewidth}
-	\textbf{Theorem.} $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$, when using $\alpha_1 \triangleq \lambda n. (n-2)$.
-\end{minipage}}
-
-\end{frame}
-
-
-
-\begin{frame}
-\frametitle{Runtime of Inverse Ackermann}
-
-\begin{equation*}
-\begin{array}{l|llllllll}
-Step & \multicolumn{2}{l}{Initial \ Arguments} &  &  \big(\alpha_1, & \alpha_1(n), & 1, & b - 1 \big) \\[3pt]
-\pause 1 & b - 1 > 0, & \alpha_1(n) > 1 & \to & \big(\alpha_2, & \alpha_2(n), & 2, & b - 2\big) \\[3pt]
-2 & b - 2 > 0, & \alpha_2(n) > 2 & \to  & \big(\alpha_3, & \alpha_3(n), & 3, & b - 3\big) \\
-\cdots & \cdots &\cdots & \cdots & \cdots & \cdots & \cdots \\
-%b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
-k & b - k > 0, & {\color{red} \alpha_{k}(n) \le k} & \to  & \multicolumn{4}{l}{k = \alpha(n)} \\[3pt] \hline
-\pause SUM & \pause \Theta(k) & \pause \Theta\big(\sum_{i=1}^{k}i\big) \pause & & \multicolumn{4}{l}{\sum_{i=1}^{k-1} \runtime_{\cdt{\alpha_i}{1}} (\alpha_i(n))} \\[3pt]
-\pause = & \Theta(k) & \Theta(k^2) & & \multicolumn{4}{l}{\sum_{i=1}^{k-1} \big(\runtime_{\alpha_{i+1}}(n) - \runtime_{\alpha_i}(n) \big)}
-\end{array}
-\end{equation*}
-
-\smallskip
-
-\pause
-Therefore, 
-\imppar{$\displaystyle
-\begin{aligned}
-\runtime_{\alpha}(n)
-& = \runtime_{\alpha_{\alpha(n)}}(n) - \runtime_{\alpha_1}(n) + \Theta\left(\alpha(n)^2\right) + \runtime_{\alpha_1}(n) \\
-& = \bigO \left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2 \right) = \bigO (n)
-\end{aligned}
-$}
 
 \end{frame}
