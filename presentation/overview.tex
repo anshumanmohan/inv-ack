@@ -140,7 +140,7 @@ $\Ack(4) = 2^{2^{2^{65536}}}$ steps!
 \bigskip
 
 \pause 
-\textbf{Engineering hack:} Hardcode. Return $4$ for all $n > 61$.
+\textbf{Engineering hack:} Hardcode with lookup tables. $n > 61 \implies \text{ans} = 4$.
 
 \bigskip
 
@@ -180,21 +180,21 @@ Require Import Omega Program.Basics.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L6-L11}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
  match b with 0 => 0 | S b' =>
-   if (n <=? a) then 0 else S (cdn_wkr f a (f n) k')
-end.
+  if (n <=? a) then 0 else S (cdn_wkr f a (f n) k')
+ end.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L14}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L32-L38} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
-  match b with 0 => 0 | S b' =>
-    if (n <=? k) then k else let g := (countdown_to f 1) in
-                        inv_ack_wkr (compose g f) (g n) (S k) b
-end.
+ match b with 0 => 0 | S b' =>
+  if (n <=? k) then k else let g := (countdown_to f 1) in
+                      inv_ack_wkr (compose g f) (g n) (S k) b
+ end.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L42-L46}{Definition inv\_ack\_linear}` n :=
-  match n with 0 | 1 => 0 | _ => 
-    let f := (fun x => x - 2) in inv_ack_wkr f (f n) 1 (n - 1)
-end.
+ match n with 0 | 1 => 0 | _ => 
+  let f := (fun x => x - 2) in inv_ack_wkr f (f n) 1 (n - 1)
+ end.
 \end{lstlisting}
 \end{mdframed} 
 \end{frame}
