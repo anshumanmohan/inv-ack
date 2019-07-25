@@ -8,9 +8,9 @@
 	Attribute & Unary & Binary Encoding \\ \hline
 	Type in Coq & \texttt{nat} & \texttt{N} \topspace{1pt} \\[6pt]
 	Number $n$ & $\Theta(n)$ bits & $\Theta\big(\log_2n\big)$ bits \\[7pt]
-	Compare $x$ and $y$ & $\Theta\big(\min\{x, y\}\big)$ time & $\Theta\big(\min\{ \log_2x, \log_2y\}\big)$ time \\[9pt]
-	$\lambda x. (x + 1)$ & $\Theta(1)$ time & Worse case: $\Theta\big(\log_2x\big)$ time \\[1pt]
-	                     &             & Amortized: $\Theta(1)$ time \\
+	Compare $x, y$ & $\Theta\big(\min\{x, y\}\big)$ time & $\Theta\big(\min\{ \log_2x, \log_2y\}\big)$ time \\[9pt]
+	Successor & \multirow{2}{*}{$\Theta(1)$ time} & Worse case: $\Theta\big(\log_2x\big)$ time \\[1pt]
+	function  &             & Amortized: $\Theta(1)$ time \\
 	                    
 \end{tabular}
 
