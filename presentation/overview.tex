@@ -222,6 +222,9 @@ Then, for $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b
 \pause 
 The hierarchical structure resembles that of \textcolor{red}{\emph{hyperoperations}}.
 
+\smallskip
+Studying hyperoperations helps in understanding the Ackermann hierarchy.
+
 %To better understand the Ackermann function as a hierarchy and this kludge, we explore the closely-related hyperoperations.
 \end{frame}
 
@@ -229,7 +232,7 @@ The hierarchical structure resembles that of \textcolor{red}{\emph{hyperoperatio
 \begin{frame}
 \frametitle{Introduction: Ackermann \emph{vs} Hyperoperation}
 
-The hyperoperations, Ackermann levels, and their \emph{inverses}:
+Treating $b$ as the main argument, we can built their \emph{upper inverses}:
 
 \begin{table}[t]
 	\begin{centermath}
@@ -241,7 +244,7 @@ The hyperoperations, Ackermann levels, and their \emph{inverses}:
 			1 & a + b & 2 + b & b - a & b - 2 \\
 			2 & a \cdot b & 2b + 3 & \left\lceil \frac{b}{a} \right\rceil & \left\lceil \frac{b-3}{2} \right\rceil \\
 			3 & a^b & 2^{b + 3} - 3 & \left\lceil \log_a ~ b \right\rceil & \left\lceil \log_2 ~ (b + 3)\right\rceil - 3 \\
-			[2pt]
+			[1pt]
 			4 & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \log^*_a ~ b & \log^*_2 ~ (b + 3) - 3
 		\end{array}
 	\end{centermath}
@@ -259,11 +262,37 @@ $\Ack_n(b) = {\color{red}2}[n](b{\color{red}+3}) {\color{red}- 3}$
 \end{frame}
 
 
-%\begin{frame}
-%\frametitle{}
-%\end{frame}
-%
-%
+\begin{frame}
+\frametitle{Introduction: Inverse Hierarchies to Inverse Ackermann}
+
+We explore the upper inverse relation:
+\begin{equation*}
+\begin{cases}
+\forall b. \forall c.\quad b \le \Ack_n(c) & \!\! \iff \ \ \alpha_n(b)\le c \\
+\forall b. \forall c. \quad b \le a[n]c & \!\! \iff \ \ a\angle{n}b \le c
+\end{cases}
+\end{equation*}
+
+\textbf{Redefine $\bm{\alpha}$:}
+$\alpha(n) = \min\{k: n\le \Ack_k(k) \} = \min\{k: \alpha_k(n)\le k \}$.
+
+\bigskip
+
+\pause
+\textbf{Computing $\bm{\alpha} $ through $\bm{\alpha_i}$!} No need to go through $\Ack$.
+
+\bigskip
+
+\pause
+\imppar{\textbf{Goal.} Build the inverse towers independent from the original towers.}
+
+\end{frame}
+
+
+
+
+
+
 %\begin{frame}
 %\frametitle{}
 %\end{frame}
