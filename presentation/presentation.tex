@@ -93,6 +93,8 @@
 \usepackage{appendixnumberbeamer}
 \usepackage{pgfplots}
 \usepackage{mdframed} %nice frames
+\usepackage{bm}
+\usepackage{multirow}
 
 \hypersetup{ % play with these to change the look of hyperlinks
 	colorlinks=true,
@@ -280,13 +282,13 @@
 %----------------------------------------------------------------------------------------
 
 \title[Inverting the Ackermann Hierarchy]{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy} % The short title appears at the bottom of every slide, the full title is only on the title page
-
 \author{Linh Tran, Anshuman Mohan, \underline{Aquinas Hobor}} % Your name
-\institute[NUS] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
-{
-National University of Singapore % Your institution for the title page
-}
-\date{\today} % Date, can be changed to a custom date
+\institute[NUS]{$\includegraphics[scale=0.45]{NUS_logo_full-horizontal.jpg}$}
+%{$\includegraphics[scale=0.33]{NUS_logo_full-horizontal.jpg}} % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+% {
+% National University of Singapore % Your institution for the title page
+% }
+\date{University College London\\ \today} % Date, can be changed to a custom date
 
 \begin{document}
 
@@ -475,30 +477,33 @@ National University of Singapore % Your institution for the title page
 %\input{discussion.tex}
 
 
-
+\section*{Conclusion}
 \begin{frame}
 \frametitle{Conclusion}
 %\frametitle{Abstract}
 %TODO: Past tense
-We implemented in Gallina a hierarchy of functions that calculate
-the upper inverses to the hyperoperation/Ackermann hierarchy.
+We inverted the hyperoperation 
+and Ackermann hierarchies \\ and implemented 
+our inverse hierarchies in Gallina.
+We used our inverses to compute the upper inverse of the 
+diagonal Ackermann function. 
 
 \bigskip
 
-Our functions run in $\Theta(b)$ for inputs expressed
-in unary, and $\bigO(b^2)$ for inputs expressed in binary ($b$ = bitlength).
+Our computations run in linear time
+-- $\Theta(b)$, where $b$=bitlength -- \\ for inputs represented in 
+both unary and binary.
 
 \bigskip
 
-We used our inverses to define linear-time functions---$\Theta(b)$ for both unary- 
-and binary-represented inputs---that compute the upper inverse of the 
-diagonal Ackermann %\linebreak[3]
-function~$\Ack(n)$. 
-
-\bigskip
-
-We showed that these functions are consistent with the usual definition of the inverse Ackermann function~$\alpha(n)$.
+We showed that these functions are consistent with the usual \\ definition of the inverse Ackermann function~$\alpha(n)$.
 \keywords{Ackermann  \and hyperoperations \and Coq}
+\end{frame}
+
+\section*{Demo}
+\begin{frame}
+\frametitle{Demo}
+We present a brief demonstration of our time bounds in Coq.
 \end{frame}
 
 \newcounter{totalframenumber}
