@@ -1,0 +1,299 @@
+Thus far we have used the Coq type \li{nat}, which represents
+a number~$n$ using~$n$ bits.
+The binary system represents~$n$ in $\lfloor \log_{2} n \rfloor + 1$ bits.
+In both systems, addition/subtraction of $b$-bit
+numbers is $\Theta(b)$, while multiplication is $\Theta \big(b^2\big)$.
+In general, arithmetic operations are often faster when the inputs
+are encoded in binary\footnote{We put a further explanation of
+Coq's binary type \li{N} in Appendix~\ref{apx:bin_in_coq}.}.
+This advantage also extends to our techniques.
+
+Our codebase has binary versions of
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_repeater.v\#L78-L87}{hyperoperations},
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_applications.v\#L30-L36}{inverse hyperoperations},
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_repeater.v\#L157-L175}{Ackermann}, and
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v\#L335-L342}{inverse Ackermann}.
+Here we show how to compute inverse Ackermann for binary inputs in
+$\Theta(b)$ time, where $b$ is the bitlength,
+\emph{i.e.} logarithmic time in the input magnitude.
+As before, we present an intuitive sketch here and put
+full proofs in Appendix~\ref{apx:time_analysis_bin}.
+
+\begin{rem}
+Although we do not prove it here, our general binary inverse hyperoperations are $O(b^2)$ time,
+since Ackermann and base-2 hyperoperations benefit from $\Theta(1)$ division via bitshifts,
+whereas general division is $O(b)$.
+\end{rem}
+
+\subsection{Countdown and contractions with binary numbers}
+
+\renewcommand{\Tleb}{\runtime_{\li{N.leb}}}
+\renewcommand{\Tsucc}{\runtime_{\li{N.succ}}}
+
+Although the theoretical \emph{countdown} is independent of the encoding
+of its inputs, its Coq definition needs to be adjusted to allow for inputs
+in \li{N}. The first step is to translate the arguments of
+\li{countdown\_worker} from \li{nat} to \li{N}. Budget \li{b} must
+remain in \li{nat} so it can serve as Coq's termination argument,
+but all other \li{nat} arguments should be changed
+to \li{N}, and functions on \li{nat} to functions on \li{N}.
+% Linked by A
+%\begin{lstlisting}
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L104-L109}{Fixpoint bin\_cdn\_wkr}` (f : N -> N) (a n : N) (b : nat) : N :=
+%  match b with O => 0 | S b' =>
+%    if (n <=? a) then 0 else 1 + bin_cdn_wkr f a (f n) b'
+%  end.
+%\end{lstlisting}
+% Edited by Linh
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L104-L109}{Fixpoint bin\_cdn\_wkr}` f a n b : N :=
+  match b with O => 0 | S b' =>
+    if (n <=? a) then 0
+      else 1 + bin_cdn_wkr f a (f n) b'
+  end.
+\end{lstlisting}
+
+Determining the budget for \li{bin\_countdown\_to} is tricky.
+A naïve approach is to use the \li{nat} translation of \li{n},
+\emph{i.e.} \li{N.to_nat n}. This is untenable as it alone
+takes exponential time \emph{viz} the length of $n$'s representation.
+We need a linear-time budget calculation for countdowns
+of oft-used functions like $\lambda n.(n-2)$.
+
+The key is to focus on functions that can bring their arguments below a threshold via repeated application in
+\emph{logarithmic} time, thus allowing a log-sized budget for
+\li{bin\_cdn\_wkr}. Simply shrinking by~$1$ is no longer good enough;
+we need to halve the argument on every application as shown below:
+\begin{defn} \label{defn: bin-contraction}
+	$f\in \contract$ is
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L37-L41}{\emph{binary strict above}}
+	$a\in \mathbb{N}$ if $\forall n > a, f(n) \le \lfloor \frac{n + a}{2} \rfloor$.
+\end{defn}
+The key advantage of binary strict contractions is that if a contraction $f$ is binary strict above some $a$, then
+$\forall n > a, \forall k.~f(n) \le \left\lfloor \frac{n - a}{2^k} \right\rfloor + a$.
+Therefore within $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than~$a$. We can choose this number as the budget for \li{bin\_cdn\_wkr} to successfully reach the countdown value before terminating.
+Note that this budget is simply the length of the binary representation
+of \li{n - a}, which we calculate using our function
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_prelims.v#L135-L143}{\li{nat\_size}}. % Linked by A
+The Coq definition of countdown on \li{N} is:
+\hide{
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_prelims.v#L135-L143}{Definition nat\_size}` (n : N) : nat :=
+  match n with
+  | 0 => 0%nat
+  | Npos p => let fix nat_pos_size (x : positive) : nat :=
+                  match x with
+                  | xH => 1%nat
+                  | xI y | xO y => S (nat_pos_size y)
+                  end
+              in nat_pos_size p
+  end.
+\end{lstlisting}
+Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the size of its binary representation, thus equals to $\lfloor \log_{2} m \rfloor + 1$.
+}% end hide
+% Linked by A
+%\begin{lstlisting}
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L111-L112}{Definition bin\_countdown\_to}` (f : N -> N) (a n : N) : N :=
+%  bin_cdn_wkr f a n (nat_size (n - a)).
+%\end{lstlisting}
+% Edited by Linh
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L111-L112}{Definition bin\_countdown\_to}` f a n :=
+bin_cdn_wkr f a n (nat_size (n - a)).
+\end{lstlisting}
+
+\noindent The following is the binary version of Lemma~\ref{lem: cdt-runtime}:
+%\begin{lem} \label{lem: cdt-runtime-bin}
+%	$\forall n \in \li{N}$, if $f$ is a binary strict contraction above $a$,
+%	\begin{equation*}
+%	\runtime_{\cdt{f}{a}}(n) \le \sum_{i=0}^{\cdt{f}{a}(n) - 1} \hspace{-6pt}
+%	\runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \ + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
+%	\end{equation*}
+%\end{lem}
+% Edited by Linh
+\begin{lem} \label{lem: cdt-runtime-bin}
+	$\forall n \in \li{N} \ \forall a\in \li{N}$, if $f$ is a binary strict contraction above $a$,
+	\begin{equation*}
+	\begin{aligned}
+	\runtime_{\cdt{f}{a}}(n) \ \le \ & \sum_{i=0}^{\cdt{f}{a}(n) - 1} \hspace{-6pt}
+	\runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \\ & + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
+	\end{aligned}
+	\end{equation*}
+\end{lem}
+
+%Substituting $a=1$ into \eqref{eq: cdt-runtime-bin} shows that \Cref{lem: inv-ack-hier-runtime} still holds.
+%Similar to \Cref{sect: hardcode-lvl2}, the use of binaries is not immediately effective since the first level. We delve deeper into the hierarchy by \emph{hardcoding the $3^{\text{th}}$ level} and starts from there. Now
+%\begin{equation*}
+%\forall n, n+2  < n+3 < 2(n+2) \iff \forall n,
+%\lfloor \log_2(n+2) \rfloor < \lceil \log_2(n+3) \rceil \le \lfloor \log_2(n+2) \rfloor + 1
+%\end{equation*}
+%This shift from floor to ceiling enables a direct computation, since $\lceil \log_2(n+3) \rceil$ can now be seen as the size of $(n+2)$'s binary representation.
+%\begin{lstlisting}
+%Definition alpha3 (n: N) : N := N.size (n+2) - 3.
+%\end{lstlisting}
+%Let $n\ge 2$. The computation of \li{N.size(n)} takes time equal to itself, so the above definition gives $\runtime(\alpha_3, n) \le 2\log_2n$. Fix an $i\ge 3$ and suppose $\runtime(\alpha_i, n) \le C_i\log_2n$. By \Cref{lem: inv-ack-hier-runtime},
+\subsection{Inverse Ackermann in $\bigO\left(\log_2 n\right)$ time, where $n$ is magnitude}
+Our new Coq definition computes countdown
+only for strict binary contractions. Fortunately, starting
+from $n = 2$, the inverse hyperoperations $a\angle{n}b$ when $a\ge 2$
+and the inverse Ackermann hierarchy $\alpha_n$ are all strict binary contractions.
+We can construct these hierarchies by hardcoding their
+first three levels and recursively building higher levels with \li{bin\_countdown\_to}.
+Furthermore,
+analagously to the optimization for \li{nat} discussed in~\S\ref{sect: hardcode-lvl2}, we hardcode an additional level.
+% Linked by A
+%\begin{lstlisting}
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L55-L60}{Fixpoint bin\_alpha}` (m : nat) (x : N) : N :=
+%  match m with
+%  | 0%nat => x - 1          | 1%nat => x - 2
+%  | 2%nat => N.div2 (x - 2) | 3%nat => N.log2 (x + 2) - 2
+%  | S m'  => bin_countdown_to (bin_alpha m') 1 (bin_alpha m' x)
+%  end.
+%\end{lstlisting}
+% Edited by Linh
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L55-L60}{Fixpoint bin\_alpha}` (m : nat) (x : N) : N :=
+  match m with
+  | 0%nat => x - 1          | 1%nat => x - 2
+  | 2%nat => N.div2 (x - 2) | 3%nat => N.log2 (x + 2) - 2
+  | S m'  => bin_countdown_to
+             (bin_alpha m') 1 (bin_alpha m' x)
+  end.
+\end{lstlisting}
+Note that for all $x$, $\li{N.div2}(x - 2) = \left\lfloor \frac{x - 2}{2} \right\rfloor = \left\lceil \frac{x - 3}{2} \right\rceil$ and $\li{N.log2}(x + 2) - 2 = \left\lfloor \log_2(x+2) \right\rfloor - 2 = \left\lceil \log_2(x+3) \right\rceil - 3$, so the above Coq definition is correct.
+
+%\begin{thm} \label{thm: inv-ack-runtime-bin}
+%	$\forall i,~\forall n,~\runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i$.
+%\end{thm}
+% Edited by Linh
+\begin{thm} \label{thm: inv-ack-runtime-bin}
+	For all $i$ and $n$,
+	\begin{equation*}
+	\runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i.
+	\end{equation*}
+\end{thm}
+
+\noindent For any level of the Ackermann hierarchy, this theorem demonstrates
+a linear computation time up to the size of the representation of the input, \emph{i.e.} logarithmic time up to its magnitude $n$:
+$\runtime_{\alpha_i}(n) = \bigO\big(\log_2n + 2^i\log_2\log_2n \big)$.
+
+Moving on to inverse Ackermann itself, we follow a style nearly identical to that
+in~\S\ref{subsec: inv_ack_hier}. For the worker, we simply translate to
+\li{N}, keeping the budget in \li{nat} as described earlier.
+The inverse Ackermann has an extra hardcoded level.
+% Linked by A
+%\begin{lstlisting}
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L326-L333}{Fixpoint bin\_inv\_ack\_wkr}` (f : N -> N) (n k : N) (b : nat) : N :=
+%  match b with 0%nat  => k | S b' => if n <=? k then k else
+%    let g := (bin_countdown_to f 1) in
+%      bin_inv_ack_wkr (compose g f) (g n) (N.succ k) b'
+%  end.
+%
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L335-L342}{Definition bin\_inv\_ack}` (n : N) : N :=
+%  if (n <=? 1) then 0 else if (n <=? 3) then 1
+%    else if (n <=? 7) then 2 else
+%      let f := (fun x => N.log2 (x + 2) - 2) in
+%        bin_inv_ack_wkr f (f n) 3 (nat_size n).
+%\end{lstlisting}
+% Edited by Linh
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L326-L333}{Fixpoint bin\_inv\_ack\_wkr}` f n k b :=
+  match b with 0%nat => k | S b' =>
+    if n <=? k then k else
+      let g := (bin_countdown_to f 1) in
+        bin_inv_ack_wkr
+          (compose g f) (g n) (N.succ k) b'
+  end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L335-L342}{Definition bin\_inv\_ack}` n :=
+  if (n <=? 1) then 0 else if (n <=? 3) then 1
+    else if (n <=? 7) then 2 else
+      let f := (fun x => N.log2 (x + 2) - 2) in
+        bin_inv_ack_wkr f (f n) 3 (nat_size n).
+\end{lstlisting}
+% Fixpoint bin_inv_ack_worker (f : N -> N) (n k : N) (b : nat) : N :=
+%   match b with
+%   | 0%nat  => k
+%   | S b' => if n <=? k then k
+%             else let g := (bin_countdown f 1) in
+%                  bin_inv_ack_worker (compose g f) (g n) (N.succ k) b'
+%   end.
+
+% Definition bin_inv_ack (n : N) : N :=
+%   if (n <=? 1) then 0
+%   else if (n <=? 3) then 1
+%        else if (n <=? 7) then 2
+%             else let f := (bin_alpha 3) in
+%                  bin_inv_ack_worker f (f n) 3 (nat_size n).
+\noindent Note that, for $n > 7$, $n < \Ack\big(\lfloor \log_2n \rfloor + 1\big)$ $= \Ack\big(\li{nat_size}(n)\big)$, so a budget of $\li{nat_size}(n)$ suffices.
+We show the
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L437-L472}
+{correctness} and
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_test.v#L14-L26}
+{benchmark}
+of \li{bin_inv_ack} in our codebase, and
+give a standalone Coq definition in Appendix~\ref{apx:code_n}.
+As in Theorem~\ref{thm: inv-ack-hardcode-correct}, the time complexity is the sum of each component's runtime:
+%\begin{equation*}
+%\runtime_\alpha(n) =
+%\begin{aligned}
+%& \ \runtime_{\alpha_3}(n)
+%+ \sum_{k = 3}^{\alpha(n) - 1} \hspace{-5pt} \runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n))
+%+ \sum_{k = 3}^{\alpha(n)}\Tleb\left(\alpha_k(n), k\right)
+%+ \sum_{k = 3}^{\alpha(n) - 1} \hspace{-5pt} \Tsucc(k)\\
+%& \ + \ \runtime_{\li{nat_size}}(n)
+%\ + \Tleb(n, 1) \ + \Tleb(n, 3) \ + \Tleb(n, 7)
+%\end{aligned}
+%\end{equation*}
+% Edited by Linh
+\begin{equation*}
+\runtime_\alpha(n) =
+\begin{aligned}
+& \ \runtime_{\alpha_3}(n)
++ \sum_{k = 3}^{\alpha(n) - 1} \hspace{-5pt} \runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n))
++ \sum_{k = 3}^{\alpha(n)}\Tleb\left(\alpha_k(n), k\right) \\
+& \ + \sum_{k = 3}^{\alpha(n) - 1} \hspace{-5pt} \Tsucc(k)
+\ + \ \runtime_{\li{nat_size}}(n) \\
+& \ + \Tleb(n, 1) \ + \ \Tleb(n, 3) \ + \ \Tleb(n, 7)
+\end{aligned}
+\end{equation*}
+With reference to Lemmas \ref{lem: compose-runtime} (Appendix~\ref{apx:time_analysis}), \ref{lem: leb-runtime-bin} and \ref{lem: succ-runtime-bin} (Appendix~\ref{apx:time_analysis_bin}), we have:
+In the second summand, $\runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n)) = \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ for each $k$ by Lemma~\ref{lem: compose-runtime}.
+By Lemma~\ref{lem: leb-runtime-bin}, each $\Tleb$ in the third summand is $\Theta\left(\log_2k\right)$, totalling $\bigO\big(\alpha(n)\log_2\alpha(n)\big) = \text{o}\big(\log_2n\big)$.
+The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by Lemma~\ref{lem: succ-runtime-bin}. The remaining items total $\Theta(\log_2n)$. Thus, $\forall n\ge 8$:
+%\begin{equation*}
+%\begin{aligned}
+%\runtime_\alpha(n)
+%& = \runtime_{\alpha_3}(n)
+%+ \sum_{k = 3}^{\alpha(n) - 1} \big(\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_{k}}(n)\big) + \Theta\left(\log_2 n\right)
+%= \runtime_{\alpha_{\alpha(n)}}(n) + \Theta\big(\log_2 n\big) \\
+%& = \bigO\big(\log_2n + 2^{\alpha(n)}\log_2\log_2n \big) + \Theta\big(\log_2n\big)
+%= \Theta\big(\log_2n\big)
+%\end{aligned}
+%\end{equation*}
+% Edited by Linh
+\begin{equation*}
+\begin{aligned}
+\runtime_\alpha(n)
+& = \runtime_{\alpha_3}(n)
++ \sum_{k = 3}^{\alpha(n) - 1} \big(\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_{k}}(n)\big) + \Theta\left(\log_2 n\right) \\
+& = \runtime_{\alpha_{\alpha(n)}}(n) + \Theta\big(\log_2 n\big) \\
+& = \bigO\big(\log_2n + 2^{\alpha(n)}\log_2\log_2n \big) + \Theta\big(\log_2n\big)
+= \Theta\big(\log_2n\big)
+\end{aligned}
+\end{equation*}
+
+\renewcommand{\Tleb}{\runtime_{\li{leb}}}
+\renewcommand{\Tsucc}{\runtime_{\li{succ}}}
+
+%We bound the RHS by bounding $\runtime\left(\alpha_{\alpha(n)}(n)\right)$, and $\runtime\left(\alpha_i(n)\right)$ in general. Note that by $\alpha_2(n) = \left\lfloor \frac{n - 2}{2} \right\rfloor$, we have $\runtime(\alpha_2, n) \le 2\log_2 n$ for all $n$.
+%Note that this bound can potentially be improved by further tightening the above inequalities. Although we do not obtain an exact asymptotic runtime similar
+%to Theorem~\ref{thm: inv-ack-hier-runtime-improved}, since this bound of $4^{\alpha(n)}\log_2n$ is strictly larger than the lower bound of $\log_2n$, it is still extremely small and can be bounded by simpler expressions such as $(\log_2n)^2$.
+%Our result is an improved version of the inverse Ackermann function which runs in time $\bigO\big(4^{\alpha(n)}\log_2n\big)$.
+%\begin{equation*}
+%\alpha(n) \triangleq \begin{cases}
+%0 & \text{if } n\le 1\\ 1 & \text{if } 2\le n\le 3 \\ 2 & \text{if } 4\le n\le 7 \\
+%\W\alpha\left(\alpha_3,
+%\alpha_3(n), 3, n\right) & \text{if } n\ge 8
+%\end{cases} \quad \text{ where } \alpha_3 \triangleq \lambda m. \big(\lfloor \log_2(m+2) \rfloor - 2\big)
+%\end{equation*} 

@@ -1,0 +1,198 @@
+We show that the inverse Ackermann from 
+Definition~\ref{defn: inv-ack-hier} runs in~$\Omega(n^2)$ 
+under a call-by-value strategy, and in $O(n)$
+after a simple optimization.
+To give intuition and remain accessible to readers, we 
+present a detailed sketch via lemma statements.
+We put full proofs of these lemmas in Appendix~\ref{apx:time_analysis}.
+We elide the parallel analysis for the inverse hyperoperations, 
+which have simpler initial values. % but are otherwise similar.
+
+\textbf{N.B.} For this section,
+all of our functions take inputs in \li{nat}, \emph{i.e.} in
+unary encoding.  In \S\ref{sec: binary} we will move to functions
+operating on \li{N}, \emph{i.e.} in binary encoding.
+
+%\footnote{We will be careful not to conclude that functions
+%$f$ and $g$ are equal when they agree on all inputs but are computed with
+%different pieces of code.} 
+% momentarily forget about the axiom of extensionality and 
+%To formalize runtime, we tag each function $f$ 
+%with its \emph{computation}, \emph{i.e.} the program that computes 
+%it in Coq .
+
+\begin{defn}
+ For a function $f$ on $k$ variables, the \emph{runtime} of $f$, denoted by $\runtime_f\big(n_1, n_2, \ldots, n_k\big)$, counts the computational steps to compute $f(n_1, n_2, \ldots, n_k)$.
+\end{defn}
+The next lemma establishes the general runtime structure of \emph{countdown} when its input is encoded in \li{nat}.
+\begin{lem} \label{lem: cdt-runtime}
+	% in the unary encoding system, \emph{i.e.} the type \li{nat} in Coq, 
+	$\forall a\ge 1,~\forall n \in \li{nat},~\forall f\in \contract_{a}$,
+	\begin{equation*}
+	\runtime_{\cdt{f}{a}}(n) =
+	\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
+	+ (a + 2)\cdt{f}{a}(n) + f^{\left(\cdt{f}{a}(n)\right)}(n) + 1
+	\end{equation*}
+\end{lem}
+
+\subsection{A na\"ive $\alpha_i$ on \li{nat} is $\Omega(n^2)$, and is $O(n)$ after optimization} \label{sect: hardcode-lvl2}
+
+\noindent We start with the following lemma about the running time of each $\alpha_i$, which is a consequence of Lemma~\ref{lem: cdt-runtime}. Its full proof can be found in Appendix~\ref{apx:time_analysis}.
+\begin{lem} \label{lem: inv-ack-hier-runtime}
+	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier},
+	\begin{equation*}
+	\runtime_{\alpha_{i+1}}(n) = \sum_{k=0}^{\alpha_{i+1}(n)}\runtime_{\alpha_i}\left( \alpha_i^{(k)}(n)\right) + 3\alpha_{i+1}(n) + C_i(n),
+	\end{equation*}
+	where $\forall i, n.~C_i(n) \triangleq \alpha_i^{(\alpha_{i+1}(n) + 1)}(n) + 1 \in \{1, 2\}$
+\end{lem}
+Crucially, this lemma implies $\runtime_{\alpha_{i+1}}(n) \ge 
+\runtime_{\alpha_i}(n)$. 
+Given some index $i$ such that $\runtime_{\alpha_i}(n) = \Omega\big(n^2\big)$, each function after $\alpha_i$ in the hierarchy will take at least $\Omega\big(n^2\big)$, thus making $\runtime_{\alpha_i} (n) = \Omega\big(n^2\big)$.
+% per Definition~\ref{defn: inv-ack-worker}. 
+In fact, $i = 2$ suffices.
+\begin{lem} \label{lem: alpha2_runtime_naive}
+	$\forall i\ge 2.~\runtime_{\alpha_i}(n) = \Omega\big(n^2\big)$.
+\end{lem}
+
+%This lemma implies $\runtime\big(\cdt{f}{a}\ , n\big) \ge \runtime(f, n)$. If for some $i$, $\runtime\big(2\angle{i}, n\big) = \Theta\big(n^2\big)$, the entire hierarchy will take at least $\Omega\big(n^2\big)$ from $2\angle{i}$, thus making $\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}. The next lemma shows $i = 2$ suffices.
+%\begin{lem}
+%	Per \cref{defn: inv-hyperop}, $\runtime\big(2\angle{2}, n\big) = \Omega\big(n^2\big) \ \forall n$.
+%\end{lem}
+%\begin{proof}
+%	Since $2\angle{1} = \cdt{\lambda m.(m-1)}{2}\ \equiv \lambda m.(m - 2)$, by \cref{lem: cdt-runtime},
+%	$$ \runtime\big(2\angle{1}, n\big) = \sum_{i=0}^{n-2} \runtime\big(\lambda m.(m-1), n - i\big) + \Omega\big(3(n-2)\big) = \Omega(n) $$
+%	, since $\runtime\big(\lambda m.(m-1), k\big) = 1 \ \forall k$. Since $2\angle{2} = \cdt{2\angle{1}}{0}\ $, again by \cref{lem: cdt-runtime},
+%	$$ \runtime\big(2\angle{2}, n\big)
+%	= \sum_{i=0}^{\lceil n/2 \rceil} \runtime \big(2\angle{1}, n-2i\big) + \Omega\left(\frac{n}{2}\right)
+%	= \Omega\left( \sum_{i=0}^{\lceil n/2 \rceil}(n - 2i) \right)
+%	= \Omega\big(n^2\big) $$
+%	The proof is complete.
+%\end{proof}
+%\begin{col}
+%	$\runtime(\alpha, n) = \Omega\big(n^2\big)$ per \cref{defn: inv-ack-worker}.
+%\end{col}
+%Intuitively, the function $2\angle{1} \equiv \lambda n.(n-2)$ is responsible for dragging the whole hierarchy's performance due to one silly weakness: its does not know it will always output $n-2$ before beginning its computation, hence needs to tediously subtract $1$ until it goes below $2$. This observation leads to the next improvement.
+
+\begin{rem} \label{rem: inv-ack-hardcode}
+Although $\alpha_1 (n)$ always returns $n-2$, it gets to this answer
+via $\Theta$(n) steps due to the nature of \emph{countdown}.
+This hurts the performance of the entire hierarchy. 
+%This observation leads to the next improvement.
+We can hardcode $\alpha_1$ as $\lambda n.(n-2)$ to reduce its runtime
+from $\Theta(n)$ to $\Theta(1)$.
+\hide{\begin{lstlisting}
+Definition sub_2 (n : nat) : nat :=
+  match n with | 0 => 0 | 1 => 1 | S (S n') => n' end.
+\end{lstlisting}}%end hide
+%Without loss of generality, let us henceforth assume that the constant factors in $\runtime(\alpha_1, n)$ and Lemma~\ref{lem: inv-ack-hier-runtime} are both $1$.
+The runtime for $\alpha_2$ can thus be bounded to $\bigO(n)$ as follows:
+%\begin{equation*}
+%\runtime_{\alpha_2}(n)
+% \le \textstyle \sum_{i=0}^{\left\lceil \frac{n-3}{2} \right\rceil} \runtime_{\alpha_1}\big(n-2i\big) + 3\left\lceil \frac{n-3}{2} \right\rceil + 2  =  4\left\lceil \frac{n-3}{2} \right\rceil + 2
+% \le 2n - 2 = \bigO(n)
+%\end{equation*}
+% Edited by Linh
+\begin{equation*}
+\begin{aligned}
+\runtime_{\alpha_2}(n)
+& \ \le \ \textstyle \sum_{i=0}^{\left\lceil \frac{n-3}{2} \right\rceil} \runtime_{\alpha_1}\big(n-2i\big) + 3\left\lceil \frac{n-3}{2} \right\rceil + 2  =  4\left\lceil \frac{n-3}{2} \right\rceil + 2 \\
+& \ \le\ 2n - 2 \ = \ \bigO(n)
+\end{aligned}
+\end{equation*}
+Note that the above bound only applies for $n\ge 2$. When $n\le 1$, the LHS is 1.
+\end{rem}
+
+\noindent This simple optimization cascades through the entire hierarchy:
+we can now prove a bound of $\bigO(n)$ for every level.
+Hardcoding $\alpha_1$ as $\lambda n.(n-2)$ gives the $i$th level of the inverse Ackermann hierarchy in $\bigO\big(n + 2^i\log n  + i\big)$ time.
+%\begin{thm} \label{thm: inv-ack-hier-runtime-improved}
+%	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$.
+%\end{thm}
+\begin{thm} \label{thm: inv-ack-hier-runtime-improved}
+	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, we have $\forall i$,
+	\begin{equation*}
+	\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n).
+	\end{equation*}
+\end{thm}
+
+\subsection{Running time of $\alpha$ on \li{nat}} %\label{sect: hardcode-lvl2}
+
+A linear-time calculation of the inverse Ackermann hierarchy 
+leads to a similarly efficient calculation of the inverse Ackermann 
+function itself. We present $\tilde{\alpha}(n)$ below,  
+and also put a minimal standalone Coq definition for it in Appendix~\ref{apx:code}.
+\hide{
+We redefine $\alpha$ once again, hardcoding the output 
+when $n\le 1 = \Ack(0)$, and starting $\alpha^{\mathcal{W}}$ with 
+$f = \alpha_1$ and $n = \alpha_1(n)$.
+For $n > 1$, $1\le \min\big\{n-1, \alpha_1(n)\big\}$. So
+$\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big) =
+\alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-~1\big)$.
+Thus $\tilde{\alpha}(n)$, defined below, equals $\alpha(n)$ and our alternate definition is reasonable.
+
+\begin{equation*}
+\tilde{\alpha}(n) = \begin{cases}
+0 & \text{ if } n \le 1 \\ \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2
+\end{cases}
+\end{equation*}
+
+Let us consider the complexity of this definition.
+At each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of the following computations. 
+Firstly, calculate $\cdt{\big(\alpha_k\big)}{1}(x)$ given $x\triangleq \alpha_k(n)$, taking time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ (by Lemma~\ref{lem: compose-runtime}). Next, calculate $\alpha_k(n) - k$, taking time $\bigO(k)$.
+
+The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
+\begin{equation} %\label{eq: inv-ack-runtime-improved}
+\begin{aligned}
+\runtime_{\tilde{\alpha}}(n)
+& = \textstyle \runtime_{\alpha_1}(n) + \sum_{k=1}^{\alpha(n) - 1}
+\left[ \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)
+\right] + \sum_{k=1}^{\alpha(n)}\bigO(k) \\
+& = \runtime_{\alpha_{\alpha(n)}}\left(n\right) + \bigO\left(\alpha(n)^2\right)
+= \bigO\left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2\right) = \bigO(n)
+\end{aligned}
+\end{equation}
+}%end hide
+%
+%\begin{defn} \label{defn: inv-ack-hardcode}
+%	Define 
+%	$\tilde{\alpha}(n) = \begin{cases}
+%	0 & \text{ if } n \le 1 \\ \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2
+%	\end{cases}$
+%\end{defn}
+\begin{defn} \label{defn: inv-ack-hardcode}
+	% Define Edited by Linh
+	$\tilde{\alpha}(n) = \begin{cases}
+	0 & \text{ if } n \le 1 \\ \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n-1\big) & \text{ if } n \ge 2
+	\end{cases}$
+\end{defn}
+
+% Linked by Linh
+\begin{thm} \label{thm: inv-ack-hardcode-correct}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L329-L337}{\coq
+	%\footnote{The link only contains the proof of correctness and not the running time}
+}
+	$\forall n.~\tilde{\alpha}(n) = \alpha(n)$
+	\; and \;
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_test.v#L5-L10}{\coq (benchmark)}
+	$\runtime_{\tilde{\alpha}}(n) = \bigO(n)$.
+\end{thm}
+
+\begin{proof}
+	% Consider the correctness of $\tilde{\alpha}(n)$. Edited by Linh
+	In terms of correctness, the cases $n = 0, 1$ are trivial. For $n > 1 = \Ack(0)$, $\alpha_1(n) > 1$ and $n - 1 > 0$, so $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n - 1\big)$ by Definition~\ref{defn: inv-ack-worker}. Theorem~\ref{thm: inv-ack-worker-correct} then implies $\tilde{\alpha}(n) = \alpha(n)$.	
+	
+  % Consider the time complexity of $\tilde{\alpha}(n)$. Edited by Linh
+	Complexity-wise, at each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of two steps:
+	First, calculation of $\li{leb}\big(\alpha_k(n), k\big)$, which takes no more than $k + 1$ steps (as shown in Appendix~\ref{apx:time_analysis} Lemma~\ref{lem: leb-runtime}). Second, calculation of $\alpha_{k+1}(n) = \cdt{\alpha_k)}{1}(x)$ given $x\triangleq \alpha_k(n)$, which takes time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ (as shown in Appendix~\ref{apx:time_analysis} Lemma~\ref{lem: compose-runtime}).
+	The computation will terminate at $k = \alpha(n)$. Thus, $\forall n\ge 1$,
+	\begin{equation*} %\label{eq: inv-ack-runtime-improved}
+	\begin{aligned}
+	\runtime_{\tilde{\alpha}}(n)
+	& \le \textstyle \runtime_{\alpha_1}(n) + \sum_{k=1}^{\alpha(n) - 1}
+	\left[ \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)
+	\right] + \sum_{k=1}^{\alpha(n)}(k + 1) \\
+	& \le \runtime_{\alpha_{\alpha(n)}}\left(n\right) + \alpha(n)^2
+	= \bigO\left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2\right) = \bigO(n)
+	\end{aligned}
+	\end{equation*}
+\end{proof}

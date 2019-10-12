@@ -1,0 +1,712 @@
+% \vspace{-1.25em} Edited by Linh
+\section{Standalone Linear-Time Inverse Ackermann $\alpha$ in \li{nat}}
+\label{apx:code}
+
+\vspace{-1em}
+\lstset{style=myTinyStyle}
+% Linked by A
+%\begin{lstlisting}
+%
+%Require Import Omega Program.Basics.
+%
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L6-L11}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
+%  match b with 0 => 0 | S b' =>
+%    if (n <=? a) then 0 else S (cdn_wkr f a (f n) k')
+%  end.
+%
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L14}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
+%
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L32-L38} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
+%  match b with 0 => 0 | S b' =>
+%    if (n <=? k) then k else let g := (countdown_to f 1) in
+%                        inv_ack_wkr (compose g f) (g n) (S k) b
+%  end.
+%
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L42-L46}{Definition inv\_ack\_linear}` n :=
+%  match n with 0 | 1 => 0 | _ => 
+%    let f := (fun x => x - 2) in inv_ack_wkr f (f n) 1 (n - 1)
+%  end.
+%\end{lstlisting}
+% Edited by Linh
+\begin{lstlisting}
+
+Require Import Omega Program.Basics.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L6-L11}{Fixpoint cdn\_wkr}` a f n b :=
+  match b with 0 => 0 | S b' =>
+    if (n <=? a) then 0
+      else S (cdn_wkr f a (f n) k')
+  end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L14}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L32-L38} {Fixpoint inv\_ack\_wkr}` f n k b :=
+  match b with 0 => 0 | S b' =>
+    if (n <=? k) then k
+      else let g := (countdown_to f 1) in
+        inv_ack_wkr (compose g f) (g n) (S k) b
+  end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L42-L46}{Definition inv\_ack\_linear}` n :=
+  match n with 0 | 1 => 0 | _ => 
+    let f := (fun x => x - 2) in
+      inv_ack_wkr f (f n) 1 (n - 1)
+  end.
+\end{lstlisting}
+
+
+
+\section{Standalone Linear-Time Inverse Ackermann $\alpha$ in \li{N}}
+\label{apx:code_n}
+
+%linked by A
+%\begin{lstlisting}
+%Require Import Omega Program.Basics.
+%Open Scope N_scope.
+%
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L56-L64}{Definition nat\_size}` (n : N) : nat :=
+%  match n with
+%  | 0 => 0%nat
+%  | Npos p => let fix nat_pos_size (x : positive) : nat :=
+%                  match x with
+%                  | xH => 1%nat
+%                  | xI y | xO y => S (nat_pos_size y) end
+%                  in nat_pos_size p
+%  end.
+%
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L67-L72}{Fixpoint bin\_cdn\_wkr}` (f : N -> N) (a n : N) (b : nat) : N :=
+%  match b with
+%  | O    => 0
+%  | S b' => if (n <=? a) then 0
+%             else 1 + bin_cdn_wkr f a (f n) b'
+%  end.
+%
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L75-L76}{Definition bin\_countdown\_to}` (f : N -> N) (a n : N) : N := 
+%  bin_cdn_wkr f a n (nat_size (n - a)).
+%
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L97-L104}{Fixpoint bin\_inv\_ack\_wkr}` (f : N -> N) (n k : N) (b : nat) : N :=
+%  match b with 0%nat => k | S b' => 
+%    if n <=? k then k else 
+%      let g := (bin_countdown_to f 1) in
+%        bin_inv_ack_wkr (compose g f) (g n) (N.succ k) b'
+%  end.
+%
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L111-L116}{Definition bin\_inv\_ack}` n :=
+%  if (n <=? 1) then 0 else if (n <=? 3) then 1
+%    else if (n <=? 7) then 2 else 
+%      let f := (fun x => N.log2 (x + 2) - 2) in
+%        bin_inv_ack_wkr f (f n) 3 (nat_size n).
+%\end{lstlisting}
+% Edited by Linh
+\begin{lstlisting}
+Require Import Omega Program.Basics.
+Open Scope N_scope.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L56-L64}{Definition nat\_size}` n :=
+  match n with
+  | 0 => 0%nat
+  | Npos p =>
+      let fix nat_pos_size (x : positive) : nat :=
+        match x with xH => 1%nat
+        | xI y | xO y => S (nat_pos_size y) end
+      in nat_pos_size p
+  end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L67-L72}{Fixpoint bin\_cdn\_wkr}` f a n b :=
+  match b with
+  | O    => 0
+  | S b' => if (n <=? a) then 0
+    else 1 + bin_cdn_wkr f a (f n) b'
+  end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L75-L76}{Definition bin\_countdown\_to}` f a n := 
+bin_cdn_wkr f a n (nat_size (n - a)).
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L97-L104}{Fixpoint bin\_inv\_ack\_wkr}` f n k b :=
+  match b with 0%nat => k | S b' => 
+    if n <=? k then k else 
+      let g := (bin_countdown_to f 1) in
+        bin_inv_ack_wkr
+          (compose g f) (g n) (N.succ k) b'
+  end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L111-L116}{Definition bin\_inv\_ack}` n :=
+  if (n <=? 1) then 0 else if (n <=? 3) then 1
+    else if (n <=? 7) then 2 else 
+      let f := (fun x => N.log2 (x + 2) - 2) in
+    bin_inv_ack_wkr f (f n) 3 (nat_size n).
+\end{lstlisting}
+\lstset{style=myStyle}
+
+\vspace{1em}
+\section{Proofs of Correctness for Worker Functions}
+\label{apx:proof_correct_worker}
+
+\subsection{Countdown Worker}
+\label{apx:proof_correct_countdown_worker}
+This subsection provides the fully detailed proof of Theorem~\ref{thm: cdt-repeat}, which states that the function in Definition~\ref{defn: countdown} correctly computes the countdown value as defined in Definition~\ref{defn: informal-countdown}.
+% Linked by Linh
+\begin{usethmcounterof}{thm: cdt-repeat}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L162-L189}{\coq}
+	$	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
+\end{usethmcounterof}
+We begin with a lemma demonstrating the internal working of \emph{countdown worker} at the $i^\text{th}$ recursive step, including the accumulated result $1+i$, the current input $f^{(1+i)}(n)$, and the current budget $b-i-1$.
+
+\begin{lem} \label{lem: cdt-intermediate}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L162-L189}{\coq}
+	$\forall a, n, b, i \in \mathbb{N}.~\forall f \in \contract$.~such that $i < b$ and $a < f^{(i)}(n)$:~
+	\begin{equation}  \label{eq: cdt-intermediate}
+	\cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{(1+i)}(n), b - i - 1\right)
+	\end{equation}
+\end{lem}
+\begin{proof}
+	Fix $a$. We proceed by induction on $i$. Define $P(i)$ as
+	\begin{equation*}
+	\begin{aligned}
+	P(i) \triangleq \forall b,&~\forall n. b\ge i+1 \Rightarrow f^{(i)}(n) > a \Rightarrow \\
+	 & \cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{(1+i)}(n), b - i - 1\right)
+	\end{aligned}
+	\end{equation*}
+	\begin{itemize}[leftmargin=*]
+		\item \textit{Base case.} For $i = 0$, our goal $P(0)$ is:
+		$\cdw{f}{a}(n, b) = 1 + \cdw{f}{a}\left(f(n), b - 1\right)$
+		where $b \ge 1$ and $f(n)\ge a+1$. This is straightforward.
+		\item \textit{Inductive step.} Assume $P(i)$ has been proved, $P(i+1)$ is
+		\begin{equation*}
+		\cdw{f}{a}(n, b) = 2 + i + \cdw{f}{a}\left( f^{(2+i)}(n), b - i - 2 \right)
+		\end{equation*}
+		where $b \ge i+2$ and $f^{(1+i)}(n) \ge a+1$. This also implies $b\ge i+1$ and $\displaystyle f^{(i)}(n) \ge f^{(1+i)}(n)\ge a+1$ by $f\in \contract$, so $P(i)$ holds. It suffices to prove:
+		\begin{equation*}
+		\cdw{f}{a}\left(f^{(1+i)}(n), b-i-1\right) = 1 + \cdw{f}{a}\left( f^{(2+i)}(n), b-i-2 \right)
+		\end{equation*}
+		This is in fact $P(0)$ with the arguments $(b, n)$ substituted for $\left(b-i-1, f^{(1+i)}(n)\right)$. Since $f^{(1+i)}(n) \ge a+1$ and $b-i-1\ge 1$, the above holds and $P(i+1)$ follows.
+	\end{itemize}
+\end{proof}
+Now we are ready to prove the correctness of the \emph{countdown} computation. \begin{proof}[Proof of Theorem~\ref{thm: cdt-repeat}]
+	Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$.\footnote{We prove the existence
+		of the min in Coq’s intuitionistic logic 
+		\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L129-L159}{here}
+		in our codebase.} Our goal becomes
+	$\cdt{f}{a}(n) = m$. Note that this setup gives us:
+	\begin{equation} \label{eq: cdt-repeat-tmp}
+	\left(f^{(m)}(n) \le a\right) \wedge
+	\left(\forall k.~f^{(k)}(n)\le a \Rightarrow m \le k\right)
+	\end{equation}	
+	If $m = 0$, then $n = f^{(0)}(n)\le a$. So $\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = 0 = m$ by Definition~\ref{lem: cdt-init}.
+	When $m > 0$, our plan is to apply Lemma~\ref{lem: cdt-intermediate} to get
+	\begin{equation*}
+	\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = m + \cdw{f}{a}\left(f^{(m)}(n), n-m\right)
+	\end{equation*}
+	and then use Definition~\ref{lem: cdt-init} over (\ref{eq: cdt-repeat-tmp})'s first conjunct to conclude $\cdt{f}{a}(n) = m$. It suffices to prove the premises of Lemma~\ref{lem: cdt-intermediate}: $a < f^{(m-1)}(n)$ and $m-1 < n$.
+	
+	The former follows by contradiction: if $f^{(m-1)}(n) \le a$, Equation~\ref{eq: cdt-repeat-tmp}'s second conjunct implies $m\le m-1$, which is impossible for $m > 0$. The latter then easily follows by $f\in \contract_{a}$, since
+	$n \ge 1 + f(n) \ge 2 + f(f(n)) \ge \cdots \ge m + f^{(m)}(n)$.
+	\linebreak Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
+\end{proof}
+
+\subsection{Inverse Ackermann Worker}
+\label{apx:proof_correct_inv_ack_worker}
+This subsection provides the fully detailed proof of Theorem~\ref{thm: inv-ack-worker-correct}, which states that given the appropriate arguments, the function \emph{inverse Ackermann worker} in Definition~\ref{defn: inv-ack-worker} correctly computes the value of the inverse Ackermann function as defined in 
+Theorem~\ref{thm: inv-ack-new}.
+\begin{usethmcounterof}{thm: inv-ack-worker-correct}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L199-L231}{\coq}
+	$\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
+\end{usethmcounterof}
+First we state and prove the following lemma, which illustrates the working of \emph{inverse Ackermann worker} by examining each recursive call made during the execution of $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, b\big)$.
+
+\begin{lem} \label{lem: inv-ack-worker-intermediate}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L172-L195}{\coq}
+	$\forall n, b, k$ such that $k\le \min\big\{b, \alpha_{k-1}(n)\big\}$,
+	\begin{equation*}
+	\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+	\end{equation*}
+\end{lem}
+
+\begin{proof}
+	Fix $n$ and $b$. We prove $P(k)$ by induction, where
+	\begin{equation*}
+	\begin{aligned}
+	P(k) & \ \triangleq \ (\alpha_k(n)\ge k+1) \wedge (b\ge k+1) \implies \null \\
+	& \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+	\end{aligned}
+	\end{equation*}
+	
+	\begin{itemize}[leftmargin=*]
+		\item \emph{Base case}. This case, where $k = 0$, is trivial since both sides of the desired equality are identical.
+%		$\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\cdt{\big(\alpha_0}{1}\big)\circ \alpha_0, \cdt{\alpha_0}{1}\big(\alpha_0(n)\big), 1, b - 1\big) $ by
+%		(\ref{eq: inv-ack-worker-recursion}) with $b\ge 1$ and $\alpha_0(n)\le 1$.
+%		Definition~\ref{defn: inv-ack-hier} gives $\alpha_1 = \big(\cdt{\alpha_0}{1}\big) \circ \alpha_0$, so $P(0)$ holds.
+		
+		\item \emph{Inductive step.} Assume $P(k)$. We need to prove $P(k+1)$. Assume $P(k+1)$'s premise, \emph{i.e.} $(\alpha_k(n)\ge k+1) \wedge (b\ge k+1)$. Then $\alpha_k(n) > k$ $\Rightarrow n > A(k, k)$ $\Rightarrow n > A(k-1, k-1)$ $\Rightarrow \alpha_{k-1}(n) > k - 1$ $\Rightarrow \alpha_{k-1}(n)\ge k$ and $b\ge k+1$ $\Rightarrow b\ge k$, so $P(k)$'s premise applies. Therefore we have $P(k)$'s conclusion. It thus suffices to show
+		\begin{equation*}
+		\alpha^{\W}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
+		= \alpha^{\W}\big(\alpha_k, \alpha_k(n), k, b-k\big)
+		\end{equation*}
+		Definition~\ref{defn: inv-ack-hier} gives $\alpha_{k+1} = \big(\cdt{\alpha_k}{1}\big)\circ \alpha_k$, so this
+		is~(\ref{eq: inv-ack-worker-recursion}) when $b - k\ge 1$ and $\alpha_k(n)\ge k+1$. Thus $P(k+1)$ holds.
+		%\vspace*{-\baselineskip}
+	\end{itemize}
+\end{proof}
+With this lemma, we can proceed to establish the correctness of \emph{inverse Ackermann worker}, \emph{i.e.} Theorem~\ref{thm: inv-ack-worker-correct}. We reproduce the statement here as a convenient point of reference for readers.
+
+\begin{proof}[Proof of Theorem~\ref{thm: inv-ack-worker-correct}]
+	Since the sequence $\big\{\alpha_k(n)\big\}_{k=1}^{\infty}$ decreases while $\{k\}_{k=1}^{\infty}$ increases to infinity, there exists $m \triangleq \min\big\{k : \alpha_k(n) \le k \} = \alpha(n)$. Note that $m\le n$ since $\alpha_n(n)\le n$.
+	If $m = 0$, $m - 1$ is also $0$, so $m = 0 \le \alpha_0(n)\le \alpha_{m-1}(n)$. If $m \ge 1$, so $m - 1 < m$, so $m - 1 < \alpha_{m-1}(n)$ $\implies m \le \alpha_{m-1}(n)$. In both cases, Lemma~\ref{lem: inv-ack-worker-intermediate} implies:
+	$$ \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\W}\big(\alpha_m, \alpha_m(n), m, n - m\big) = m $$
+	where the last equality follows from \eqref{eq: inv-ack-worker-recursion} when $\alpha_m(n)\le m$.
+\end{proof}
+
+\section{Support for Binary Numbers in Coq}
+\label{apx:bin_in_coq}
+Coq has support for binary numbers with the type \li{N}, which consists
+of constructors \li{N0} and \li{Npos}. The latter, \li{Npos}, unfolds directly to \li{positive}:
+
+\begin{lstlisting}
+Inductive positive : Set :=
+  | xI : positive -> positive 
+  | xO : positive -> positive
+  | xH : positive.
+\end{lstlisting}
+
+Constructor \li{xH} represents $1$, and constructors \li{xO} and \li{xI} represent
+appending $0$ and $1$ respectively.
+By always starting with $1$, \li{positive} bypasses
+the issue of disambiguating \emph{e.g.} the strings \li{011} and
+\li{00011}, which represent the same number but pose
+a minor technical challenge.
+To represent $0$, the type \li{N} simply provides a separate constructor \li{N0}.
+
+\hide{
+\begin{lstlisting}
+Definition exp (x y : N) : N := match y with
+| 0 => 1 | Npos y'
+  => match x with
+     | 0 => 0 | _ =>
+     let fix expPos (p : positive) :=
+            match p with
+            | xH => x
+            | xI p' => let t := expPos p' in x * t * t
+            | xO p' => let t := expPos p' in t * t
+            end in expPos y'
+     end end.
+\end{lstlisting}
+To analyse the performance of this definition, let us denote the computation time for \li{exp a b} and \li{a * b} respectively by $\Texp (a, b)$ and $ \Tmul (a, b)$.Now
+
+\begin{equation*}
+\begin{aligned}
+\Texp(a, b)
+& \le \Texp\left(a, \left\lfloor \frac{b}{2} \right\rfloor\right)
++ \Tmul\left(a^{\left\lfloor \frac{b}{2} \right\rfloor}, a^{\left\lfloor \frac{b}{2} \right\rfloor} \right) + \Tmul\left(a^{2\left\lfloor \frac{b}{2} \right\rfloor}, a\right) \\
+& \le \Texp\left(a, \left\lfloor \frac{b}{2} \right\rfloor\right) + \left\lfloor \frac{b}{2} \right\rfloor^2 \big(\log_2 a + 1\big)^2 + 2\left\lfloor \frac{b}{2} \right\rfloor \big(\log_2 a + 1\big)^2 \\
+& \le \Texp\left(a, \left\lfloor \frac{b}{2} \right\rfloor\right) + 3\left(\frac{b}{2}\right)^2 \big(\log_2 a + 1\big)^2
+\end{aligned}
+\end{equation*}
+
+Thus, $\Texp(a, b) \le 3\big(\log_2 a + 1\big)^2 \sum_{k=1}^{\infty} \frac{b^{2k}}{4^k} = \bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$.
+This a massive improvement over the bound $\Theta\left(a^b\right)$ of exponentiation in the unary system.
+
+Apart from speeding up addition and multiplication, the binary system does the same for their successor, namely exponentiation. We achieve this by \emph{repeated squaring},
+which by standard techniques allows us to calculate $a^b$ in $\bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$.
+}%end hide
+
+\section{Proofs of Time Bound Lemmas on \li{nat}}
+\label{apx:time_analysis}
+
+This section provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: inv-ack}, \emph{i.e.} Lemma~\ref{lem: inv-ack-hier-runtime} for the general running time formula of $\alpha_i$, Lemma~\ref{lem: alpha2_runtime_naive} for the lower bound on the na\"ive version, and Theorem~\ref{thm: inv-ack-hier-runtime-improved} for the upper bound on the improved version. These results and their supporting lemmas are reproduced here for readers' easy reference.
+
+We start by examining the running time of two operations used in the Coq definition of \emph{countdown worker} on \li{nat}, namely \li{leb} and \li{compose}.
+
+\begin{lem} \label{lem: leb-runtime}
+	The standard Coq library function \ $\li{leb}(x, y)$ \ returns \li{true} if $x\le y$ and \li{false} otherwise. $\runtime_{\li{leb}}(x, y) = \min\{x, y\} + 1$ when $n$ and $a$ are of type \li{nat}.
+\end{lem}
+
+\begin{proof}
+	Per its Coq definition, $\li{leb}(x, y)$ returns \li{true} if $x = 0$. When $x > 0$, $\li{leb}(x, y)$ returns \li{false} if $y = 0$, or $\li{leb}(x-1, y-1)$ if $y > 0$. Therefore,
+	\begin{equation*}
+	\runtime_{\li{leb}}(x, y) = \begin{cases}
+	1 & \text{ when } x = 0 \text{ or } y = 0 \\
+	\runtime_{\li{leb}}(x - 1, y - 1) + 1 & \text{ when } x > 0, y > 0
+	\end{cases}
+	\end{equation*}
+	Let $P(x) \triangleq \forall y.~\runtime_{\li{leb}}(x, y) = \min\{x, y\} + 1$. $P(0)$ holds since both sides are $1$. Assume $P(x-1)$ holds for $x > 0$, and consider any $y$
+	\begin{itemize}
+		\item If $y = 0$, $\runtime_{\li{leb}}(x, 0) = 1 = \min\{x-1, 0\} + 1$.
+		\item If $y > 0$, $\runtime_{\li{leb}}(x, y)$ $ = \runtime_{\li{leb}}(x - 1, y - 1) + 1 = $
+		$ \linebreak \min\{x-1, y-1\} + 2 = \min\{(x-1) + 1, (y-1) + 1\} + 1 = \min\{x, y\} + 1$.
+		The second equality, $\runtime_{\li{leb}}(x - 1, y - 1) + 1 = \min\{x-1, y-1\} + 2$,  
+		comes thanks to $P(x-1)$.
+	\end{itemize}
+  In both cases, $P(x)$ holds. The proof is complete by induction on $x$.
+\end{proof}
+
+\begin{lem} \label{lem: compose-runtime}
+	% In all encoding systems,
+	$\runtime_{f\circ g}(n) = \runtime_f(g(n)) + \runtime_g(n)$.
+	% per Coq's definition of functional composition.
+\end{lem}
+\begin{proof}
+	Per the Coq definition \li{compose}, computing $(f\circ g)(n)$, \emph{i.e.} $\li{(compose f g)}(n)$, requires first computing $m\triangleq g(n)$, and then $f(m)$.
+\end{proof}
+
+\begin{lem} \label{lem: cdt-runtime-general}
+%	$\forall a\in \mathbb{N}, f\in \contract_{a}$, where $\li{succ}(x) \triangleq x+1$,
+%	\begin{equation} \label{eq: cdt-runtime-struct}
+%	\runtime_{\cdt{f}{a}}(n) =
+%	\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
+%	+ \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right)
+%	+ \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i)~~~
+%	\end{equation}
+	$\forall a\in \mathbb{N}, f\in \contract_{a}$, where $\li{succ}(x) \triangleq x+1$,
+\begin{equation} \label{eq: cdt-runtime-struct}
+\begin{aligned}
+\runtime_{\cdt{f}{a}}(n) =
+\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
+& + \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right) \\
+& + \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i)
+\end{aligned}
+\end{equation}
+\end{lem}
+
+\begin{proof}
+	Since $f\in \contract_{a}$, $\cdt{f}{a}\ $ is the minimum $k$ such that $f^{(k)}(n) \le a$. The execution of $\cdw{f}{a}\big(n, n\big)$ then takes $k+1$ recursive calls, where the $i^{th}$ call for $0\le i \le k$ takes the arguments $i, a$ and $n_i \triangleq f^{(i)}(n)$ from the previous call (or the initial argument when $i = 0$), and performs the following computations:
+	\begin{enumerate}
+		\item Compute $\li{leb}\left(n_i, a\right)$ for $\Tleb\left(f^{(i)}(n), a\right)$ steps.
+		\item If $\li{leb}\left(n_i, a\right) = \li{true}$, return $0$. Else go to the next step.
+		\item Compute $n_{i+1} \triangleq f(n_i) = f^{(i+1)}(n)$ in $\runtime_f\left(f^{(i)}(n)\right)$ steps.
+		\item Pass $n_{i+1}, i+1, a$ to the next recursive call and wait for it to return $k - i - 1$.
+		\item Add $1$ to the result in $\Tsucc(k-i-1)$ steps, return $k - i$.
+	\end{enumerate}
+    Summing up the time of each call gives the desired expression for $\runtime_{\cdt{f}{a}}(n)$.
+\end{proof}
+
+\noindent Next, we restate and prove Lemma~\ref{lem: cdt-runtime}, which gives a formula for \emph{countdown}'s running time.
+
+\begin{uselemcounterof}{lem: cdt-runtime}
+	$\forall a\ge 1, \forall n \in \li{nat}, \forall f\in \contract_{a}$ we have:
+	\begin{equation} \label{eq: cdt-runtime}
+	\runtime_{\cdt{f}{a}}(n) =
+	\sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
+	+ (a + 2)\cdt{f}{a}(n) + f^{\left(\cdt{f}{a}(n)\right)}(n) + 1
+	\end{equation}
+\end{uselemcounterof}
+
+\begin{proof}
+	Per Definition~\ref{defn: countdown} of countdown,
+$\Tleb\big(f^{(i)}(n), a\big) = a + 1$ if $i < \cdt{f}{a}(n)$ and $f^{(i)}(n) + 1$ otherwise (by Lemma~\ref{lem: leb-runtime}).  Thus,
+the second summand in \eqref{eq: cdt-runtime-struct} is equal to $(a + 1)\cdt{f}{a}(n) + f^{\left(\cdt{f}{a}(n)\right)}(n) + 1$. Since $\Tsucc(i) = 1$ on \li{nat}, the third summand is equal to $\cdt{f}{a}(n)$, completing the desired formula.
+\end{proof}
+The above lemma is the last step for us to build a recursive formula for the running time of the inverse Ackermann hierarchy, with each level's runtime involving that of its previous one. We restate and prove Lemma~\ref{lem: inv-ack-hier-runtime} from \S\ref{sect: hardcode-lvl2}.
+
+\begin{uselemcounterof}{lem: inv-ack-hier-runtime}
+	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier},
+	\begin{equation} \label{eq: inv-ack-hier-runtime}
+	\runtime_{\alpha_{i+1}}(n) = \sum_{k=0}^{\alpha_{i+1}(n)}\runtime_{\alpha_i}\left( \alpha_i^{(k)}(n)\right) + 3\alpha_{i+1}(n) + C_i(n),
+	\end{equation}
+	\hspace{4em}where $\forall i, n.~C_i(n) \triangleq \alpha_i^{(\alpha_{i+1}(n) + 1)}(n) + 1 \in \{1, 2\}$
+\end{uselemcounterof}
+
+\begin{proof}
+	 From Definition~\ref{defn: inv-ack-hier}, $\alpha_{i+1} = \big(\cdt{\alpha_i}{1}\big)\circ \alpha_i$. Since $\alpha_i\in \contract_{1}$, applying Lemma~\ref{lem: cdt-runtime} gives us:
+
+	 \begin{equation*}
+	 \begin{aligned}
+	 & \runtime_{\cdt{\alpha_i}{1}}\big(\alpha_i(n)\big) \\
+	 & = \hspace{-5pt} \sum_{k=0}^{\cdt{\alpha_i}{1}(\alpha_i(n)) - 1} \hspace{-10pt} \runtime_{\alpha_i}\left(\alpha_i^{(k)}\big(\alpha_i(n)\big)\right)
+	 + 3\cdt{\alpha_i}{1}\big(\alpha_i(n)\big) \\
+	 & \hspace{60pt} + \alpha_i^{\big(\cdt{\alpha_i}{1}(\alpha_i(n))\big)}\big(\alpha_i(n)\big) + 1 \\
+	 & = \sum_{k=0}^{\alpha_{i+1}(n) - 1} \runtime_{\alpha_i}\left(\alpha_i^{(k+1)}(n)\right)
+	 + 3\alpha_{i+1}(n)
+	 + \alpha_i^{\big(\alpha_{i+1}(n)\big)}\big(\alpha_i(n)\big) + 1 \\
+	 & = \ \sum_{k=1}^{\alpha_{i+1}(n)} \runtime_{\alpha_i}\left(\alpha_i^{(k)}(n)\right)
+	 + 3\alpha_{i+1}(n)
+	 + \underbrace{\alpha_i^{\alpha_{i+1}(n) + 1}(n) + 1}_{C_i(n)}
+	 \end{aligned}
+	 \end{equation*}By Lemma~\ref{lem: compose-runtime}, $\runtime_{\alpha_{i+1}}(n) = \runtime_{\cdt{\alpha_i}{1}}\big(\alpha_i(n)\big) + \runtime_{\alpha_i}(n)$, which completes \eqref{eq: inv-ack-hier-runtime}. By Definition~\ref{defn: informal-countdown} of countdown, $\alpha_{i+1}(n) = \cdt{\alpha_i}{1}\big(\alpha_i(n)\big)$
+	 $= \min\big\{l: \alpha_i^{(l+1)}(n)\le 1\big\}$. Thus $\alpha_i^{\alpha_{i+1}(n) + 1}(n) \in \{0, 1\}$, or $C_i(n)\in \{1, 2\}$. The proof is complete.
+\end{proof}
+
+\noindent We are finally ready to prove the time complexity bounds of $\alpha_i$. We start with proving the quadratic lower bound on the running time of the na\"ive version without any hardcoding, \emph{i.e.} Lemma~\ref{lem: alpha2_runtime_naive}.
+
+\begin{uselemcounterof}{lem: alpha2_runtime_naive}
+	When $\alpha_i$ is defined per Definitions~\ref{defn: inv-ack-hier}, $\forall i\ge 2.~\runtime_{\alpha_i}(n) = \Omega\big(n^2\big)$.
+\end{uselemcounterof}
+
+\begin{proof}
+	$\alpha_0 = \lambda m.(m-1)$ so $\alpha_1 = \cdt{\big(\alpha_0\big)}{1}\circ \alpha_0 = \lambda m.(m - 2)$. By Lemma~\ref{lem: inv-ack-hier-runtime},
+	\begin{equation*}
+	\runtime_{\alpha_1}(n) \ge \sum_{i=0}^{n-1} \runtime\big(\lambda m.(m-1), n - i\big) + 3(n - 2) + 1 = 4n - 5\text{,}
+	\end{equation*}
+	since $\runtime_{\alpha_0}(k) = 1$. Because $\alpha_2 = \cdt{\big(\alpha_1\big)}{1}\circ \alpha_1 = \lambda m.\left\lceil \frac{m-3}{2} \right\rceil$, again by Lemma~\ref{lem: inv-ack-hier-runtime},
+	\begin{equation*}
+	\runtime_{\alpha_2}(n)
+	\ge \sum_{i=0}^{\left\lceil \frac{n-3}{2} \right\rceil} \big(4(n-2i) - 5\big) + 3\left\lceil \frac{n-3}{2} \right\rceil + 1
+	= \Omega\big(n^2\big)
+	\end{equation*}
+	By Lemma~\ref{lem: inv-ack-hier-runtime}, $\forall i \ge 2$, $ \runtime_{\alpha_{i+1}}(n)\ge \runtime_{\alpha_i}(n)$, so $\runtime_{\alpha_i}(n) = \Omega\big(n^2\big)$.
+\end{proof}
+
+% TODO: find a good place to insert this
+%\begin{col}
+%	$\runtime(\alpha, n) = \Omega\big(n^2\big)$ per Definition~\ref{defn: inv-ack-worker}.
+%\end{col}
+
+With the hardcoding $\alpha_1 \triangleq \lambda n.(n - 2)$, we can improve the execution time of the whole hierarchy as noted in Remark~\ref{rem: inv-ack-hardcode}. We now show that this small improvement makes the inverse Ackermann hierarchy run in linear time at any level, (\emph{i.e.} we prove Theorem~\ref{thm: inv-ack-hier-runtime-improved}), via a few supporting lemmas.
+
+\begin{lem} \label{lem: inv-ack-3-runtime}
+	If $n\ge 1$, $\runtime_{\alpha_3}(n) = 2$ $\runtime_{\alpha_3}(n) \le 4n + 4$.
+\end{lem}
+
+\begin{proof}
+	It is easy to show that $\alpha_2^{(k)}(n) = \left\lfloor \frac{n+2}{2^k} \right\rfloor - 2$. Thus
+	
+	\begin{equation*}
+	\begin{aligned}
+		\runtime_{\alpha_3}(n)
+		&  \le \ \sum_{k=0}^{\alpha_{3}(n)}\runtime_{\alpha_2}\left(\left\lfloor \frac{n+2}{2^k} \right\rfloor - 2\right) + 3\alpha_{3}(n) + 2 \\
+		& \le \ 2\sum_{k=0}^{\alpha_3(n)}\left(\frac{n+2}{2^k} - 3\right) + 3\alpha_3(n) + 2 \\
+		& \le \ 4(n + 2) - 6(\alpha_3(n) + 1) + 3\alpha_3(n) + 2 \le 4n + 4.
+	\end{aligned}
+\end{equation*}
+\end{proof}
+
+\noindent The following two technical lemmas that bound a sum of repeated applications of $\log_2$ and $\alpha_i$ are also needed in time bound proofs for the binary version of the inverse Ackermann hierarchy in Appendix~\ref{apx:time_analysis_bin}, and so have made as general as possible to allow reusability.
+
+\begin{lem} \label{lem: sum-log-repeat}
+	$\forall n$,~$\sum_{k = 0}^{\log_2^*(n) - 1}\log_2^{(k)}n \le 2n$, where
+	$$\log_a^*(n) \triangleq \min\{k : \log_a^{(k)}n \le 1\}.$$
+	Note that the sum is $0$ when $n\le 1$.
+\end{lem}
+
+\begin{proof}
+	Define $S: \mathbb{R}_{\ge 0}\to \mathbb{R}_{\ge 0}$ where $S(x) \triangleq \sum_{k = 0}^{\log_2^*(x) - 1}\log_2^{(k)}x$. Clearly $S$ is strictly increasing and $\forall x>1, S(x) = n + S(\log_2 x)$. Using the fact $\log_2^*(x)\in \mathbb{N}$, we prove by induction on $k$ the statement $P(k) \triangleq$ $\forall x: \log_2^*(x) = k$, $S(x)\le 2x$.
+	\begin{itemize}[leftmargin=*]
+		\item \emph{Base case.} $P(0)$, $P(1)$ hold trivially and $P(2) = \forall x: 2 < x \le 4$, $x + \log_2x \le 2x$, which is equivalent to $\log_2x \le x$, which holds for all $x > 2$.
+		\item \emph{Inductive case.} Assume $P(k-1)$ where $k\ge 3$. Fix any $x$ such that $\log_2^*(x)=~k$, then $x > 4$. The function $\lambda x.\frac{x}{\log_2x}$ is increasing on $[4, +\infty)$, so $\frac{4}{\log_24} \le \frac{x}{\log_2x}$ or $2\log_2x \le x$. Since $\log_2^*(x) = k$, we have $\log_2^*(\log_2x) = k-1$. By $P(k-1)$, $S(x) = x + S(\log_2x) \le x + 2\log_2x \le 2x$, which completes the proof.
+	\end{itemize}
+\end{proof}
+
+\begin{lem} \label{lem: sum-alpha-repeat}
+	$\forall l,~\forall i \ge 3,~\forall s\le \alpha_{i+1}(n)$.~$\displaystyle \sum_{k=s}^{\alpha_{i+1}(n)} \log_2^{(l)}\alpha_i^{(k)}(n) \le 2\log_2^{(l+s)}n$.
+\end{lem}
+
+\begin{proof}
+  $\forall i\ge 3, \forall n, \alpha_i(n)\le \log_2n$ and $\alpha_{i+1}(n)\le \log_2^*(n)-1$, therefore
+	\begin{equation*}
+%	S_i(n) \ = \
+	\sum_{k=s}^{\alpha_{i+1}(n)} \log_2^{(l)}\alpha_i^{(k)}(n) \ \le \
+%	\sum_{k=1}^{\log_2^*(n)-1} \log_2^{(l)}\alpha_i^{(k)}(n) \ \le \
+	\sum_{k=s}^{\log_2^*(n)-1} \log_2^{(l+k)}(n) \ \le \
+	2\log_2^{(l+s)} n
+	\end{equation*}
+\end{proof}
+With these lemmas, we are ready to tackle Theorem~\ref{thm: inv-ack-hier-runtime-improved}.
+
+\begin{usethmcounterof}{thm: inv-ack-hier-runtime-improved}
+	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$.
+\end{usethmcounterof}
+
+\begin{proof}
+	We have proved the result for $i = 0, 1, 2$. Let us proceed with induction on $i\ge 3$. The case $i = 3$ has been covered by Lemma~\ref{lem: inv-ack-3-runtime}. Let $M_i \triangleq 2^{i-3}19 - 2i - 13$ for each $i$ and suppose the result holds for $i\ge 3$. We have
+%	\begin{equation*}
+%	\begin{aligned}
+%	%\begin{array}{@{}l@{}}
+%	& \runtime_{\alpha_{i+1}}(n) \le \sum_{k=0}^{\alpha_{i+1}(n)} \runtime_{\alpha_i}\big(\alpha_i^{(k)}(n)\big) + 3\alpha_{i+1}(n) + 2 \\
+%	& \le \sum_{k=0}^{\alpha_{i+1}(n)}\big(4\alpha_i^{(k)}(n) + M_i\log_2\alpha_i^{(k)}(n) + 2i \big) + 3\alpha_{i+1}(n) + 2 \\[-3pt]
+%  & = 4n + 2(i+1) + (2i + 3)\underbrace{\alpha_{i+1}(n)}_{\le \log_2n} + 4\underbrace{\sum_{k=1}^{\alpha_{i+1}(n)}\alpha_i^{(k)}(n)}_{\le 2\log_2n} + M_i\underbrace{\sum_{k=0}^{\alpha_{i+1}(n)}\log_2\alpha_i^{(k)}(n)}_{\le 2\log_2n} \\
+%	& \le 4n + 2(i+1) + (2M_i + 2i + 3 + 8)\log_2n
+%	= 4n + M_{i+1}\log_2n + 2(i+1)
+%	%\end{array}
+%  \end{aligned}
+%	\end{equation*}
+% Edited by Linh
+	\begin{equation*}
+	\begin{aligned}
+	%\begin{array}{@{}l@{}}
+	& \runtime_{\alpha_{i+1}}(n) \le \sum_{k=0}^{\alpha_{i+1}(n)} \runtime_{\alpha_i}\big(\alpha_i^{(k)}(n)\big) + 3\alpha_{i+1}(n) + 2 \\
+	& \le \sum_{k=0}^{\alpha_{i+1}(n)}\big(4\alpha_i^{(k)}(n) + M_i\log_2\alpha_i^{(k)}(n) + 2i \big) + 3\alpha_{i+1}(n) + 2 \\[-3pt]
+	& = 4n + 2(i+1) \ + \\
+	& \quad (2i + 3)\underbrace{\alpha_{i+1}(n)}_{\le \log_2n} + 4\underbrace{\sum_{k=1}^{\alpha_{i+1}(n)}\alpha_i^{(k)}(n)}_{\le 2\log_2n} + M_i\underbrace{\sum_{k=0}^{\alpha_{i+1}(n)}\log_2\alpha_i^{(k)}(n)}_{\le 2\log_2n} \\
+	& \le 4n + 2(i+1) + (2M_i + 2i + 3 + 8)\log_2n \\
+	& = 4n + M_{i+1}\log_2n + 2(i+1).
+	%\end{array}
+	\end{aligned}
+	\end{equation*}
+\end{proof}
+
+\section{Proofs of Time Bound Lemmas on \li{N}}
+\label{apx:time_analysis_bin}
+
+\renewcommand{\Tleb}{\runtime_{\li{N.leb}}}
+\renewcommand{\Tsucc}{\runtime_{\li{N.succ}}}
+
+This section provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: binary},
+\emph{i.e.} Lemma~\ref{lem: cdt-runtime-bin} for the upper bound on the time complexity of $\alpha_i$ on \li{N} (\li{bin_alpha}),
+and Theorem~\ref{thm: inv-ack-runtime-bin} for the upper bound on the time complexity of the $\alpha$ on \li{N} (\li{bin_inv_ack}).
+These results and their supporting lemmas are reproduced here for readers' easy reference.
+
+We start by inspecting the execution time of crucial computations in each recursive call of \li{bin_countdown}, namely \li{N.leb} and \li{N.succ}. While \li{leb} is easy, \li{succ} requires more care as it is worst-case logarithmic time but amortized constant time.
+
+\begin{lem} \label{lem: leb-runtime-bin}
+	In binary encoding, for all $x, y\in \li{N}$, we have \linebreak $\Tleb(x, y) \le \lfloor \log_{2}\min\{x, y\} \rfloor + 1$.
+\end{lem}
+\begin{proof}
+	\li{N.leb}'s Coq definition indirectly involves the function \li{Pos.compare_cont}, which maps from \li{Pos*Pos} to the set $\{Gt, Lt, Eq\}$ (respectively stand for ``Greater Than'', ``Less Than'' and ``Equal''). We henceforth use \li{Pc} as short form for \li{Pos.compare_cont}. Precisely we have:
+	
+	\begin{equation*}
+	\li{N.leb}(x, y) = \begin{cases}
+	\li{true} & \text{ when } x = 0 \\ \li{false} & \text{ when } x > 0, y = 0 \\
+	\neg \big(\li{Pc}(Eq, x, y) == Gt \big) & \text{ when } x > 0, y > 0
+	\end{cases}
+	\end{equation*}
+
+\hide{
+	\li{N.leb}'s Coq definition involves a function \li{N.compare}, which takes input in \li{N} to values in the set $\{Gt, Lt, Eq\}$ (respectively stand for ``Greater Than'', ``Less Than'' and ``Equal'').
+	$\li{N.leb}(x, y)$ returns \li{false} if $\li{N.compare}(x, y) =  Gt$ and \li{true} otherwise, thus $\runtime_{\li{N.leb}}(x, y) = \runtime_{\li{N.compare}}(x, y) + 1$.
+	\li{N.compare} indirectly uses another function, which is \li{Pos.compare_cont}.
+	
+	\begin{equation*}
+	\li{N.compare}(x, y) = \begin{cases}
+	Eq & \text{ when } x = 0, y = 0 \\ Lt & \text{ when } x = 0, y > 0 \\
+	Gt & \text{ when } x > 0, y = 0 \\ \li{Pos.compare_cont}(Eq, x, y) & \text{ when } x > 0, y > 0
+	\end{cases}
+	\end{equation*}
+	where in the last case, $x$ and $y$ are treated as type \li{Pos}.
+	Using \li{Nc} and \li{Pc} respectively as abbreviations for \li{N.compare} and \li{Pos.compare_cont}, we have $\runtime_{\li{Nc}}(x, y) = 1$ when $\min\{x, y\} = 0$ and $\runtime_{\li{Pc}}(x, y) + 1$ otherwise.
+}%end hide	
+		\noindent where in the last case, $x$ and $y$ are treated as type \li{Pos}. The value of $\li{Pc}(x, y)$ is given in the following table, where $x{\sim}0$ and $x{\sim}1$ respectively representing appending $0$ and $1$ to the end of $x$'s representation:
+	
+	\begin{equation*}
+	\begin{array}{c|c|c|c}
+	\hspace{10pt} x \backslash y \hspace{10pt} & \hspace{10pt} 1 \hspace{10pt} & y'{\sim}0 & y'{\sim}1 \\ \hline
+	1 & R & Lt & Lt \\ \hline
+	x'{\sim}0 & Gt & \ \li{Pc}(R, x', y') \ & \ \li{Pc}(Lt, x', y') \ \\ \hline
+	x'{\sim}1 & Gt & \ \li{Pc}(Gt, x', y') \ & \ \li{Pc}(R, x', y') \
+	\end{array}
+	\end{equation*}
+	
+	\noindent It suffices to show $\runtime_{\li{Pc}}(x, y) \le \lfloor\log_2\min\{x, y\}\rfloor + 1$. The table above gives:
+	
+	\begin{equation*}
+	\runtime_{\li{Pc}}(x, y) = \begin{cases}
+	1 & \text{ if } x = 1 \vee y = 1 \\
+	\runtime_{\li{Pc}}\left(\left\lfloor \frac{x}{2} \right\rfloor, \left\lfloor \frac{x}{2} \right\rfloor\right) + 1 & \text{ if } x > 1 \wedge y > 1
+	\end{cases}
+	\end{equation*}
+	
+	\noindent A simple binary induction on $\min\{x, y\}$ shows $\runtime_{\li{Pc}}(x, y) = \lfloor\log_2\min\{x, y\}\rfloor + 1$. The proof is complete.
+\end{proof}
+
+\begin{lem} \label{lem: succ-runtime-bin}
+	$\forall n\ge 1.~S(n) = \displaystyle \sum_{i=0}^{n-1}\Tsucc(i) \le 2n + \log_2n$.
+\end{lem}
+\begin{proof}
+	Per \li{N.succ}'s Coq definition, $\li{N.succ}(u) = 1$ if $u = 0$ and $\li{Pos.succ}(u)$ if $u > 0$, where when treating $u$ as \li{Pos} we have $\li{Pos.succ}(u)$ returns $2$ when $u = 1$, $u'{\sim}1$ when $u = u'{\sim}0$ and $(\li{Pos.succ}(u')){\sim}0$ when $u = u'{\sim}1$.
+%	\begin{equation*}
+%	\li{Pos.succ}(u) = \begin{cases}
+%	2 & \text{ when } u = 1 \\
+%	u'{\sim}1 & \text{ when } u = u'{\sim}0 \\ (\li{Pos.succ}(u')){\sim}0 & \text{ when } u = u'{\sim}1
+%	\end{cases}
+%	\end{equation*}
+  A binary induction on $u$ confirms that for all $u$,
+	\begin{equation*}
+	\Tsucc(u) = \begin{cases}
+	\Tsucc\left(\frac{u-1}{2}\right) + 1 & \text{ when } u \text{ is odd,} \\
+	1 & \text{ when } u \text{ is even.}
+	\end{cases}
+	\end{equation*}
+	\noindent We prove the lemma by induction on $n$.
+	If $n = 1$, $S(n) = \Tsucc(0) = 1$, our goal is $1\le 2$, which is trivial. For $n > 1$, observe that . Thus for all $n$, $S(2n+1) = S(2n) + 1$ and
+	\begin{equation*}
+	\begin{aligned}
+	S(2n) & = \ \sum_{i=0}^{n}\Tsucc(2i) + \sum_{i=0}^{n-1}\Tsucc(2i+1) \\
+	& = \ \sum_{i=0}^{n}1 + \sum_{i=0}^{n-1}\big(\Tsucc(i) + 1\big) \\
+	& = n+1 + S(n) + n = S(n) + 2n + 1
+	\end{aligned}
+	\end{equation*}
+	Hereafter, a simple induction on $n$ completes the proof.
+\end{proof}
+Now we are ready to prove Lemma~\ref{lem: cdt-runtime-bin}, reproduced here for readers' reference.
+
+\begin{uselemcounterof}{lem: cdt-runtime-bin}
+	$\forall n \in \li{N}, \forall a\in \li{N}$, if $f$ is a binary strict contraction above $a$,
+%	\begin{equation*}
+%	\runtime_{\cdt{f}{a}}(n) \le \sum_{i=0}^{\cdt{f}{a}(n) - 1} \hspace{-6pt}
+%	\runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \ + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
+%	\end{equation*}
+	\begin{equation*}
+	\begin{aligned}
+	\runtime_{\cdt{f}{a}}(n) & \le \sum_{i=0}^{\cdt{f}{a}(n) - 1} \hspace{-6pt}
+	\runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right)\\
+	& \quad + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
+	\end{aligned}
+	\end{equation*}
+\end{uselemcounterof}
+
+\begin{proof}
+	On strict binary contractions, \li{bin_countdown} does exactly the same computations as the \li{countdown} on \li{nat}, with the added step of computing the budget of \li{nat_size (n-a)}, thus its execution time structure is almost the same. The only difference is the running time of each component in the sum.
+	\begin{equation} \label{eq: cdt-bin-runtime-struct}
+	\runtime_{\cdt{f}{a}}(n) =
+	\hspace{5pt}
+	\begin{aligned}
+	& \sum_{i=0}^{\cdt{f}{a}(n) - 1} \runtime_f\left(f^{(i)}(n)\right)
+	&\hspace{-4pt} + & ~ \sum_{i=0}^{\cdt{f}{a}(n)}\Tleb\left(f^{(i)}(n), a\right) \\
+	& +~ \sum_{i=0}^{\cdt{f}{a}(n) - 1}\Tsucc(i)
+	&\hspace{-4pt} + & ~ \runtime_{\li{sub}}(n, a) \\
+	& \ + \ \runtime_{\li{nat_size}}(n - a)
+	\end{aligned},
+	\end{equation}
+	By Lemma~\ref{lem: leb-runtime-bin}, $\forall i, \Tleb\left(f^{(i)}(n), a\right) \le \log_2a + 1$, thus the second summand in \eqref{eq: cdt-bin-runtime-struct} is no more than $(\log_2a + 1)\big(\cdt{f}{a}(n) + 1\big)$. By Lemma~\ref{lem: succ-runtime-bin}, the third summand is no more than $2\cdt{f}{a}(n) + \log_2\cdt{f}{a}(n)$. Lastly, the last two summands are each no more than $\log_2n + 1$. Thus
+	 \begin{equation*}
+	 \begin{aligned}
+	 \runtime_{\cdt{f}{a}(n)}(n) & \ \le \
+	 \left(\begin{aligned}
+	 & \sum_{i=0}^{\cdt{f}{a}(n) - 1}
+	 \runtime_f\big(f^{(i)}(n)\big)
+	 \ + \ (\log_2a + 1)\big(f^{(i)}(n) + 1\big) \\
+	 & \ + \ 2\cdt{f}{a}(n) \ + \ \log_2\cdt{f}{a}(n)
+	 \ + \ 2\big(\!\log_2n + 1\big)
+	 \end{aligned}\right)\\
+	 & \le \ \begin{aligned}
+	 & \sum_{i=0}^{\cdt{f}{a}(n) - 1}
+	 \runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right)\\
+	 & \ + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
+	 \end{aligned}
+	 \end{aligned}
+	 \end{equation*}
+\end{proof}
+
+With all critical lemmas established and proven, including Lemma~\ref{lem: sum-alpha-repeat} in Appendix~\ref{apx:time_analysis}, we proceed to prove the time complexity bound of each level in \li{bin_alpha} in the form of Theorem~\ref{thm: inv-ack-runtime-bin}.
+
+\begin{usethmcounterof}{thm: inv-ack-runtime-bin}
+	When $\alpha_i$ on \li{N} is defined via \li{bin_alpha}, for all $i$ and $n$ we have $\runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i$.
+\end{usethmcounterof}
+
+\begin{proof}
+	Firstly, we have:
+	\begin{itemize}
+		\item Clearly $\runtime_{\alpha_i}(n)\le \log_2n + 1$ for $i = 0, 1$.
+		\item Computing $\alpha_2(n)$ consists of 2 steps: subtracting by 2 and dividing by 2 (shifting right by 1 bit), both of which takes no more than time $\log_2n + 1$ time, thus $\runtime_{\alpha_2}(n)\le 2\log_2n$.
+		\item Computing $\alpha_3(n)$ consists of 3 steps: adding 2, then take base 2 logarithm and subtract 2 from the result, with the first two taking no longer than time $\log_2n + 1$ each and the last taking time at most $\log_2\log_2(n+2) + 1$ $\le \log_2\log_2 n + 2$. Thus $\runtime_{\alpha_3}(n)\le 2\log_2n + \log_2\log_2n + 3$.
+	\end{itemize}
+  Let $M_i = 3\cdot 2^i - 3i - 13$, then $\runtime_{\alpha_i}(n)\le 2\log_2n + M_i\log_2^{(2)}n + 3i$ for $i = 0, 1, 2, 3$.
+	Suppose the same inequality holds for $i\ge 3$, by Lemmas~\ref{lem: compose-runtime} and \ref{lem: cdt-runtime-bin}, note that Lemma~\ref{lem: compose-runtime} works for all encoding systems, we have
+	\begin{equation*}
+	\begin{aligned}
+	& \runtime_{\alpha_{i+1}}(n) \le
+	\begin{aligned}
+	& \sum_{k=0}^{\alpha_{i+1}(n)} \hspace{-5pt} \runtime_{\alpha_i}\big(\alpha_i^{(k)}(n)\big)
+	\ + \ 3\hspace{-4pt}\underbrace{\alpha_{i+1}(n)}_{\le \log_2\log_2n} \\
+	& + \ 2\underbrace{\log_2\alpha_i(n)}_{\le \log_2\log_2n}
+	+ \ \underbrace{\log_2\alpha_{i+1}(n)}_{\le \log_2\log_2n} + \ 3
+	\end{aligned} \\
+	& \le 2\log_2n
+	+ 2\underbrace{\hspace{-5pt}\sum_{k=1}^{\alpha_{i+1}(n)}\hspace{-5pt} \log_2\alpha_i^{(k)}(n)}_{\le 2\log_2\log_2n}
+	+ M_i\underbrace{\hspace{-5pt}\sum_{k=0}^{\alpha_{i+1}(n)}\hspace{-5pt} \log_2^{(2)}\alpha_i^{(k)}(n)}_{\le 2\log_2\log_2n} \\
+	& \hspace{20pt} +  3i\big(\hspace{-5.5pt}\underbrace{\alpha_{i+1}(n)}_{\le \log_2\log_2n}\hspace{-4pt} + 1\big) + 6\log_2^{(2)}n + 3 \\
+	& \le 2\log_2n + (2M_i + 3i + 10)\log_2^{(2)}n + 3(i + 1) \\
+	& = 2\log_2 + M_{i+1}\log_2^{(2)}n + 3(i + 1)
+	\end{aligned}
+	\end{equation*}
+	where $\forall i\ge 3, \alpha_i(n)\le \log_2n$ and $\alpha_{i+1}(n)\le \log_2^{(2)}n$, while the $2\log_2^{(2)}n$ upper bounds for the sums come from Lemma~\ref{lem: sum-alpha-repeat}.
+	By induction on $i$, proof is complete.
+\end{proof}
