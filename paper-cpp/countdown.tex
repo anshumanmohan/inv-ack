@@ -13,16 +13,16 @@ do not come as naturally.
 %\end{defn}
 % Edited by Linh
 \begin{defn} \label{defn: inverse}
-	The \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L28-L45}{
+	The \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L28-L45}{\color{blue}
 		\emph{upper inverse}} of $F$, denoted by $F^{-1}$,
 	% {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$}
 	is $\lambda n. \min\{m : F(m)\ge n\}$.
 \end{defn}
-This is well-defined as long as $F$ is unbounded,
-\emph{i.e.} $\forall b.~\exists a.~ b \leq F(a)$.
-However, it only makes sense as an ``inverse'' if $F$ is strictly
+\noindent This is well-defined if $F$ is unbounded,
+\emph{i.e.} $\forall b.~\exists a.~b \leq F(a)$.
+However, it only makes sense as an ``inverse'' \lb if~$F$ is strictly
 increasing, \emph{i.e.} $\forall n,m.~n < m \Rightarrow F(n) < F(m)$, which is
-a rough analogue of injectivity in the discrete domain.
+a rough analogue of injectivity in the discrete \lb domain.
 
 We call this the \emph{upper} inverse because, for strictly increasing functions like
 addition, multiplication, and exponentiation, the upper inverse is the ceiling of the
@@ -37,18 +37,18 @@ Even if $F$ strictly increases, as $a[n]$ does for every $a\ge 2$, notice that t
 Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower inverses in \cref{sec: discussion}.
 }%end hide
 \begin{thm}[a Galois connection] \label{thm: upp-inverse-rel}
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L65-L77}{\coq} If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L65-L77}{\color{blue}\coq} If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
 \end{thm}
 \begin{proof}
-Fix $n$. The sentence $\forall m.~ f(n)\le m \iff n\le F(m)$ implies: (1) $f(n)$ is a lower bound to $\{m: n \le F(m)\}$ and (2) $f(n)$ is itself in the set, since plugging in $m \triangleq f(n)$ yields $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. Conversely, if $f$ is the upper inverse of $F$, we know $\forall m.~n\le F(m)\Rightarrow f(n)\le m$. Now, $\forall m \ge f(n)$.~$F(m)\ge F(f(n)) \ge n$ by increasing-ness, thus completing the proof.
+Fix $n$. The sentence $\forall m.~ f(n)\le m \iff n\le F(m)$ \lb implies: (1) $f(n)$ is a lower bound to $\{m: n \le F(m)\}$ and \lb (2) $f(n)$ is itself in the set, since plugging in $m \triangleq f(n)$ yields $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. \lb Conversely, if $f$ is the upper inverse of $F$, we know that \lb $\forall m.~n\le F(m)\Rightarrow f(n)\le m$. Finally, by increasing-ness, $\forall m \ge f(n)$.~$F(m) \ge F(f(n)) \ge n$. 
 \end{proof}
 \begin{col}\label{col:inv_gives_id}
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L79-L90}{\coq}
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L79-L90}{\color{blue}\coq}
 If $F$ is strictly increasing, then $F^{-1} \circ F$ is
 the identity function.
 \end{col}
 \begin{proof}
-Proceed by antisymmetry. By ($\Leftarrow$) of Theorem~\ref{thm: upp-inverse-rel}, $F(n) \le F(n)$ implies
+Proceed by antisymmetry. By ($\Leftarrow$) of Theorem~\ref{thm: upp-inverse-rel}, \lb $F(n) \le F(n)$ implies
 $(F^{-1} \circ F)(n) \le n$.  By ($\Rightarrow$) of the same theorem, $(F^{-1} \circ F)(n) \le (F^{-1} \circ F)(n)$ implies $F(n) \le F \big((F^{-1} \circ F)(n)\big)$. $F$ is strictly increasing, so $n \le (F^{-1} \circ F)(n)$.
 \end{proof}
 
@@ -62,27 +62,27 @@ encompass the primary reasoning framework we provide to clients of our inverse f
 \noindent Our inverses require increasing functions,
 and our definitions of hyperoperations/Ackermann use repeater.
 But if $F$ is strictly increasing,
-$\rf{F}{a}$ is not necessarily strictly increasing:
-\emph{e.g.} the identity function
-$\li{id}$ is strictly increasing, but $\rf{\li{id}}{a}(n) = (\li{id} \circ \ldots \circ \li{id}) (a) = a$ is a constant function.  We need a little more.
+$\rf{F}{a}$ is not necessarily strictly increasing. For example,
+the identity function
+$\li{id}$ is strictly increasing, but $\rf{\li{id}}{a}(n) = (\li{id} \circ \ldots \circ \li{id}) (a) = a$ is a constant function.  We need something stronger.
 % Linked by Linh
 \begin{defn}
 A function $F:\mathbb{N}\to\mathbb{N}$ is an
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L80-L82}{\emph{expansion}} if $\forall n.~ F(n)\ge n$. Further, given $a\in \mathbb{N}$, an expansion $F$ is
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L84-L86}{\emph{strict from}} $a$ if ~$\forall n \ge a.~ F(n) > n$.
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L80-L82}{\color{blue}\emph{expansion}} if $\forall n.~ F(n)\ge n$. Further, given $a\in \mathbb{N}$, an expansion $F$ is
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L84-L86}{\color{blue}\emph{strict from}} $a$ if ~$\forall n \ge a.~ F(n) > n$.
 \end{defn}
-If $a\ge 1$ and $F$ is an expansion \emph{strict from} $a$, we quickly get:
+\noindent If $a\ge 1$ and $F$ is an expansion \emph{strict from} $a$, we quickly get:
 $\forall n.~ \rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$. That is, $\rf{F}{a} \ $ is itself an expansion strict from $0$.
 
 % Linked by Linh
 \begin{defn} \label{rem: repeatable-subset}
-$\forall a\ge 1$, if~$F$ is a strictly increasing function
-that is also a strict expansion from~$a$, then $\rf{F}{a}$
-enjoys an important property: $\rf{F}{a}$
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L143-L145}{``preserves'' the properties} of~$F$, 
-albeit with $0$ substituted for $a$.
+Suppose $a\ge 1$, and $F$ has two properties: is a strictly increasing function
+and it is also a strict expansion from~$a$. 
+Then $\rf{F}{a}$ 
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L143-L145}{\color{blue}``preserves'' the two properties} of~$F$. The only difference is that it is 
+a strict expansion from $0$ instead of from $a$.
 We thus say that such a function $F$ is
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L111-L112}{\emph{repeatable from}} $a$, and denote the
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L111-L112}{\color{blue}\emph{repeatable from}} $a$, and denote the
 set of functions repeatable from $a$ as $\repeatable_a$.
 It is straightforward to see that $\forall s,t.~ s \le t \Rightarrow \repeatable_s \subseteq \repeatable_t $.
 \end{defn}
@@ -94,16 +94,16 @@ let $f \triangleq F^{-1}$, \emph{i.e.} the inverse of $F$.
 Our goal is to use $f$ to compute an inverse to $\rf{F}{a}$.
 From the preceeding discussion we know that this inverse must exist,
 since $F \in \repeatable_a$ implies $\rf{F}{a} \in \repeatable_0$.
-For reasons that will be clear momentarily, we write this inverse as $\cdt{f}{a}$.  Now
-fix $n$ and observe that $\forall m.~f^{(m)}(n)\le a \iff m \ge \cdt{f}{a}(n)$
+For reasons that will be clear momentarily, we write this inverse as $\cdt{f}{a}$.  
+Fix $n$ and observe that $\forall m.~f^{(m)}(n)\le a \iff m \ge \cdt{f}{a}(n)$
 since
 \vspace{-0.5em}
 \begin{equation} \label{eq: rf-upp-inv}
 \begin{aligned}
-\cdt{f}{a}(n)\le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \iff f(n)\le F^{(m-1)}(a) \\
+\cdt{f}{a}(n) \le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \iff f(n)\le F^{(m-1)}(a) \\
 & \iff f^{(2)}(n)\le F^{(m-2)}(a) \iff \ldots \iff f^{(m)}(n)\le a
 \end{aligned}
-\vspace{-0.5em}
+% \vspace{-0.5em}
 \end{equation}
 Setting $m = \cdt{f}{a}(n)$ gives us
 $f^{(\cdt{f}{a}(n))}(n) \le a$.
@@ -112,16 +112,17 @@ times~$f$ needs to be compositionally applied to $n$ before the result
 equals or passes below $a$.
 In other words, count the length of the chain $\{n, f(n), f^{(2)}(n), \ldots\}$ that
 terminates as soon as we reach/pass $a$.
-This only works if each chainlink is strictly less than the previous,
-\emph{i.e.} $f$ is a \emph{contraction}.
+This only works if each chainlink is strictly smaller than the previous,
+\emph{i.e.} $f$ is a \emph{contraction}:
 % Linked by Linh
 \begin{defn} \label{defn: contracting}
 	A function $f : \mathbb{N} \to \mathbb{N}$ is a
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L40-L42}{\emph{contraction}} if $\forall n.~ f(n) \le n$. Given an $a \ge 1$, a contraction $f$ is
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L44-L46}{\emph{strict above}} $a$ if $\forall n > a.~n > f(n)$. We denote the set of contractions by $\contract$ and the set of contractions strict above $a$ by $\contract_a$. Analogously to our observation in
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L40-L42}{\color{blue}\emph{contraction}} if $\forall n.~ f(n) \le n$. Given an $a \ge 1$, a contraction $f$ is
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L44-L46}{\color{blue}\emph{strict above}} $a$ if $\forall n > a.~n > f(n)$. We denote the set of contractions by $\contract$ and the set of contractions strict above~$a$ by $\contract_a$. Analogously to our observation in
 	Definition \ref{rem: repeatable-subset}, $\forall s\le t.~ \contract_s \subseteq \contract_t$.
 \end{defn}
-What kinds of functions have contractive inverses? Expansions, naturally:
+% \noindent What kinds of functions have contractive inverses? Expansions, naturally:
+\noindent Next, observe that all expansions have contractive inverses:
 \begin{thm} \label{thm: expansion-inv-contraction}
 $\forall a\in \mathbb{N}.~F\in \repeatable_a \Rightarrow F^{-1} \in \contract_a$.
 \end{thm}
@@ -131,19 +132,19 @@ $\forall n.~F(n)\ge n \Rightarrow n \ge F^{-1}(n)$, so $F^{-1} \in
 Since $F\in \repeatable_a$, $F(n-1)\ge n$ holds.
 Finally, $n-1\ge F^{-1}(n) \Rightarrow n > F^{-1}(n)$.
 \end{proof}
-This clarifies the inverse relationship between expansions strict from some $a$ and contractions strict above that same $a$. The inverse of an expansion's
+\noindent This clarifies the inverse relationship between expansions strict from some $a$ and contractions strict above that same~$a$. The inverse of an expansion's
 repeater exists, and can be built from the expansion's inverse.
 To this end we introduce \emph{countdown}, a new iterative technique in the
 spirit of \emph{repeater}.
 \begin{defn} \label{defn: informal-countdown} \label{eq: countdown}
 Let $f\in \contract_a$. The \textit{countdown to} $a$ of $f$, written
 $\cdt{f}{a}(n)$, is the smallest number of times $f$ needs to be applied to
-$n$ for the answer to equal or go below $a$. \emph{i.e.},
+$n$ for the answer to equal or go below $a$. \lb \emph{i.e.},
 $\cdt{f}{a}(n) \triangleq \min\{m: f^{(m)}(n)\le a \}$.
 \end{defn}
-Inspired by Equation~\ref{eq: rf-upp-inv}, we provide a neat, algebraically manipulable logical sentence equivalent to Definition~\ref{eq: countdown}, which is more useful later in our paper:
+\noindent Inspired by Equation~\ref{eq: rf-upp-inv}, we provide a neat, algebraically manipulable logical sentence equivalent to Definition~\ref{eq: countdown}, which is more useful later in our paper:
 \begin{col} \label{col: cdt-repeat}
-If $a \in \mathbb{N}$ and $f\in \contract_{a}$, then $\forall n, m.~ \cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a$.
+If $a \in \mathbb{N}$ and $f\in \contract_{a}$, then \lb $\forall n, m.~ \cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a$.
 \end{col}
 \begin{proof}
 	Fix $a$ and $n$. The interesting direction is $(\Rightarrow)$. Suppose $\cdt{f}{a}(n)\le m$, we get $f^{(m)}(n)\le f^{(\cdt{f}{a}(n))}(n)$ due to $f\in \contract$, and $f^{(\cdt{f}{a}(n))}(n)\le a$ due to Definition~\ref{eq: countdown}.
@@ -151,7 +152,7 @@ If $a \in \mathbb{N}$ and $f\in \contract_{a}$, then $\forall n, m.~ \cdt{f}{a}(
 %\begin{thm} \label{thm: upp-inv-cdt-rf}
 %	For all $a\in \mathbb{N}$, if $f\in \contract_{a}$ is the upper inverse of $F: \mathbb{N}\to \mathbb{N}$, then $\cdt{f}{a}$ is the upper inverse of $\rf{F}{a}$.
 %\end{thm}
-Another useful result is the recursive formula for \emph{countdown}:
+\noindent Another useful result is the recursive formula for \emph{countdown}:
 % Linked by Linh
 \begin{thm} \label{thm: cdt-recursion}
 	%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L219-L245}{\coq}
@@ -163,8 +164,8 @@ Another useful result is the recursive formula for \emph{countdown}:
 	\end{equation*}
 \end{thm}
 \begin{proof}
-When $n \le a$, use Corollary~\ref{col: cdt-repeat} as follows:
-$n = f^{(0)}(n)\le a \iff \cdt{f}{a}(n)\le 0$.
+When $n \le a$, use Corollary~\ref{col: cdt-repeat} as follows: \lb
+$n = f^{(0)}(n)\le~a \iff \cdt{f}{a}(n)\le 0$.
 When $n > a$, proceed by antisymmetry.
 Define $m \triangleq \cdt{f}{a}(f(n))$, and note that
 Corollary~\ref{col: cdt-repeat} gives
@@ -174,7 +175,8 @@ and unfolding the definition of~$m$ shows that this last clause is true.
 Now since $n > a$, we have $\cdt{f}{a}(n)\ge 1$ by the above.
 Define $p \triangleq \cdt{f}{a}(n) - 1$.
 It remains to show $\cdt{f}{a}(f(n))\le p \Rightarrow 
-\linebreak f^{(p)}(f(n))\le a \Rightarrow f^{(p+1)}(n)\le a$, which holds by unfolding $p$'s definition.
+\linebreak f^{(p)}(f(n))\le a \Rightarrow f^{(p+1)}(n)\le a$, which holds by 
+unfolding the definition of $p$.
 \end{proof}
 
 %\begin{thm} \label{thm: cdt-contr-0}
@@ -186,7 +188,7 @@ It remains to show $\cdt{f}{a}(f(n))\le p \Rightarrow
 %	Thus $f^{(n-1)}(n)\le 1 \le a$, a contradiction. The theorem then follows.
 %\end{proof}
 
-\subsection{A structurally recursive computation of countdown}
+\subsection{A Coq computation of countdown}
 
 The higher-order repeater function is well-defined for all input functions,
 even those not in $\repeatable_a$ (although for such functions it may not
@@ -200,7 +202,7 @@ prove that this worker correctly computes the countdown when it is
 passed a contraction.
 
 \begin{defn} \label{defn: countdown-worker} \label{lem: cdt-init}
-For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the
+$\forall a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the
 \emph{countdown worker}
 to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
 \begin{equation*}
@@ -209,12 +211,12 @@ to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that
 \end{cases}
 \end{equation*}
 \end{defn}
-The worker operates on two arguments:
-the \emph{true argument} $n$, for which we want to simulate
-\emph{countdown to} $a$,
-and the \emph{budget} $b$, the maximum number of times we shall attempt
+\noindent The worker operates on two arguments:
+the \emph{true argument}~$n$, for which we want to simulate
+\emph{countdown to}~$a$,
+and the \lb \emph{budget}~$b$, the maximum number of times we shall attempt
 to compositionally apply $f$ on the input before giving up.
-If the input goes below or equals $a$ after $k$ applications, \emph{i.e.} $f^{(k)}(n)~\le~a$, we return the count $k$. If the budget is exhausted (\emph{i.e.} $b = 0$) while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but the point is that it can clearly be written as a Coq \li{Fixpoint}:
+If the input goes below or equals $a$ after $k$ applications, \lb \emph{i.e.} $f^{(k)}(n)~\le~a$, we return the count $k$. If the budget is exhausted (\emph{i.e.} $b = 0$) while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but the point is that it can clearly be written as a Coq Fixpoint:
 % Linked by A
 %\begin{lstlisting}
 %`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L103-L108}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
@@ -224,7 +226,7 @@ If the input goes below or equals $a$ after $k$ applications, \emph{i.e.} $f^{(k
 %\end{lstlisting}
 % Edited by Linh
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L103-L108}{Fixpoint cdn\_wkr}` a f n b :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L103-L108}{\color{blue}Fixpoint cdn\_wkr}` a f n b :=
   match b with 0 => 0 | S b' =>
     if (n <=? a) then 0
       else S (cdn_wkr f a (f n) k')
@@ -238,7 +240,7 @@ Careful readers may have noticed that \emph{budget} is similar to
 and dismissed for potentially
 being too computationally expensive to calculate.
 Budget is actually a refinement of gas because
-we always accompany its use with a method to calculate it in constant time.
+we always accompany its use with a constant-time calculation for it. 
 In fact, we will soon show that a budget of $n$ is sufficient in this case.
 This lets us define \emph{countdown} in Coq for the first time:
 \begin{defn} \label{defn: countdown}
@@ -246,7 +248,7 @@ Redefine $\cdt{f}{a}(n)
 \triangleq \cdw{f}{a}(n, n)$.
 % Linked by A
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L112}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L112}{\color{blue}Definition countdown\_to}` a f n := cdn_wkr a f n n.
 \end{lstlisting}
 \vspace{-0.8em}
 \end{defn}
@@ -310,8 +312,8 @@ finds the same value as the theoretical
 Definition~\ref{defn: informal-countdown}:
 % Linked by Linh
 \begin{thm} \label{thm: cdt-repeat}
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L191-L217}{\coq}
-	$\forall a \in \mathbb{N}.~ \forall f\in \contract_{a}$, we have
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L191-L217}{\color{blue}\coq}
+	$\forall a \in \mathbb{N}.~ \forall f\in \contract_{a}$, we can show that \lb
 %	\begin{equation} \label{eq: cdt-minimum}
 $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 \end{thm}
@@ -319,13 +321,13 @@ $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 %	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.
 %\hide{
 	Assume the initial arguments $(n, b)$, and let the original call 
-	$\cdw{f}{a}(n, b)$ be the $0^{th}$ call. A straightforward induction on $i$ shows that in the~$i^{th}$ call, the arguments will be $\big(f^{(i)}(n), b-i\big)$, while an accumulated amount~$i$ will have been added to the final result. The only exception to this rule will be the last call, which 
+	$\cdw{f}{a}(n, b)$ be the $0^{\text{th}}$ call. A straightforward induction on $i$ shows that in the~$i^{\text{th}}$ call, the arguments will be $\big(f^{(i)}(n), b-i\big)$, while an accumulated amount~$i$ will have been added to the final result. The only exception to this rule will be the last call, which 
 	will return $0$ and add nothing to the result.
 	
 	Suppose $b = n$, and let $m \triangleq \min\big\{i : f^{(i)}(n)\le a\big\}$\footnote{We prove the existence
 		of the min in Coq’s intuitionistic logic
 		% Linked by Linh
-	  \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L129-L159}{here} in our codebase.}. Then $m \le n$ since $f^{(n)}(n)\le a$. Thus, before the budget is exhausted, the function reaches the $m^{th}$ call. This is actually the last recursive call since $\big(f^{(m)}(n), n - m\big)$ satisfies the terminating condition $f^{(m)}(n)\le a$. This last call adds $0$ to the accumulated result, which is $m$ at the moment. Therefore $\cdw{f}{a}(n, n) = m$.
+	  \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L129-L159}{\color{blue}here} in our codebase.}. Then $m \le n$ since $f^{(n)}(n)\le a$. Thus, before the budget is exhausted, the function reaches the $m^{\text{th}}$ call. This is actually the last recursive call since $\big(f^{(m)}(n), n - m\big)$ satisfies the terminating condition $f^{(m)}(n)\le a$. This last call adds $0$ to the accumulated result, which is $m$ at the moment. Therefore $\cdw{f}{a}(n, n) = m$.
 %}%end hide
 \hide{
 	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.
@@ -334,17 +336,17 @@ $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 	\text{If } i < b \text{ and } a < f^{(i)}(n) \text{, then } \cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{(1+i)}(n), b - i - 1\right)
 	\end{equation*}
 	Let $m \triangleq \min\big\{i : f^{(i)}(n)\le a\big\}$\footnote{We prove the existence
-of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v\#L125-L150}{here} in our codebase.}, the case $m = 0$ is trivial. If $m > 0$, substitute $i = m - 1$ in the above equation, we have:
+of the min in Coq’s intuitionistic logic \href{https://github.com/inv-ack/inv-ack/blob/6099297c6ab0e16d14b037fb5ed600c4d22818f6/countdown.v\#L125-L150}{\color{blue}here} in our codebase.}, the case $m = 0$ is trivial. If $m > 0$, substitute $i = m - 1$ in the above equation, we have:
 	\begin{equation*}
 	\cdt{f}{a}(n) = \cdw{f}{a}(n, n) = m + \cdw{f}{a}\left(f^{(m)}(n), n-m\right) = m,
 	\end{equation*}
 where the last equality follows by applying Definition~\ref{defn: countdown-worker} given $f^{(m)}(n)\le a$.
 }%end hide
 \end{proof}
-We give an extended version of this proof in
+\noindent We give an extended version of this proof in
 Appendix~\ref{apx:proof_correct_countdown_worker},
 and mechanize it
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L191-L217}{here}.
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L191-L217}{\color{blue}here}.
 Theorem~\ref{thm: cdt-repeat} and (\ref{eq: rf-upp-inv}) establish the correctness of the Coq definitions of \emph{countdown worker} and \emph{countdown}, thereby justifying our budget of $n$ and our unification of
 Definitions \ref{defn: informal-countdown} and \ref{defn: countdown}. We wrap everything together with the following theorem:
 \begin{thm} \label{thm: cdt-inv-rf}

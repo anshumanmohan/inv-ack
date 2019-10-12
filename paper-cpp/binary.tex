@@ -9,10 +9,10 @@ Coq's binary type \li{N} in Appendix~\ref{apx:bin_in_coq}.}.
 This advantage also extends to our techniques.
 
 Our codebase has binary versions of
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_repeater.v\#L78-L87}{hyperoperations},
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_applications.v\#L30-L36}{inverse hyperoperations},
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_repeater.v\#L157-L175}{Ackermann}, and
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v\#L335-L342}{inverse Ackermann}.
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_repeater.v\#L78-L87}{\color{blue}hyperoperations},
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_applications.v\#L30-L36}{\color{blue}inverse hyperoperations},
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_repeater.v\#L157-L175}{\color{blue}Ackermann}, and
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v\#L335-L342}{\color{blue}inverse Ackermann}.
 Here we show how to compute inverse Ackermann for binary inputs in
 $\Theta(b)$ time, where $b$ is the bitlength,
 \emph{i.e.} logarithmic time in the input magnitude.
@@ -46,7 +46,7 @@ to \li{N}, and functions on \li{nat} to functions on \li{N}.
 %\end{lstlisting}
 % Edited by Linh
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L104-L109}{Fixpoint bin\_cdn\_wkr}` f a n b : N :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L104-L109}{\color{blue}Fixpoint bin\_cdn\_wkr}` f a n b : N :=
   match b with O => 0 | S b' =>
     if (n <=? a) then 0
       else 1 + bin_cdn_wkr f a (f n) b'
@@ -54,8 +54,8 @@ to \li{N}, and functions on \li{nat} to functions on \li{N}.
 \end{lstlisting}
 
 Determining the budget for \li{bin\_countdown\_to} is tricky.
-A naïve approach is to use the \li{nat} translation of \li{n},
-\emph{i.e.} \li{N.to_nat n}. This is untenable as it alone
+A naïve approach is to use the built-in \li{nat} translation of \li{n},
+\emph{i.e.} \li{N.to_nat n}. This is untenable as the translation alone
 takes exponential time \emph{viz} the length of $n$'s representation.
 We need a linear-time budget calculation for countdowns
 of oft-used functions like $\lambda n.(n-2)$.
@@ -66,19 +66,19 @@ The key is to focus on functions that can bring their arguments below a threshol
 we need to halve the argument on every application as shown below:
 \begin{defn} \label{defn: bin-contraction}
 	$f\in \contract$ is
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L37-L41}{\emph{binary strict above}}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L37-L41}{\color{blue}\emph{binary strict above}}
 	$a\in \mathbb{N}$ if $\forall n > a, f(n) \le \lfloor \frac{n + a}{2} \rfloor$.
 \end{defn}
-The key advantage of binary strict contractions is that if a contraction $f$ is binary strict above some $a$, then
+\noindent The key advantage of binary strict contractions is that if a contraction $f$ is binary strict above some $a$, then \lb
 $\forall n > a, \forall k.~f(n) \le \left\lfloor \frac{n - a}{2^k} \right\rfloor + a$.
-Therefore within $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than~$a$. We can choose this number as the budget for \li{bin\_cdn\_wkr} to successfully reach the countdown value before terminating.
+Therefore within \lb $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than~$a$. We can choose this number as the budget for \li{bin\_cdn\_wkr} to successfully reach the countdown value before terminating.
 Note that this budget is simply the length of the binary representation
 of \li{n - a}, which we calculate using our function
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_prelims.v#L135-L143}{\li{nat\_size}}. % Linked by A
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_prelims.v#L135-L143}{\color{blue}\li{nat\_size}}. % Linked by A
 The Coq definition of countdown on \li{N} is:
 \hide{
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_prelims.v#L135-L143}{Definition nat\_size}` (n : N) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_prelims.v#L135-L143}{\color{blue}Definition nat\_size}` (n : N) : nat :=
   match n with
   | 0 => 0%nat
   | Npos p => let fix nat_pos_size (x : positive) : nat :=
@@ -98,8 +98,8 @@ Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the s
 %\end{lstlisting}
 % Edited by Linh
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L111-L112}{Definition bin\_countdown\_to}` f a n :=
-bin_cdn_wkr f a n (nat_size (n - a)).
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L111-L112}{\color{blue}Definition bin\_countdown\_to}` f a n :=
+  bin_cdn_wkr f a n (nat_size (n - a)).
 \end{lstlisting}
 
 \noindent The following is the binary version of Lemma~\ref{lem: cdt-runtime}:
@@ -152,12 +152,14 @@ analagously to the optimization for \li{nat} discussed in~\S\ref{sect: hardcode-
 %\end{lstlisting}
 % Edited by Linh
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L55-L60}{Fixpoint bin\_alpha}` (m : nat) (x : N) : N :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L55-L60}{\color{blue}Fixpoint bin\_alpha}` (m : nat) (x : N) : N :=
   match m with
-  | 0%nat => x - 1          | 1%nat => x - 2
-  | 2%nat => N.div2 (x - 2) | 3%nat => N.log2 (x + 2) - 2
+  | 0%nat => x - 1          
+  | 1%nat => x - 2
+  | 2%nat => N.div2 (x - 2) 
+  | 3%nat => N.log2 (x + 2) - 2
   | S m'  => bin_countdown_to
-             (bin_alpha m') 1 (bin_alpha m' x)
+               (bin_alpha m') 1 (bin_alpha m' x)
   end.
 \end{lstlisting}
 Note that for all $x$, $\li{N.div2}(x - 2) = \left\lfloor \frac{x - 2}{2} \right\rfloor = \left\lceil \frac{x - 3}{2} \right\rceil$ and $\li{N.log2}(x + 2) - 2 = \left\lfloor \log_2(x+2) \right\rfloor - 2 = \left\lceil \log_2(x+3) \right\rceil - 3$, so the above Coq definition is correct.
@@ -197,7 +199,7 @@ The inverse Ackermann has an extra hardcoded level.
 %\end{lstlisting}
 % Edited by Linh
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L326-L333}{Fixpoint bin\_inv\_ack\_wkr}` f n k b :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L326-L333}{\color{blue}Fixpoint bin\_inv\_ack\_wkr}` f n k b :=
   match b with 0%nat => k | S b' =>
     if n <=? k then k else
       let g := (bin_countdown_to f 1) in
@@ -205,7 +207,7 @@ The inverse Ackermann has an extra hardcoded level.
           (compose g f) (g n) (N.succ k) b'
   end.
 
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L335-L342}{Definition bin\_inv\_ack}` n :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L335-L342}{\color{blue}Definition bin\_inv\_ack}` n :=
   if (n <=? 1) then 0 else if (n <=? 3) then 1
     else if (n <=? 7) then 2 else
       let f := (fun x => N.log2 (x + 2) - 2) in
@@ -228,12 +230,12 @@ The inverse Ackermann has an extra hardcoded level.
 \noindent Note that, for $n > 7$, $n < \Ack\big(\lfloor \log_2n \rfloor + 1\big)$ $= \Ack\big(\li{nat_size}(n)\big)$, so a budget of $\li{nat_size}(n)$ suffices.
 We show the
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L437-L472}
-{correctness} and
+{\color{blue}correctness} and
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_test.v#L14-L26}
-{benchmark}
+{\color{blue}benchmark}
 of \li{bin_inv_ack} in our codebase, and
 give a standalone Coq definition in Appendix~\ref{apx:code_n}.
-As in Theorem~\ref{thm: inv-ack-hardcode-correct}, the time complexity is the sum of each component's runtime:
+As in Theorem~\ref{thm: inv-ack-hardcode-correct}, the time complexity $\runtime_\alpha(n)$ is the sum of each component's runtime:
 %\begin{equation*}
 %\runtime_\alpha(n) =
 %\begin{aligned}
@@ -247,7 +249,6 @@ As in Theorem~\ref{thm: inv-ack-hardcode-correct}, the time complexity is the su
 %\end{equation*}
 % Edited by Linh
 \begin{equation*}
-\runtime_\alpha(n) =
 \begin{aligned}
 & \ \runtime_{\alpha_3}(n)
 + \sum_{k = 3}^{\alpha(n) - 1} \hspace{-5pt} \runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n))
@@ -257,8 +258,8 @@ As in Theorem~\ref{thm: inv-ack-hardcode-correct}, the time complexity is the su
 & \ + \Tleb(n, 1) \ + \ \Tleb(n, 3) \ + \ \Tleb(n, 7)
 \end{aligned}
 \end{equation*}
-With reference to Lemmas \ref{lem: compose-runtime} (Appendix~\ref{apx:time_analysis}), \ref{lem: leb-runtime-bin} and \ref{lem: succ-runtime-bin} (Appendix~\ref{apx:time_analysis_bin}), we have:
-In the second summand, $\runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n)) = \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ for each $k$ by Lemma~\ref{lem: compose-runtime}.
+With reference to Lemmas \ref{lem: compose-runtime} (Appendix~\ref{apx:time_analysis}), \ref{lem: leb-runtime-bin} and \ref{lem: succ-runtime-bin} \lb (Appendix~\ref{apx:time_analysis_bin}), we have:
+In the second summand, \lb $\runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n)) = \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ for each $k$ by Lemma~\ref{lem: compose-runtime}.
 By Lemma~\ref{lem: leb-runtime-bin}, each $\Tleb$ in the third summand is $\Theta\left(\log_2k\right)$, totalling $\bigO\big(\alpha(n)\log_2\alpha(n)\big) = \text{o}\big(\log_2n\big)$.
 The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by Lemma~\ref{lem: succ-runtime-bin}. The remaining items total $\Theta(\log_2n)$. Thus, $\forall n\ge 8$:
 %\begin{equation*}

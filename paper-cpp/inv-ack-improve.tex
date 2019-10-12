@@ -8,7 +8,7 @@ We put full proofs of these lemmas in Appendix~\ref{apx:time_analysis}.
 We elide the parallel analysis for the inverse hyperoperations, 
 which have simpler initial values. % but are otherwise similar.
 
-\textbf{N.B.} For this section,
+\noindent \textbf{N.B.} For this section,
 all of our functions take inputs in \li{nat}, \emph{i.e.} in
 unary encoding.  In \S\ref{sec: binary} we will move to functions
 operating on \li{N}, \emph{i.e.} in binary encoding.
@@ -24,7 +24,7 @@ operating on \li{N}, \emph{i.e.} in binary encoding.
 \begin{defn}
  For a function $f$ on $k$ variables, the \emph{runtime} of $f$, denoted by $\runtime_f\big(n_1, n_2, \ldots, n_k\big)$, counts the computational steps to compute $f(n_1, n_2, \ldots, n_k)$.
 \end{defn}
-The next lemma establishes the general runtime structure of \emph{countdown} when its input is encoded in \li{nat}.
+\noindent The next lemma establishes the general runtime structure of \emph{countdown} when its input is encoded in \li{nat}.
 \begin{lem} \label{lem: cdt-runtime}
 	% in the unary encoding system, \emph{i.e.} the type \li{nat} in Coq, 
 	$\forall a\ge 1,~\forall n \in \li{nat},~\forall f\in \contract_{a}$,
@@ -45,7 +45,7 @@ The next lemma establishes the general runtime structure of \emph{countdown} whe
 	\end{equation*}
 	where $\forall i, n.~C_i(n) \triangleq \alpha_i^{(\alpha_{i+1}(n) + 1)}(n) + 1 \in \{1, 2\}$
 \end{lem}
-Crucially, this lemma implies $\runtime_{\alpha_{i+1}}(n) \ge 
+\noindent Crucially, this lemma implies $\runtime_{\alpha_{i+1}}(n) \ge 
 \runtime_{\alpha_i}(n)$. 
 Given some index $i$ such that $\runtime_{\alpha_i}(n) = \Omega\big(n^2\big)$, each function after $\alpha_i$ in the hierarchy will take at least $\Omega\big(n^2\big)$, thus making $\runtime_{\alpha_i} (n) = \Omega\big(n^2\big)$.
 % per Definition~\ref{defn: inv-ack-worker}. 
@@ -85,7 +85,7 @@ Definition sub_2 (n : nat) : nat :=
   match n with | 0 => 0 | 1 => 1 | S (S n') => n' end.
 \end{lstlisting}}%end hide
 %Without loss of generality, let us henceforth assume that the constant factors in $\runtime(\alpha_1, n)$ and Lemma~\ref{lem: inv-ack-hier-runtime} are both $1$.
-The runtime for $\alpha_2$ can thus be bounded to $\bigO(n)$ as follows:
+The runtime for $\alpha_2$ can thus be bounded to $\bigO(n)$:
 %\begin{equation*}
 %\runtime_{\alpha_2}(n)
 % \le \textstyle \sum_{i=0}^{\left\lceil \frac{n-3}{2} \right\rceil} \runtime_{\alpha_1}\big(n-2i\big) + 3\left\lceil \frac{n-3}{2} \right\rceil + 2  =  4\left\lceil \frac{n-3}{2} \right\rceil + 2
@@ -120,7 +120,7 @@ Hardcoding $\alpha_1$ as $\lambda n.(n-2)$ gives the $i$th level of the inverse 
 A linear-time calculation of the inverse Ackermann hierarchy 
 leads to a similarly efficient calculation of the inverse Ackermann 
 function itself. We present $\tilde{\alpha}(n)$ below,  
-and also put a minimal standalone Coq definition for it in Appendix~\ref{apx:code}.
+and also put a minimal standalone Coq definition for it in Figure~\ref{fig:standalone}.
 \hide{
 We redefine $\alpha$ once again, hardcoding the output 
 when $n\le 1 = \Ack(0)$, and starting $\alpha^{\mathcal{W}}$ with 
@@ -168,12 +168,12 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 
 % Linked by Linh
 \begin{thm} \label{thm: inv-ack-hardcode-correct}
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L329-L337}{\coq
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L329-L337}{\color{blue}\coq
 	%\footnote{The link only contains the proof of correctness and not the running time}
 }
 	$\forall n.~\tilde{\alpha}(n) = \alpha(n)$
 	\; and \;
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_test.v#L5-L10}{\coq (benchmark)}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_test.v#L5-L10}{\color{blue}\coq (benchmark)}
 	$\runtime_{\tilde{\alpha}}(n) = \bigO(n)$.
 \end{thm}
 
@@ -191,8 +191,8 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 	& \le \textstyle \runtime_{\alpha_1}(n) + \sum_{k=1}^{\alpha(n) - 1}
 	\left[ \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)
 	\right] + \sum_{k=1}^{\alpha(n)}(k + 1) \\
-	& \le \runtime_{\alpha_{\alpha(n)}}\left(n\right) + \alpha(n)^2
-	= \bigO\left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2\right) = \bigO(n)
+	& \le \runtime_{\alpha_{\alpha(n)}}\left(n\right) + \alpha(n)^2 \\
+	& = \bigO\left(n + 2^{\alpha(n)}\log_2n + \alpha(n)^2\right) = \bigO(n)
 	\end{aligned}
 	\end{equation*}
 \end{proof}

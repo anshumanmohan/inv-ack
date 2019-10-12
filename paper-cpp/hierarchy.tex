@@ -1,5 +1,5 @@
 Let us formally define hyperoperations and clarify the intuition
-given by Table~\ref{table: hyperop-ack-inv} by relating them to
+given by Table~\ref{table: hyperop-ack-inv} by relating hyperoperations to
 the Ackermann function.
 The first hyperoperation (level 0) is simply successor, and
 every hyperoperation that follows is the repeated application of the previous.
@@ -38,7 +38,7 @@ which should now be the multiplicative identity $1$. The formal definition of hy
 \textit{3. Recursive rule:} & a[n+1](b+1) & \triangleq & a[n]\big(a[n+1]b\big)
 \end{array}
 \end{equation}
-The seemingly complicated recursive rule is actually just \emph{repeated application} in disguise. By fixing $a$ and treating $a[n]b$ as a function of $b$, we can write
+The recursive rule looks complicated, but is actually just \emph{repeated application} in disguise. By fixing~$a$ and treating~$a[n]b$ as a function of~$b$, we can write
 % \begin{equation*}
 % \begin{array}{lll}
 % a[n+1]b & ~ = ~ a[n]\big(a[n+1](b-1)\big) & ~ = ~ a[n]\big(a[n](a[n+1](b-2))\big) \\
@@ -55,7 +55,7 @@ a[n+1]b ~& = ~ a[n]\big(a[n+1](b-1)\big) \\
 \end{equation*}
 %where $f^{(k)}(u) ~ \triangleq ~ \overbrace{(f\circ f\circ \cdots \circ f)}^{k \text{ times}} (u)$,
 where $f^{(k)}(u) \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ compositional applications of a function~$f$ to an
-input~$u$; $f^{(0)}(u) = u$ (\emph{i.e.} applying $0$ times yields the identity).
+input~$u$; $f^{(0)}(u) = u$ \linebreak (\emph{i.e.} applying $0$ times yields the identity).
 
 This insight helps us encode hyperoperations~(\ref{eq:hyper}) and
 Ackermann~(\ref{eq:ackermann}) in Coq.  Notice that the recursive case of hyperoperations --- and
@@ -66,28 +66,30 @@ but the second is expanding explosively; in the inner recursive call, the first 
 constant but the second is shrinking. The elegant solution uses double recursion~\cite{bertotcast} as follows:
 % Linked by A
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L51-L52}{Definition hyperop\_init}` (a n : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L51-L52}{\color{blue}Definition hyperop\_init}` (a n : nat) : nat :=
   match n with 0 => a | 1 => 0 | _ => 1 end.
 
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L55-L64}{Fixpoint hyperop\_original}` (a n b : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L55-L64}{\color{blue}Fixpoint hyperop\_original}` (a n b : nat) : nat :=
   match n with
   | 0    => 1 + b
   | S n'
     => let fix hyperop' (b : nat) :=
          match b with
          | 0    => hyperop_init a n'
-         | S b' => hyperop_original a n' (hyperop' b')
+         | S b' => hyperop_original a n' 
+                              (hyperop' b')
          end in hyperop' b
   end.
 
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L123-L132}{Fixpoint ackermann\_original}` (m n : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L123-L132}{\color{blue}Fixpoint ackermann\_original}` (m n : nat) : nat :=
   match m with
   | 0    => 1 + n
   | S m'
     => let fix ackermann' (n : nat) : nat :=
          match n with
          | 0    => ackermann_original m' 1
-         | S n' => ackermann_original m' (ackermann' n')
+         | S n' => ackermann_original m' 
+                                (ackermann' n')
          end in ackermann' n
   end.
 \end{lstlisting}
@@ -105,7 +107,7 @@ to the former. For this we employ a version of the well-known function iterator
 \li{iter}~\cite{bertotcast}:
 \begin{defn}
 $\forall a\in \mathbb{N}, f: \mathbb{N}\to \mathbb{N}$, the
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L32-L36}{\emph{repeater from}}
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L32-L36}{\color{blue}\emph{repeater from}}
 $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 % Linked by A
 %\begin{lstlisting}
@@ -113,13 +115,14 @@ $a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ su
 %  match n with 0 => a | S n' => f (repeater_from f a n') end.
 %\end{lstlisting}
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L32-L36}{Fixpoint repeater\_from}` f a n :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L32-L36}{\color{blue}Fixpoint repeater\_from}` f a n :=
   match n with
   | 0 => a
-  | S n' => f (repeater_from f a n') end.
+  | S n' => f (repeater_from f a n') 
+  end.
 \end{lstlisting}
 \end{defn}
-This allows simple and function-oriented definitions of hyperoperations and the
+\noindent This allows simple and function-oriented definitions of hyperoperations and the
 Ackermann function that we give below. Note that the Curried $a[n-1]$ denotes
 the single-variable function $\lambda b.a[n-1]b$.
 \vspace{-0.5em}
@@ -160,7 +163,7 @@ a & \text{when } n = 0 \\
 %\end{lstlisting}
 % Edited by Linh
 \begin{lstlisting} 
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L67-L71}{Fixpoint hyperop}` (a n b : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L67-L71}{\color{blue}Fixpoint hyperop}` (a n b : nat) : nat :=
   match n with
   | 0    => 1 + b
   | S n' => repeater_from
@@ -185,7 +188,7 @@ m + 1 & \text{when } n = 0 \\
 %\end{lstlisting}
 % Edited by Linh
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L135-L139}{Fixpoint ackermann}` (n m : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L135-L139}{\color{blue}Fixpoint ackermann}` (n m : nat) : nat :=
   match n with
   | 0    => S m
   | S n' => repeater_from
@@ -193,7 +196,7 @@ m + 1 & \text{when } n = 0 \\
   end.
 \end{lstlisting}
 In the rest of this paper we construct efficient inverses to these
-functions.  Our key idea is an inverse to the higher-order repeater function, which we call \emph{countdown}.
+functions.  Our key idea is an inverse to the higher-order \emph{repeater} function, which we call \emph{countdown}.
 
 % Aquinas' promise:
 % We explain our core techniques of repeaters and countdowns that allow us to define each level of the Ackermann hierarchy—and their upper inverses—in a straightforward and uniform manner. We show how countdowns, in particular, can be written structurally recursively.

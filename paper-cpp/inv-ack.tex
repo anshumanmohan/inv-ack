@@ -91,10 +91,10 @@
 
 \hypersetup{ % play with these to change the look of hyperlinks
     colorlinks=true,
-    linkcolor=black,
+    linkcolor=blue,
     filecolor=magenta,
     urlcolor=blue,
-    citecolor=black
+    citecolor=blue,
 }
 
 \newcommand{\coq}{\scalebox{.6}{\textpmhg{\Ha}}}
@@ -155,6 +155,7 @@
 \newcommand{\rf}[2]{{#1\mathrel{\mathchoice{\mkern-5mu}{\mkern-5mu}{\mkern-2mu}{\mkern-2mu}} ^{\mathcal{R}}_{#2} \mathrel{\mathchoice{\mkern-3.5mu}{\mkern-3.5mu}{\mkern-2mu}{\mkern-2mu}}}}
 
 \newcommand{\invhyper}{I}
+\newcommand{\lb}{\linebreak}
 \renewcommand{\angle}[1]{\langle #1\rangle}
 
 \newcommand{\W}{\mathcal{W}}
@@ -223,19 +224,19 @@
 
 %\bibliographystyle{plainurl}% the mandatory bibstyle
 
-\title{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy}
+% \title{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy}
 
 \begin{document}
 	
 %% Title information
-\title[Inverting the Ackermann Hierarchy]{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy}         %% [Short Title] is optional;
+\title[Inverting the Ackermann Hierarchy]{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy}     %% [Short Title] is optional;
 %% when present, will be used in
 %% header instead of Full Title.
-\titlenote{with title note}             %% \titlenote is optional;
+% \titlenote{with title note}             %% \titlenote is optional;
 %% can be repeated if necessary;
 %% contents suppressed with 'anonymous'
-\subtitle{Subtitle}                     %% \subtitle is optional
-\subtitlenote{with subtitle note}       %% \subtitlenote is optional;
+% \subtitle{Subtitle}                     %% \subtitle is optional
+% \subtitlenote{with subtitle note}       %% \subtitlenote is optional;
 %% can be repeated if necessary;
 %% contents suppressed with 'anonymous'
 
@@ -304,11 +305,11 @@
 	We implement in Gallina a hierarchy of functions that calculate
 	the upper inverses to the hyperoperation/Ackermann hierarchy.
 	Our functions run in $\Theta(b)$ for inputs expressed
-	in unary, and $\bigO(b^2)$ for inputs expressed in binary ($b$ = bitlength).
-	We use our inverses to define linear-time functions---$\Theta(b)$ for both unary- 
-	and binary-represented inputs---that compute the upper inverse of the 
+	in unary, and in $\bigO(b^2)$ for inputs expressed in binary \linebreak (where $b$ = bitlength).
+	We use our inverses to define linear-time functions---$\Theta(b)$ for both unary-represented 
+	and binary-\linebreak represented inputs---that compute the upper inverse of the 
 	diagonal Ackermann %\linebreak[3]
-	function~$\Ack(n)$ and show that these functions are consistent with the usual definition of the inverse Ackermann function~$\alpha(n)$.
+	function~$\Ack(n)$. We show that these functions are consistent with the usual definition of the \linebreak inverse Ackermann function~$\alpha(n)$.
 	\keywords{Ackermann  \and hyperoperations \and Coq}
 \end{abstract}
 
@@ -337,7 +338,7 @@
 
 %% Keywords
 %% comma separated list
-\keywords{Ackermann  \and hyperoperations \and Coq}  %% \keywords are mandatory in final camera-ready submission
+\keywords{Ackermann, hyperoperations, inverses, Coq}  %% \keywords are mandatory in final camera-ready submission
 
 
 %% \maketitle
@@ -402,7 +403,7 @@
 %%
 %\bibliographystyle{plainurl}% the mandatory bibstyle
 
-\bibliographystyle{splncs04}
+% \bibliographystyle{ACM-Reference-Format}
 \bibliography{inv-ack}
 
 %% The Appendices part is started with the command \appendix;

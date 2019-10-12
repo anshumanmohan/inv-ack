@@ -4,7 +4,7 @@ division, $\log$, and $\log^{*}$.
 We then modify this technique to arrive at the inverse
 Ackermann hierarchy.
 
-\subsection{The inverse hyperoperations, including \li{div}, \li{log}, and \li{log*}}
+\subsection{Inverse hyperoperations, including \li{div}, \li{log}, \li{log*}}
 
 \begin{defn} \label{defn: inv-hyperop}
 	The inverse hyperoperations, written $a\angle{n}b$, are defined as:
@@ -40,7 +40,7 @@ Ackermann hierarchy.
 %\end{lstlisting}
 % Edited by Linh
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L28-L33}{Fixpoint inv\_hyperop}` (a n b : nat) : nat :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L28-L33}{\color{blue}Fixpoint inv\_hyperop}` (a n b : nat) : nat :=
   match n with 0 => b - 1 | S n' =>
     countdown_to
       (hyperop_init a n') (inv_hyperop a n') b
@@ -77,13 +77,13 @@ the correctness of  $\logc$, which in turn implies the correctness of $\log^*$. 
 together with the correctness of the entire hyperoperation hierarchy.
 }
 \vspace{-1.3em}
-where the Curried $a\angle{n{-}1}$ denotes the single-variable function
+\noindent where the Curried $a\angle{n{-}1}$ denotes the single-variable function
 $\lambda b.a\angle{n{-}1}b$.
-We now show that $a\angle{n}$ is the inverse to $a[n]$.
+We now show that $a\angle{n}$ is the inverse \lb to $a[n]$.
 First note that $a\angle{0}\in \contract_0$.~Then:
 % Linked by Linh
 \begin{lem}
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L48-L62}{\coq}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L48-L62}{\color{blue}\coq}
 $\forall a.~\forall b.~a\angle{1}b = b - a$.
 \end{lem}
 \begin{proof}
@@ -112,11 +112,11 @@ $\forall a \ge 1, a\angle{1} \in \contract_1$.
 \end{enumerate}
 \end{col}}%end hide
 %Now we are ready to prove the correctness of the inverse hyperoperations.
-\textbf{N.B.} $a\angle{n}b$ is a total function, but it is never actually used for $a = 0$ when $n \ge 2$ or for $a=1$ when $n \ge 3$. For the values
+\noindent \textbf{N.B.} $a\angle{n}b$ is a total function, but it is never actually used for $a = 0$ when $n \ge 2$ or for $a=1$ when $n \ge 3$. For the values
 we do care about, we have our inverse:
 % Linked by Linh
 \begin{thm} \label{thm: inv-hyperop-correct}
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L72-L98}{\coq}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L72-L98}{\color{blue}\coq}
 When $n\le 1$, or $n \le 2 \wedge a\ge 1$, or $a\ge 2$, then
 $a\angle{n} = \left(a[n]\right)^{-1}$.
 \end{thm}
@@ -127,9 +127,12 @@ P(n) \triangleq  \Big(a[n] \in \repeatable_{a_n}\Big)\ \text{ and } \
 Q(n) \triangleq  \Big((a\angle{n} = \left(a[n]\right)^{-1} \Big).
 \end{equation*}
 We have three goals:
-(1) $\forall a.~ Q(0) \wedge Q(1)$. \
-(2) $\forall a \ge 1.~ Q(2)$. \
-(3) $\forall a \ge 2.~ Q(n)$. \ Note that \ \mbox{$\forall n.~ a\angle{n+1}$} $= \cdt{a\angle{n}}{a_n}$ ~and \ $a[n+1] = \rf{a[n]}{a_n}$. By Theorem~\ref{thm: cdt-inv-rf},
+\begin{enumerate}
+	\item $\forall a.~ Q(0) \wedge Q(1)$ \\ \vspace{-1.2em}
+	\item $\forall a \ge 1.~ Q(2)$ \\ \vspace{-1.2em}
+	\item $\forall a \ge 2.~ Q(n)$ \\ \vspace{-1.2em}
+\end{enumerate}
+	Note that \ \mbox{$\forall n.~ a\angle{n+1}$} $= \cdt{a\angle{n}}{a_n}$ ~and \ $a[n+1] = \rf{a[n]}{a_n}$. By Theorem~\ref{thm: cdt-inv-rf},
 % Edited by Linh
 %\vspace*{-1em}
 %\noindent\begin{minipage}{.45\linewidth}
@@ -147,12 +150,15 @@ We have three goals:
 	P(n) & \ \Rightarrow \ Q(n) \ \Rightarrow \ Q(n+1) \label{eq: tmp-induction-1} \\
 	\qquad a_{n} \ge 1 & \ \Rightarrow \ P(n) \ \Rightarrow \ P(n+1) \label{eq: tmp-induction-2}
 	\end{align}
-Goal 1: $P(0) \iff \lambda b.(b+1)\in \repeatable_a$ and
-$Q(0) \iff a\angle{0} = \left(a[0]\right)^{-1} \iff (b-~1\le c \iff b\le c+1)$.
-These are both straightforward, and $Q(1)$ holds by~(\ref{eq: tmp-induction-1}). Goal 2: we have $a \ge 1$, so
+Goal 1: $P(0) \iff \lambda b.(b+1)\in \repeatable_a$, and
+$Q(0) \iff a\angle{0}~=~\left(a[0]\right)^{-1} \lb \iff (b-~1\le c \iff b\le c+1)$.
+These are both straightforward, and $Q(1)$ holds by~(\ref{eq: tmp-induction-1}). 
+
+\noindent Goal 2: we have $a \ge 1$, so
 $P(1)$ holds by $P(0)$ and~(\ref{eq: tmp-induction-2}), and
 $Q(2)$ holds by $Q(1)$ and~(\ref{eq: tmp-induction-1}).
-Goal 3: we have $a\ge 2$, and using~(\ref{eq: tmp-induction-1}) and $Q(0)$
+
+\noindent Goal 3: we have $a\ge 2$, and using~(\ref{eq: tmp-induction-1}) and $Q(0)$
 reduces the goal to $P(n)$. Using~(\ref{eq: tmp-induction-2}) and the fact that $\forall n \neq 1.~a_n\ge 1$, the goal reduces to $P(2)$. This unfolds to:
 \begin{equation*}
 a[2]\in \repeatable_0 \iff \forall b < c.~ab < ac \quad \wedge \quad \forall b \ge 1.~ab \ge b+1\text{,}
@@ -163,9 +169,9 @@ which is straightforward for $a\ge 2$. Induction on $n$ gives us the third goal.
 \begin{rem}
 Three early hyperoperations are $a[2]b = ab$, $a[3]b = a^b$ and
 $a[4]b = \! ^ba$, so, by Theorem~\ref{thm: inv-hyperop-correct}, we can define their inverses $\left\lceil b/a \right\rceil$, $\left\lceil \log_a b \right\rceil$, and $\log^*_a b$ as	
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L102-L113}{$a\angle{2}b$},	
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L115-L124}{$a\angle{3}b$}, and	
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L126-L128}{$a\angle{4}b$}.
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L102-L113}{\color{blue}$a\angle{2}b$},	
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L115-L124}{\color{blue}$a\angle{3}b$}, and	
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L126-L128}{\color{blue}$a\angle{4}b$}.
 Note that the functions $\log_a b$ and $\log^*_a b$ are not in the Coq Standard Library.
 \end{rem}
 \hide{
@@ -247,7 +253,7 @@ The following theorem demonstrates that a budget of $n$ suffices.
 %formalizes a setting for $\W\alpha$ to work.
 % Linked by Linh
 \begin{thm} \label{thm: inv-ack-worker-correct}
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L199-L231}{\coq}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L199-L231}{\color{blue}\coq}
 	$\forall n.~\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{thm}
 \begin{proof}[Proof outline]
@@ -258,9 +264,9 @@ The following theorem demonstrates that a budget of $n$ suffices.
 	Let $m \triangleq \min\big\{k : \alpha_k(n) \le k \}$. Then $m\le n$ since $\alpha_n(n)\le n$. \eqref{eq: inv-ack-worker-intermediate} then implies:
 	$$ \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\W}\big(\alpha_m, \alpha_m(n), m, n - m\big) = m = \alpha(n) $$
 \end{proof}
-We put a more involved mathematical proof of correctness in Appendix~\ref{apx:proof_correct_inv_ack_worker}, and a mechanized proof
+\noindent We put a more involved mathematical proof of correctness in Appendix~\ref{apx:proof_correct_inv_ack_worker}, and a mechanized proof
 % Linked by Linh
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L163-L231}{here}.
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L163-L231}{\color{blue}here}.
 We thus have a (re-)definition of inverse Ackermann that is %computationally
 definable via a Coq-accepted worker, \emph{i.e.} $\alpha(n) \triangleq \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big)$. Below, we present the inverse
 Ackermann function in Gallina.
@@ -281,19 +287,19 @@ Ackermann function in Gallina.
 %\end{lstlisting}
 % Edited by Linh
 \begin{lstlisting}
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L155-L161} {Fixpoint inv\_ack\_wkr}` f n k b :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L155-L161} {\color{blue}Fixpoint inv\_ack\_wkr}` f n k b :=
   match b with 0 => 0 | S b' =>
     if (n <=? k) then k
       else let g := (countdown_to f 1) in
         inv_ack_wkr (compose g f) (g n) (S k) b
   end.
 
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L37-L41}{Fixpoint alpha}` m x :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L37-L41}{\color{blue}Fixpoint alpha}` m x :=
   match m with 0 => x - 1 | S m' =>
     countdown_to 1 (alpha m') (alpha m' x)
   end.
 
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L167}{Definition inv\_ack}` :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L167}{\color{blue}Definition inv\_ack}` :=
   inv_ack_wkr (alpha 0) (alpha 0 n) 0 n.
 \end{lstlisting}
 

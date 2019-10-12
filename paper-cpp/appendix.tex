@@ -1,8 +1,8 @@
 % \vspace{-1.25em} Edited by Linh
-\section{Standalone Linear-Time Inverse Ackermann $\alpha$ in \li{nat}}
-\label{apx:code}
+% \section{Standalone Linear-Time Inverse Ackermann $\alpha$ in \li{nat}}
+% \label{apx:code}
 
-\vspace{-1em}
+% \vspace{-1em}
 \lstset{style=myTinyStyle}
 % Linked by A
 %\begin{lstlisting}
@@ -28,31 +28,7 @@
 %  end.
 %\end{lstlisting}
 % Edited by Linh
-\begin{lstlisting}
 
-Require Import Omega Program.Basics.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L6-L11}{Fixpoint cdn\_wkr}` a f n b :=
-  match b with 0 => 0 | S b' =>
-    if (n <=? a) then 0
-      else S (cdn_wkr f a (f n) k')
-  end.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L14}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L32-L38} {Fixpoint inv\_ack\_wkr}` f n k b :=
-  match b with 0 => 0 | S b' =>
-    if (n <=? k) then k
-      else let g := (countdown_to f 1) in
-        inv_ack_wkr (compose g f) (g n) (S k) b
-  end.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L42-L46}{Definition inv\_ack\_linear}` n :=
-  match n with 0 | 1 => 0 | _ => 
-    let f := (fun x => x - 2) in
-      inv_ack_wkr f (f n) 1 (n - 1)
-  end.
-\end{lstlisting}
 
 
 
@@ -102,7 +78,7 @@ Require Import Omega Program.Basics.
 Require Import Omega Program.Basics.
 Open Scope N_scope.
 
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L56-L64}{Definition nat\_size}` n :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L56-L64}{\color{blue}Definition nat\_size}` n :=
   match n with
   | 0 => 0%nat
   | Npos p =>
@@ -112,17 +88,17 @@ Open Scope N_scope.
       in nat_pos_size p
   end.
 
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L67-L72}{Fixpoint bin\_cdn\_wkr}` f a n b :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L67-L72}{\color{blue}Fixpoint bin\_cdn\_wkr}` f a n b :=
   match b with
   | O    => 0
   | S b' => if (n <=? a) then 0
     else 1 + bin_cdn_wkr f a (f n) b'
   end.
 
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L75-L76}{Definition bin\_countdown\_to}` f a n := 
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L75-L76}{\color{blue}Definition bin\_countdown\_to}` f a n := 
 bin_cdn_wkr f a n (nat_size (n - a)).
 
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L97-L104}{Fixpoint bin\_inv\_ack\_wkr}` f n k b :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L97-L104}{\color{blue}Fixpoint bin\_inv\_ack\_wkr}` f n k b :=
   match b with 0%nat => k | S b' => 
     if n <=? k then k else 
       let g := (bin_countdown_to f 1) in
@@ -130,7 +106,7 @@ bin_cdn_wkr f a n (nat_size (n - a)).
           (compose g f) (g n) (N.succ k) b'
   end.
 
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L111-L116}{Definition bin\_inv\_ack}` n :=
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L111-L116}{\color{blue}Definition bin\_inv\_ack}` n :=
   if (n <=? 1) then 0 else if (n <=? 3) then 1
     else if (n <=? 7) then 2 else 
       let f := (fun x => N.log2 (x + 2) - 2) in
@@ -147,13 +123,13 @@ bin_cdn_wkr f a n (nat_size (n - a)).
 This subsection provides the fully detailed proof of Theorem~\ref{thm: cdt-repeat}, which states that the function in Definition~\ref{defn: countdown} correctly computes the countdown value as defined in Definition~\ref{defn: informal-countdown}.
 % Linked by Linh
 \begin{usethmcounterof}{thm: cdt-repeat}
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L162-L189}{\coq}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L162-L189}{\color{blue}\coq}
 	$	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 \end{usethmcounterof}
 We begin with a lemma demonstrating the internal working of \emph{countdown worker} at the $i^\text{th}$ recursive step, including the accumulated result $1+i$, the current input $f^{(1+i)}(n)$, and the current budget $b-i-1$.
 
 \begin{lem} \label{lem: cdt-intermediate}
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L162-L189}{\coq}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L162-L189}{\color{blue}\coq}
 	$\forall a, n, b, i \in \mathbb{N}.~\forall f \in \contract$.~such that $i < b$ and $a < f^{(i)}(n)$:~
 	\begin{equation}  \label{eq: cdt-intermediate}
 	\cdw{f}{a}(n, b) = 1 + i + \cdw{f}{a}\left(f^{(1+i)}(n), b - i - 1\right)
@@ -185,7 +161,7 @@ We begin with a lemma demonstrating the internal working of \emph{countdown work
 Now we are ready to prove the correctness of the \emph{countdown} computation. \begin{proof}[Proof of Theorem~\ref{thm: cdt-repeat}]
 	Since $f\in \contract_{a}$ and $\mathbb{N}$ is well-ordered, let $m = \min\big\{i : f^{(i)}(n)\le a\big\}$.\footnote{We prove the existence
 		of the min in Coq’s intuitionistic logic 
-		\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L129-L159}{here}
+		\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L129-L159}{\color{blue}here}
 		in our codebase.} Our goal becomes
 	$\cdt{f}{a}(n) = m$. Note that this setup gives us:
 	\begin{equation} \label{eq: cdt-repeat-tmp}
@@ -209,13 +185,13 @@ Now we are ready to prove the correctness of the \emph{countdown} computation. \
 This subsection provides the fully detailed proof of Theorem~\ref{thm: inv-ack-worker-correct}, which states that given the appropriate arguments, the function \emph{inverse Ackermann worker} in Definition~\ref{defn: inv-ack-worker} correctly computes the value of the inverse Ackermann function as defined in 
 Theorem~\ref{thm: inv-ack-new}.
 \begin{usethmcounterof}{thm: inv-ack-worker-correct}
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L199-L231}{\coq}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L199-L231}{\color{blue}\coq}
 	$\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha(n)$.
 \end{usethmcounterof}
 First we state and prove the following lemma, which illustrates the working of \emph{inverse Ackermann worker} by examining each recursive call made during the execution of $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, b\big)$.
 
 \begin{lem} \label{lem: inv-ack-worker-intermediate}
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L172-L195}{\coq}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L172-L195}{\color{blue}\coq}
 	$\forall n, b, k$ such that $k\le \min\big\{b, \alpha_{k-1}(n)\big\}$,
 	\begin{equation*}
 	\alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, b\big) = \alpha^{\W}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, b-k-1\big)
