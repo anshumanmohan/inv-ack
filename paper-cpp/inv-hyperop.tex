@@ -76,7 +76,6 @@ to prove that all three definitions are correct, since that statement implies
 the correctness of  $\logc$, which in turn implies the correctness of $\log^*$. We will prove this in \ref{blah},
 together with the correctness of the entire hyperoperation hierarchy.
 }
-\vspace{-1.3em}
 \noindent where the Curried $a\angle{n{-}1}$ denotes the single-variable function
 $\lambda b.a\angle{n{-}1}b$.
 We now show that $a\angle{n}$ is the inverse \lb to $a[n]$.
@@ -209,7 +208,7 @@ Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\
 \begin{equation} \label{eq: inv-ack-hier-derive}
 \alpha_{i+1}(n)\le m \iff n\le \big(\mathcal{A}_i\big)^{(m+1)}(1) \iff \big(\alpha_i\big)^{(m+1)}(n) \le 1
 \end{equation}
-Equivalently, $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\big\}$, or $\alpha_{i+1}(n) = \cdt{\alpha_i}{1}\big(\alpha_i(n)\big)$. From Equation \ref{eq: inv-ack-hier-derive} we can thus define the inverse Ackermann hierarchy:
+Equivalently, $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\big\}$, or $\alpha_{i+1}(n) = \cdt{\alpha_i}{1}\big(\alpha_i(n)\big)$. From \eqref{eq: inv-ack-hier-derive} we can thus define the inverse Ackermann hierarchy:
 \begin{defn} \label{defn: inv-ack-hier}
 	$ \alpha_i \triangleq \begin{cases}
 	\lambda n.(n - 1) & \text{if } i = 0
@@ -242,7 +241,7 @@ All that remains is to provide a structurally-recursive function that computes $
 		\end{aligned}
 	\end{equation}
 \end{defn}
-The following theorem shows that this function computes the inverse Ackermann function correctly when passed appropriate arguments.
+Next, we show that this function computes the inverse Ackermann function when passed appropriate arguments.
 \hide{
 Given the arguments $\big(\alpha_i, \alpha_i(n), i, b - i\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$ at the next recursive call. Thus if $\alpha^{\W}$ is given a sufficient budget $b$, it will recursively transform the tuple $(\alpha_k, \alpha_k(n), k, b - k)$ until a point $k$ where $\alpha_k(n)\le k$, and will then return $k$. We now need to show that $\alpha^{\W}$ correctly computes $\alpha(n)$ given a reasonable budget.
 The following theorem demonstrates that a budget of $n$ suffices.
