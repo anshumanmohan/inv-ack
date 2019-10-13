@@ -79,7 +79,7 @@ it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 To show that our techniques translate well and 
 are free from unstated Coq dependencies, 
 we implemented our work in Isabelle/HOL
-($\approx 2$ hours of work, starting from total unfamiliarity).
+($\approx 2$ hours of work, starting from total \lb unfamiliarity).
 \lstset{style=isaStyle}
 \begin{lstlisting}
 theory inv_ack_standalone
@@ -113,14 +113,14 @@ fun inv_ack_linear :: "nat => nat" where
  
 end
 \end{lstlisting}
-\lstset{style=myStyle}
 
 \noindent Our techniques are as applicable to Isabelle as they are to Coq:
 Isabelle offers \li{floorlog}, a discrete logarithm with arbitrary base, but 
-a little investigation shows that this is computed via continous logarithm.
+\li{floorlog} is computed via~\li{ln}, the continous logarithm.
 The definition is likely not computable, and is, in any event, 
 less computationally efficient than our approach. 
-
+Further, we found no evidence of $\log^*$ or the inverse Ackermann function
+in the Isabelle literature.
 \begin{lstlisting}
 definition log :: "[real,real] => real" where
   "log a x = ln x / ln a"
@@ -129,9 +129,7 @@ definition floorlog :: "nat => nat => nat" where
   "floorlog b a = (if a > 0 /\ b > 1 
                    then nat `$\lfloor$`log b a`$\rfloor$` + 1 else 0)"
 \end{lstlisting}
-
-\noindent As may be expected, we found no evidence of $\log^*$ or inverse Ackermann
-in the Isabelle literature.
+\lstset{style=myStyle}
 
 % https://www.isa-afp.org/browser_info/current/AFP/IEEE_Floating_Point/Log_Nat.html
 % https://isabelle.in.tum.de/website-Isabelle2013/dist/library/HOL/Log.html
