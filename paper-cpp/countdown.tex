@@ -47,14 +47,14 @@ Fix $n$. The sentence $\forall m.~ f(n)\le m \iff n\le F(m)$ implies:
 \end{enumerate}	
 Conversely, if $f$ is the upper inverse of $F$, we know that \lb $\forall m.~n\le F(m)\Rightarrow f(n)\le m$. Finally, by increasing-ness, $\forall m \ge f(n)$.~$F(m) \ge F(f(n)) \ge n$. 
 \end{proof}
-\begin{col}\label{col:inv_gives_id}
+\begin{col}[property of Galois connections]\label{col:inv_gives_id}
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L79-L90}{\color{blue}\coq}
 If $F$ is strictly increasing, then $F^{-1} \circ F$ is
 the identity function.
 \end{col}
 \begin{proof}
 Proceed by antisymmetry. By ($\Leftarrow$) of Theorem~\ref{thm: upp-inverse-rel}, \lb $F(n) \le F(n)$ implies
-$(F^{-1} \circ F)(n) \le n$.  Next, by ($\Rightarrow$) of the same theorem, $(F^{-1} \circ F)(n) \le (F^{-1} \circ F)(n)$ implies that $F(n) \le F \big((F^{-1} \circ F)(n)\big)$. Now $F$ is strictly increasing, so \lb we get $n~\le~(F^{-1} \circ F)(n)$.
+$(F^{-1} \circ F)(n) \le n$.  Next, by ($\Rightarrow$) of the same theorem, $(F^{-1} \circ F)(n) \le (F^{-1} \circ F)(n)$ implies that $F(n) \le F \big((F^{-1} \circ F)(n)\big)$. We know $F$ is strictly increasing, so \lb we get $n~\le~(F^{-1} \circ F)(n)$.
 \end{proof}
 
 \begin{rem}

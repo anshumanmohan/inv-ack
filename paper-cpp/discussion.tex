@@ -26,8 +26,7 @@ Some authors~\cite{chazelle,tarjan} prefer a two-parameter inverse Ackermann fun
 	\ackt (m, n) \triangleq \min\left\{i \ge 1 : \Ack\left(i, \left\lfloor \frac{m}{n} \right\rfloor \right)\ge \log_2n \right\}
 	\end{equation}
 \end{defn}
-\noindent Note that $\ackt(n, n)$ and the single-parameter $\alpha(n)$
-are neither equal nor directly related, but
+\noindent Note that $\ackt(n, n) \neq \alpha(n)$. However,
 it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 \hide{This function arises from deep runtime analysis of the disjoint-set data structure. Tarjan \cite{tarjan} showed that, in the disjoint-set data structure, the time required $t(m,n)$ for a sequence of $m$ \textsc{\color{magenta}FIND}s intermixed with $n-1$ \textsc{\color{magenta}UNION}s (such that $m \geq n$) is bounded as: $k_{1}m\cdot\alpha(m,n) \leq t(m,n) \leq k_{2}m\cdot\alpha(m,n)$. In graph theory, Chazelle \cite{chazelle} showed that the minimum spanning tree of a connected graph with $n$ vertices and $m$ edges can be found in time $O(m\cdot\alpha(m,n))$. Computing this function is in fact easier than $\alpha(n)$, as when $m$ and $n$ are given, we are reduced to finding the minimum $i\ge 1$ such that $\Ack_i(s)\ge t$ for $s, t$ fixed, which can be done with the following variant of the \emph{inverse Ackermann worker}.
 }
@@ -75,3 +74,64 @@ it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 		Here $b\ge l$ due to the fact that $\Ack(b, k)\ge b$, so $\alpha_b(b)\le k$. This completes the proof.
 \end{proof}}%end hide
 
+\subsection{A brief foray into Isabelle/HOL}
+
+To show that our techniques translate well and 
+are free from unstated Coq dependencies, 
+we implemented our work in Isabelle/HOL
+($\approx 2$ hours of work, starting from total unfamiliarity).
+\lstset{style=isaStyle}
+\begin{lstlisting}
+theory inv_ack_standalone
+  imports "HOL-Library.Log_Nat" HOL.Divides
+begin
+
+primrec cdn_wkr :: "(nat => nat) => nat => 
+                   nat => nat => nat" where
+  "cdn_wkr f a n 0 = 0" |
+  "cdn_wkr f a n (Suc k) = 
+    (if n <= a then 0 
+  	           else Suc (cdn_wkr f a (f n) k))"
+
+fun countdown_to :: "(nat => nat) => nat => 
+                    nat => nat" where
+  "countdown_to f a n = cdn_wkr f a n n"
+
+primrec inv_ack_wkr :: "(nat => nat) => nat => 
+                       nat => nat => nat" where
+  "inv_ack_wkr f n k 0 = k" |
+  "inv_ack_wkr f n k (Suc b) = 
+  	(if n <= k then k
+  	else let g = (countdown_to f 1) in
+    inv_ack_wkr (g o f) (g n) (Suc k) b)"
+
+fun inv_ack_linear :: "nat => nat" where
+  "inv_ack_linear 0 = 0" |
+  "inv_ack_linear (Suc 0) = 0" |
+  "inv_ack_linear (Suc (Suc n)) = 
+  	inv_ack_wkr (`$\lambda$` x. (x - 2)) n 1 (Suc n)"
+ 
+end
+\end{lstlisting}
+\lstset{style=myStyle}
+
+\noindent Our techniques are as applicable to Isabelle as they are to Coq:
+Isabelle offers \li{floorlog}, a discrete logarithm with arbitrary base, but 
+a little investigation shows that this is computed via continous logarithm.
+The definition is likely not computable, and is, in any event, 
+less computationally efficient than our approach. 
+
+\begin{lstlisting}
+definition log :: "[real,real] => real" where
+  "log a x = ln x / ln a"
+
+definition floorlog :: "nat => nat => nat" where
+  "floorlog b a = (if a > 0 /\ b > 1 
+                   then nat `$\lfloor$`log b a`$\rfloor$` + 1 else 0)"
+\end{lstlisting}
+
+\noindent As may be expected, we found no evidence of $\log^*$ or inverse Ackermann
+in the Isabelle literature.
+
+% https://www.isa-afp.org/browser_info/current/AFP/IEEE_Floating_Point/Log_Nat.html
+% https://isabelle.in.tum.de/website-Isabelle2013/dist/library/HOL/Log.html

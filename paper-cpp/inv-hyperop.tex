@@ -152,12 +152,10 @@ We have three goals:
 Goal 1: $P(0) \iff \lambda b.(b+1)\in \repeatable_a$, and
 $Q(0) \iff a\angle{0}~=~\left(a[0]\right)^{-1} \lb \iff (b-~1\le c \iff b\le c+1)$.
 These are both straightforward, and $Q(1)$ holds by~(\ref{eq: tmp-induction-1}). 
-
-\noindent Goal 2: we have $a \ge 1$, so
+Goal 2: we have $a \ge 1$, so
 $P(1)$ holds by $P(0)$ and~(\ref{eq: tmp-induction-2}), and
 $Q(2)$ holds by $Q(1)$ and~(\ref{eq: tmp-induction-1}).
-
-\noindent Goal 3: we have $a\ge 2$, and using~(\ref{eq: tmp-induction-1}) and $Q(0)$
+Goal 3: we have $a\ge 2$, and using~(\ref{eq: tmp-induction-1}) and $Q(0)$
 reduces the goal to $P(n)$. Using~(\ref{eq: tmp-induction-2}) and the fact that $\forall n \neq 1.~a_n\ge 1$, the goal reduces to $P(2)$. This unfolds to:
 \begin{equation*}
 a[2]\in \repeatable_0 \iff \forall b < c.~ab < ac \quad \wedge \quad \forall b \ge 1.~ab \ge b+1\text{,}
@@ -172,7 +170,16 @@ $a[4]b = \! ^ba$, so, by Theorem~\ref{thm: inv-hyperop-correct}, we can define t
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L115-L124}{\color{blue}$a\angle{3}b$}, and	
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L126-L128}{\color{blue}$a\angle{4}b$}.
 Note that the functions $\log_a b$ and $\log^*_a b$ are not in the Coq Standard Library.
+
+\begin{lstlisting}
+Definition divc a b := inv_hyperop a 2 b.
+Definition logc a b := inv_hyperop a 3 b.
+Definition logstar a b := inv_hyperop a 4 b.
+\end{lstlisting}
 \end{rem}
+
+
+
 \hide{
 \begin{col}
 	$\forall a \in \mathbb{N}$:
