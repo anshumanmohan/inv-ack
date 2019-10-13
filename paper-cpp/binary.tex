@@ -1,12 +1,12 @@
 Thus far we have used the Coq type \li{nat}, which represents
 a number~$n$ using~$n$ bits.
-The binary system represents~$n$ in $\lfloor \log_{2} n \rfloor + 1$ bits.
+In contrast, the binary system represents~$n$ in $\lfloor \log_{2} n \rfloor + 1$ bits.
 In both systems, addition/subtraction of $b$-bit
 numbers is $\Theta(b)$, while multiplication is $\Theta \big(b^2\big)$.
 In general, arithmetic operations are often faster when the inputs
 are encoded in binary\footnote{We put a further explanation of
 Coq's binary type \li{N} in Appendix~\ref{apx:bin_in_coq}.}.
-This advantage also extends to our techniques.
+In this section we show that this advantage also extends to our techniques.
 
 Our codebase has binary versions of
 	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_repeater.v\#L78-L87}{\color{blue}hyperoperations},
@@ -25,7 +25,7 @@ since Ackermann and base-2 hyperoperations benefit from $\Theta(1)$ division via
 whereas general division is $O(b)$.
 \end{rem}
 
-\subsection{Countdown and contractions with binary numbers}
+\subsection{Countdown and contractions in binary}
 
 \renewcommand{\Tleb}{\runtime_{\li{N.leb}}}
 \renewcommand{\Tsucc}{\runtime_{\li{N.succ}}}
@@ -70,8 +70,8 @@ we need to halve the argument on every application as shown below:
 	$a\in \mathbb{N}$ if $\forall n > a, f(n) \le \lfloor \frac{n + a}{2} \rfloor$.
 \end{defn}
 \noindent The key advantage of binary strict contractions is that if a contraction $f$ is binary strict above some $a$, then \lb
-$\forall n > a, \forall k.~f(n) \le \left\lfloor \frac{n - a}{2^k} \right\rfloor + a$.
-Therefore within \lb $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than~$a$. We can choose this number as the budget for \li{bin\_cdn\_wkr} to successfully reach the countdown value before terminating.
+we know that $\forall n > a, \forall k.~f(n) \le \left\lfloor \frac{n - a}{2^k} \right\rfloor + a$.
+Therefore, within \lb $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than~$a$. We can choose this number as the budget for \li{bin\_cdn\_wkr} to successfully reach the countdown value before terminating.
 Note that this budget is simply the length of the binary representation
 of \li{n - a}, which we calculate using our function
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_prelims.v#L135-L143}{\color{blue}\li{nat\_size}}. % Linked by A
@@ -115,8 +115,9 @@ Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the s
 	$\forall n \in \li{N} \ \forall a\in \li{N}$, if $f$ is a binary strict contraction above $a$,
 	\begin{equation*}
 	\begin{aligned}
-	\runtime_{\cdt{f}{a}}(n) \ \le \ & \sum_{i=0}^{\cdt{f}{a}(n) - 1} \hspace{-6pt}
-	\runtime_f\big(f^{(i)}(n)\big) \ + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \\ & + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
+	\runtime_{\cdt{f}{a}}(n) \ \le \ \sum_{i=0}^{\cdt{f}{a}(n) - 1} \hspace{-6pt}
+	\runtime_f\big(f^{(i)}(n)\big) \ & + \ (\log_2a + 3)\left(\cdt{f}{a}(n) + 1\right) \\ 
+  & + \ 2\log_2n \ + \ \log_2\cdt{f}{a}(n)
 	\end{aligned}
 	\end{equation*}
 \end{lem}
@@ -132,7 +133,7 @@ Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the s
 %Definition alpha3 (n: N) : N := N.size (n+2) - 3.
 %\end{lstlisting}
 %Let $n\ge 2$. The computation of \li{N.size(n)} takes time equal to itself, so the above definition gives $\runtime(\alpha_3, n) \le 2\log_2n$. Fix an $i\ge 3$ and suppose $\runtime(\alpha_i, n) \le C_i\log_2n$. By \Cref{lem: inv-ack-hier-runtime},
-\subsection{Inverse Ackermann in $\bigO\left(\log_2 n\right)$ time, where $n$ is magnitude}
+\subsection{Inverse Ackermann in $\bigO\left(\log_2 n\right)$}
 Our new Coq definition computes countdown
 only for strict binary contractions. Fortunately, starting
 from $n = 2$, the inverse hyperoperations $a\angle{n}b$ when $a\ge 2$
@@ -169,9 +170,9 @@ Note that for all $x$, $\li{N.div2}(x - 2) = \left\lfloor \frac{x - 2}{2} \right
 %\end{thm}
 % Edited by Linh
 \begin{thm} \label{thm: inv-ack-runtime-bin}
-	For all $i$ and $n$,
+	% For all $i$ and $n$,
 	\begin{equation*}
-	\runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i.
+	\forall i,n.~\runtime_{\alpha_i}(n) \le 2\log_2n + \left(3\cdot 2^i - 3i - 13\right)\log_2\log_2n + 3i.
 	\end{equation*}
 \end{thm}
 
@@ -250,8 +251,8 @@ As in Theorem~\ref{thm: inv-ack-hardcode-correct}, the time complexity $\runtime
 % Edited by Linh
 \begin{equation*}
 \begin{aligned}
-& \ \runtime_{\alpha_3}(n)
-+ \sum_{k = 3}^{\alpha(n) - 1} \hspace{-5pt} \runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n))
+\runtime_{\alpha_3}(n)
+& \ + \sum_{k = 3}^{\alpha(n) - 1} \hspace{-5pt} \runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n))
 + \sum_{k = 3}^{\alpha(n)}\Tleb\left(\alpha_k(n), k\right) \\
 & \ + \sum_{k = 3}^{\alpha(n) - 1} \hspace{-5pt} \Tsucc(k)
 \ + \ \runtime_{\li{nat_size}}(n) \\
@@ -279,8 +280,8 @@ The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by Lemma~\
 & = \runtime_{\alpha_3}(n)
 + \sum_{k = 3}^{\alpha(n) - 1} \big(\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_{k}}(n)\big) + \Theta\left(\log_2 n\right) \\
 & = \runtime_{\alpha_{\alpha(n)}}(n) + \Theta\big(\log_2 n\big) \\
-& = \bigO\big(\log_2n + 2^{\alpha(n)}\log_2\log_2n \big) + \Theta\big(\log_2n\big)
-= \Theta\big(\log_2n\big)
+& = \bigO\big(\log_2n + 2^{\alpha(n)}\log_2\log_2n \big) + \Theta\big(\log_2n\big) \\
+& = \Theta\big(\log_2n\big)
 \end{aligned}
 \end{equation*}
 
