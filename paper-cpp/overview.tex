@@ -157,7 +157,7 @@ $.
 \label{sec:incfuncinv}
 Defining increasing functions is often easier than defining their inverses.
 For instance, addition, multiplication, and exponentiation on Church numerals
-are simpler than subtraction, division, and logarithm. Similarly, defining multiplication in Gallina~\cite{coq} is easy, but defining division along the same lines leads to suffering:
+are simpler than subtraction, division, and logarithm. Similarly, defining multiplication in Gallina~\cite{coq} is easy, but defining division along the same lines leads to much suffering:
 %Defining increasing functions is often significantly easier than defining their inverses.
 %The Church numeral encodings of addition, multiplication, and exponentiation
 %are each simpler than their corresponding inverses, \emph{i.e.} subtraction, division, and logarithm. Similarly, defining multiplication in Gallina~\cite{coq} is easy, but defining division is unexpectedly painful:
@@ -290,7 +290,10 @@ Finally, our techniques are compact: consider the 14 lines of code that invert t
     \item[\S\ref{sec: binary}] We extend to binary inputs. This takes time~$\bigO(b)$, 
     where~$b$ is the bitlength of the binary encoding of $n$.
     \item[\S\ref{sec: discussion}] We discuss the value of linear time inverses for
-explosively growing functions, and extend to the two-argument inverse Ackermann function. %, \note{other derivative functions such as foo bar doo dah,} and survey related work.
+    explosively growing functions, and extend to the two-argument inverse Ackermann function.
+    \item[\S\ref{sec:related}] {\color{red}Something something related, historial, etc. Something something related, historial, etc.}
+
+    %, \note{other derivative functions such as foo bar doo dah,} and survey related work.
 \end{itemize}
 All our techniques are mechanized in Coq and our code is available
 online at \href{https://github.com/inv-ack/inv-ack}{\color{blue}github.com/inv-ack/inv-ack}~\cite{inv-ack}. Further, definitions and theorems presented
