@@ -2,13 +2,14 @@ We show that the inverse Ackermann from
 Definition~\ref{defn: inv-ack-hier} runs in~$\Omega(n^2)$ 
 under a call-by-value strategy, and in $O(n)$
 after a simple optimization.
-To give intuition and remain accessible to readers, we 
-present a detailed sketch via lemma statements.
+To remain accessible to readers, we give intuition 
+by presenting a detailed sketch via lemma statements.
 We put full proofs of these lemmas in Appendix~\ref{apx:time_analysis}.
 We elide the parallel analysis for the inverse hyperoperations, 
-which have simpler initial values. % but are otherwise similar.
+which is easier thanks to simpler initial values but are otherwise similar.
 
-\noindent \textbf{N.B.} For this section,
+\noindent \textbf{N.B.} 
+For this section,
 all of our functions take inputs in \li{nat}, \emph{i.e.} in
 unary encoding.  In \S\ref{sec: binary} we will move to functions
 operating on \li{N}, \emph{i.e.} in binary encoding.
@@ -35,7 +36,7 @@ operating on \li{N}, \emph{i.e.} in binary encoding.
 	\end{equation*}
 \end{lem}
 
-\subsection{A na\"ive $\alpha_i$ on \li{nat} is $\Omega(n^2)$, and is $O(n)$ after optimization} \label{sect: hardcode-lvl2}
+\subsection{Na\"ive $\alpha_i$ on \li{nat} is $\Omega(n^2)$; optimized $\alpha_i$ is $O(n)$} \label{sect: hardcode-lvl2}
 
 \noindent We start with the following lemma about the running time of each $\alpha_i$, which is a consequence of Lemma~\ref{lem: cdt-runtime}. Its full proof can be found in Appendix~\ref{apx:time_analysis}.
 \begin{lem} \label{lem: inv-ack-hier-runtime}
@@ -47,7 +48,7 @@ operating on \li{N}, \emph{i.e.} in binary encoding.
 \end{lem}
 \noindent Crucially, this lemma implies $\runtime_{\alpha_{i+1}}(n) \ge 
 \runtime_{\alpha_i}(n)$. 
-Given some index $i$ such that $\runtime_{\alpha_i}(n) = \Omega\big(n^2\big)$, each function after $\alpha_i$ in the hierarchy will take at least $\Omega\big(n^2\big)$, thus making $\runtime_{\alpha_i} (n) = \Omega\big(n^2\big)$.
+Given some index $i$ such that $\runtime_{\alpha_i}(n) = \Omega\big(n^2\big)$, each function after $\alpha_i$ in the hierarchy will take at least $\Omega\big(n^2\big)$ time, thus making \lb $\runtime_{\alpha_i} (n) = \Omega\big(n^2\big)$.
 % per Definition~\ref{defn: inv-ack-worker}. 
 In fact, $i = 2$ suffices.
 \begin{lem} \label{lem: alpha2_runtime_naive}
@@ -99,7 +100,7 @@ The runtime for $\alpha_2$ can thus be bounded to $\bigO(n)$:
 & \ \le\ 2n - 2 \ = \ \bigO(n)
 \end{aligned}
 \end{equation*}
-Note that the above bound only applies for $n\ge 2$. When $n\le 1$, the LHS is 1.
+Note that the above bound only applies for $n\ge 2$. When $n\le 1$, the left hand side is $1$.
 \end{rem}
 
 \noindent This simple optimization cascades through the entire hierarchy:
@@ -109,9 +110,9 @@ Hardcoding $\alpha_1$ as $\lambda n.(n-2)$ gives the $i$th level of the inverse 
 %	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, $\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n)$.
 %\end{thm}
 \begin{thm} \label{thm: inv-ack-hier-runtime-improved}
-	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, we have $\forall i$,
+	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier} with the added hardcoding of $\alpha_1$ to $\lambda n. (n - 2)$, we have:
 	\begin{equation*}
-	\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n).
+	\forall i.~\runtime_{\alpha_i}(n) \le 4n + \left(19\cdot 2^{i-3} - 2i - 13\right)\log_2n + 2i = \bigO(n).
 	\end{equation*}
 \end{thm}
 
@@ -119,8 +120,10 @@ Hardcoding $\alpha_1$ as $\lambda n.(n-2)$ gives the $i$th level of the inverse 
 
 A linear-time calculation of the inverse Ackermann hierarchy 
 leads to a similarly efficient calculation of the inverse Ackermann 
-function itself. We present $\tilde{\alpha}(n)$ below,  
-and also put a minimal standalone Coq definition for it in Figure~\ref{fig:standalone}.
+function itself. We present $\tilde{\alpha}(n)$ below, 
+along with a Coq encoding. The function
+\li{inv\_ack\_linear} is, precisely the function we presented as a 
+sneak peek in Figure~\ref{fig:standalone}.
 \hide{
 We redefine $\alpha$ once again, hardcoding the output 
 when $n\le 1 = \Ack(0)$, and starting $\alpha^{\mathcal{W}}$ with 
@@ -166,14 +169,20 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 	\end{cases}$
 \end{defn}
 
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L42-L46}{\color{blue}Definition inv\_ack\_linear}` n :=
+  match n with 0 | 1 => 0 | _ => 
+    let f := (fun x => x - 2) in
+      inv_ack_wkr f (f n) 1 (n - 1)
+  end.
+\end{lstlisting}
+
 % Linked by Linh
 \begin{thm} \label{thm: inv-ack-hardcode-correct}
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L329-L337}{\color{blue}\coq
-	%\footnote{The link only contains the proof of correctness and not the running time}
-}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L329-L337}{\color{blue}\coq}
 	$\forall n.~\tilde{\alpha}(n) = \alpha(n)$
-	\; and \;
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_test.v#L5-L10}{\color{blue}\coq (benchmark)}
+	\; and \hfill\break 
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_test.v#L5-L10}{\hspace{6.1em}\color{blue}\coq (benchmark)}
 	$\runtime_{\tilde{\alpha}}(n) = \bigO(n)$.
 \end{thm}
 
