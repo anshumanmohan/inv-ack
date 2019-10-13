@@ -20,9 +20,9 @@ do not come as naturally.
 \end{defn}
 \noindent This is well-defined if $F$ is unbounded,
 \emph{i.e.} $\forall b.~\exists a.~b \leq F(a)$.
-However, it only makes sense as an ``inverse'' \lb if~$F$ is strictly
-increasing, \emph{i.e.} $\forall n,m.~n < m \Rightarrow F(n) < F(m)$, which is
-a rough analogue of injectivity in the discrete \lb domain.
+However, it only really serves as an ``inverse'' if~$F$ is strictly
+increasing, \emph{i.e.} $\forall n,m.~n<m \Rightarrow F(n)<F(m)$, which is
+a rough analogue of injectivity in the discrete domain.
 
 We call this the \emph{upper} inverse because, for strictly increasing functions like
 addition, multiplication, and exponentiation, the upper inverse is the ceiling of the
@@ -40,7 +40,12 @@ Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower
 	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L65-L77}{\color{blue}\coq} If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
 \end{thm}
 \begin{proof}
-Fix $n$. The sentence $\forall m.~ f(n)\le m \iff n\le F(m)$ \lb implies: (1) $f(n)$ is a lower bound to $\{m: n \le F(m)\}$ and \lb (2) $f(n)$ is itself in the set, since plugging in $m \triangleq f(n)$ yields $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. \lb Conversely, if $f$ is the upper inverse of $F$, we know that \lb $\forall m.~n\le F(m)\Rightarrow f(n)\le m$. Finally, by increasing-ness, $\forall m \ge f(n)$.~$F(m) \ge F(f(n)) \ge n$. 
+Fix $n$. The sentence $\forall m.~ f(n)\le m \iff n\le F(m)$ implies:
+\begin{enumerate}
+	\item $f(n)$ is a lower bound to $\{m: n \le F(m)\}$ \\ \vspace{-1.2em}
+	\item $f(n)$ is itself in the set, since plugging in $m \triangleq f(n)$ yields $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. \\ \vspace{-1.2em}
+\end{enumerate}	
+Conversely, if $f$ is the upper inverse of $F$, we know that \lb $\forall m.~n\le F(m)\Rightarrow f(n)\le m$. Finally, by increasing-ness, $\forall m \ge f(n)$.~$F(m) \ge F(f(n)) \ge n$. 
 \end{proof}
 \begin{col}\label{col:inv_gives_id}
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L79-L90}{\color{blue}\coq}
@@ -49,7 +54,7 @@ the identity function.
 \end{col}
 \begin{proof}
 Proceed by antisymmetry. By ($\Leftarrow$) of Theorem~\ref{thm: upp-inverse-rel}, \lb $F(n) \le F(n)$ implies
-$(F^{-1} \circ F)(n) \le n$.  By ($\Rightarrow$) of the same theorem, $(F^{-1} \circ F)(n) \le (F^{-1} \circ F)(n)$ implies $F(n) \le F \big((F^{-1} \circ F)(n)\big)$. $F$ is strictly increasing, so $n \le (F^{-1} \circ F)(n)$.
+$(F^{-1} \circ F)(n) \le n$.  Next, by ($\Rightarrow$) of the same theorem, $(F^{-1} \circ F)(n) \le (F^{-1} \circ F)(n)$ implies that $F(n) \le F \big((F^{-1} \circ F)(n)\big)$. Now $F$ is strictly increasing, so \lb we get $n~\le~(F^{-1} \circ F)(n)$.
 \end{proof}
 
 \begin{rem}
@@ -79,10 +84,11 @@ $\forall n.~ \rf{F}{a}(n) = F^{(n)}(a) \ge a + n \ge 1 + n$. That is, $\rf{F}{a}
 Suppose $a\ge 1$, and $F$ has two properties: is a strictly increasing function
 and it is also a strict expansion from~$a$. 
 Then $\rf{F}{a}$ 
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L143-L145}{\color{blue}``preserves'' the two properties} of~$F$. The only difference is that it is 
-a strict expansion from $0$ instead of from $a$.
-We thus say that such a function $F$ is
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L111-L112}{\color{blue}\emph{repeatable from}} $a$, and denote the
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L143-L145}{\color{blue}``preserves'' the two properties} of~$F$. As noted above, the only difference is 
+that $\rf{F}{a}$ is 
+a strict expansion from~$0$ instead of from~$a$.
+We thus say that a function $F$ with these two properties is
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v#L111-L112}{\color{blue}\emph{repeatable from}} $a$. We denote the
 set of functions repeatable from $a$ as $\repeatable_a$.
 It is straightforward to see that $\forall s,t.~ s \le t \Rightarrow \repeatable_s \subseteq \repeatable_t $.
 \end{defn}
@@ -97,11 +103,12 @@ since $F \in \repeatable_a$ implies $\rf{F}{a} \in \repeatable_0$.
 For reasons that will be clear momentarily, we write this inverse as $\cdt{f}{a}$.  
 Fix $n$ and observe that $\forall m.~f^{(m)}(n)\le a \iff m \ge \cdt{f}{a}(n)$
 since
-\vspace{-0.5em}
 \begin{equation} \label{eq: rf-upp-inv}
 \begin{aligned}
-\cdt{f}{a}(n) \le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \iff f(n)\le F^{(m-1)}(a) \\
-& \iff f^{(2)}(n)\le F^{(m-2)}(a) \iff \ldots \iff f^{(m)}(n)\le a
+\cdt{f}{a}(n) \le m & \iff n\le \rf{F}{a}(m) = F^{(m)}(a) \\
+& \iff f(n)\le F^{(m-1)}(a) \\
+& \iff f^{(2)}(n)\le F^{(m-2)}(a) \\
+& \iff \ldots \iff f^{(m)}(n)\le a
 \end{aligned}
 % \vspace{-0.5em}
 \end{equation}
@@ -111,15 +118,15 @@ Together these say that~$\cdt{f}{a}(n)$ is the smallest number of
 times~$f$ needs to be compositionally applied to $n$ before the result
 equals or passes below $a$.
 In other words, count the length of the chain $\{n, f(n), f^{(2)}(n), \ldots\}$ that
-terminates as soon as we reach/pass $a$.
-This only works if each chainlink is strictly smaller than the previous,
+terminates as soon a member of the chain equals or passes below $a$.
+This strategy only really works if each chainlink is strictly smaller than the previous,
 \emph{i.e.} $f$ is a \emph{contraction}:
 % Linked by Linh
 \begin{defn} \label{defn: contracting}
 	A function $f : \mathbb{N} \to \mathbb{N}$ is a
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L40-L42}{\color{blue}\emph{contraction}} if $\forall n.~ f(n) \le n$. Given an $a \ge 1$, a contraction $f$ is
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L40-L42}{\color{blue}\emph{contraction}} if $\forall n.~ f(n) \le n$. Next, if given some $a \ge 1$, a contraction $f$ is
 	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L44-L46}{\color{blue}\emph{strict above}} $a$ if $\forall n > a.~n > f(n)$. We denote the set of contractions by $\contract$ and the set of contractions strict above~$a$ by $\contract_a$. Analogously to our observation in
-	Definition \ref{rem: repeatable-subset}, $\forall s\le t.~ \contract_s \subseteq \contract_t$.
+	Definition \ref{rem: repeatable-subset}, \lb $\forall s\le t.~ \contract_s \subseteq \contract_t$.
 \end{defn}
 % \noindent What kinds of functions have contractive inverses? Expansions, naturally:
 \noindent Next, observe that all expansions have contractive inverses:
@@ -137,14 +144,14 @@ repeater exists, and can be built from the expansion's inverse.
 To this end we introduce \emph{countdown}, a new iterative technique in the
 spirit of \emph{repeater}.
 \begin{defn} \label{defn: informal-countdown} \label{eq: countdown}
-Let $f\in \contract_a$. The \textit{countdown to} $a$ of $f$, written
-$\cdt{f}{a}(n)$, is the smallest number of times $f$ needs to be applied to
+Let $f\in \contract_a$. The \textit{countdown to} $a$ of $f$, \lb written
+$\cdt{f}{a}(n)$, is the smallest number of times $f$ needs to be \lb applied to
 $n$ for the answer to equal or go below $a$. \lb \emph{i.e.},
 $\cdt{f}{a}(n) \triangleq \min\{m: f^{(m)}(n)\le a \}$.
 \end{defn}
 \noindent Inspired by Equation~\ref{eq: rf-upp-inv}, we provide a neat, algebraically manipulable logical sentence equivalent to Definition~\ref{eq: countdown}, which is more useful later in our paper:
 \begin{col} \label{col: cdt-repeat}
-If $a \in \mathbb{N}$ and $f\in \contract_{a}$, then \lb $\forall n, m.~ \cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a$.
+If $a \in \mathbb{N}$ and $f\in \contract_{a}$, then we have \lb $\forall n, m.~ \cdt{f}{a}(n)\le m \iff f^{(m)}(n)\le a$.
 \end{col}
 \begin{proof}
 	Fix $a$ and $n$. The interesting direction is $(\Rightarrow)$. Suppose $\cdt{f}{a}(n)\le m$, we get $f^{(m)}(n)\le f^{(\cdt{f}{a}(n))}(n)$ due to $f\in \contract$, and $f^{(\cdt{f}{a}(n))}(n)\le a$ due to Definition~\ref{eq: countdown}.
@@ -164,7 +171,7 @@ If $a \in \mathbb{N}$ and $f\in \contract_{a}$, then \lb $\forall n, m.~ \cdt{f}
 	\end{equation*}
 \end{thm}
 \begin{proof}
-When $n \le a$, use Corollary~\ref{col: cdt-repeat} as follows: \lb
+In the case when $n \le a$, use Corollary~\ref{col: cdt-repeat} as follows: \lb
 $n = f^{(0)}(n)\le~a \iff \cdt{f}{a}(n)\le 0$.
 When $n > a$, proceed by antisymmetry.
 Define $m \triangleq \cdt{f}{a}(f(n))$, and note that
@@ -175,7 +182,7 @@ and unfolding the definition of~$m$ shows that this last clause is true.
 Now since $n > a$, we have $\cdt{f}{a}(n)\ge 1$ by the above.
 Define $p \triangleq \cdt{f}{a}(n) - 1$.
 It remains to show $\cdt{f}{a}(f(n))\le p \Rightarrow 
-\linebreak f^{(p)}(f(n))\le a \Rightarrow f^{(p+1)}(n)\le a$, which holds by 
+\linebreak f^{(p)}(f(n))\le a \Rightarrow f^{(p+1)}(n)\le a$. This holds by 
 unfolding the definition of $p$.
 \end{proof}
 
@@ -195,7 +202,7 @@ even those not in $\repeatable_a$ (although for such functions it may not
 be useful), and so is easy to define
 in Coq as shown in \S\ref{sec: countdown-repeater}. In contrast, a
 \emph{countdown} only exists for certain functions, most conveniently
-contractions, which makes it a little harder to encode into Coq.
+contractions. This restriction makes it a little harder to encode into Coq.
 Our strategy is to first define a \emph{countdown worker} which is
 structurally recursive and is thus more palatable to Coq, and to then
 prove that this worker correctly computes the countdown when it is 
@@ -229,7 +236,7 @@ If the input goes below or equals $a$ after $k$ applications, \lb \emph{i.e.} $f
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L103-L108}{\color{blue}Fixpoint cdn\_wkr}` a f n b :=
   match b with 0 => 0 | S b' =>
     if (n <=? a) then 0
-      else S (cdn_wkr f a (f n) k')
+                 else S (cdn_wkr f a (f n) k')
   end.
 \end{lstlisting}
 Given an $f$ that is a contraction strict from $a$,
@@ -321,13 +328,13 @@ $	\forall n.~ \cdt{f}{a}(n) = \min\left\{ i : f^{(i)}(n) \le a \right\} $.
 %	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.
 %\hide{
 	Assume the initial arguments $(n, b)$, and let the original call 
-	$\cdw{f}{a}(n, b)$ be the $0^{\text{th}}$ call. A straightforward induction on $i$ shows that in the~$i^{\text{th}}$ call, the arguments will be $\big(f^{(i)}(n), b-i\big)$, while an accumulated amount~$i$ will have been added to the final result. The only exception to this rule will be the last call, which 
+	$\cdw{f}{a}(n, b)$ be the $0^{\text{th}}$ call. A straightforward induction on $i$ shows that in the~$i^{\text{th}}$ call, the arguments will be $\big(f^{(i)}(n), b-i\big)$, while an accumulated amount~$i$ will have been added to the final result. The only exception is the last call, which 
 	will return $0$ and add nothing to the result.
 	
 	Suppose $b = n$, and let $m \triangleq \min\big\{i : f^{(i)}(n)\le a\big\}$\footnote{We prove the existence
 		of the min in Coq’s intuitionistic logic
 		% Linked by Linh
-	  \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L129-L159}{\color{blue}here} in our codebase.}. Then $m \le n$ since $f^{(n)}(n)\le a$. Thus, before the budget is exhausted, the function reaches the $m^{\text{th}}$ call. This is actually the last recursive call since $\big(f^{(m)}(n), n - m\big)$ satisfies the terminating condition $f^{(m)}(n)\le a$. This last call adds $0$ to the accumulated result, which is $m$ at the moment. Therefore $\cdw{f}{a}(n, n) = m$.
+	  \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L129-L159}{\color{blue}here}.}. Then $m \le n$ since $f^{(n)}(n)\le a$. Thus, before the budget is exhausted, the function reaches the $m^{\text{th}}$ call. This is actually the last recursive call since $\big(f^{(m)}(n), n - m\big)$ satisfies the terminating condition $f^{(m)}(n)\le a$. This last call adds $0$ to the accumulated result, which is $m$ at the moment. Therefore $\cdw{f}{a}(n, n) = m$.
 %}%end hide
 \hide{
 	Observe that given arguments $\left(f^{(i)}(n), b - i\right)$ \emph{s.t.} $i < b$ and $a < f^{(i)}(n)$, $\cdw{f}{a}$ will pass $\left(f^{(i+1)}(n), b - i - 1\right)$ to the next recursive call and add $1$ to the result.
@@ -354,7 +361,7 @@ Definitions \ref{defn: informal-countdown} and \ref{defn: countdown}. We wrap ev
 \end{thm}
 \begin{proof}
 	By Theorem~\ref{thm: expansion-inv-contraction}, $f\triangleq F^{-1} \in \contract_a$.
-	Equation \ref{eq: rf-upp-inv} and Corollary~\ref{col: cdt-repeat}
+	Corollary~\ref{col: cdt-repeat} and \eqref{eq: rf-upp-inv}
 	then show that $\cdt{f}{a}\ = \left(\rf{F}{a}\ \right)^{-1}$.
 	If $a\ge 1$, a simple induction shows that $F^{(n)}(a)\ge a + n\ge 1 + n$, so $\rf{F}{a}\ \in \repeatable_0$. Hence $\cdt{f}{a} \ = \left(\rf{F}{a}\ \right)^{-1} \in \contract_0$ by Theorem~\ref{thm: expansion-inv-contraction}.
 \end{proof}
