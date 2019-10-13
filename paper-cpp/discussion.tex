@@ -26,14 +26,14 @@ Some authors~\cite{chazelle,tarjan} prefer a two-parameter inverse Ackermann fun
 	\ackt (m, n) \triangleq \min\left\{i \ge 1 : \Ack\left(i, \left\lfloor \frac{m}{n} \right\rfloor \right)\ge \log_2n \right\}
 	\end{equation}
 \end{defn}
-Note that $\ackt(n, n)$ and the single-parameter $\alpha(n)$
+\noindent Note that $\ackt(n, n)$ and the single-parameter $\alpha(n)$
 are neither equal nor directly related, but
 it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 \hide{This function arises from deep runtime analysis of the disjoint-set data structure. Tarjan \cite{tarjan} showed that, in the disjoint-set data structure, the time required $t(m,n)$ for a sequence of $m$ \textsc{\color{magenta}FIND}s intermixed with $n-1$ \textsc{\color{magenta}UNION}s (such that $m \geq n$) is bounded as: $k_{1}m\cdot\alpha(m,n) \leq t(m,n) \leq k_{2}m\cdot\alpha(m,n)$. In graph theory, Chazelle \cite{chazelle} showed that the minimum spanning tree of a connected graph with $n$ vertices and $m$ edges can be found in time $O(m\cdot\alpha(m,n))$. Computing this function is in fact easier than $\alpha(n)$, as when $m$ and $n$ are given, we are reduced to finding the minimum $i\ge 1$ such that $\Ack_i(s)\ge t$ for $s, t$ fixed, which can be done with the following variant of the \emph{inverse Ackermann worker}.
 }
 \begin{defn} \label{defn: 2para-inv-ack-worker}
-	The {two-parameter inverse Ackermann worker}
-	,written $\ackt^{\W}$, is a function $\mathbb{N}^4\to \mathbb{N}$, defined by:
+	The {two-parameter inverse Ackermann worker},
+	written $\ackt^{\W}$, is a function $\mathbb{N}^4\to \mathbb{N}$, defined by:
 	\hide{$(\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:}
 %	\begin{equation} \label{eq: 2para-inv-ack-worker-recursion}
 %	\ackt^{\W}(f, n, k, b) = \begin{cases}
@@ -54,12 +54,12 @@ it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 %	$\displaystyle \ackt(m, n) = 1 + \ackt^{\W}\left(\alpha_1, \alpha_1\big(\lceil\log_2n \rceil\big), \left\lfloor \frac{m}{n} \right\rfloor, \lceil\log_2n \rceil \right)$.
 %\end{thm}
 % Edited by Linh
-\begin{thm} For all $m$ and $n$,
+\begin{thm} We can calculate $\ackt(m, n)$ from $\ackt^{\W}$:
 	\begin{equation*}
-	\displaystyle \ackt(m, n) = 1 + \ackt^{\W}\left(\alpha_1, \alpha_1\big(\lceil\log_2n \rceil\big), \left\lfloor \frac{m}{n} \right\rfloor, \lceil\log_2n \rceil \right).
+	\displaystyle \forall m,n.~\ackt(m, n) = 1 + \ackt^{\W}\left(\alpha_1, \alpha_1\big(\lceil\log_2n \rceil\big), \left\lfloor \frac{m}{n} \right\rfloor, \lceil\log_2n \rceil \right).
 	\end{equation*}
 \end{thm}
-We mechanize the above for both \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L245-L248}{\color{blue}unary} and \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L222-L228}{\color{blue}binary} inputs in our codebase.
+\noindent We mechanize the above for both \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L245-L248}{\color{blue}unary} and \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L222-L228}{\color{blue}binary} inputs in our codebase.
 
 \hide{
 	\begin{proof}[Proof Sketch]

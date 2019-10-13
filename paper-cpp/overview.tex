@@ -286,14 +286,11 @@ Finally, our techniques are compact: consider the 14 lines of code that invert t
     \item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, present Coq encodings for hyperoperations and the Ackermann function, and discuss \emph{repeater}.
     \item[\S\ref{sec: countdown}] We discuss upper inverses and show how to invert repeater with \emph{countdown}.
     \item[\S\ref{sec: inv-hyperop}] We use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base. We sketch a route to the inverse Ackermann function.
-    \item[\S\ref{sec: inv-ack}] We give a computation for the inverse Ackermann function in $\bigO(n)$ time.
-    \item[\S\ref{sec: binary}] We extend to binary inputs. This takes time~$\bigO(b)$, 
-    where~$b$ is the bitlength of the binary encoding of $n$.
+    \item[\S\ref{sec: inv-ack}] We give a Coq computation for the inverse Ackermann function in $\bigO(n)$ time.
+    \item[\S\ref{sec: binary}] We extend our work to calculate inverse Ackermann for binary inputs. We show that this takes time~$\bigO(b)$, where~$b$ is the bitlength of the binary encoding of the input $n$.
     \item[\S\ref{sec: discussion}] We discuss the value of linear time inverses for
-    explosively growing functions, and extend to the two-argument inverse Ackermann function.
-    \item[\S\ref{sec:related}] {\color{red}Something something related, historial, etc. Something something related, historial, etc.}
-
-    %, \note{other derivative functions such as foo bar doo dah,} and survey related work.
+    explosively growing functions, and extend our work to calculate the two-argument inverse Ackermann function.
+    \item[\S\ref{sec:related}] We present historical notes, survey related work, and finally conclude.
 \end{itemize}
 All our techniques are mechanized in Coq and our code is available
 online at \href{https://github.com/inv-ack/inv-ack}{\color{blue}github.com/inv-ack/inv-ack}~\cite{inv-ack}. Further, definitions and theorems presented
