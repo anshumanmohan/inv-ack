@@ -16,21 +16,18 @@ upwards and downwards in the natural hierarchy of functions, and
 provide linear-time computations.
 
 \subsection{Historical notes}
-% This creates an unnumbered paragraph. ie a smaller, less flashy, header
-
-%\marginpar{\tiny \color{blue} Multiplication, Division, Algorisms. Representations of numbers (Egyption fractions/Roman numerals/Decimal/Zero). Exponentiation, Logarithm, Tetration, Log*, ...   Hyperoperations, Knuth Arrows.  Inverses as a separate notation? Mechanizations of the above?}
 The operations successor, predecessor, addition, and subtraction have
 been integral to counting forever. The ancient Egyptian
 number system used glyphs denoting $1$, $10$, $100$, \emph{etc.},
 and expressed numbers using additive combinations of these.
 The Roman system is similar, but
-it combines glyphs using both addition and subtraction.
+combines glyphs using both addition and subtraction.
 This buys brevity and readability,
 since \emph{e.g.} $9_{\text{roman}}$ is two characters, ``one less than ten'',
 and not a series of nine $1$s.
-The ancient Babylonian system, like the modern Hindu-Arabic decimal system,
-enabled \emph{algorisms}: the place value of a glyph determined how many times it
-counted towards the number being represented.
+The ancient Babylonian system was the first to introduce 
+\emph{algorisms}: the place value of a glyph succinctly expressed \emph{how many times} 
+it counted towards the number being represented.
 The Babylonians operated in
 base $60$, and so \emph{e.g.} a three-gylph number $abc_{\text{babylonian}}$ could
 be parsed as $a \times 60^2 + b \times 60 + c$. Sadly they lacked
@@ -39,48 +36,54 @@ $a \times 60^3 + b \times 60^2 + c \times 60$, $a \times 60 + b + c \div 60$,
 \emph{etc.} were also reasonable interpretations.
 Including multiplication and division bought great concision: a number $n$ was
 represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
+The modern Indo-Arabic decimal system is also an algorism, 
+but operates in base $10$ and (thankfully) has a radix point.
 
-exp, log, the fact that the reverse came later, tetration, log*...
+A form of exponentiation was discussed by Euclid (\textasciitilde 300 BCE), and our modern
+understanding of it, including the superscript notation,
+came in 1637 thanks to René Descartes~\cite{descartes}. 
+Similarly, logarithm was mentioned by 
+Archimedes (\textasciitilde 250 BCE) and our modern understanding came in 1614 thanks to 
+John Napier~\cite{napier}.
 
-%\subsection*{The Ackermann function and its inverse.}
-% This creates an unnumbered subsection
-
-\subsection{The Ackermann function and its inverse}
-%\marginpar{\tiny \color{blue} Several variations. Original. Peter.
-%Primitive recursive. Hilbert? Ackermann is used in CS. Formalizations that use or define it. The grit of sand. The bug.}
-% https://projecteuclid.org/download/pdf_1/euclid.bams/1183512393
-% https://www.cs.princeton.edu/~chazelle/pubs/mst.pdf
-%{\color{magenta}A brief sentence explaining what a primitive recursive function is and
-%why total computable functions tend to be primitive recursive.}
-The three-variable Ackermann function was presented by
-Wilhelm Ackermann as an example of a total computable function that
-is not primitive recursive~\cite{ackermann}.
-It does not have the higher-order
-relation to repeated application and hyperoperation that we have been studying in
-this paper. Those properties emerged thanks to refinements by Rózsa Péter~\cite{peter},
-and it is her variant, usually called the Ackermann-Péter function,
+The three-variable Ackermann function was presented by Wilhelm Ackermann~\cite{ackermann} in 1928 as an example of a total computable function that is not primitive recursive.
+In 1935, Rózsa Péter~\cite{peter} developed a two-argument variant of the Ackermann 
+function, and it is her variant, often called the Ackermann-Péter function,
 that computer scientists commonly care about.
+In 1947, Reuben Goodstein~\cite{goodstein} showed that a variant of the Ackermann function 
+can be used to place the natural sequence of functions (addition, multiplication,
+exponentiation) in a systematic hierarchy of hyperoperations. 
+This brought tetration, the fourth member of the sequence, into use.
+In the 1980s, computer scientists started using the
+iterated logarithm $\log^*$ in algorithmic analysis.
 
-The inverse Ackermann
+\subsection{Inverse Ackermann in computer science}
+% Ackermann's original function does not have the higher-order
+% relation to repeated application and hyperoperation that we have been studying in
+% this paper. Those properties emerged thanks to refinements by ,
+
+The inverse of the Ackermann-Péter function
 features in the time bound analyses of several algorithms.
 Tarjan~\cite{tarjan} showed that the union-find data structure
-takes time $O(m\cdot\alpha(m,n))$ for a sequence of $m$ operations
+takes time \lb \mbox{$O(m\cdot\alpha(m,n))$} for a sequence of $m$ operations
 involving no more than $n$ elements.
 Tarjan and van Leeuwen~\cite{tarjan2} later refined this to $O(m\cdot\alpha(n))$.
 Chazelle~\cite{chazelle} showed that the minimum spanning tree
 of a connected graph with $n$ vertices and $m$ edges
 can be found in time $O(m\cdot\alpha(m,n))$.
 
-% http://gallium.inria.fr/~fpottier/publis/chargueraud-pottier-uf-sltc.pdf
-% http://gallium.inria.fr/~agueneau/publis/gueneau-chargueraud-pottier-coq-bigO.pdf
-% https://scholar.google.com.sg/scholar?start=0&hl=en&as_sdt=2005&sciodt=0,5&cites=6488308509111085774&scipsc=
 Chargu\'eraud and Pottier~\cite{charpott}
-verified the time complexity of union-find in Coq.
-They use another variant
-of the Ackermann function (\emph{i.e.} not the Ackermann-Péter function we have studied), for which they provide a computational definition.  On the other hand, they do not provide any function that computes the inverse of the Ackermann variant they use.
-%Others \cite{others2,others4,others3,others1}
-%have also checked bounds on the resources
-%used by programs formally in proof assistants such as Coq, Isabelle/HOL, and Why3.
+verify the time complexity of union-find in Coq.
+% Their analysis requires inverse Ackermann, and 
+To this end they invert another variant of the Ackermann function 
+(\emph{i.e.} not the Ackermann-Péter function we have 
+studied). 
+However, their inversion strategy 
+relies on Hilbert's non-constructive~$\varepsilon$ operator 
+to find the necessary minimum (see Definition~\ref{defn: inv_ack}). 
+% The~$\varepsilon$ operator blurs the distinction between \li{Prop} and \li{Type}, 
+This means that Chargu\'eraud and Pottier's 
+inverse cannot be extracted to executable code.
 
 %Every pearl starts with a grain of sand.  We had the benefit of two:
 %Nivasch~\cite{nivasch} and Seidel~\cite{seidel}.
