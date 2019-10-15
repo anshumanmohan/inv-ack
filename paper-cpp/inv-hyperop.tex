@@ -169,7 +169,7 @@ $a[4]b = \! ^ba$, so, by Theorem~\ref{thm: inv-hyperop-correct}, we can define t
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L102-L113}{\color{blue}$a\angle{2}b$},	
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L115-L124}{\color{blue}$a\angle{3}b$}, and	
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L126-L128}{\color{blue}$a\angle{4}b$}.
-Note that the functions $\log_a b$ and $\log^*_a b$ are not in the Coq Standard Library.
+Note that the functions $\log_a b$ and $\log^*_a b$ are not in the Coq Standard Library but are one-liners for us:
 
 \begin{lstlisting}
 Definition divc a b := inv_hyperop a 2 b.
@@ -208,7 +208,7 @@ Definition logstar a b := inv_hyperop a 4 b.
 % NEW METHOD FOR INVERSE ACKERMANN
 Next, we want to use \emph{countdown} to build the \emph{inverse Ackermann hierarchy}, where each
 level $\alpha_i$ inverts the level $\Ack_i$.
-We know $\Ack_{i+1} = \rf{\Ack_i}{\Ack_i(1)}$, so the recursive
+We know $\Ack_{i+1} = \rf{\Ack_i}{\Ack_i(1)}$\hspace{0.2em}, so the recursive
 rule $\alpha_{i+1} \triangleq \cdt{\alpha_i}{\Ack_i(1)}$ is tempting.
 But this approach is flawed because it still depends on $\Ack_i$.
 Instead, we reexamine the inverse relationship: suppose $\alpha_i = \big(\Ack_i\big)^{-1}$ and $\alpha_{i+1} = \big(\Ack_{i+1}\big)^{-1}$. Then $\Ack_{i+1}(m) = \big(\Ack_{i}\big)^{(m)} \big(\Ack_{i}(1)\big)$. We then have:
@@ -227,7 +227,7 @@ Abracadabra! We can express $\alpha$ using the hierarchy \emph{without referring
 	%For all $n, k$, $n\le \Ack(k, k) \!\!\iff \!\! \alpha_k(n)\le k$. Thus
 	$\forall n.~ \alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}$.
 \end{thm}
-All that remains is to provide a structurally-recursive function that computes $\alpha$.
+\noindent All that remains is to provide a structurally-recursive function that computes $\alpha$.
 %\begin{defn} \label{defn: inv-ack-worker}
 %	The inverse Ackermann worker is a function $\alpha^{\W}$: %(\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
 %	\begin{equation} \label{eq: inv-ack-worker-recursion}
@@ -248,7 +248,7 @@ All that remains is to provide a structurally-recursive function that computes $
 		\end{aligned}
 	\end{equation}
 \end{defn}
-Next, we show that this function computes the inverse Ackermann function when passed appropriate arguments.
+\noindent Next, we show that this function computes the inverse Ackermann function when passed appropriate arguments.
 \hide{
 Given the arguments $\big(\alpha_i, \alpha_i(n), i, b - i\big)$ such that $\alpha_i(n) > i$ and $b > i$, $\alpha^{\W}$ takes on arguments $\big(\alpha_{i+1}, \alpha_{i+1}(n), i+1, b - (i+1)\big)$ at the next recursive call. Thus if $\alpha^{\W}$ is given a sufficient budget $b$, it will recursively transform the tuple $(\alpha_k, \alpha_k(n), k, b - k)$ until a point $k$ where $\alpha_k(n)\le k$, and will then return $k$. We now need to show that $\alpha^{\W}$ correctly computes $\alpha(n)$ given a reasonable budget.
 The following theorem demonstrates that a budget of $n$ suffices.
@@ -276,6 +276,7 @@ The following theorem demonstrates that a budget of $n$ suffices.
 We thus have a (re-)definition of inverse Ackermann that is %computationally
 definable via a Coq-accepted worker, \emph{i.e.} $\alpha(n) \triangleq \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big)$. Below, we present the inverse
 Ackermann function in Gallina.
+
 % Linked by A
 %\begin{lstlisting}
 %`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L155-L161} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
@@ -309,6 +310,8 @@ Ackermann function in Gallina.
   inv_ack_wkr (alpha 0) (alpha 0 n) 0 n.
 \end{lstlisting}
 
+\noindent Note that this is not the linear-time computation we presented in
+Figure~\ref{fig:standalone}. We will arrive at that code via an improvement discussed in the next section.
 % OLD METHOD FOR INVERSE ACKERMANN
 
 %Using the Ackermann kludge from \cref{sec: overview}, we sketch a method to find the inverse Ackermann function from the inverse hyperoperations.

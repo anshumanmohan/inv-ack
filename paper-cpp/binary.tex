@@ -22,7 +22,7 @@ full proofs in Appendix~\ref{apx:time_analysis_bin}.
 \begin{rem}
 Although we do not prove it here, our general binary inverse hyperoperations are $O(b^2)$ time,
 since Ackermann and base-2 hyperoperations benefit from $\Theta(1)$ division via bitshifts,
-whereas general division is $O(b)$.
+whereas general division is $O(b^2)$.
 \end{rem}
 
 \subsection{Countdown and contractions in binary}
@@ -71,7 +71,7 @@ we need to halve the argument on every application as shown below:
 \end{defn}
 \noindent The key advantage of binary strict contractions is that if a contraction $f$ is binary strict above some $a$, then \lb
 we know that $\forall n > a, \forall k.~f(n) \le \left\lfloor \frac{n - a}{2^k} \right\rfloor + a$.
-Therefore, within \lb $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than~$a$. We can choose this number as the budget for \li{bin\_cdn\_wkr} to successfully reach the countdown value before terminating.
+Therefore, within $\lfloor \log_2 (n - a) \rfloor + 1$ applications of $f$, the result will become equal to or less than~$a$. We can choose this number as the budget for \li{bin\_cdn\_wkr} to successfully reach the countdown value before terminating.
 Note that this budget is simply the length of the binary representation
 of \li{n - a}, which we calculate using our function
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_prelims.v#L135-L143}{\color{blue}\li{nat\_size}}. % Linked by A
@@ -102,6 +102,7 @@ Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the s
   bin_cdn_wkr f a n (nat_size (n - a)).
 \end{lstlisting}
 
+\pagebreak
 \noindent The following is the binary version of Lemma~\ref{lem: cdt-runtime}:
 %\begin{lem} \label{lem: cdt-runtime-bin}
 %	$\forall n \in \li{N}$, if $f$ is a binary strict contraction above $a$,
@@ -232,7 +233,7 @@ The inverse Ackermann has an extra hardcoded level.
 We show the
 \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L437-L472}
 {\color{blue}correctness} and
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_test.v#L14-L26}
+\href{https://github.com/inv-ack/inv-ack/blob/195209ba895061fc51368c3c46c1d8760f05df50/bin_test_runtime_ocaml.ml#L359-L363}
 {\color{blue}benchmark}
 of \li{bin_inv_ack} in our codebase, and
 give a standalone Coq definition in Appendix~\ref{apx:code_n}.

@@ -43,7 +43,7 @@ Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower
 Fix $n$. The sentence $\forall m.~ f(n)\le m \iff n\le F(m)$ implies:
 \begin{enumerate}
 	\item $f(n)$ is a lower bound to $\{m: n \le F(m)\}$ \\ \vspace{-1.2em}
-	\item $f(n)$ is itself in the set, since plugging in $m \triangleq f(n)$ yields $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. \\ \vspace{-1.2em}
+	\item $f(n)$ is itself in the set, since plugging in $f(n)$ for $m$  yields $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. \\ \vspace{-1.2em}
 \end{enumerate}	
 Conversely, if $f$ is the upper inverse of $F$, we know that \lb $\forall m.~n\le F(m)\Rightarrow f(n)\le m$. Finally, by increasing-ness, $\forall m \ge f(n)$.~$F(m) \ge F(f(n)) \ge n$. 
 \end{proof}
@@ -112,7 +112,7 @@ since
 \end{aligned}
 % \vspace{-0.5em}
 \end{equation}
-Setting $m = \cdt{f}{a}(n)$ gives us
+Setting $m$ as $\cdt{f}{a}(n)$ gives us
 $f^{(\cdt{f}{a}(n))}(n) \le a$.
 Together these say that~$\cdt{f}{a}(n)$ is the smallest number of
 times~$f$ needs to be compositionally applied to $n$ before the result
@@ -223,7 +223,7 @@ the \emph{true argument}~$n$, for which we want to simulate
 \emph{countdown to}~$a$,
 and the \lb \emph{budget}~$b$, the maximum number of times we shall attempt
 to compositionally apply $f$ on the input before giving up.
-If the input goes below or equals $a$ after $k$ applications, \lb \emph{i.e.} $f^{(k)}(n)~\le~a$, we return the count $k$. If the budget is exhausted (\emph{i.e.} $b = 0$) while the result is still above $a$, we fail by returning the original budget. This definition is admittedly inelegant, but the point is that it can clearly be written as a Coq Fixpoint:
+If the input goes below or equals $a$ after $k$ applications, \lb \emph{i.e.} $f^{(k)}(n)~\le~a$, we return the count $k$. If the budget is exhausted (\emph{i.e.} $b = 0$) while the result is still above $a$, we fail by returning the original budget. This definition is workmanlike, but the point is that it can clearly be written in~Coq:
 % Linked by A
 %\begin{lstlisting}
 %`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L103-L108}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
@@ -247,7 +247,7 @@ Careful readers may have noticed that \emph{budget} is similar to
 and dismissed for potentially
 being too computationally expensive to calculate.
 Budget is actually a refinement of gas because
-we always accompany its use with a constant-time calculation for it. 
+we always accompany its use with an efficient calculation for it. 
 In fact, we will soon show that a budget of $n$ is sufficient in this case.
 This lets us define \emph{countdown} in Coq for the first time:
 \begin{defn} \label{defn: countdown}

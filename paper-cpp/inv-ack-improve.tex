@@ -122,7 +122,7 @@ A linear-time calculation of the inverse Ackermann hierarchy
 leads to a similarly efficient calculation of the inverse Ackermann 
 function itself. We present $\tilde{\alpha}(n)$ below, 
 along with a Coq encoding. The function
-\li{inv\_ack\_linear} is, precisely the function we presented as a 
+\li{inv\_ack\_linear} is precisely the function we presented as a 
 sneak peek in Figure~\ref{fig:standalone}.
 \hide{
 We redefine $\alpha$ once again, hardcoding the output 
@@ -182,16 +182,16 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L329-L337}{\color{blue}\coq}
 	$\forall n.~\tilde{\alpha}(n) = \alpha(n)$
 	\; and \hfill\break 
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_test.v#L5-L10}{\hspace{6.1em}\color{blue}\coq (benchmark)}
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/test_runtime_ocaml.ml#L99-L104}{\hspace{6.1em}\color{blue}\coq (benchmark)}
 	$\runtime_{\tilde{\alpha}}(n) = \bigO(n)$.
 \end{thm}
 
 \begin{proof}
 	% Consider the correctness of $\tilde{\alpha}(n)$. Edited by Linh
-	In terms of correctness, the cases $n = 0, 1$ are trivial. For $n > 1 = \Ack(0)$, $\alpha_1(n) > 1$ and $n - 1 > 0$, so $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n - 1\big)$ by Definition~\ref{defn: inv-ack-worker}. Theorem~\ref{thm: inv-ack-worker-correct} then implies $\tilde{\alpha}(n) = \alpha(n)$.	
+	Correctness: the cases $n = 0, 1$ are trivial. For $n > 1 = \Ack(0)$, $\alpha_1(n) > 1$ and $n - 1 > 0$, so $\alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\mathcal{W}}\big(\alpha_1, \alpha_1(n), 1, n - 1\big)$ by Definition~\ref{defn: inv-ack-worker}. Theorem~\ref{thm: inv-ack-worker-correct} then implies $\tilde{\alpha}(n) = \alpha(n)$.	
 	
   % Consider the time complexity of $\tilde{\alpha}(n)$. Edited by Linh
-	Complexity-wise, at each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of two steps:
+	Complexity: at each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of two steps:
 	First, calculation of $\li{leb}\big(\alpha_k(n), k\big)$, which takes no more than $k + 1$ steps (as shown in Appendix~\ref{apx:time_analysis} Lemma~\ref{lem: leb-runtime}). Second, calculation of $\alpha_{k+1}(n) = \cdt{\alpha_k)}{1}(x)$ given $x\triangleq \alpha_k(n)$, which takes time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ (as shown in Appendix~\ref{apx:time_analysis} Lemma~\ref{lem: compose-runtime}).
 	The computation will terminate at $k = \alpha(n)$. Thus, $\forall n\ge 1$,
 	\begin{equation*} %\label{eq: inv-ack-runtime-improved}
@@ -205,3 +205,9 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 	\end{aligned}
 	\end{equation*}
 \end{proof}
+
+\noindent \textbf{N.B.} The hyperlink ``\coq \emph{(benchmark)}'' 
+above leads to experimental timebound tests of the code, which we will 
+discuss further in~\S\ref{sec: discussion}.
+We provide this benchmark and the theoretical argument above, but 
+do not prove the asymptotic bounds of the code in Coq.

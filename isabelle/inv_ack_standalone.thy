@@ -2,7 +2,18 @@ theory inv_ack_standalone
   imports "HOL-Library.Log_Nat" HOL.Divides
 begin
 
-value "floorlog (7::nat) 343" 
+definition myln :: "real => real" where
+  "myln x = (THE u. exp u = x)"
+
+
+definition mylog :: "[real,real] => real" where
+  "mylog a x = myln x / myln a"
+
+definition myfloorlog :: "nat \<Rightarrow> nat \<Rightarrow> nat" where
+"myfloorlog b a = (if a > 0 \<and> b > 1 then nat \<lfloor>mylog b a\<rfloor> + 1 else 0)"
+
+
+export_code floorlog in OCaml module_name exported
 
 (* Countdown worker function *)
 primrec cdn_wkr :: "(nat \<Rightarrow> nat) \<Rightarrow> nat \<Rightarrow> 

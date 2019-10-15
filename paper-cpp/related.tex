@@ -4,8 +4,13 @@
 The Coq standard library has linear-time definitions
 of division and base-$2$ discrete logarithm on \li{nat} and \li{N}.
 The Mathematical Components library~\cite{MathComp}
-has a discrete logarithm on \li{nat}.
-To our knowledge, we are the first to generalize this
+has a discrete logarithm with arbitrary base, with inputs encoded in \li{nat}.
+The Isabelle/HOL Archive of Formal Proofs~\cite{isastan2019} 
+provides a definition of discrete logarithm
+with arbitrary base along with a separate computation strategy.
+None of these libraries provides a definition of iterated logarithm or
+further members of the hierarchy.
+Indeed, to our knowledge, we are the first to generalize this
 problem in a proof assistant, extend it both
 upwards and downwards in the natural hierarchy of functions, and
 provide linear-time computations.
@@ -34,6 +39,8 @@ $a \times 60^3 + b \times 60^2 + c \times 60$, $a \times 60 + b + c \div 60$,
 \emph{etc.} were also reasonable interpretations.
 Including multiplication and division bought great concision: a number $n$ was
 represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
+
+exp, log, the fact that the reverse came later, tetration, log*...
 
 %\subsection*{The Ackermann function and its inverse.}
 % This creates an unnumbered subsection
@@ -69,7 +76,8 @@ can be found in time $O(m\cdot\alpha(m,n))$.
 % https://scholar.google.com.sg/scholar?start=0&hl=en&as_sdt=2005&sciodt=0,5&cites=6488308509111085774&scipsc=
 Chargu\'eraud and Pottier~\cite{charpott}
 verified the time complexity of union-find in Coq.
-They formalized a version of the Ackermann function, but not its inverse.
+They use another variant
+of the Ackermann function (\emph{i.e.} not the Ackermann-Péter function we have studied), for which they provide a computational definition.  On the other hand, they do not provide any function that computes the inverse of the Ackermann variant they use.
 %Others \cite{others2,others4,others3,others1}
 %have also checked bounds on the resources
 %used by programs formally in proof assistants such as Coq, Isabelle/HOL, and Why3.
@@ -80,7 +88,7 @@ They formalized a version of the Ackermann function, but not its inverse.
 %the inverse hyperoperations, \emph{i.e.} along the lines of our Theorem~\ref{thm: inv-ack-new}: $\forall n.~ \alpha(n) \stackrel{?}{=} \Theta(\min\big\{k : 2 \langle k \rangle n\le 3 \big\})$.  Unfortunately, their technique is unsound (it should be $\le k$), since it diverges from
 %the true Ackermann inverse when the inputs grow sufficiently large; even adjusting for this, their technique is off by an additive constant.  Our technique is exact and verified in Coq.
 
-\subsection{Conclusion}
+\section{Conclusion}
 We have implemented a hierarchy of functions that calculate the upper inverses
 to the hyperoperation/Ackermann hierarchy and used these inverses
 to compute the inverse of the diagonal Ackermann function~$\Ack(n)$.

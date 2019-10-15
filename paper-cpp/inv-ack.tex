@@ -88,6 +88,7 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 
+\usepackage{array,multirow,graphicx}
 
 \hypersetup{ % play with these to change the look of hyperlinks
     colorlinks=true,
@@ -139,7 +140,7 @@
 
 \lstdefinestyle{isaStyle}{
 %	language=Coq,
-    keywords={theory,imports,begin,primrec,where,end,definition,if,then,else,fun},
+    keywords={theory,lemma,code,by,imports,begin,primrec,where,end,definition,if,then,else,fun},
 	basicstyle=\normalfont\footnotesize\tt,
     keywordstyle=\color{green}, % Blue clashes with the cyan links. Change if you want.
 	stepnumber=1,
@@ -399,7 +400,7 @@
 \label{sec: inv-ack}
 \input{inv-ack-improve.tex}
 
-\section{Performance Improvement With Inputs Encoded in Binary}
+\section{Inputs Encoded in Binary}
 \label{sec: binary}
 \input{binary.tex}
 
@@ -407,7 +408,7 @@
 \label{sec: discussion}
 \input{discussion.tex}
 
-\section{Related Work and Conclusion}
+\section{Related Work}
 \label{sec:related}
 \input{related.tex}
 
