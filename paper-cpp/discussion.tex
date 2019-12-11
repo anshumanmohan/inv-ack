@@ -48,13 +48,12 @@ Rather surprisingly, for binary-encoded numbers, it appears we can invert the Ac
 	\vspace{0em}
 \end{table}
 
-As shown in Table~\ref{table:benchmarking} our functions are very rapid in practice.
-We benchmark our results using Coq's extraction mechanism to OCaml and time the 
-results using a machine running i5 2.4GHz with 8GB RAM.  The displayed times are
-the average of three runs; we suspect that garbage collection is the largest cause 
+As shown in Table~\ref{table:benchmarking}, our functions are very rapid in practice.
+Extracting our code to OCaml is straightforward: we import Coq's built-in \li{Extraction} module and then execute \li{Recursive Extraction inv_ack_linear.} We then benchmark our results using a machine running i5 2.4GHz with 8GB RAM.  The displayed times are
+the average of three runs, and we suspect that garbage collection is the largest cause 
 of variations in the wall-clock times.  Our functions run quickly
-in Gallina as well, but exhibit unexpectedly rapid times when the inputs are large
-due to some Coq optimizations for representing large \li{nat}s.
+in Gallina as well, but exhibit unexpectedly rapid times when the inputs are 
+large because Coq optimizes large \li{nat}s under the hood.
 
 %we show the results of 
 %extracting our linear-time inverse Ackermann functions to OCaml using Coq's built-in 

@@ -227,7 +227,60 @@ Abracadabra! We can express $\alpha$ using the hierarchy \emph{without referring
 	%For all $n, k$, $n\le \Ack(k, k) \!\!\iff \!\! \alpha_k(n)\le k$. Thus
 	$\forall n.~ \alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}$.
 \end{thm}
-\noindent All that remains is to provide a structurally-recursive function that computes $\alpha$.
+
+
+\begin{table}[t]
+	\begin{centermath}
+		\begin{array}{c | c@{\hspace{1.5em}} c@{\hspace{1.5em}} c@{\hspace{1.5em}} c@{\hspace{1.5em}} c@{\hspace{1.5em}} c@{\hspace{1.5em}} c@{\hspace{1.5em}} c@{\hspace{1.5em}} c@{\hspace{1.5em}} c@{\hspace{1.5em}}}
+			          $\diagbox[height=\line]{$\alpha_k$}{$n$}$ & 0\tikzmark{zero} & 1\tikzmark{one} & \tikzmark{twoa}2\tikzmark{two} & \tikzmark{threea}3\tikzmark{three} & \tikzmark{foura}4\tikzmark{four} & \tikzmark{fivea}5\tikzmark{five} & \tikzmark{sixa}6\tikzmark{six} & \tikzmark{sevena}7\tikzmark{seven} & \tikzmark{eighta}8\tikzmark{eight} & \tikzmark{ninea}9\tikzmark{nine} \\
+			\hline
+			\alpha_0 & 0\tikzmark{zero_succ} & 0\tikzmark{one_succ} & \tikzmark{two_fail}1 & \tikzmark{three_fail}2 & \tikzmark{four_fail1}3 & \tikzmark{five_fail1}4 & \tikzmark{six_fail1}5 & \tikzmark{seven_fail1}6 & \tikzmark{eight_fail1}7 & \tikzmark{nine_fail1}8 \\
+			\alpha_1 & 0 & 0 & 0\tikzmark{two_succ} & 1\tikzmark{three_succ} & \tikzmark{four_fail2}2 & \tikzmark{five_fail2}3 & \tikzmark{six_fail2}4 & \tikzmark{seven_fail2}5 & \tikzmark{eight_fail2}6 & \tikzmark{nine_fail2}7 \\
+			\alpha_2 & 0 & 0 & 0 & 0 & 1\tikzmark{four_succ} & 1\tikzmark{five_succ} & 2\tikzmark{six_succ} & 2\tikzmark{seven_succ} & \tikzmark{eight_fail3}3 & \tikzmark{nine_fail3}3 \\
+			\alpha_3 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1\tikzmark{eight_succ} & \tikzmark{nine_fail4}1 \\
+		\end{array}
+	\end{centermath}
+	\caption{Intuition for $\alpha(n)$ defined without $\Ack(n)$.}
+	\label{table:inv_intuition}
+\end{table}
+  \begin{tikzpicture}[overlay, remember picture, yshift=.25\baselineskip, shorten >=.5pt, shorten <=.5pt]
+    \draw [->, green] ({pic cs:zero}) to [bend left]({pic cs:zero_succ});
+    \draw [->, green] ({pic cs:one}) to [bend left]({pic cs:one_succ});
+   	\draw [->, red] ({pic cs:twoa}) to [bend right]({pic cs:two_fail});
+   	\draw [->, green] ({pic cs:two}) to [bend left]({pic cs:two_succ});
+   	\draw [->, red] ({pic cs:threea}) to [bend right]({pic cs:three_fail});
+   	\draw [->, green] ({pic cs:three}) to [bend left]({pic cs:three_succ});
+   	\draw [->, red] ({pic cs:foura}) to [bend right]({pic cs:four_fail1});
+   	\draw [->, red] ({pic cs:foura}) to [bend right]({pic cs:four_fail2});
+   	\draw [->, green] ({pic cs:four}) to [bend left]({pic cs:four_succ});
+   	\draw [->, red] ({pic cs:fivea}) to [bend right]({pic cs:five_fail1});
+   	\draw [->, red] ({pic cs:fivea}) to [bend right]({pic cs:five_fail2});
+   	\draw [->, green] ({pic cs:five}) to [bend left]({pic cs:five_succ});
+   	\draw [->, red] ({pic cs:sixa}) to [bend right]({pic cs:six_fail1});
+   	\draw [->, red] ({pic cs:sixa}) to [bend right]({pic cs:six_fail2});
+   	\draw [->, green] ({pic cs:six}) to [bend left]({pic cs:six_succ});
+   	\draw [->, red] ({pic cs:sevena}) to [bend right]({pic cs:seven_fail1});
+   	\draw [->, red] ({pic cs:sevena}) to [bend right]({pic cs:seven_fail2});
+   	\draw [->, green] ({pic cs:seven}) to [bend left]({pic cs:seven_succ});
+   	\draw [->, red] ({pic cs:eighta}) to [bend right]({pic cs:eight_fail1});
+   	\draw [->, red] ({pic cs:eighta}) to [bend right]({pic cs:eight_fail2});
+   	\draw [->, red] ({pic cs:eighta}) to [bend right]({pic cs:eight_fail3});
+   	\draw [->, green] ({pic cs:eight}) to [bend left]({pic cs:eight_succ});
+   	\draw [->, red] ({pic cs:ninea}) to [bend right]({pic cs:nine_fail1});
+   	\draw [->, red] ({pic cs:ninea}) to [bend right]({pic cs:nine_fail2});
+   	\draw [->, red] ({pic cs:ninea}) to [bend right]({pic cs:nine_fail3});
+   	\draw [->, red] ({pic cs:ninea}) to [bend right]({pic cs:nine_fail4});
+  \end{tikzpicture}
+
+\vspace{-3em}
+We provide intuition for our new definition in Table~\ref{table:inv_intuition}. 
+For any $n$, imagine searching down its column for an $\alpha_k(n) \le k$.
+This table is populated exactly as suggested by 
+Table~\ref{table: hyperop-ack-inv} earlier.
+Red arrows represent unsuccessful searches, and green arrows represent 
+successful searches.
+
+Now all that remains is to provide a structurally-recursive function that computes $\alpha$.
 %\begin{defn} \label{defn: inv-ack-worker}
 %	The inverse Ackermann worker is a function $\alpha^{\W}$: %(\mathbb{N}\to \mathbb{N}) \times \mathbb{N}^3\to \mathbb{N}$ such that for all $n, k, b\in \mathbb{N}$ and $f:\mathbb{N}\to \mathbb{N}$:
 %	\begin{equation} \label{eq: inv-ack-worker-recursion}
