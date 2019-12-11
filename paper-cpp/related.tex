@@ -7,7 +7,7 @@ The Mathematical Components library~\cite{MathComp}
 has a discrete logarithm with arbitrary base, with inputs encoded in \li{nat}.
 The Isabelle/HOL Archive of Formal Proofs~\cite{isastan2019} 
 provides a definition of discrete logarithm
-with arbitrary base along with a separate computation strategy.
+with arbitrary base along with a separate computation strategy (\lstset{style=isaStyle}\li{[code]}\lstset{style=myStyle}).
 None of these libraries provides a definition of iterated logarithm or
 further members of the hierarchy.
 Indeed, to our knowledge, we are the first to generalize this
@@ -16,7 +16,7 @@ upwards and downwards in the natural hierarchy of functions, and
 provide linear-time computations.
 
 \subsection{Historical notes}
-The operations successor, predecessor, addition, and subtraction have
+The operations of successor, predecessor, addition, and subtraction have
 been integral to counting forever. The ancient Egyptian
 number system used glyphs denoting $1$, $10$, $100$, \emph{etc.},
 and expressed numbers using additive combinations of these.
@@ -27,14 +27,14 @@ since \emph{e.g.} $9_{\text{roman}}$ is two characters, ``one less than ten'',
 and not a series of nine $1$s.
 The ancient Babylonian system was the first to introduce 
 \emph{algorisms}: the place value of a glyph succinctly expressed \emph{how many times} 
-it counted towards the number being represented.
+it counted towards the number being represented, along with associated techniques for addition, multiplication, \emph{etc.}
 The Babylonians operated in
 base $60$, and so \emph{e.g.} a three-gylph number $abc_{\text{babylonian}}$ could
 be parsed as $a \times 60^2 + b \times 60 + c$. Sadly they lacked
 a radix point, and so
 $a \times 60^3 + b \times 60^2 + c \times 60$, $a \times 60 + b + c \div 60$,
 \emph{etc.} were also reasonable interpretations.
-Including multiplication and division bought great concision: a number $n$ was
+Using multiplication and division in numerical representations bought great concision: a number $n$ was
 represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
 The modern Indo-Arabic decimal system is also an algorism, 
 but operates in base $10$ and (thankfully) has a radix point.
@@ -42,14 +42,14 @@ but operates in base $10$ and (thankfully) has a radix point.
 A form of exponentiation was discussed by Euclid (\textasciitilde 300 BCE), and our modern
 understanding of it, including the superscript notation,
 came in 1637 thanks to René Descartes~\cite{descartes}. 
-Similarly, logarithm was mentioned by 
+Similarly, logarithms were mentioned by 
 Archimedes (\textasciitilde 250 BCE) and our modern understanding came in 1614 thanks to 
 John Napier~\cite{napier}.
 
 The three-variable Ackermann function was presented by Wilhelm Ackermann~\cite{ackermann} in 1928 as an example of a total computable function that is not primitive recursive.
 In 1935, Rózsa Péter~\cite{peter} developed a two-argument variant of the Ackermann 
 function, and it is her variant, often called the Ackermann-Péter function,
-that computer scientists commonly care about.
+that computer scientists---the authors included---commonly care about.
 In 1947, Reuben Goodstein~\cite{goodstein} showed that a variant of the Ackermann function 
 can be used to place the natural sequence of functions (addition, multiplication,
 exponentiation) in a systematic hierarchy of hyperoperations. 
@@ -62,10 +62,10 @@ iterated logarithm $\log^*$ in algorithmic analysis.
 % relation to repeated application and hyperoperation that we have been studying in
 % this paper. Those properties emerged thanks to refinements by ,
 
-The inverse of the Ackermann-Péter function
+The inverse of the Ackermann function
 features in the time bound analyses of several algorithms.
 Tarjan~\cite{tarjan} showed that the union-find data structure
-takes time \lb \mbox{$O(m\cdot\alpha(m,n))$} for a sequence of $m$ operations
+takes time \mbox{$O(m\cdot\alpha(m,n))$} for a sequence of $m$ operations
 involving no more than $n$ elements.
 Tarjan and van Leeuwen~\cite{tarjan2} later refined this to $O(m\cdot\alpha(n))$.
 Chazelle~\cite{chazelle} showed that the minimum spanning tree
@@ -80,10 +80,14 @@ To this end they invert another variant of the Ackermann function
 studied). 
 However, their inversion strategy 
 relies on Hilbert's non-constructive~$\varepsilon$ operator 
-to find the necessary minimum (see Definition~\ref{defn: inv_ack}). 
+to choose the necessary minimum (see Definition~\ref{defn: inv_ack}). 
 % The~$\varepsilon$ operator blurs the distinction between \li{Prop} and \li{Type}, 
+This collapses Coq's distinction between \li{Prop} and \li{Type}.
 This means that Chargu\'eraud and Pottier's 
-inverse cannot be extracted to executable code.
+inverse cannot be extracted to executable code.  Moreover, 
+Coq tactics such as \li{compute} cannot reduce applications of
+their inverse to concrete values.  In contrast, with our technique
+proving a goal such as \li{inv_ack_linear 100 = 4} is as simple as using \li{reflexivity}, and which moreover operates essentially instantaneously.
 
 %Every pearl starts with a grain of sand.  We had the benefit of two:
 %Nivasch~\cite{nivasch} and Seidel~\cite{seidel}.

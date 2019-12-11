@@ -118,7 +118,7 @@ lastly, $\Ack_n$ subtracts three.\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not brea
 			4 & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \log^*_a ~ b & \log^*_2 ~ (b + 3) - 3
 		\end{array}
 	\end{centermath}
-	\caption{Hyperoperations, the Ackermann hierarchy, and inverses thereof}
+	\caption{Hyperoperations, the Ackermann hierarchy, and inverses thereof.}
 	\label{table: hyperop-ack-inv}
 	\vspace{-2em}
 \end{table}
@@ -252,7 +252,7 @@ Require Import Omega Program.Basics.
       inv_ack_wkr f (f n) 1 (n - 1)
   end.
 \end{lstlisting}
-\caption{A linear-time Coq computation of the inverse Ackermann function for inputs represted in unary, \emph{i.e.} \li{nat}}
+\caption{A linear-time Coq computation of the inverse Ackermann function for inputs represted in unary, \emph{i.e.} \li{nat}.}
 \label{fig:standalone}
 \end{figure}
 
@@ -261,7 +261,7 @@ Require Import Omega Program.Basics.
 We provide a complete solution to inverting each individual function in the hyperoperation/Ackermann hierarchy,
 as well as the diagonal Ackermann function itself.  All our functions are structurally recursive, so
 Coq is immediately convinced of their termination.  Moreover, our functions run in linear time: practical utility follows from theoretical grace.
-Finally, our techniques are compact.  The key inverse functions themselves are remarkably succicint: in Figure~\ref{fig:standalone} we show 14 lines of code that calculates the inverse diagonal Ackermann function $\alpha$ in linear time for unary-represented inputs. The entire Coq development, which proves the correctness of our definitions, is about 2,500 lines, split between parallel efforts in unary-encoded and binary-encoded inputs.
+Finally, our techniques are compact.  The key inverse functions themselves are remarkably succinct: in Figure~\ref{fig:standalone} we show 14 lines of code that calculates the inverse diagonal Ackermann function $\alpha$ in linear time for unary-represented inputs. The entire Coq development, which proves the correctness of our definitions, is about 2,500 lines, split between parallel efforts in unary-encoded and binary-encoded inputs.
 
 %The rest of this paper is organized as follows.
 %, so they are as asymptotically efficient as they can be, and are thus suitable for extraction\footnote{A criterion more useful in practice for $\mathsf{log}_b$ and perhaps $\mathsf{log}^*_b$ than the other members of the hierarchy.}
@@ -274,7 +274,7 @@ Finally, our techniques are compact.  The key inverse functions themselves are r
 %\item[\S\ref{blah}] We discuss related work and give some closing thoughts.
 %\end{itemize}
 \begin{itemize}
-    \item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, present Coq encodings for hyperoperations and the Ackermann function, and discuss \emph{repeater}.
+    \item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, \lb present Coq encodings for hyperoperations and the Ackermann function, and discuss \emph{repeater}.
     \item[\S\ref{sec: countdown}] We discuss upper inverses and show how to invert repeater with \emph{countdown}.
     \item[\S\ref{sec: inv-hyperop}] We use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base. We sketch a route to the inverse Ackermann function.
     \item[\S\ref{sec: inv-ack}] We give a Coq computation for the inverse Ackermann function in $\bigO(n)$ time for a unary-encoded input $n$.

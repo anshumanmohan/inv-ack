@@ -22,6 +22,46 @@ values, and thus fall more into the realm of engineering than mathematics.
 Rather surprisingly, for binary-encoded numbers, it appears we can invert the Ackermann function asymptotically faster than we can calculate the base-3 logarithm. 
 \end{rem}
 
+\subsection{Benchmarking our inverses}
+
+\begin{table}[t]
+	\begin{centermath}
+		\begin{array}{clc}
+			& \li{n} & \text{time in }\li{OCaml} \\
+			\cline{2-3}
+			\cline{2-3}
+			\parbox[t]{2mm}{\multirow{4}{*}{\rotatebox[origin=c]{90}{\li{n:nat}}}} 
+			& 100 & 0.000020 \\
+			& 1000 & 0.000926 \\
+			& 10000 & 0.001450 \\
+			& 100000 & 0.016406 \\	
+			\cline{2-3}
+			\parbox[t]{2mm}{\multirow{4}{*}{\rotatebox[origin=c]{90}{\li{n:N}}}} 
+			& 2^{100} & 0.000012 \\
+			& 2^{1000} & 0.000082 \\
+			& 2^{10000} & 0.000959 \\
+			& 2^{100000} & 0.014332 \\
+		\end{array}
+	\end{centermath}
+	\caption{Benchmarking our results \\ (all times in seconds).}
+	\label{table:benchmarking}
+	\vspace{0em}
+\end{table}
+
+As shown in Table~\ref{table:benchmarking} our functions are very rapid in practice.
+We benchmark our results using Coq's extraction mechanism to OCaml and time the 
+results using a machine running i5 2.4GHz with 8GB RAM.  The displayed times are
+the average of three runs; we suspect that garbage collection is the largest cause 
+of variations in the wall-clock times.  Our functions run quickly
+in Gallina as well, but exhibit unexpectedly rapid times when the inputs are large
+due to some Coq optimizations for representing large \li{nat}s.
+
+%we show the results of 
+%extracting our linear-time inverse Ackermann functions to OCaml using Coq's built-in 
+%\li{Extraction} utility and then running a few benchmarks.
+%We made no further optimizations in OCaml, and the timings above
+%are $3$-time averages of wallclock timings on 
+
 \subsection{The two-parameter inverse Ackermann function}
 Some authors~\cite{chazelle,tarjan} prefer a two-parameter inverse Ackermann function.
 \begin{defn} \label{defn: 2para-alpha}
@@ -78,47 +118,12 @@ it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 		Here $b\ge l$ due to the fact that $\Ack(b, k)\ge b$, so $\alpha_b(b)\le k$. This completes the proof.
 \end{proof}}%end hide
 
-\subsection{Benchmarking our inverses}
+\subsection{Implementing our functions in Isabelle/HOL}
 
-\begin{table}[t]
-	\begin{centermath}
-		\begin{array}{clc}
-			& \li{n} & \text{time in }\li{OCaml} \\
-			\cline{2-3}
-			\cline{2-3}
-			\parbox[t]{2mm}{\multirow{4}{*}{\rotatebox[origin=c]{90}{\li{n:nat}}}} 
-			& 100 & 0.000020 \\
-			& 1000 & 0.000926 \\
-			& 10000 & 0.001450 \\
-			& 100000 & 0.016406 \\	
-			\cline{2-3}
-			\parbox[t]{2mm}{\multirow{4}{*}{\rotatebox[origin=c]{90}{\li{n:N}}}} 
-			& 2^{100} & 0.000012 \\
-			& 2^{1000} & 0.000082 \\
-			& 2^{10000} & 0.000959 \\
-			& 2^{100000} & 0.014332 \\
-		\end{array}
-	\end{centermath}
-	\caption{Benchmarking our results \\ (all times in seconds)}
-	\label{table:benchmarking}
-	\vspace{0em}
-\end{table}
-
-In Table~\ref{table:benchmarking} we show the results of 
-extracting our linear-time inverse Ackermann functions to OCaml using Coq's built-in 
-\li{Extraction} utility and then running a few benchmarks.
-We made no further optimizations in OCaml, and the timings above
-are $3$-time averages of wallclock timings on a machine running 
-i5 2.4GHz with 8GB RAM.
-We suspect that garbage collection is the largest cause 
-of variations in the wall-clock times. 
-
-\subsection{Implementing our techniques in Isabelle/HOL}
-
-To show that our techniques translate well and 
-are free from unstated Coq dependencies, 
-we implemented our work in Isabelle/HOL.  Although we
-had no previous experinece with Isabelle/HOL, it took us
+To show that our functions translate well and do not 
+depend on Coq idiosyncrasies,
+we implemented our functions in Isabelle/HOL.  Despite having 
+no previous experience with Isabelle/HOL, it took us
 only 2 hours to define our inverse Ackermann function (\emph{i.e.}, a translation of Figure~\ref{fig:standalone}):
 \lstset{style=isaStyle}
 \begin{lstlisting}
@@ -154,7 +159,9 @@ fun inv_ack_linear :: "nat => nat" where
 end
 \end{lstlisting}
 
-\noindent Our techniques are as applicable to Isabelle as they are to Coq:
+%\noindent Although we have not done the proofs about our functions in Isabelle, they only require first-order mathematics and so should pose no difficulties.
+
+Our techniques are as applicable to Isabelle as they are to Coq:
 Isabelle offers \li{floorlog}, a discrete logarithm with arbitrary base, but 
 \li{floorlog} is defined using~\li{ln}, the continous logarithm on $\mathbb{R}$.
 This technique will not yield a computable function, and so the relevant 
@@ -179,8 +186,8 @@ by (* proof elided *)
 \end{lstlisting}
 
 \noindent This hack requires a pre-developed computational strategy 
-for the \li{[code]} extraction-substitution lemma; there ain't no such thing 
-as a free lunch~\cite{moonmistress}. Indeed, \li{[code]}-extracting the inverse 
+for the \li{[code]} extraction-substitution lemma: there ain't no such thing 
+as a free lunch~\cite{moonmistress}. Thus, \li{[code]}-extracting the inverse 
 Ackermann would require the Isabelle/HOL functions we have presented 
 just above (or their equivalent). Further, we found no definitions of $\log^*$ 
 or the inverse Ackermann function in the Isabelle documentation. Our technique 
