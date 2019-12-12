@@ -30,12 +30,9 @@
 % Edited by Linh
 
 
-\section{Proofs of Correctness for Worker Functions}
-\label{apx:proof_correct_worker}
-
-\subsection{Countdown Worker}
+\section{Proof of Correctness of Countdown Worker}
 \label{apx:proof_correct_countdown_worker}
-This subsection provides the fully detailed proof of Theorem~\ref{thm: cdt-repeat}, which states that the function in Definition~\ref{defn: countdown} correctly computes the countdown value as defined in Definition~\ref{defn: informal-countdown}.
+This appendix provides the fully detailed proof of Theorem~\ref{thm: cdt-repeat}, which states that the function in Definition~\ref{defn: countdown} correctly computes the countdown value as defined in Definition~\ref{defn: informal-countdown}.
 % Linked by Linh
 \begin{usethmcounterof}{thm: cdt-repeat}
 	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L162-L189}{\color{blue}\coq}
@@ -95,9 +92,9 @@ Now we are ready to prove the correctness of the \emph{countdown} computation. \
 	\linebreak Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
 \end{proof}
 
-\subsection{Inverse Ackermann Worker}
+\section{Proof of Correctness of Inverse Ackermann Worker}
 \label{apx:proof_correct_inv_ack_worker}
-This subsection provides the fully detailed proof of Theorem~\ref{thm: inv-ack-worker-correct}, which states that given the appropriate arguments, the function \emph{inverse Ackermann worker} in Definition~\ref{defn: inv-ack-worker} correctly computes the value of the inverse Ackermann function as defined in 
+This appendix provides the fully detailed proof of Theorem~\ref{thm: inv-ack-worker-correct}, which states that given the appropriate arguments, the function \emph{inverse Ackermann worker} in Definition~\ref{defn: inv-ack-worker} correctly computes the value of the inverse Ackermann function as defined in 
 Theorem~\ref{thm: inv-ack-new}.
 \begin{usethmcounterof}{thm: inv-ack-worker-correct}
 	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L199-L231}{\color{blue}\coq}
@@ -180,10 +177,11 @@ Apart from speeding up addition and multiplication, the binary system does the s
 which by standard techniques allows us to calculate $a^b$ in $\bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$.
 }%end hide
 
+\hide{ % hiding for camera ready. will bring back for extended 
 \section{Proofs of Time Bound Lemmas on \li{nat}}
 \label{apx:time_analysis}
 
-This section provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: inv-ack}, \emph{i.e.} Lemma~\ref{lem: inv-ack-hier-runtime} for the general running time formula of $\alpha_i$, Lemma~\ref{lem: alpha2_runtime_naive} for the lower bound on the na\"ive version, and Theorem~\ref{thm: inv-ack-hier-runtime-improved} for the upper bound on the improved version. These results and their supporting lemmas are reproduced here for readers' easy reference.
+This appendix provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: inv-ack}, \emph{i.e.} Lemma~\ref{lem: inv-ack-hier-runtime} for the general running time formula of $\alpha_i$, Lemma~\ref{lem: alpha2_runtime_naive} for the lower bound on the na\"ive version, and Theorem~\ref{thm: inv-ack-hier-runtime-improved} for the upper bound on the improved version. These results and their supporting lemmas are reproduced here for readers' easy reference.
 
 We start by examining the running time of two operations used in the Coq definition of \emph{countdown worker} on \li{nat}, namely \li{leb} and \li{compose}.
 
@@ -410,7 +408,7 @@ With these lemmas, we are ready to tackle Theorem~\ref{thm: inv-ack-hier-runtime
 \renewcommand{\Tleb}{\runtime_{\li{N.leb}}}
 \renewcommand{\Tsucc}{\runtime_{\li{N.succ}}}
 
-This section provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: binary},
+This appendix provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: binary},
 \emph{i.e.} Lemma~\ref{lem: cdt-runtime-bin} for the upper bound on the time complexity of $\alpha_i$ on \li{N} (\li{bin_alpha}),
 and Theorem~\ref{thm: inv-ack-runtime-bin} for the upper bound on the time complexity of the $\alpha$ on \li{N} (\li{bin_inv_ack}).
 These results and their supporting lemmas are reproduced here for readers' easy reference.
@@ -581,3 +579,5 @@ With all critical lemmas established and proven, including Lemma~\ref{lem: sum-a
 	where $\forall i\ge 3, \alpha_i(n)\le \log_2n$ and $\alpha_{i+1}(n)\le \log_2^{(2)}n$, while the $2\log_2^{(2)}n$ upper bounds for the sums come from Lemma~\ref{lem: sum-alpha-repeat}.
 	By induction on $i$, proof is complete.
 \end{proof}
+
+}% end hide

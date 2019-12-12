@@ -123,8 +123,12 @@ To show that our functions translate well and do not
 depend on Coq idiosyncrasies,
 we implemented our functions in Isabelle/HOL.  Despite having 
 no previous experience with Isabelle/HOL, it took us
-only 2 hours to define our inverse Ackermann function (\emph{i.e.}, a translation of Figure~\ref{fig:standalone}):
+only 2 hours to define our inverse Ackermann function.
+Figure~\ref{fig:standalone_isabelle} is an Isabelle translation of 
+Figure~\ref{fig:standalone}.
+
 \lstset{style=isaStyle}
+\begin{figure}
 \begin{lstlisting}
 theory inv_ack_standalone
   imports "HOL-Library.Log_Nat" HOL.Divides
@@ -157,6 +161,9 @@ fun inv_ack_linear :: "nat => nat" where
  
 end
 \end{lstlisting}
+\caption{A linear-time Isabelle computation of the inverse Ackermann function for inputs represented in unary, \emph{i.e.} \li{nat}.}
+\label{fig:standalone_isabelle}
+\end{figure}
 
 %\noindent Although we have not done the proofs about our functions in Isabelle, they only require first-order mathematics and so should pose no difficulties.
 
@@ -166,7 +173,9 @@ Isabelle offers \li{floorlog}, a discrete logarithm with arbitrary base, but
 This technique will not yield a computable function, and so the relevant 
 Isabelle standard library
 uses a ``hack'' (in the form of a \li{[code]} annotation) to generate a computable equivalent for extraction.
-Below we present relevant extracts from the Isabelle standard libraries~\cite{isastan2013, isastan2019}:
+In Figure~\ref{fig:isabelle_hack} we present relevant extracts from the Isabelle standard libraries~\cite{isastan2013, isastan2019}.
+
+\begin{figure}
 \begin{lstlisting}
 definition ln :: "real => real" where
   "ln x = (THE u. exp u = x)"
@@ -183,12 +192,15 @@ lemma compute_floorlog[code]:
               floorlog b (x div b) + 1 else 0)"
 by (* proof elided *)
 \end{lstlisting}
+\caption{The standard Isabelle technique for extractable discrete logarithm.}
+\label{fig:isabelle_hack}
+\end{figure}
 
-\noindent This hack requires a pre-developed computational strategy 
+This hack requires a pre-developed computational strategy 
 for the \li{[code]} extraction-substitution lemma: there ain't no such thing 
 as a free lunch~\cite{moonmistress}. Thus, \li{[code]}-extracting the inverse 
-Ackermann would require the Isabelle/HOL functions we have presented 
-just above (or their equivalent). Further, we found no definitions of $\log^*$ 
+Ackermann would require the Isabelle/HOL functions presented in Figure~\ref{fig:standalone_isabelle} or some equivalent thereof. 
+Further, we found no definitions of $\log^*$ 
 or the inverse Ackermann function in the Isabelle documentation. Our technique 
 gives directly extractable solutions to the entire hierarchy.
 \lstset{style=myStyle}

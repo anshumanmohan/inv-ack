@@ -73,6 +73,8 @@
 
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{appendix}
+
 %% The amsthm package provides extended theorem environments
 
 % \usepackage{amsthm}
@@ -288,13 +290,13 @@
 
 \author{Anshuman Mohan}
 \affiliation{
-	\department{Yale-NUS College and School of Computing}
+	\department{Yale-NUS College and \protect \\ School of Computing}
 	\institution{National University of Singapore}            %% \institution is required
 }
 
 \author{Aquinas Hobor}
 \affiliation{
-	\department{Yale-NUS College and School of Computing}
+	\department{Yale-NUS College and \protect \\ School of Computing}
 	\institution{National University of Singapore}            %% \institution is required
 }
 
@@ -408,8 +410,10 @@ this material are those of the authors and do not necessarily reflect the
 views of Yale-NUS College.
 \end{acks}
 
-%% \section{}
-%% \label{}
+\appendix
+\appendixpage
+
+\input{appendix.tex}
 
 %% If you have bibdatabase file and want bibtex to generate the
 %% bibitems, please use
@@ -421,8 +425,6 @@ views of Yale-NUS College.
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
-\appendix
-\input{appendix.tex}
 
 
 %% else use the following coding to input the bibitems directly in the

@@ -272,13 +272,24 @@ Abracadabra! We can express $\alpha$ using the hierarchy \emph{without referring
    	\draw [->, green] ({pic cs:nine}) to [bend left]({pic cs:nine_succ});
   \end{tikzpicture}
 
-\vspace{-3em}
-We provide intuition for our new definition in Table~\ref{table:inv_intuition}. 
-For any $n$, imagine searching down its column for an $\alpha_k(n) \le k$.
+% \vspace{-3em}
+Table~\ref{table:inv_intuition} gives intuition for our new definition of $\alpha$.
 This table is populated exactly as suggested by 
-Table~\ref{table: hyperop-ack-inv} earlier.
-Red arrows represent unsuccessful searches, and green arrows represent 
-successful searches.
+Table~\ref{table: hyperop-ack-inv}:
+$\alpha_{0}(n)$ is $n-1$, 
+$\alpha_{1}(n)$ is $n-2$,
+$\alpha_{2}(n)$ is $\left\lceil \frac{n-3}{2} \right\rceil$, and
+$\alpha_{3}(n)$ is $\left\lceil \log_2 ~ (b + 3)\right\rceil - 3$.
+Now for any $n$, we search down its column, which is indexed by $k$, 
+looking for the smallest $k$ such that $\alpha_k(n) \le k$.
+
+Consider $n = 8$. $\alpha_{0}(8) = 7$. Because $7 \not\le 0$, $\alpha_0$ is rejected.
+Similarly $\alpha_{1}(8) = 6 \not\le 1$ and $\alpha_{2}(8) = 3 \not\le 2$
+are rejected. Finally $\alpha_{3}(8) = 1$ is accepted because $1 \le 3$. 
+Indeed, $\alpha(8) = 3$.
+Similar reasoning applies to the other values for $n$. To aid intuition in this table,
+we show show unsuccessful searches in {\color{red}red} and successful searches in 
+{\color{green}green}.
 
 Now all that remains is to provide a structurally-recursive function that computes $\alpha$.
 %\begin{defn} \label{defn: inv-ack-worker}
