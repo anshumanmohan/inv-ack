@@ -3,7 +3,7 @@
 % \label{apx:code}
 
 % \vspace{-1em}
-\lstset{style=myTinyStyle}
+
 % Linked by A
 %\begin{lstlisting}
 %
@@ -30,91 +30,6 @@
 % Edited by Linh
 
 
-
-
-\section{Standalone Linear-Time Inverse Ackermann $\alpha$ in \li{N}}
-\label{apx:code_n}
-
-%linked by A
-%\begin{lstlisting}
-%Require Import Omega Program.Basics.
-%Open Scope N_scope.
-%
-%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L56-L64}{Definition nat\_size}` (n : N) : nat :=
-%  match n with
-%  | 0 => 0%nat
-%  | Npos p => let fix nat_pos_size (x : positive) : nat :=
-%                  match x with
-%                  | xH => 1%nat
-%                  | xI y | xO y => S (nat_pos_size y) end
-%                  in nat_pos_size p
-%  end.
-%
-%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L67-L72}{Fixpoint bin\_cdn\_wkr}` (f : N -> N) (a n : N) (b : nat) : N :=
-%  match b with
-%  | O    => 0
-%  | S b' => if (n <=? a) then 0
-%             else 1 + bin_cdn_wkr f a (f n) b'
-%  end.
-%
-%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L75-L76}{Definition bin\_countdown\_to}` (f : N -> N) (a n : N) : N := 
-%  bin_cdn_wkr f a n (nat_size (n - a)).
-%
-%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L97-L104}{Fixpoint bin\_inv\_ack\_wkr}` (f : N -> N) (n k : N) (b : nat) : N :=
-%  match b with 0%nat => k | S b' => 
-%    if n <=? k then k else 
-%      let g := (bin_countdown_to f 1) in
-%        bin_inv_ack_wkr (compose g f) (g n) (N.succ k) b'
-%  end.
-%
-%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L111-L116}{Definition bin\_inv\_ack}` n :=
-%  if (n <=? 1) then 0 else if (n <=? 3) then 1
-%    else if (n <=? 7) then 2 else 
-%      let f := (fun x => N.log2 (x + 2) - 2) in
-%        bin_inv_ack_wkr f (f n) 3 (nat_size n).
-%\end{lstlisting}
-% Edited by Linh
-\begin{lstlisting}
-Require Import Omega Program.Basics.
-Open Scope N_scope.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L56-L64}{\color{blue}Definition nat\_size}` n :=
-  match n with
-  | 0 => 0%nat
-  | Npos p =>
-      let fix nat_pos_size (x : positive) : nat :=
-        match x with xH => 1%nat
-        | xI y | xO y => S (nat_pos_size y) end
-      in nat_pos_size p
-  end.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L67-L72}{\color{blue}Fixpoint bin\_cdn\_wkr}` f a n b :=
-  match b with
-  | O    => 0
-  | S b' => if (n <=? a) then 0
-    else 1 + bin_cdn_wkr f a (f n) b'
-  end.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L75-L76}{\color{blue}Definition bin\_countdown\_to}` f a n := 
-bin_cdn_wkr f a n (nat_size (n - a)).
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L97-L104}{\color{blue}Fixpoint bin\_inv\_ack\_wkr}` f n k b :=
-  match b with 0%nat => k | S b' => 
-    if n <=? k then k else 
-      let g := (bin_countdown_to f 1) in
-        bin_inv_ack_wkr
-          (compose g f) (g n) (N.succ k) b'
-  end.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L111-L116}{\color{blue}Definition bin\_inv\_ack}` n :=
-  if (n <=? 1) then 0 else if (n <=? 3) then 1
-    else if (n <=? 7) then 2 else 
-      let f := (fun x => N.log2 (x + 2) - 2) in
-    bin_inv_ack_wkr f (f n) 3 (nat_size n).
-\end{lstlisting}
-\lstset{style=myStyle}
-
-\vspace{1em}
 \section{Proofs of Correctness for Worker Functions}
 \label{apx:proof_correct_worker}
 
@@ -231,26 +146,6 @@ With this lemma, we can proceed to establish the correctness of \emph{inverse Ac
 	$$ \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\W}\big(\alpha_m, \alpha_m(n), m, n - m\big) = m $$
 	where the last equality follows from \eqref{eq: inv-ack-worker-recursion} when $\alpha_m(n)\le m$.
 \end{proof}
-
-\section{Support for Binary Numbers in Coq}
-\label{apx:bin_in_coq}
-Coq has support for binary numbers with the type \li{N}, which consists
-of constructors \li{N0} and \li{Npos}. The latter, \li{Npos}, unfolds directly to \li{positive}:
-
-\begin{lstlisting}
-Inductive positive : Set :=
-  | xI : positive -> positive 
-  | xO : positive -> positive
-  | xH : positive.
-\end{lstlisting}
-
-Constructor \li{xH} represents $1$, and constructors \li{xO} and \li{xI} represent
-appending $0$ and $1$ respectively.
-By always starting with $1$, \li{positive} bypasses
-the issue of disambiguating \emph{e.g.} the strings \li{011} and
-\li{00011}, which represent the same number but pose
-a minor technical challenge.
-To represent $0$, the type \li{N} simply provides a separate constructor \li{N0}.
 
 \hide{
 \begin{lstlisting}

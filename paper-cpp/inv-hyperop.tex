@@ -237,7 +237,7 @@ Abracadabra! We can express $\alpha$ using the hierarchy \emph{without referring
 			\alpha_0 & 0\tikzmark{zero_succ} & 0\tikzmark{one_succ} & \tikzmark{two_fail}1 & \tikzmark{three_fail}2 & \tikzmark{four_fail1}3 & \tikzmark{five_fail1}4 & \tikzmark{six_fail1}5 & \tikzmark{seven_fail1}6 & \tikzmark{eight_fail1}7 & \tikzmark{nine_fail1}8 \\
 			\alpha_1 & 0 & 0 & 0\tikzmark{two_succ} & 1\tikzmark{three_succ} & \tikzmark{four_fail2}2 & \tikzmark{five_fail2}3 & \tikzmark{six_fail2}4 & \tikzmark{seven_fail2}5 & \tikzmark{eight_fail2}6 & \tikzmark{nine_fail2}7 \\
 			\alpha_2 & 0 & 0 & 0 & 0 & 1\tikzmark{four_succ} & 1\tikzmark{five_succ} & 2\tikzmark{six_succ} & 2\tikzmark{seven_succ} & \tikzmark{eight_fail3}3 & \tikzmark{nine_fail3}3 \\
-			\alpha_3 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1\tikzmark{eight_succ} & \tikzmark{nine_fail4}1 \\
+			\alpha_3 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1\tikzmark{eight_succ} & 1\tikzmark{nine_succ} \\
 		\end{array}
 	\end{centermath}
 	\caption{Intuition for $\alpha(n)$ defined without $\Ack(n)$.}
@@ -269,7 +269,7 @@ Abracadabra! We can express $\alpha$ using the hierarchy \emph{without referring
    	\draw [->, red] ({pic cs:ninea}) to [bend right]({pic cs:nine_fail1});
    	\draw [->, red] ({pic cs:ninea}) to [bend right]({pic cs:nine_fail2});
    	\draw [->, red] ({pic cs:ninea}) to [bend right]({pic cs:nine_fail3});
-   	\draw [->, red] ({pic cs:ninea}) to [bend right]({pic cs:nine_fail4});
+   	\draw [->, green] ({pic cs:nine}) to [bend left]({pic cs:nine_succ});
   \end{tikzpicture}
 
 \vspace{-3em}
