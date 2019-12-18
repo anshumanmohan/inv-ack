@@ -26,7 +26,7 @@ a rough analogue of injectivity in the discrete domain.
 
 We call this the \emph{upper} inverse because, for strictly increasing functions like
 addition, multiplication, and exponentiation, the upper inverse is the ceiling of the
-corresponding inverse functions on $\mathbb{R}$. The following clarifies further:
+corresponding inverse functions on $\mathbb{R}$. The following clarifies this further:
 \hide{
 \color{red} It is reasonable to wonder about the floor.
 \begin{defn} \label{defn: lower_inverse}
@@ -40,7 +40,7 @@ Thus we focus on upper inverses (hereafter just ``inverses''), and discuss lower
 	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v#L65-L77}{\color{blue}\coq} If $F:\mathbb{N}\to \mathbb{N}$ is increasing, then $f$ is the upper inverse of $F$ if and only if $\ \forall n, m.~ f(n)\le m \iff n \le F(m)$.
 \end{thm}
 \begin{proof}
-Fix $n$. The sentence $\forall m.~ f(n)\le m \iff n\le F(m)$ implies:
+Fix $n$. Then $\forall m.~ f(n)\le m \iff n\le F(m)$ implies:
 \begin{enumerate}
 	\item $f(n)$ is a lower bound to $\{m: n \le F(m)\}$ \\ \vspace{-1.2em}
 	\item $f(n)$ is itself in the set, since plugging in $f(n)$ for $m$  yields $n\le F(f(n))$, which makes $f$ the upper inverse of $F$. \\ \vspace{-1.2em}
@@ -125,7 +125,7 @@ This strategy only really works if each chainlink is strictly smaller than the p
 \begin{defn} \label{defn: contracting}
 	A function $f : \mathbb{N} \to \mathbb{N}$ is a
 	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L40-L42}{\color{blue}\emph{contraction}} if $\forall n.~ f(n) \le n$. Next, if given some $a \ge 1$, a contraction $f$ is
-	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L44-L46}{\color{blue}\emph{strict above}} $a$ if $\forall n > a.~n > f(n)$. We denote the set of contractions by $\contract$ and the set of contractions strict above~$a$ by $\contract_a$. Analogously to our observation in
+	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L44-L46}{\color{blue}\emph{strict above}} $a$ if $\forall n > a.~f(n)<n$. We denote the set of contractions by $\contract$ and the set of contractions strict above~$a$ by $\contract_a$. Analogously to our observation in
 	Definition \ref{rem: repeatable-subset}, \lb $\forall s\le t.~ \contract_s \subseteq \contract_t$.
 \end{defn}
 % \noindent What kinds of functions have contractive inverses? Expansions, naturally:

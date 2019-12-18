@@ -55,7 +55,7 @@ a[n+1]b ~& = ~ a[n]\big(a[n+1](b-1)\big) \\
 \end{equation*}
 %where $f^{(k)}(u) ~ \triangleq ~ \overbrace{(f\circ f\circ \cdots \circ f)}^{k \text{ times}} (u)$,
 where $f^{(k)}(u) \triangleq ~ (f\circ f\circ \cdots \circ f)(u)$ denotes $k$ compositional applications of a function~$f$ to an
-input~$u$; $f^{(0)}(u) = u$ \linebreak (\emph{i.e.} applying $0$ times yields the identity).
+input~$u$. Here $f^{(0)}(u) = u$, \emph{i.e.} applying $f$ zero times yields the identity.
 
 This insight helps us encode hyperoperations~(\ref{eq:hyper}) and
 Ackermann~(\ref{eq:ackermann}) in Coq.  

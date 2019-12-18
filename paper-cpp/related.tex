@@ -33,7 +33,8 @@ base $60$, and so \emph{e.g.} a three-gylph number $abc_{\text{babylonian}}$ cou
 be parsed as $a \times 60^2 + b \times 60 + c$. Sadly they lacked
 a radix point, and so
 $a \times 60^3 + b \times 60^2 + c \times 60$, $a \times 60 + b + c \div 60$,
-\emph{etc.} were also reasonable interpretations.
+\emph{etc.} were also reasonable interpretations, and the correct number had
+to be inferred from context.
 Using multiplication and division in numerical representations bought great concision: a number $n$ was
 represented in $\lfloor \log_{60}n \rfloor + 1$ glyphs.
 The modern Indo-Arabic decimal system is also an algorism, 
@@ -86,8 +87,9 @@ This collapses Coq's distinction between \li{Prop} and \li{Type}.
 This means that Chargu\'eraud and Pottier's 
 inverse cannot be extracted to executable code.  Moreover, 
 Coq tactics such as \li{compute} cannot reduce applications of
-their inverse to concrete values.  In contrast, with our technique
-proving a goal such as \li{inv_ack_linear 100 = 4} is as simple as using \li{reflexivity}, and which moreover operates essentially instantaneously.
+their inverse to concrete values.  In contrast, with our technique,
+proving a goal such as \li{inv_ack_linear 100 = 4} is as simple as 
+using \li{reflexivity}, and the computation is essentially instantaneous.
 
 %Every pearl starts with a grain of sand.  We had the benefit of two:
 %Nivasch~\cite{nivasch} and Seidel~\cite{seidel}.

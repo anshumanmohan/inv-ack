@@ -26,7 +26,7 @@ Rather surprisingly, for binary-encoded numbers, it appears we can invert the Ac
 
 \begin{table}[t]
 	\begin{centermath}
-		\begin{array}{clc}
+		\begin{array}{cl@{\hspace{8em}}c}
 			& \li{n} & \text{time in }\li{OCaml} \\
 			\cline{2-3}
 			\cline{2-3}
@@ -161,7 +161,7 @@ fun inv_ack_linear :: "nat => nat" where
  
 end
 \end{lstlisting}
-\caption{A linear-time Isabelle computation of the inverse Ackermann function for inputs represented in unary, \emph{i.e.} \li{nat}.}
+\caption{A linear-time Isabelle computation of the inverse Ackermann function (inputs  in unary, \emph{i.e.} \li{nat}).}
 \label{fig:standalone_isabelle}
 \end{figure}
 
@@ -190,7 +190,7 @@ definition floorlog :: "nat => nat => nat" where
 lemma compute_floorlog[code]:
   "floorlog b x = (if x > 0 `$\wedge$` b > 1 then 
               floorlog b (x div b) + 1 else 0)"
-by (* proof elided *)
+ by (* proof elided *)
 \end{lstlisting}
 \caption{The standard Isabelle technique for extractable discrete logarithm.}
 \label{fig:isabelle_hack}

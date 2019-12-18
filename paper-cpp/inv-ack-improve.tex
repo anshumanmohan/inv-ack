@@ -4,7 +4,9 @@ under a call-by-value strategy, and in $O(n)$
 after a simple optimization.
 To remain accessible to readers, we give intuition 
 by presenting a detailed sketch via lemma statements.
-We put full proofs of these lemmas in Appendix~\ref{apx:time_analysis}.
+We put full proofs of these lemmas in 
+Appendix~C of the extended version of this paper~\cite{extendedinvack}.
+% Appendix~\ref{apx:time_analysis}.
 We elide the parallel analysis for the inverse hyperoperations, 
 which is easier thanks to simpler initial values but are otherwise similar.
 
@@ -38,7 +40,9 @@ operating on \li{N}, \emph{i.e.} in binary encoding.
 
 \subsection{Na\"ive $\alpha_i$ on \li{nat} is $\Omega(n^2)$; optimized $\alpha_i$ is $O(n)$} \label{sect: hardcode-lvl2}
 
-\noindent We start with the following lemma about the running time of each $\alpha_i$, which is a consequence of Lemma~\ref{lem: cdt-runtime}. Its full proof can be found in Appendix~\ref{apx:time_analysis}.
+\noindent We start with the following lemma about the running time of each $\alpha_i$, which is a consequence of Lemma~\ref{lem: cdt-runtime}. Its full proof can be found in 
+Appendix~C. 
+% Appendix~\ref{apx:time_analysis}.
 \begin{lem} \label{lem: inv-ack-hier-runtime}
 	When $\alpha_i$ is defined per Definition~\ref{defn: inv-ack-hier},
 	\begin{equation*}
@@ -192,7 +196,13 @@ The computation will terminate at $k = \alpha(n)$. Thus $\forall n\ge 1$,
 	
   % Consider the time complexity of $\tilde{\alpha}(n)$. Edited by Linh
 	Complexity: at each recursive step, the transition from $\alpha^{\mathcal{W}}\big(\alpha_k, \alpha_k(n), k, n-~k\big)$ to $\alpha^{\mathcal{W}}\big(\alpha_{k+1}, \alpha_{k+1}(n), k+1, n-k-1\big)$ consists of two steps:
-	First, calculation of $\li{leb}\big(\alpha_k(n), k\big)$, which takes no more than $k + 1$ steps (as shown in Appendix~\ref{apx:time_analysis} Lemma~\ref{lem: leb-runtime}). Second, calculation of $\alpha_{k+1}(n) = \cdt{\alpha_k)}{1}(x)$ given $x\triangleq \alpha_k(n)$, which takes time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ (as shown in Appendix~\ref{apx:time_analysis} Lemma~\ref{lem: compose-runtime}).
+	First, calculation of $\li{leb}\big(\alpha_k(n), k\big)$, which takes no more than $k + 1$ steps (Appendix~C).
+	% \ref{apx:time_analysis} of \cite{extendedinvack}). 
+	%Lemma~\ref{lem: leb-runtime}). 
+	Second, calculation of $\alpha_{k+1}(n) = \cdt{\alpha_k)}{1}(x)$ given $x\triangleq \alpha_k(n)$, which takes time $\runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ 
+	(Appendix~C). 
+	% (Appendix~\ref{apx:time_analysis} of \cite{extendedinvack}). 
+	%Lemma~\ref{lem: compose-runtime}).
 	The computation will terminate at $k = \alpha(n)$. Thus, $\forall n\ge 1$,
 	\begin{equation*} %\label{eq: inv-ack-runtime-improved}
 	\begin{aligned}

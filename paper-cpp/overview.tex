@@ -124,7 +124,7 @@ lastly, $\Ack_n$ subtracts three.\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not brea
 \end{table}
 
 It is worth studying and inverting the hyperoperations before handling the Ackermann inverses.
-With computationally efficient definitions of the individual Ackermann inverses $\alpha_n$ in hand, we can redefine $\alpha$---the inverse of the diagonal Ackermann $\Ack$---in a computationally effficient way.  The key is our 
+With computationally efficient definitions of the individual Ackermann inverses $\alpha_n$ in hand, we shall redefine $\alpha$---the inverse of the diagonal Ackermann $\Ack$---in a computationally effficient way.  The key is our 
 Theorem \ref{thm: inv-ack-new} (\S\ref{sec: inv-hyperop}), which characterizes~$\alpha$ without referring to~$\Ack$ directly: $\forall n.~ \alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}$.
 
 %Our initial goal of inverting the Ackermann function can thus be broken
@@ -251,7 +251,7 @@ Require Import Omega Program.Basics.
       inv_ack_wkr f (f n) 1 (n - 1)
   end.
 \end{lstlisting}
-\caption{A linear-time Coq computation of the inverse Ackermann function for inputs represented in unary, \emph{i.e.} \li{nat}.}
+\caption{A linear-time Coq computation of the inverse Ackermann function for inputs in unary, \emph{i.e.} \li{nat}.}
 \label{fig:standalone}
 \end{figure}
 
