@@ -7,7 +7,7 @@ The Mathematical Components library~\cite{MathComp}
 has a discrete logarithm with arbitrary base, with inputs encoded in \li{nat}.
 The Isabelle/HOL Archive of Formal Proofs~\cite{isastan2019} 
 provides a definition of discrete logarithm
-with arbitrary base along with a separate computation strategy (\lstset{style=isaStyle}\li{[code]}\lstset{style=myStyle}).
+with arbitrary base along with a separTate computation strategy (\lstset{style=isaStyle}\li{[code]}\lstset{style=myStyle}).
 None of these libraries provides a definition of iterated logarithm or
 further members of the hierarchy.
 Indeed, to our knowledge, we are the first to generalize this
@@ -83,8 +83,8 @@ However, their inversion strategy
 relies on Hilbert's non-constructive~$\varepsilon$ operator 
 to choose the necessary minimum (see Definition~\ref{defn: inv_ack}). 
 % The~$\varepsilon$ operator blurs the distinction between \li{Prop} and \li{Type}, 
-This collapses Coq's distinction between \li{Prop} and \li{Type}.
-This means that Chargu\'eraud and Pottier's 
+This collapses Coq's distinction between \li{Prop} and \li{Type}, meaning that
+Chargu\'eraud and Pottier's 
 inverse cannot be extracted to executable code.  Moreover, 
 Coq tactics such as \li{compute} cannot reduce applications of
 their inverse to concrete values.  In contrast, with our technique,

@@ -119,8 +119,8 @@ it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 
 \subsection{Implementing our functions in Isabelle/HOL}
 
-To show that our functions translate well and do not 
-depend on Coq idiosyncrasies,
+To show that our functions are independent of any 
+Coq idiosyncrasies,
 we implemented our functions in Isabelle/HOL.  Despite having 
 no previous experience with Isabelle/HOL, it took us
 only 2 hours to define our inverse Ackermann function.
@@ -167,14 +167,6 @@ end
 
 %\noindent Although we have not done the proofs about our functions in Isabelle, they only require first-order mathematics and so should pose no difficulties.
 
-Our techniques are as applicable to Isabelle as they are to Coq:
-Isabelle offers \li{floorlog}, a discrete logarithm with arbitrary base, but 
-\li{floorlog} is defined using~\li{ln}, the continous logarithm on $\mathbb{R}$.
-This technique will not yield a computable function, and so the relevant 
-Isabelle standard library
-uses a ``hack'' (in the form of a \li{[code]} annotation) to generate a computable equivalent for extraction.
-In Figure~\ref{fig:isabelle_hack} we present relevant extracts from the Isabelle standard libraries~\cite{isastan2013, isastan2019}.
-
 \begin{figure}
 \begin{lstlisting}
 definition ln :: "real => real" where
@@ -195,6 +187,14 @@ lemma compute_floorlog[code]:
 \caption{The standard Isabelle technique for extractable discrete logarithm.}
 \label{fig:isabelle_hack}
 \end{figure}
+
+Furthermore, our techniques are as \emph{applicable} to Isabelle as they are to Coq:
+Isabelle offers \li{floorlog}, a discrete logarithm with arbitrary base, but 
+\li{floorlog} is defined using~\li{ln}, the continous logarithm on $\mathbb{R}$.
+This does not yield a computable function, and so the relevant 
+Isabelle standard library
+uses a ``hack'' (in the form of a \li{[code]} annotation) to generate a computable equivalent for extraction.
+In Figure~\ref{fig:isabelle_hack} we present relevant extracts from the Isabelle standard libraries~\cite{isastan2013, isastan2019}.
 
 This hack requires a pre-developed computational strategy 
 for the \li{[code]} extraction-substitution lemma: there ain't no such thing 
