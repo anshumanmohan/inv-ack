@@ -272,8 +272,16 @@ Abracadabra! We can express $\alpha$ using the hierarchy \emph{without referring
    	\draw [->, green] ({pic cs:nine}) to [bend left]({pic cs:nine_succ});
   \end{tikzpicture}
 
+Intuitionally, this new definition of $\alpha$ aligns 
+with the goal we laid out initially 
+in Definition~\ref{defn: inv_ack}. For some $n$, we were trying to 
+minimize $k$ such that $n \le \Ack(k)$. 
+Now we have shown that this is equivalent to minimizing $k$ such that 
+$\alpha_{k} (n) \le k$.
+
 % \vspace{-3em}
-Table~\ref{table:inv_intuition} gives intuition for our new definition of $\alpha$.
+Table~\ref{table:inv_intuition} gives further intuition for how this 
+new definition works.
 This table is populated exactly as suggested by 
 Table~\ref{table: hyperop-ack-inv}:
 $\alpha_{0}(n)$ is $n-1$, 
