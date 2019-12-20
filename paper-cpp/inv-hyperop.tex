@@ -222,6 +222,31 @@ Equivalently, $\alpha_{i+1}(n) = \min\big\{m : \big( \alpha_i \big)^{(m+1)}(n)\l
 	\\ \big(\cdt{\alpha_{i-1}}{1}\big)\circ \alpha_{i-1} & \text{if } i\ge 1 \end{cases}
 $
 \end{defn}
+
+\begin{col}\label{cor:newest}
+Applying our Galois connection (Theorem~\ref{thm: upp-inverse-rel}) to the above
+gives us an important inverse relation \emph{for each level} of 
+the Ackermann hierarchy:
+\begin{equation*}
+n \le \Ack_j(m) \Leftrightarrow \alpha_j(n) \le m
+\end{equation*}
+Note that we are now inverting the $j^{th}$ level of the hierarchy,
+and not the Ackermann function altogether.
+\end{col}
+
+Now recall the goal we laid out initially in Definition~\ref{defn: inv_ack}.
+We were trying to minimize $k$ such that $n \le \Ack(k)$. \emph{i.e.},
+$\alpha(n) \triangleq \min\left\{k : n \le \Ack(k)\right\}$.
+Unfolding the definition of \Ack~shows that we can instead solve an equivalent 
+minimization goal:
+$\min\left\{k : n \le \Ack_k(k)\right\}$.
+Finally, we can apply Corollary~\ref{cor:newest} to transform this
+minimization goal one more time:
+\lb $\min\left\{k : \alpha_k(n) \le k\right\}$.
+
+
+
+
 Abracadabra! We can express $\alpha$ using the hierarchy \emph{without referring to $\Ack$ itself}:
 \begin{thm} \label{thm: inv-ack-new}
 	%For all $n, k$, $n\le \Ack(k, k) \!\!\iff \!\! \alpha_k(n)\le k$. Thus
@@ -271,13 +296,6 @@ Abracadabra! We can express $\alpha$ using the hierarchy \emph{without referring
    	\draw [->, red] ({pic cs:ninea}) to [bend right]({pic cs:nine_fail3});
    	\draw [->, green] ({pic cs:nine}) to [bend left]({pic cs:nine_succ});
   \end{tikzpicture}
-
-Intuitionally, this new definition of $\alpha$ aligns 
-with the goal we laid out initially 
-in Definition~\ref{defn: inv_ack}. For some $n$, we were trying to 
-minimize $k$ such that $n \le \Ack(k)$. 
-Now we have shown that this is equivalent to minimizing $k$ such that 
-$\alpha_{k} (n) \le k$.
 
 % \vspace{-3em}
 Table~\ref{table:inv_intuition} gives further intuition for how this 
