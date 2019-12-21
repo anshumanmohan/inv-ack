@@ -36,7 +36,8 @@ $\Theta(b)$ time, where $b$ is the bitlength,
 \emph{i.e.} logarithmic time in the input magnitude.
 As before, we present an intuitive sketch here and put
 full proofs in 
-Appendix~D of the extended version of this paper~\cite{extendedinvack}.
+Appendix~D
+ of the extended version of this paper~\cite{extendedinvack}.
 % Appendix~\ref{apx:time_analysis_bin}.
 
 \begin{rem}
@@ -329,15 +330,15 @@ As in Theorem~\ref{thm: inv-ack-hardcode-correct}, the time complexity $\runtime
 & \ + \Tleb(n, 1) \ + \ \Tleb(n, 3) \ + \ \Tleb(n, 7)
 \end{aligned}
 \end{equation*}
-With reference to Lemmas~47 (Appendix~C), 52 and 53 (Appendix~D), we have:
+With reference to Lemmas~48 (Appendix~C), 53 and 54 (Appendix~D), we have:
 % With reference to Lemmas \ref{lem: compose-runtime} (Appendix~C), \ref{lem: leb-runtime-bin} and \ref{lem: succ-runtime-bin} \lb (Appendix~D), we have:
-In the second summand, \lb $\runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n)) = \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ for each $k$ by Lemma~47.
+In the second summand, \lb $\runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n)) = \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ for each $k$ by Lemma~48.
 % \ref{lem: compose-runtime}.
-By Lemma~52, 
+By Lemma~53, 
 % By Lemma~\ref{lem: leb-runtime-bin}, 
 each $\Tleb$ in the third summand is $\Theta\left(\log_2k\right)$, totalling $\bigO\big(\alpha(n)\log_2\alpha(n)\big) = \text{o}\big(\log_2n\big)$.
 The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by 
-Lemma~53. 
+Lemma~54. 
 % Lemma~\ref{lem: succ-runtime-bin}. 
 The remaining items total $\Theta(\log_2n)$. Thus, $\forall n\ge 8$:
 %\begin{equation*}

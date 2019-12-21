@@ -224,6 +224,7 @@ $
 \end{defn}
 
 \begin{col}\label{cor:newest}
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L43-L61}{\color{blue}\coq}
 Applying our Galois connection (Theorem~\ref{thm: upp-inverse-rel}) to the above
 gives us an important inverse relation \emph{for each level} of
 the Ackermann hierarchy:
@@ -258,6 +259,7 @@ and then by applying Corollary~\ref{cor:newest} we can---Abracadabra!---express 
 	\end{centermath}
 	\caption{Intuition for $\alpha(n)$ defined without $\Ack(n)$.}
 	\label{table:inv_intuition}
+\vspace{-2em}
 \end{table}
   \begin{tikzpicture}[overlay, remember picture, yshift=.25\baselineskip, shorten >=.5pt, shorten <=.5pt]
     \draw [->, green] ({pic cs:zero}) to [bend left]({pic cs:zero_succ});
@@ -288,21 +290,20 @@ and then by applying Corollary~\ref{cor:newest} we can---Abracadabra!---express 
    	\draw [->, green] ({pic cs:nine}) to [bend left]({pic cs:nine_succ});
   \end{tikzpicture}
 
-% \vspace{-3em}
 Table~\ref{table:inv_intuition} illustrates how this new definition points to
 an efficient algorithm.
-This table is populated exactly as suggested by
+The values come from
 Table~\ref{table: hyperop-ack-inv}:
 $\alpha_{0}(n)$ is $n-1$,
 $\alpha_{1}(n)$ is $n-2$,
 $\alpha_{2}(n)$ is $\left\lceil \frac{n-3}{2} \right\rceil$, and
 $\alpha_{3}(n)$ is $\left\lceil \log_2 ~ (b + 3)\right\rceil - 3$.
-Now for any $n$, we search down its column, which is indexed by $k$,
+For any $n$, search down its $k$-indexed column,
 looking for the smallest $k$ such that $\alpha_k(n) \le k$.
-For clarity,
+Here
 we show show unsuccessful searches in {\color{red}red} and successful searches in
 {\color{green}green}.
-For example, consider $n = 8$. $\alpha_{0}(8) = 7$. Because $7 \not\le 0$, $\alpha_0$ is rejected.
+\emph{e.g.} consider $n = 8$. $\alpha_{0}(8) = 7$. Because $7 \not\le 0$, $\alpha_0$ is rejected.
 Similarly $\alpha_{1}(8) = 6 \not\le 1$ and $\alpha_{2}(8) = 3 \not\le 2$
 are rejected. Finally $\alpha_{3}(8) = 1$ is accepted because $1 \le 3$.
 Indeed, $\alpha(8) = 3$.
@@ -350,12 +351,12 @@ The following theorem demonstrates that a budget of $n$ suffices.
 	Let $m \triangleq \min\big\{k : \alpha_k(n) \le k \}$. Then $m\le n$ since $\alpha_n(n)\le n$. \eqref{eq: inv-ack-worker-intermediate} then implies:
 	$$ \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big) = \alpha^{\W}\big(\alpha_m, \alpha_m(n), m, n - m\big) = m = \alpha(n) $$
 \end{proof}
-\noindent We put a more involved mathematical proof of correctness in Appendix~\ref{apx:proof_correct_inv_ack_worker}, and a mechanized proof
+\noindent We put a mathematical proof of correctness in Appendix~\ref{apx:proof_correct_inv_ack_worker}, and a mechanized proof
 % Linked by Linh
 	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L163-L231}{\color{blue}here}.
 We thus have a (re-)definition of inverse Ackermann that is %computationally
-definable via a Coq-accepted worker, \emph{i.e.} $\alpha(n) \triangleq \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big)$. Below, we present the inverse
-Ackermann function in Gallina.
+definable via a Coq-accepted worker, \emph{i.e.} $\alpha(n) \triangleq \alpha^{\W}\big(\alpha_0, \alpha_0(n), 0, n\big)$. We present the inverse
+Ackermann function in Gallina:
 
 % Linked by A
 %\begin{lstlisting}
