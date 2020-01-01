@@ -37,7 +37,8 @@
 %%   Right brace   \}     Tilde         \~}
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{acmart}
-[2019/12/18 v1.66 Typesetting articles for the Association for Computing Machinery]
+[2019/04/22 v1.60 Typesetting articles for the Association for
+Computing Machinery]
 \def\@classname{acmart}
 \InputIfFileExists{acmart-preload-hook.tex}{%
   \ClassWarning{\@classname}{%
@@ -730,11 +731,6 @@
   \let\@vspacer\@vspacer@orig}
 \AtBeginEnvironment{table*}{\let\@vspace\@vspace@orig
   \let\@vspacer\@vspacer@orig}
-\AtBeginEnvironment{algorithm}{\let\@vspace\@vspace@orig
-  \let\@vspacer\@vspacer@orig}
-\AtBeginEnvironment{algorithm*}{\let\@vspace\@vspace@orig
-  \let\@vspacer\@vspacer@orig}
-
 \RequirePackage{caption, float}
 \captionsetup[table]{position=top}
 \if@ACM@journal
@@ -874,12 +870,9 @@
   \endlist
 }
 \let\enddescription=\endlist % for efficiency
-\newif\if@ACM@maketitle@typeset
-\@ACM@maketitle@typesetfalse
 \define@choicekey*+{ACM}{acmJournal}[\@journalCode\@journalCode@nr]{%
   CIE,%
   CSUR,%
-  DGOV,%
   DTRAP,%
   HEALTH,%
   IMWUT,%
@@ -903,7 +896,6 @@
   TDS,%
   TEAC,%
   TECS,%
-  TELO,%
   THRI,%
   TIIS,%
   TIOT,%
@@ -931,13 +923,11 @@
   TOS,%
   TOSEM,%
   TOSN,%
-  TQC,%
   TRETS,%
   TSAS,%
   TSC,%
   TSLP,%
-  TWEB,%
-  FACMP%
+  TWEB%
 }{%
 \ifcase\@journalCode@nr
 \relax % CIE
@@ -948,10 +938,6 @@
   \def\@journalName{ACM Computing Surveys}%
   \def\@journalNameShort{ACM Comput. Surv.}%
   \def\@permissionCodeOne{0360-0300}%
-\or % DGOV
-  \def\@journalName{Digital Government: Research and Practice}%
-  \def\@journalNameShort{Digit. Gov. Res. Pract.}%
-  \def\@permissionCodeOne{2639-0175}%
 \or % DTRAP
   \def\@journalName{Digital Threats: Research and Practice}%
   \def\@journalNameShort{Digit. Threat. Res. Pract.}%
@@ -1047,10 +1033,6 @@
   \def\@journalName{ACM Transactions on Embedded Computing Systems}%
   \def\@journalNameShort{ACM Trans. Embedd. Comput. Syst.}%
   \def\@permissionCodeOne{1539-9087}%
-\or % TELO
-  \def\@journalName{ACM Transactions on Evolutionary Learning}%
-  \def\@journalNameShort{ACM Trans. Evol. Learn.}%
-  \def\@permissionCodeOne{2688-3007}%
 \or % THRI
   \def\@journalName{ACM Transactions on Human-Robot Interaction}%
   \def\@journalNameShort{ACM Trans. Hum.-Robot Interact.}%
@@ -1158,10 +1140,6 @@
   \def\@journalName{ACM Transactions on Sensor Networks}%
   \def\@journalNameShort{ACM Trans. Sensor Netw.}%
   \def\@permissionCodeOne{1550-4859}%
-\or % TQC
-  \def\@journalName{ACM Transactions on Quantum Computing}%
-  \def\@journalNameShort{ACM Trans. Quantum Comput.}%
-  \def\@permissionCodeOne{2643-6817}%
 \or % TRETS
   \def\@journalName{ACM Transactions on Reconfigurable Technology and Systems}%
   \def\@journalNameShort{ACM Trans. Reconfig. Technol. Syst.}%
@@ -1182,10 +1160,6 @@
   \def\@journalName{ACM Transactions on the Web}%
   \def\@journalNameShort{ACM Trans. Web}%
   \def\@permissionCodeOne{1559-1131}%
-\else % FACMP, a dummy journal
-  \def\@journalName{Forthcoming ACM Publication}%
-  \def\@journalNameShort{ACM Forthcoming}%
-  \def\@permissionCodeOne{XXXX-XXXX}%
 \fi
 \ClassInfo{\@classname}{Using journal code \@journalCode}%
 }{%
@@ -1384,17 +1358,9 @@
 \def\terms#1{\ClassWarning{\@classname}{The command \string\terms{} is
     obsolete.  I am going to ignore it}}
 \def\keywords#1{\def\@keywords{#1}}
-\let\@keywords\@empty
-\AtEndDocument{\if@ACM@nonacm\else\ifx\@keywords\@empty
-  \ifnum\getrefnumber{TotPages}>2\relax
-  \ClassWarningNoLine{\@classname}{ACM keywords are mandatory
-    for papers over two pages}%
-  \fi\fi\fi}
+\keywords{}
 \renewenvironment{abstract}{\Collect@Body\@saveabstract}{}
-\long\def\@saveabstract#1{\if@ACM@maketitle@typeset
-  \ClassError{\@classname}{Abstract must be defined before maketitle
-    command. Please move it!}\fi
-  \long\gdef\@abstract{#1}}
+\long\def\@saveabstract#1{\long\gdef\@abstract{#1}}
 \@saveabstract{}
 \long\def\@lempty{}
 \define@boolkey+{@ACM@topmatter@}[@ACM@]{printccs}[true]{%
@@ -1409,11 +1375,6 @@
   \else
     \ClassInfo{\@classname}{Suppressing bibformat}%
   \fi}{\ClassError{\@classname}{The option printacmref can be either true or false}}
-\AtEndDocument{\if@ACM@nonacm\else\if@ACM@printacmref\else
-  \ifnum\getrefnumber{TotPages}>1\relax
-  \ClassWarningNoLine{\@classname}{ACM reference format is mandatory
-    for papers over one page}%
-  \fi\fi\fi}
 \define@boolkey+{@ACM@topmatter@}[@ACM@]{printfolios}[true]{%
   \if@ACM@printfolios
     \ClassInfo{\@classname}{Printing folios}%
@@ -1483,11 +1444,6 @@
      #3\fi\fi\ifnum\value{@concepts}=0.\else; \fi}%
   \fi
 \ccsdesc@parse@finish}
-\AtEndDocument{\if@ACM@nonacm\else\ifx\@concepts\@empty\relax
-  \ifnum\getrefnumber{TotPages}>2\relax
-  \ClassWarningNoLine{\@classname}{CCS concepts are mandatory
-    for papers over two pages}%
-  \fi\fi\fi}
 \def\ccsdesc@parse@finish#1\ccsdesc@parse@end{}
 \newif\if@printcopyright
 \@printcopyrighttrue
@@ -1628,10 +1584,10 @@
    source.
   \or % usgovmixed
    ACM acknowledges that this contribution was authored or co-authored
-   by an employee, contractor, or affiliate of the United States
-   government. As such, the United States government retains a
-   nonexclusive, royalty-free right to publish or reproduce this
-   article, or to allow others to do so, for government purposes only.
+   by an employee, contractor, or affiliate of the United States government. As such,
+   the United States government retains a nonexclusive, royalty-free right to
+   publish or reproduce this article, or to allow others to do so, for
+   government purposes only.
   \or % cagov
    This article was authored by employees of the Government of Canada.
    As such, the Canadian government retains all interest in the
@@ -1725,7 +1681,6 @@
    \fi}}
 \newbox\mktitle@bx
 \def\maketitle{%
-  \@ACM@maketitle@typesettrue
   \if@ACM@anonymous
     % Anonymize omission of \author-s
     \ifnum\num@authorgroups=0\author{}\fi
@@ -1854,9 +1809,6 @@
   \@afterheading
 }
 \def\@specialsection#1{%
-  \bgroup
-  \let\@vspace\@vspace@orig
-  \let\@vspacer\@vspacer@orig
   \ifcase\ACM@format@nr
   \relax % manuscript
     \par\medskip\small\noindent#1: %
@@ -1876,8 +1828,7 @@
     \section*{#1}%
   \or % sigchi-a
     \section*{#1}%
-    \fi
-  \egroup}
+    \fi}
 \def\@printtopmatter{%
   \ifx\@startPage\@empty
      \gdef\@startPage{1}%
@@ -2166,8 +2117,7 @@
 \newdimen\author@bx@wd
 \newskip\author@bx@sep
 \author@bx@sep=1pc\relax
-\def\@typeset@author@bx{\bgroup\hsize=\author@bx@wd
-  \def\and{\par}\normalbaselines
+\def\@typeset@author@bx{\bgroup\hsize=\author@bx@wd\def\and{\par}%
   \global\setbox\author@bx=\vtop{\if@ACM@sigchiamode\else\centering\fi
     \@authorfont\@currentauthors\par\@affiliationfont
     \@currentaffiliation}\egroup
@@ -2272,24 +2222,19 @@
   \ifnum\num@authorgroups>1\relax
   addresses: \else address: \fi
   \bgroup
-  \def\streetaddress##1{\unskip, ##1}%
-  \def\postcode##1{\unskip, ##1}%
+  \def\streetaddress##1{\unskip\@addpunct, ##1}%
+  \def\postcode##1{\unskip\@addpunct, ##1}%
   \def\position##1{\unskip\ignorespaces}%
-  \def\institution##1{\unskip, ##1}%
-  \def\city##1{\unskip, ##1}%
-  \def\state##1{\unskip, ##1}%
+  \def\institution##1{\unskip\@addpunct, ##1}%
+  \def\city##1{\unskip\@addpunct, ##1}%
+  \def\state##1{\unskip\@addpunct, ##1}%
   \renewcommand\department[2][0]{\unskip\@addpunct, ##2}%
-  \def\country##1{\unskip, ##1}%
-  \def\and{\unskip; }%
+  \def\country##1{\unskip\@addpunct, ##1}%
+  \def\and{\unskip\@addpunct; }%
   \def\@author##1{##1}%
-  \def\email##1##2{\unskip, \nolinkurl{##2}}%
+  \def\email##1##2{\unskip\@addpunct, \nolinkurl{##2}}%
   \addresses
   \egroup}
-\AtEndDocument{\if@ACM@nonacm\else\if@ACM@journal
-  \ifx\@authorsaddresses\@empty
-  \ClassWarningNoLine{\@classname}{Authors'
-    addresses are mandatory for ACM journals}%
-  \fi\fi\fi}
 \def\@setaddresses{}
 \def\@authornotemark{\g@addto@macro\@currentauthors{\footnotemark\relax}}
 \def\@@authornotemark#1{\g@addto@macro\@currentauthors{\footnotemark[#1]}}
@@ -2372,8 +2317,7 @@
   \newcount\ACM@linecount
   \ACM@linecount\@ne\relax
   \def\ACM@mk@linecount{%
-    \savebox{\ACM@linecount@bx}[4em][t]{\parbox[t]{4em}{\normalfont
-        \normalsize
+    \savebox{\ACM@linecount@bx}[4em][t]{\parbox[t]{4em}{%
         \setlength{\ACM@linecount@bxht}{0pt}%
         \loop{\color{red}\scriptsize\the\ACM@linecount}\\
         \global\advance\ACM@linecount by \@ne

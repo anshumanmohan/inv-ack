@@ -111,8 +111,7 @@ and thus easily satisfy Coq's termination checker.
 Every pearl starts with a grain of sand.  We had the benefit of two:
 Nivasch~\cite{nivasch} and Seidel~\cite{seidel}.
 They proposed a definition of the inverse Ackermann essentially in terms of
-the inverse hyperoperations.  Unfortunately, their technique is unsound, since it diverges from
-the true Ackermann inverse when the inputs grow sufficiently large.  Our technique is verified in Coq.
+the inverse hyperoperations.  However, their definition is approximate rather than exact (\emph{i.e.} it has the same asymptotic rate of growth as the canonical definition but is off by a bounded-but-varying constant factor) and they provide only a sketch of an algorithm.  Our technique is exact; our algorithm concrete, structurally recursive and asymptotically optimal; and our theory is verified in Coq.
 
 %, and that it is consistent with
 %the usual definition of the inverse Ackermann function $\alpha(n)$.
