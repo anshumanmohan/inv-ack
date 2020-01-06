@@ -59,7 +59,7 @@ Unfortunately, its runtime is $\Omega(\Ack(\alpha(n)))$,
 so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ takes
 $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 
-\subsection{The hyperoperation/Ackermann hierarchy}
+\subsection{The Hyperoperation/Ackermann Hierarchy}
 
 %\marginpar{\tiny \color{blue}cite the grit?}
 The Ackermann function is relatively easy to define, but hard to
@@ -106,6 +106,7 @@ lastly, $\Ack_n$ subtracts three.\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not brea
 %\end{table}
 % Edited by Linh
 \begin{table}[t]
+	\caption{Hyperoperations, the Ackermann hierarchy, and inverses thereof.}
 	\begin{centermath}
 		\begin{array}{c@{\hskip 0.5em}|@{\hskip 1em}c@{\hskip 1em}c@{\hskip 1em}|@{\hskip 1em}c@{\hskip 1em}c}
 			n & a [n] b & \Ack_n(b) & a \angle{n} b & \alpha_n(b)\\
@@ -118,7 +119,6 @@ lastly, $\Ack_n$ subtracts three.\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not brea
 			4 & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \log^*_a ~ b & \log^*_2 ~ (b + 3) - 3
 		\end{array}
 	\end{centermath}
-	\caption{Hyperoperations, the Ackermann hierarchy, and inverses thereof.}
 	\label{table: hyperop-ack-inv}
 	\vspace{-2em}
 \end{table}
@@ -146,7 +146,7 @@ Theorem \ref{thm: inv-ack-new} (\S\ref{sec: inv-hyperop}), which characterizes~$
 %\end{array}
 %\]
 
-\subsection{Increasing functions and their inverses}
+\subsection{Increasing Functions and Their Inverses}
 \label{sec:incfuncinv}
 Defining increasing functions is often easier than defining their inverses.
 For instance, addition, multiplication, and exponentiation on Church numerals

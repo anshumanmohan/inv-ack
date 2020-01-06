@@ -1,6 +1,6 @@
 \newcommand{\ackt}{\ensuremath{\hat{\alpha}}}
 
-\subsection{The value of a linear-time solution to the hierarchy}
+\subsection{The Value of a Linear-Time Solution to the Hierarchy}
 
 Our functions' linear runtimes can be understood in two distinct but
 complementary ways.  A runtime less than the bitlength is impossible
@@ -22,7 +22,7 @@ values, and thus fall more into the realm of engineering than mathematics.
 Rather surprisingly, for binary-encoded numbers, it appears we can invert the Ackermann function asymptotically faster than we can calculate the base-3 logarithm. 
 \end{rem}
 
-\subsection{Benchmarking our inverses}
+\subsection{Benchmarking our Inverses}
 
 \begin{table}[t]
 	\begin{centermath}
@@ -61,7 +61,7 @@ large because Coq optimizes large \li{nat}s under the hood.
 %We made no further optimizations in OCaml, and the timings above
 %are $3$-time averages of wallclock timings on 
 
-\subsection{The two-parameter inverse Ackermann function}
+\subsection{The Two-Parameter Inverse Ackermann Function}
 Some authors~\cite{chazelle,tarjan} prefer a two-parameter inverse Ackermann function.
 \begin{defn} \label{defn: 2para-alpha}
 	The two-parameter inverse Ackermann function is defined as:
@@ -117,7 +117,7 @@ it is straightforward to modify our techniques to compute $\ackt(m, n)$.
 		Here $b\ge l$ due to the fact that $\Ack(b, k)\ge b$, so $\alpha_b(b)\le k$. This completes the proof.
 \end{proof}}%end hide
 
-\subsection{Implementing our functions in Isabelle/HOL}
+\subsection{Implementing our Functions in Isabelle/HOL}
 
 To show that our functions are independent of any 
 Coq idiosyncrasies,

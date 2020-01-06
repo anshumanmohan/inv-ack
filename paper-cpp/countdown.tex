@@ -2,7 +2,7 @@ Many functions on $\mathbb{R}$ are bijections and thus have an intuituve inverse
 Functions on~$\mathbb{N}$ are often non-bijections and so their inverses
 do not come as naturally.
 
-\subsection{Upper inverses, expansions, and repeatability}
+\subsection{Upper Inverses, Expansions, and Repeatability}
 %; indeed, simply defining an inverse can be a little subtle.
 % Linked by Linh
 %\begin{defn} \label{defn: inverse}
@@ -93,7 +93,7 @@ set of functions repeatable from $a$ as $\repeatable_a$.
 It is straightforward to see that $\forall s,t.~ s \le t \Rightarrow \repeatable_s \subseteq \repeatable_t $.
 \end{defn}
 
-\subsection{Contractions and the countdown operation}
+\subsection{Contractions and the Countdown Operation}
 
 Suppose $F \in \repeatable_a$ for some $a \ge 1$, and
 let $f \triangleq F^{-1}$, \emph{i.e.} the inverse of $F$.
@@ -195,7 +195,7 @@ unfolding the definition of $p$.
 %	Thus $f^{(n-1)}(n)\le 1 \le a$, a contradiction. The theorem then follows.
 %\end{proof}
 
-\subsection{A Coq computation of countdown}
+\subsection{A Coq Computation of Countdown}
 
 The higher-order repeater function is well-defined for all input functions,
 even those not in $\repeatable_a$ (although for such functions it may not

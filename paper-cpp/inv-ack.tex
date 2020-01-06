@@ -259,7 +259,7 @@
 \begin{document}
 	
 %% Title information
-\title[Inverting the Ackermann Hierarchy]{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy }     %% [Short Title] is optional;
+\title[A Functional Proof Pearl: Inverting the Ackermann Hierarchy]{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy}     %% [Short Title] is optional;
 %% when present, will be used in
 %% header instead of Full Title.
 % \titlenote{with title note}             %% \titlenote is optional;
@@ -414,23 +414,28 @@
 \label{sec:related}
 \input{related.tex}
 
+
+\appendix
+% \appendixpage
+
+\input{appendix.tex}
+
 %% Acknowledgments
 \begin{acks}
+
 We thank Olivier Danvy for a helpful early-stage discussion about the 
 difficulty of defining \li{div} in Coq.
 This work was funded in part by
 \grantsponsor{}{Yale-NUS College}{} grant~\mbox{\grantnum{}{R-607-265-322-121}}
 and the
-sponsors of the Crystal Center at National University of
-Singapore. Any opinions, findings, conclusions, or recommendations expressed in 
-this material are those of the authors and do not necessarily reflect the 
+sponsors of the Crystal Center at National University 
+of Singapore. 
+Any opinions, findings, conclusions, or recommendations expressed in 
+this material are those of the 
+\newpage
+\noindent authors and do not necessarily reflect the 
 views of Yale-NUS College or the Crystal Centre.
 \end{acks}
-
-\appendix
-\appendixpage
-
-\input{appendix.tex}
 
 %% If you have bibdatabase file and want bibtex to generate the
 %% bibitems, please use
@@ -438,6 +443,7 @@ views of Yale-NUS College or the Crystal Centre.
 %\bibliographystyle{plainurl}% the mandatory bibstyle
 
 % \bibliographystyle{ACM-Reference-Format}
+
 \bibliography{inv-ack}
 
 %% The Appendices part is started with the command \appendix;
