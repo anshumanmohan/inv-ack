@@ -59,7 +59,7 @@ Unfortunately, its runtime is $\Omega(\Ack(\alpha(n)))$,
 so \emph{e.g.} computing $\alpha(100) \mapsto^{*} 4$ takes
 $\Ack(4) = 2^{2^{2^{65536}}}-3$ steps!
 
-\subsection{The hyperoperation/Ackermann hierarchy}
+\subsection{The Hyperoperation/Ackermann Hierarchy}
 
 %\marginpar{\tiny \color{blue}cite the grit?}
 The Ackermann function is relatively easy to define, but hard to
@@ -106,6 +106,7 @@ lastly, $\Ack_n$ subtracts three.\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not brea
 %\end{table}
 % Edited by Linh
 \begin{table}[t]
+	\caption{Hyperoperations, the Ackermann hierarchy, and inverses thereof.}
 	\begin{centermath}
 		\begin{array}{c@{\hskip 0.5em}|@{\hskip 1em}c@{\hskip 1em}c@{\hskip 1em}|@{\hskip 1em}c@{\hskip 1em}c}
 			n & a [n] b & \Ack_n(b) & a \angle{n} b & \alpha_n(b)\\
@@ -118,13 +119,12 @@ lastly, $\Ack_n$ subtracts three.\footnote{$\Ack_{1}$ and $\Ack_{2}$ do not brea
 			4 & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \log^*_a ~ b & \log^*_2 ~ (b + 3) - 3
 		\end{array}
 	\end{centermath}
-	\caption{Hyperoperations, the Ackermann hierarchy, and inverses thereof}
 	\label{table: hyperop-ack-inv}
 	\vspace{-2em}
 \end{table}
 
 It is worth studying and inverting the hyperoperations before handling the Ackermann inverses.
-With computationally efficient definitions of the individual Ackermann inverses $\alpha_n$ in hand, we can redefine $\alpha$---the inverse of the diagonal Ackermann $\Ack$---in a computationally effficient way.  The key is our 
+With computationally efficient definitions of the individual Ackermann inverses $\alpha_n$ in hand, we shall redefine $\alpha$---the inverse of the diagonal Ackermann $\Ack$---in a computationally effficient way.  The key is our 
 Theorem \ref{thm: inv-ack-new} (\S\ref{sec: inv-hyperop}), which characterizes~$\alpha$ without referring to~$\Ack$ directly: $\forall n.~ \alpha(n) = \min\big\{k : \alpha_k(n)\le k \big\}$.
 
 %Our initial goal of inverting the Ackermann function can thus be broken
@@ -146,7 +146,7 @@ Theorem \ref{thm: inv-ack-new} (\S\ref{sec: inv-hyperop}), which characterizes~$
 %\end{array}
 %\]
 
-\subsection{Increasing functions and their inverses}
+\subsection{Increasing Functions and Their Inverses}
 \label{sec:incfuncinv}
 Defining increasing functions is often easier than defining their inverses.
 For instance, addition, multiplication, and exponentiation on Church numerals
@@ -228,7 +228,6 @@ $\left \lfloor \frac{\lfloor \mathsf{log}_2 100 \rfloor}{\lfloor \mathsf{log}_2 
 \begin{figure}
 \lstset{style=myTinyStyle}
 \begin{lstlisting}
-
 Require Import Omega Program.Basics.
 
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L6-L11}{\color{blue}Fixpoint cdn\_wkr}` a f n b :=
@@ -252,7 +251,7 @@ Require Import Omega Program.Basics.
       inv_ack_wkr f (f n) 1 (n - 1)
   end.
 \end{lstlisting}
-\caption{A linear-time Coq computation of the inverse Ackermann function for inputs represted in unary, \emph{i.e.} \li{nat}}
+\caption{A linear-time Coq computation of the inverse Ackermann function for inputs in unary, \emph{i.e.} \li{nat}.}
 \label{fig:standalone}
 \end{figure}
 
@@ -261,7 +260,7 @@ Require Import Omega Program.Basics.
 We provide a complete solution to inverting each individual function in the hyperoperation/Ackermann hierarchy,
 as well as the diagonal Ackermann function itself.  All our functions are structurally recursive, so
 Coq is immediately convinced of their termination.  Moreover, our functions run in linear time: practical utility follows from theoretical grace.
-Finally, our techniques are compact.  The key inverse functions themselves are remarkably succicint: in Figure~\ref{fig:standalone} we show 14 lines of code that calculates the inverse diagonal Ackermann function $\alpha$ in linear time for unary-represented inputs. The entire Coq development, which proves the correctness of our definitions, is about 2,500 lines, split between parallel efforts in unary-encoded and binary-encoded inputs.
+Finally, our techniques are compact.  The key inverse functions themselves are remarkably succinct: in Figure~\ref{fig:standalone} we show 14 lines of code that calculates the inverse diagonal Ackermann function $\alpha$ in linear time for unary-represented inputs. The entire Coq development, which proves the correctness of our definitions, is about 2,500 lines, split between parallel efforts in unary-encoded and binary-encoded inputs.
 
 %The rest of this paper is organized as follows.
 %, so they are as asymptotically efficient as they can be, and are thus suitable for extraction\footnote{A criterion more useful in practice for $\mathsf{log}_b$ and perhaps $\mathsf{log}^*_b$ than the other members of the hierarchy.}
@@ -274,7 +273,7 @@ Finally, our techniques are compact.  The key inverse functions themselves are r
 %\item[\S\ref{blah}] We discuss related work and give some closing thoughts.
 %\end{itemize}
 \begin{itemize}
-    \item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, present Coq encodings for hyperoperations and the Ackermann function, and discuss \emph{repeater}.
+    \item[\S\ref{sec: countdown-repeater}] We show a formal definition for hyperoperations, \lb present Coq encodings for hyperoperations and the Ackermann function, and discuss \emph{repeater}.
     \item[\S\ref{sec: countdown}] We discuss upper inverses and show how to invert repeater with \emph{countdown}.
     \item[\S\ref{sec: inv-hyperop}] We use our techniques to define the inverse hyperoperations, whose notable members include division, logarithm and iterated logarithm with arbitrary base. We sketch a route to the inverse Ackermann function.
     \item[\S\ref{sec: inv-ack}] We give a Coq computation for the inverse Ackermann function in $\bigO(n)$ time for a unary-encoded input $n$.
@@ -284,12 +283,10 @@ Finally, our techniques are compact.  The key inverse functions themselves are r
     implement our techniques in Isabelle/HOL.
     \item[\S\ref{sec:related}] We present historical notes and survey related work.
 \end{itemize}
+
 All our techniques are mechanized in Coq and our code is available
 online at \href{https://github.com/inv-ack/inv-ack}{\color{blue}github.com/inv-ack/inv-ack}~\cite{inv-ack}. Further, definitions and theorems presented
 in this paper are linked directly to appropriate points in our codebase,
-represented using \href{https://github.com/inv-ack/inv-ack}{\color{blue}hyperlinks}
+represented 
+using \href{https://github.com/inv-ack/inv-ack}{\color{blue}hyperlinks}
 and the symbol \href{https://github.com/inv-ack/inv-ack}{\color{blue}\coq} where appropriate.
-
-%, and
-%each theorem and definition is hyperlinked (in {\color{cyan}cyan}) to our Coq development for %browsing.
-

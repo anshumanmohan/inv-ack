@@ -1,11 +1,29 @@
 Thus far we have used the Coq type \li{nat}, which represents
 a number~$n$ using~$n$ bits.
 In contrast, the binary system represents~$n$ in $\lfloor \log_{2} n \rfloor + 1$ bits.
-In both systems, addition/subtraction of $b$-bit
+Coq comes with a built-in binary type \li{N}, 
+which consists
+of constructors \li{N0} and \li{Npos}. The latter, \li{Npos}, unfolds to \li{positive}:
+
+\begin{lstlisting}
+Inductive positive : Set :=
+  | xI : positive -> positive 
+  | xO : positive -> positive
+  | xH : positive.
+\end{lstlisting}
+
+Constructor \li{xH} represents $1$, and constructors \li{xO} and \li{xI} represent
+appending $0$ and $1$ respectively.
+By always starting with $1$, \li{positive} bypasses
+the issue of disambiguating \emph{e.g.} the strings \li{011} and
+\li{00011}, which represent the same number but pose
+a minor technical challenge.
+To represent $0$, the type \li{N} simply uses the separate constructor \li{N0}.
+
+In both \li{nat} and \li{N}, addition/subtraction of $b$-bit
 numbers is $\Theta(b)$, while multiplication is $\Theta \big(b^2\big)$.
 In general, arithmetic operations are often faster when the inputs
-are encoded in binary\footnote{We put a further explanation of
-Coq's binary type \li{N} in Appendix~\ref{apx:bin_in_coq}.}.
+are encoded in binary. 
 In this section we show that this advantage also extends to our techniques.
 
 Our codebase has binary versions of
@@ -17,7 +35,10 @@ Here we show how to compute inverse Ackermann for binary inputs in
 $\Theta(b)$ time, where $b$ is the bitlength,
 \emph{i.e.} logarithmic time in the input magnitude.
 As before, we present an intuitive sketch here and put
-full proofs in Appendix~\ref{apx:time_analysis_bin}.
+full proofs in 
+Appendix~D
+ of the extended version of this paper~\cite{extendedinvack}.
+% Appendix~\ref{apx:time_analysis_bin}.
 
 \begin{rem}
 Although we do not prove it here, our general binary inverse hyperoperations are $O(b^2)$ time,
@@ -25,7 +46,7 @@ since Ackermann and base-2 hyperoperations benefit from $\Theta(1)$ division via
 whereas general division is $O(b^2)$.
 \end{rem}
 
-\subsection{Countdown and contractions in binary}
+\subsection{Countdown and Contractions in Binary}
 
 \renewcommand{\Tleb}{\runtime_{\li{N.leb}}}
 \renewcommand{\Tsucc}{\runtime_{\li{N.succ}}}
@@ -102,7 +123,6 @@ Note that \li{nat_size} outputs $0$ on $0$, and on any positive number $m$ the s
   bin_cdn_wkr f a n (nat_size (n - a)).
 \end{lstlisting}
 
-\pagebreak
 \noindent The following is the binary version of Lemma~\ref{lem: cdt-runtime}:
 %\begin{lem} \label{lem: cdt-runtime-bin}
 %	$\forall n \in \li{N}$, if $f$ is a binary strict contraction above $a$,
@@ -235,8 +255,58 @@ We show the
 {\color{blue}correctness} and
 \href{https://github.com/inv-ack/inv-ack/blob/195209ba895061fc51368c3c46c1d8760f05df50/bin_test_runtime_ocaml.ml#L359-L363}
 {\color{blue}benchmark}
-of \li{bin_inv_ack} in our codebase, and
-give a standalone Coq definition in Appendix~\ref{apx:code_n}.
+of \li{bin_inv_ack} in our codebase. Figure~\ref{fig:standalone_binary} 
+shows a standalone binary-specific computation of the inverse 
+Ackermann function that takes logarithmic 
+time up to the input's magnitude.
+This is simply an assimilation of the code snippets we have already discussed in 
+this section, and serves as a 
+binary translation of Figure~\ref{fig:standalone} shown earlier.
+
+\begin{figure}
+\lstset{style=myTinyStyle}
+\begin{lstlisting}
+Require Import Omega Program.Basics.
+Open Scope N_scope.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L56-L64}{\color{blue}Definition nat\_size}` n :=
+  match n with
+  | 0 => 0%nat
+  | Npos p =>
+      let fix nat_pos_size (x : positive) : nat :=
+        match x with xH => 1%nat
+        | xI y | xO y => S (nat_pos_size y) end
+      in nat_pos_size p
+  end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L104-L109}{\color{blue}Fixpoint bin\_cdn\_wkr}` f a n b : N :=
+  match b with O => 0 | S b' =>
+    if (n <=? a) then 0
+      else 1 + bin_cdn_wkr f a (f n) b'
+  end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L75-L76}{\color{blue}Definition bin\_countdown\_to}` f a n := 
+bin_cdn_wkr f a n (nat_size (n - a)).
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L97-L104}{\color{blue}Fixpoint bin\_inv\_ack\_wkr}` f n k b :=
+  match b with 0%nat => k | S b' => 
+    if n <=? k then k else 
+      let g := (bin_countdown_to f 1) in
+        bin_inv_ack_wkr
+          (compose g f) (g n) (N.succ k) b'
+  end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L111-L116}{\color{blue}Definition bin\_inv\_ack}` n :=
+  if (n <=? 1) then 0 else if (n <=? 3) then 1
+    else if (n <=? 7) then 2 else 
+      let f := (fun x => N.log2 (x + 2) - 2) in
+        bin_inv_ack_wkr f (f n) 3 (nat_size n).
+\end{lstlisting}
+\caption{A log-time Coq computation of the inverse Ackermann function for inputs represented in binary, \emph{i.e.} \li{N}.}
+\label{fig:standalone_binary}
+\end{figure}
+\lstset{style=myStyle}
+
 As in Theorem~\ref{thm: inv-ack-hardcode-correct}, the time complexity $\runtime_\alpha(n)$ is the sum of each component's runtime:
 %\begin{equation*}
 %\runtime_\alpha(n) =
@@ -260,10 +330,17 @@ As in Theorem~\ref{thm: inv-ack-hardcode-correct}, the time complexity $\runtime
 & \ + \Tleb(n, 1) \ + \ \Tleb(n, 3) \ + \ \Tleb(n, 7)
 \end{aligned}
 \end{equation*}
-With reference to Lemmas \ref{lem: compose-runtime} (Appendix~\ref{apx:time_analysis}), \ref{lem: leb-runtime-bin} and \ref{lem: succ-runtime-bin} \lb (Appendix~\ref{apx:time_analysis_bin}), we have:
-In the second summand, \lb $\runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n)) = \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ for each $k$ by Lemma~\ref{lem: compose-runtime}.
-By Lemma~\ref{lem: leb-runtime-bin}, each $\Tleb$ in the third summand is $\Theta\left(\log_2k\right)$, totalling $\bigO\big(\alpha(n)\log_2\alpha(n)\big) = \text{o}\big(\log_2n\big)$.
-The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by Lemma~\ref{lem: succ-runtime-bin}. The remaining items total $\Theta(\log_2n)$. Thus, $\forall n\ge 8$:
+With reference to Lemmas~48 (Appendix~C), 53 and 54 (Appendix~D), we have:
+% With reference to Lemmas \ref{lem: compose-runtime} (Appendix~C), \ref{lem: leb-runtime-bin} and \ref{lem: succ-runtime-bin} \lb (Appendix~D), we have:
+In the second summand, \lb $\runtime_{\cdt{\alpha_k}{1}\ }(\alpha_k(n)) = \runtime_{\alpha_{k+1}}(n) - \runtime_{\alpha_k}(n)$ for each $k$ by Lemma~48.
+% \ref{lem: compose-runtime}.
+By Lemma~53, 
+% By Lemma~\ref{lem: leb-runtime-bin}, 
+each $\Tleb$ in the third summand is $\Theta\left(\log_2k\right)$, totalling $\bigO\big(\alpha(n)\log_2\alpha(n)\big) = \text{o}\big(\log_2n\big)$.
+The fourth summand is $\Theta(\alpha(n)) = \text{o}\big(\log_2n\big)$ by 
+Lemma~54. 
+% Lemma~\ref{lem: succ-runtime-bin}. 
+The remaining items total $\Theta(\log_2n)$. Thus, $\forall n\ge 8$:
 %\begin{equation*}
 %\begin{aligned}
 %\runtime_\alpha(n)

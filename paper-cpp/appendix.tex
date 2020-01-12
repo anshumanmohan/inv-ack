@@ -3,7 +3,7 @@
 % \label{apx:code}
 
 % \vspace{-1em}
-\lstset{style=myTinyStyle}
+
 % Linked by A
 %\begin{lstlisting}
 %
@@ -30,97 +30,9 @@
 % Edited by Linh
 
 
-
-
-\section{Standalone Linear-Time Inverse Ackermann $\alpha$ in \li{N}}
-\label{apx:code_n}
-
-%linked by A
-%\begin{lstlisting}
-%Require Import Omega Program.Basics.
-%Open Scope N_scope.
-%
-%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L56-L64}{Definition nat\_size}` (n : N) : nat :=
-%  match n with
-%  | 0 => 0%nat
-%  | Npos p => let fix nat_pos_size (x : positive) : nat :=
-%                  match x with
-%                  | xH => 1%nat
-%                  | xI y | xO y => S (nat_pos_size y) end
-%                  in nat_pos_size p
-%  end.
-%
-%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L67-L72}{Fixpoint bin\_cdn\_wkr}` (f : N -> N) (a n : N) (b : nat) : N :=
-%  match b with
-%  | O    => 0
-%  | S b' => if (n <=? a) then 0
-%             else 1 + bin_cdn_wkr f a (f n) b'
-%  end.
-%
-%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L75-L76}{Definition bin\_countdown\_to}` (f : N -> N) (a n : N) : N := 
-%  bin_cdn_wkr f a n (nat_size (n - a)).
-%
-%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L97-L104}{Fixpoint bin\_inv\_ack\_wkr}` (f : N -> N) (n k : N) (b : nat) : N :=
-%  match b with 0%nat => k | S b' => 
-%    if n <=? k then k else 
-%      let g := (bin_countdown_to f 1) in
-%        bin_inv_ack_wkr (compose g f) (g n) (N.succ k) b'
-%  end.
-%
-%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L111-L116}{Definition bin\_inv\_ack}` n :=
-%  if (n <=? 1) then 0 else if (n <=? 3) then 1
-%    else if (n <=? 7) then 2 else 
-%      let f := (fun x => N.log2 (x + 2) - 2) in
-%        bin_inv_ack_wkr f (f n) 3 (nat_size n).
-%\end{lstlisting}
-% Edited by Linh
-\begin{lstlisting}
-Require Import Omega Program.Basics.
-Open Scope N_scope.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L56-L64}{\color{blue}Definition nat\_size}` n :=
-  match n with
-  | 0 => 0%nat
-  | Npos p =>
-      let fix nat_pos_size (x : positive) : nat :=
-        match x with xH => 1%nat
-        | xI y | xO y => S (nat_pos_size y) end
-      in nat_pos_size p
-  end.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L67-L72}{\color{blue}Fixpoint bin\_cdn\_wkr}` f a n b :=
-  match b with
-  | O    => 0
-  | S b' => if (n <=? a) then 0
-    else 1 + bin_cdn_wkr f a (f n) b'
-  end.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L75-L76}{\color{blue}Definition bin\_countdown\_to}` f a n := 
-bin_cdn_wkr f a n (nat_size (n - a)).
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L97-L104}{\color{blue}Fixpoint bin\_inv\_ack\_wkr}` f n k b :=
-  match b with 0%nat => k | S b' => 
-    if n <=? k then k else 
-      let g := (bin_countdown_to f 1) in
-        bin_inv_ack_wkr
-          (compose g f) (g n) (N.succ k) b'
-  end.
-
-`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L111-L116}{\color{blue}Definition bin\_inv\_ack}` n :=
-  if (n <=? 1) then 0 else if (n <=? 3) then 1
-    else if (n <=? 7) then 2 else 
-      let f := (fun x => N.log2 (x + 2) - 2) in
-    bin_inv_ack_wkr f (f n) 3 (nat_size n).
-\end{lstlisting}
-\lstset{style=myStyle}
-
-\vspace{1em}
-\section{Proofs of Correctness for Worker Functions}
-\label{apx:proof_correct_worker}
-
-\subsection{Countdown Worker}
+\section{Proof of Correctness of Countdown Worker}
 \label{apx:proof_correct_countdown_worker}
-This subsection provides the fully detailed proof of Theorem~\ref{thm: cdt-repeat}, which states that the function in Definition~\ref{defn: countdown} correctly computes the countdown value as defined in Definition~\ref{defn: informal-countdown}.
+This appendix provides the fully detailed proof of Theorem~\ref{thm: cdt-repeat}, which states that the function in Definition~\ref{defn: countdown} correctly computes the countdown value as defined in Definition~\ref{defn: informal-countdown}.
 % Linked by Linh
 \begin{usethmcounterof}{thm: cdt-repeat}
 	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L162-L189}{\color{blue}\coq}
@@ -180,9 +92,9 @@ Now we are ready to prove the correctness of the \emph{countdown} computation. \
 	\linebreak Therefore, $\cdt{f}{a}(n) = m$ in all cases, which completes the proof.
 \end{proof}
 
-\subsection{Inverse Ackermann Worker}
+\section{Proof of Correctness of Inverse Ackermann Worker}
 \label{apx:proof_correct_inv_ack_worker}
-This subsection provides the fully detailed proof of Theorem~\ref{thm: inv-ack-worker-correct}, which states that given the appropriate arguments, the function \emph{inverse Ackermann worker} in Definition~\ref{defn: inv-ack-worker} correctly computes the value of the inverse Ackermann function as defined in 
+This appendix provides the fully detailed proof of Theorem~\ref{thm: inv-ack-worker-correct}, which states that given the appropriate arguments, the function \emph{inverse Ackermann worker} in Definition~\ref{defn: inv-ack-worker} correctly computes the value of the inverse Ackermann function as defined in 
 Theorem~\ref{thm: inv-ack-new}.
 \begin{usethmcounterof}{thm: inv-ack-worker-correct}
 	\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L199-L231}{\color{blue}\coq}
@@ -232,26 +144,6 @@ With this lemma, we can proceed to establish the correctness of \emph{inverse Ac
 	where the last equality follows from \eqref{eq: inv-ack-worker-recursion} when $\alpha_m(n)\le m$.
 \end{proof}
 
-\section{Support for Binary Numbers in Coq}
-\label{apx:bin_in_coq}
-Coq has support for binary numbers with the type \li{N}, which consists
-of constructors \li{N0} and \li{Npos}. The latter, \li{Npos}, unfolds directly to \li{positive}:
-
-\begin{lstlisting}
-Inductive positive : Set :=
-  | xI : positive -> positive 
-  | xO : positive -> positive
-  | xH : positive.
-\end{lstlisting}
-
-Constructor \li{xH} represents $1$, and constructors \li{xO} and \li{xI} represent
-appending $0$ and $1$ respectively.
-By always starting with $1$, \li{positive} bypasses
-the issue of disambiguating \emph{e.g.} the strings \li{011} and
-\li{00011}, which represent the same number but pose
-a minor technical challenge.
-To represent $0$, the type \li{N} simply provides a separate constructor \li{N0}.
-
 \hide{
 \begin{lstlisting}
 Definition exp (x y : N) : N := match y with
@@ -285,10 +177,11 @@ Apart from speeding up addition and multiplication, the binary system does the s
 which by standard techniques allows us to calculate $a^b$ in $\bigO\left(b^2\big(\log_2 a + 1\big)^2\right)$.
 }%end hide
 
+\hide{ % hiding for camera ready. will bring back for extended 
 \section{Proofs of Time Bound Lemmas on \li{nat}}
 \label{apx:time_analysis}
 
-This section provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: inv-ack}, \emph{i.e.} Lemma~\ref{lem: inv-ack-hier-runtime} for the general running time formula of $\alpha_i$, Lemma~\ref{lem: alpha2_runtime_naive} for the lower bound on the na\"ive version, and Theorem~\ref{thm: inv-ack-hier-runtime-improved} for the upper bound on the improved version. These results and their supporting lemmas are reproduced here for readers' easy reference.
+This appendix provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: inv-ack}, \emph{i.e.} Lemma~\ref{lem: inv-ack-hier-runtime} for the general running time formula of $\alpha_i$, Lemma~\ref{lem: alpha2_runtime_naive} for the lower bound on the na\"ive version, and Theorem~\ref{thm: inv-ack-hier-runtime-improved} for the upper bound on the improved version. These results and their supporting lemmas are reproduced here for readers' easy reference.
 
 We start by examining the running time of two operations used in the Coq definition of \emph{countdown worker} on \li{nat}, namely \li{leb} and \li{compose}.
 
@@ -515,7 +408,7 @@ With these lemmas, we are ready to tackle Theorem~\ref{thm: inv-ack-hier-runtime
 \renewcommand{\Tleb}{\runtime_{\li{N.leb}}}
 \renewcommand{\Tsucc}{\runtime_{\li{N.succ}}}
 
-This section provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: binary},
+This appendix provides fully detailed proofs for the time complexity bounds established in \S\ref{sec: binary},
 \emph{i.e.} Lemma~\ref{lem: cdt-runtime-bin} for the upper bound on the time complexity of $\alpha_i$ on \li{N} (\li{bin_alpha}),
 and Theorem~\ref{thm: inv-ack-runtime-bin} for the upper bound on the time complexity of the $\alpha$ on \li{N} (\li{bin_inv_ack}).
 These results and their supporting lemmas are reproduced here for readers' easy reference.
@@ -686,3 +579,5 @@ With all critical lemmas established and proven, including Lemma~\ref{lem: sum-a
 	where $\forall i\ge 3, \alpha_i(n)\le \log_2n$ and $\alpha_{i+1}(n)\le \log_2^{(2)}n$, while the $2\log_2^{(2)}n$ upper bounds for the sums come from Lemma~\ref{lem: sum-alpha-repeat}.
 	By induction on $i$, proof is complete.
 \end{proof}
+
+}% end hide
