@@ -1,0 +1,86 @@
+\subsection{Implementing Countdown}
+
+\begin{frame}[fragile]
+\frametitle{A Coq Computation of Countdown}
+\textbf{Idea.} %To compute $\cdt{f}{a}(n)$,
+Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
+
+\bigskip
+
+\pause 
+\textbf{Primary issue.} Termination in Coq.
+%Coq needs a known terminating point, i.e. an explicit decreasing argument. How to know when to terminate beforehand?
+
+\bigskip
+
+\textbf{Secondary issue.} It's hard to restrict $f$ to contractions only.
+%It's hard to define a Coq definition of Countdown for contractions only. Defining a computation for \emph{all functions} that actually computes Countdown on contractions is easier.
+
+\bigskip
+
+\pause 
+\textbf{The worker function.} $\begin{cases}
+\text{Budget } b: & \hspace{-1em}\text{Maximum } b \text{ steps. } \\
+\text{Step } i: & \hspace{-1em}\text{Compute } f^{(i)}(n). \\
+\text{Stops when: } & \hspace{-1em}\text{budget reaches } 0 \text{ or } f^{(i)}(n) \le a.
+\end{cases}$
+%\bigskip
+%\begin{itemize}
+%	\item Budget $b$: Maximum $b$ steps.
+%	\item Step $i$: Computes $\alpha_i(n)$.
+%	\item Stops when budget reaches $0$ or $\alpha_i(n) \le i$.
+%\end{itemize}
+
+%A worker function takes $f, a, n$ and a budget $b$ and compute the chain $\{n, f(n), \ldots, f^{(b)}(n)\}$. It stops before reaching $f^{(b)}(n)$ upon encountering $k$ such that $f^{(k)}(n)\le a$.
+%%TODO: Use bullet points
+
+\bigskip
+
+\pause 
+\textbf{Primary issue.} How to determine a sufficient budget?
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{A Coq Computation of Countdown}
+
+\textbf{The worker.}
+%For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the
+%\emph{countdown worker}
+%to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
+The \emph{countdown worker}
+to $a$ of $f$ is a function $\cdw{f}{a}$~~:
+\begin{equation*}
+\cdw{f}{a}(n, b) = \begin{cases}
+0 & \text{if } b = 0 \vee n\le a \\ 1 +\cdw{f}{a}(f(n), b-1) & \text{if } b \ge 1 \wedge n > a
+\end{cases}
+\end{equation*}
+
+% Linked by A
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L103-L108}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
+  match b with 0 => 0 | S b' =>
+    if (n <=? a) then 0 else S (cdn_wkr f a (f n) k')
+end.
+\end{lstlisting}
+
+\bigskip
+
+\pause 
+\textbf{The Countdown.} Budget $b = n$ is sufficient.
+\impinline{Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.}
+% Linked by A
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L112}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
+\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{}
+\end{frame}
+
+
+\subsection{Inverting the hierarchies in Coq}
+
+\subsection{The inverse Ackermann in Coq}

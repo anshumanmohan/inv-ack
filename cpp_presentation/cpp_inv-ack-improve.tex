@@ -1,0 +1,212 @@
+\subsection{Using the Hierarchy to Implement $\alpha(n)$}
+\begin{frame}
+\frametitle{Implementation Idea}
+\textbf{Redefinition.}
+$
+\alpha(n) = \min\{k: n\le A(k, k) \} \triangleq \min\{k: \alpha_k(n)\le k \}
+$
+
+\bigskip
+
+\pause 
+\textbf{The worker function.} $\begin{cases}
+\text{Budget } b: & \hspace{-1em}\text{Maximum } b \text{ steps. } \\
+\text{Step } i: & \hspace{-1em}\text{Compute } \alpha_i(n). \\
+\text{Stops when: } & \hspace{-1em}\text{budget reaches } 0 \text{ or } \alpha_i(n) \le i.
+\end{cases}$
+
+%\textbf{The worker function.}
+%\bigskip
+%\begin{itemize}
+%	\item Budget $b$: Maximum $b$ steps.
+%	\item Step $i$: Computes $\alpha_i(n)$.
+%	\item Stops when budget reaches $0$ or $\alpha_i(n) \le i$.
+%\end{itemize}
+
+\bigskip
+
+\pause 
+\textbf{Advantage.} $\alpha_{i+1}(n) = \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)$\\
+\smallskip
+So the next step is computable from the previous.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{The Worker Function}
+
+\uncover<1->{$\displaystyle 	\alpha^{\W}(f, n, k, b) = \begin{cases}
+k & \text{if } b = 0 \vee n\le k \\ \alpha^{\W}(\cdt{f}{1}\circ f , \cdt{f}{1}(n), k+1, b-1) & \text{if } b \ge 1 \wedge n \ge k+1
+\end{cases}$}
+
+\bigskip
+
+\begin{overlayarea}{\linewidth}{3cm}
+\begin{onlyenv}<2->
+	\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L155-L161} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) : nat :=
+match b with 0 => 0 | S b' =>
+  if (n <=? k) then k else let g := (countdown_to f 1) in
+                      inv_ack_wkr (compose g f) (g n) (S k) b
+end.
+\end{lstlisting}
+\end{onlyenv}
+\end{overlayarea}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{The Worker Function}
+
+\textbf{Observation.}
+\begin{equation*}
+\begin{array}{lllllll}
+Initial \ Arguments & & \big(\alpha_i, & \alpha_i(n), & i, & b - i \big) \\[5pt]
+\pause
+b - i > 0, \ \alpha_i(n) > i & \pause \to & \big(\cdt{\alpha_i}{1}\circ \alpha_i, & \cdt{\alpha_i}{1}(\alpha_i(n)), & i + 1, & b - i - 1\big) \\[5pt]
+\pause
+{\color{blue} b > i}, \ \hspace{15pt} \alpha_i(n) > i & \to  & \big({\color{blue} \alpha_{i+1}}, & {\color{blue} \alpha_{i+1}(n)}, & i + 1, & {\color{blue} b - (i + 1)}\big) \\
+\end{array}
+\end{equation*}
+
+\pause
+\textbf{Execution.}
+\begin{equation*}
+\begin{array}{l|lllllll}
+Step & Initial \ Arguments &  &  \big(\alpha_0, & \alpha_0(n), & 0, & b - 0 \big) \\[3pt]
+\pause
+0 & b > 0, \ \alpha_0(n) > 0 & \pause \to & \big(\alpha_1, & \alpha_1(n), & 1, & b - 1\big) \\[3pt]
+\pause
+1 & b > 1, \ \alpha_1(n) > 1 & \pause \to  & \big(\alpha_2, & \alpha_2(n), & 2, & b - 2\big) \\[3pt]
+\pause
+\vdots & \vdots & \vdots & & \multicolumn{3}{l}{\vdots} \\
+%b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
+\pause
+k & b > k, \ {\color{red} \alpha_{k}(n) \le k} & \pause \to  & \multicolumn{4}{l}{\impinline{$k = \alpha(n)$}}
+\end{array}
+\end{equation*}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{The Inverse Ackermann Function}
+
+Any budget $b \ge \alpha(n)$ suffices, so we can choose $b = n$.
+
+\bigskip
+
+\pause
+\textbf{First version:} $\bigO(n^2)$.
+\pause
+\begin{equation*}
+\alpha(n) = \alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big)
+= \alpha^{\mathcal{W}}\big(\lambda n(n - 1), n - 1, 0, n\big)
+\end{equation*}
+
+\smallskip
+
+\pause
+\textbf{Simple improvement:} $\bigO(n)$.
+\pause
+\begin{equation*}
+\begin{aligned}
+\alpha(n) & = \begin{cases}
+\alpha^{\mathcal{W}}\big(\alpha_{{\color{red} 1}}, \alpha_{{\color{red} 1}}(n), {{\color{red} 1}}, n - {{\color{red} 1}}\big) & \hspace{3em}\text{ when } n > \Ack(0) \\
+0 & \hspace{3em}\text{ when } n \le \Ack(0)
+\end{cases} \\[5pt]
+\pause & = \begin{cases}
+\alpha^{\mathcal{W}}\big(\lambda n(n - 2), n - 2, 1, n - 1\big) & \text{ when } n > 1 \\
+0 & \text{ when } n \le 1
+\end{cases}
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+
+
+%\begin{frame}
+%\frametitle{Time Complexity of $\alpha$: A Sketch}
+%
+%$
+%{\color{green}\alpha_{i+1}} = \cdt{\big({\color{blue}\alpha_{i}}\big)}{1}\circ {\color{blue}\alpha_i} \quad \text{ and } \quad {\color{green} \alpha_{i+1}(n)} = \cdt{\big({\color{blue}\alpha_{i}}\big)}{1}\big({\color{red}\alpha_{i}(n)}\big).
+%$
+%
+%\bigskip
+%
+%$ \displaystyle
+%\begin{aligned}
+%\alpha^{\mathcal{W}}\big({\color{blue}\alpha_i}, \ {\color{red}\alpha_i(n)}, \ i, \ b\big)
+%& = \alpha^{\mathcal{W}}\left(
+%\cdt{{\color{blue}\alpha_i}}{1}\circ {\color{blue}\alpha_i},  \
+%\cdt{{\color{blue}\alpha_i}}{1}\big({\color{red}\alpha_i(n)}\big), \
+%i+1, \ b - 1\right) \\
+%& = \alpha^{\mathcal{W}}\left(
+%{\color{green}\alpha_{i+1}}, \ \ \ \
+%{\color{green}\alpha_{i+1}(n)}, \ \ \ \ \
+%i+1, \ b - 1\right).
+%\end{aligned}
+%$
+%
+%\bigskip
+%
+%The recursive formula of $\alpha^{\mathcal{W}}$ contains the recursive formula of $\alpha_i$.
+%
+%%The computation $\alpha(n)$ up to step $i$ incorporates the computation of $\alpha_i(n)$, plus some minor computations.
+%
+%\bigskip
+%
+%Thus, most of $\alpha(n)$'s running time is to compute $\alpha_k(n)$, where $k \triangleq \alpha(n)$.
+%
+%\bigskip
+%
+%Similarly, for each $i$, most of $\alpha_i(n)$'s running time is to compute the chain $\alpha_i(n), \alpha_i^{(2)}(n), \alpha_i^{(3)}(n) \ldots, $ until reaching $1$.
+%
+%%\begin{equation*}
+%%\begin{array}{l|lllllll}
+%%Step & Initial \ Arguments &  &  \big(\alpha_0, & \alpha_0(n), & 0, & b - 0 \big) \\[3pt]
+%%0 & b > 0, \ \alpha_0(n) > 0 & \to & \big(\alpha_1, & \alpha_1(n), & 1, & b - 1\big) \\[3pt]
+%%1 & b > 1, \ \alpha_1(n) > 1 & \to  & \big(\alpha_2, & \alpha_2(n), & 2, & b - 2\big) \\[3pt]
+%%\vdots & \vdots & \vdots & & \multicolumn{3}{l}{\vdots} \\
+%%%b > k-1, \ \alpha_{k-1}(n) > k - 1 & \to  & \big(\alpha_k, & \alpha_k(n), & k, & b - k\big) & k-1 \\
+%%k & b > k, \ \alpha_{k}(n) \le k & \to  & \multicolumn{4}{l}{k = \alpha(n)}
+%%\end{array}
+%%\end{equation*}
+%
+%\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Time Complexity of $\alpha$: A Sketch}
+
+Let $\runtime_f(n)$ denotes the running time of computing $f(n)$ given $f$ and $n$.
+\pause
+\begin{equation*}
+\runtime_{\alpha_{i+1}}(n) \approx
+\runtime_{\alpha_i}(n) + \runtime_{\alpha_i}\big(\alpha_i(n)\big)
++ \runtime_{\alpha_i}\big(\alpha_i^{(2)}(n)\big) + \ldots (\text{until 1})
+\end{equation*}
+
+\smallskip
+
+\pause
+Manual computation: $\runtime_{\alpha_3}(n)\le 4n + 4$.
+
+\smallskip
+
+\pause
+Suppose $\runtime_{\alpha_i}(n) \le 4n + \bigO\big(\log_2n\big)$. \pause Then
+\begin{equation*}
+\begin{aligned}
+& \runtime_{\alpha_{i+1}}(n) \ \lessapprox \ 4n + \bigO\big(\log_2n\big) + 4\log_2n + \bigO\big(\log_2^{(2)}n\big) + \ldots \\
+& \quad = 4n + \bigO\left(\log_2n + \log_2^{(2)}n + \log_2^{(3)}n + \ldots\right)
+ = 4n + \bigO\big(\log_2n\big)
+\end{aligned}
+\end{equation*}
+\pause
+Therefore, \imppar{$T_{\alpha}(n) \approx \runtime_{\alpha_{\alpha(n)}}(n) \lessapprox 4n + \bigO\big(\log_2n\big) \lessapprox \Theta(n)$} by induction.
+
+\end{frame}

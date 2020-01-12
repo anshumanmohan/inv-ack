@@ -1,0 +1,291 @@
+\subsection{Inverting Repeater with Countdown}
+
+\begin{frame}
+\frametitle{Repeatable Functions}
+
+Functions in the Ackermann and hyperoperation (when $a\ge 2$) hierarchies are all \textcolor{red}{\emph{repeatable function}}.
+
+\bigskip
+%
+%\pause
+%\textbf{Expansions.} A function $F:\mathbb{N}\to\mathbb{N}$ is an
+%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L80-L82}{\emph{expansion}} if $\forall n.~ F(n)\ge n$. Further, for $a\in \mathbb{N}$, an expansion $F$ is
+%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L84-L86}{\emph{strict from}} $a$ if ~$\forall n \ge a.~ F(n) > n$.
+%
+%\bigskip
+
+\pause
+\textbf{Repeatable functions:} A $F$ is \emph{repeatable} from $a$ if\\
+$F$ is strictly increasing and $F$ is an
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L80-L82}{\emph{expansion}}
+that is
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L84-L86}{\emph{strict from}}
+$a$, i.e. ~$\forall n \ge a.~ F(n) > n$.
+
+\bigskip
+\pause
+We extend our scope of study from functions in the hyperoperations and Ackermann hierarchies to repeatable functions.
+
+\bigskip
+\pause
+\textbf{Advantage.} If $F$ is repeatable from $a$, $F^{-1}$ makes sense and is total,
+\\ and $\rf{F}{a}$ is repeatable from $1$.
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Inverting Repeater: The Idea of Countdown}
+
+The \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L28-L45}{
+	\emph{upper inverse}} of $F$, written $F^{-1}$,
+% {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$}
+is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
+
+\smallskip
+
+\pause 
+\textbf{\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L65-L77}{Logical equivalence} (more useful)}: If $F:\mathbb{N}\to \mathbb{N}$ is increasing, \\
+then $f = F^{-1}$ iff \impinline{$\forall n, m.~ f(n)\le m \iff n \le F(m)$}.
+
+\bigskip
+
+\textbf{Idea.} Build $\left(\rf{F}{a}\ \right)^{-1}$ from $f \triangleq F^{-1}$.
+	\begin{equation*}
+	\displayindent0pt
+	\displaywidth\textwidth
+	\begin{array}{ccll}
+	& \left(\rf{F}{a}\ \right)^{-1}(n)\le m \pause & \iff \ n \le \rf{F}{a}(m) \pause & \iff n \ \le F^{(m)}(a) \\
+  \pause \iff & f(n)\le F^{(m-1)}(a) \pause & \iff \ \cdots \pause &
+	\iff \ f^{(m)}(n) \le a 
+	\end{array}
+	\end{equation*}
+
+\pause
+\imppar{$\left(\rf{F}{a}\ \right)^{-1}(n)$ is \emph{the least} $m$ for which $f^{(m)}(n)\le a$.}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Formalizing countdown}
+
+\textbf{Does such $m$ exists?}
+
+Yes because $f$ is a \textbf{contraction} when $F$ is repeatable!
+
+\bigskip
+
+\pause 
+\textbf{Contraction.} A function $f : \mathbb{N} \to \mathbb{N}$ is a
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L40-L42}{\emph{contraction}} if $\forall n.~ f(n) \le n$.
+
+Given an $a \ge 1$, a contraction $f$ is
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L44-L46}{\emph{strict above}} $a$ if $\forall n > a.~n > f(n)$.
+
+%\bigskip
+%
+%\textbf{Notation.} Set of contractions strict above $a$ is denoted $\contract_a$.
+
+\bigskip
+
+\pause 
+\textbf{Countdown.} Let $f\in \contract_a$. The \textit{countdown to} $a$ of $f$, written~$\cdt{f}{a}(n)$, is the smallest number of times $f$ needs to be compositionally applied to
+$n$ for the answer to equal or go below $a$. \emph{i.e.},
+\begin{equation*}
+\cdt{f}{a}(n) \triangleq \min\{m: f^{(m)}(n)\le a \}.
+\end{equation*}
+
+\pause
+\imppar{\textbf{Theorem.} If $F$ is repeatable from $a$, then $\left(\rf{F}{a}\ \right)^{-1} = \cdt{\left(F^{-1}\right)}{a}$.}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{A Coq Computation of Countdown}
+\textbf{Idea.} %To compute $\cdt{f}{a}(n)$,
+Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
+
+\bigskip
+
+\pause 
+\textbf{Primary issue.} Termination in Coq.
+%Coq needs a known terminating point, i.e. an explicit decreasing argument. How to know when to terminate beforehand?
+
+\bigskip
+
+\textbf{Secondary issue.} It's hard to restrict $f$ to contractions only.
+%It's hard to define a Coq definition of Countdown for contractions only. Defining a computation for \emph{all functions} that actually computes Countdown on contractions is easier.
+
+\bigskip
+
+\pause 
+\textbf{The worker function.} $\begin{cases}
+\text{Budget } b: & \hspace{-1em}\text{Maximum } b \text{ steps. } \\
+\text{Step } i: & \hspace{-1em}\text{Compute } f^{(i)}(n). \\
+\text{Stops when: } & \hspace{-1em}\text{budget reaches } 0 \text{ or } f^{(i)}(n) \le a.
+\end{cases}$
+%\bigskip
+%\begin{itemize}
+%	\item Budget $b$: Maximum $b$ steps.
+%	\item Step $i$: Computes $\alpha_i(n)$.
+%	\item Stops when budget reaches $0$ or $\alpha_i(n) \le i$.
+%\end{itemize}
+
+%A worker function takes $f, a, n$ and a budget $b$ and compute the chain $\{n, f(n), \ldots, f^{(b)}(n)\}$. It stops before reaching $f^{(b)}(n)$ upon encountering $k$ such that $f^{(k)}(n)\le a$.
+%%TODO: Use bullet points
+
+\bigskip
+
+\pause 
+\textbf{Primary issue.} How to determine a sufficient budget?
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{A Coq Computation of Countdown}
+
+\textbf{The worker.}
+%For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the
+%\emph{countdown worker}
+%to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
+The \emph{countdown worker}
+to $a$ of $f$ is a function $\cdw{f}{a}$~~:
+\begin{equation*}
+\cdw{f}{a}(n, b) = \begin{cases}
+0 & \text{if } b = 0 \vee n\le a \\ 1 +\cdw{f}{a}(f(n), b-1) & \text{if } b \ge 1 \wedge n > a
+\end{cases}
+\end{equation*}
+
+% Linked by A
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L103-L108}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) : nat :=
+  match b with 0 => 0 | S b' =>
+    if (n <=? a) then 0 else S (cdn_wkr f a (f n) k')
+end.
+\end{lstlisting}
+
+\bigskip
+
+\pause 
+\textbf{The Countdown.} Budget $b = n$ is sufficient.
+\impinline{Redefine $\cdt{f}{a}(n) \triangleq \cdw{f}{a}(n, n)$.}
+% Linked by A
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v#L112}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
+\end{lstlisting}
+\end{frame}
+
+
+%\subsection*{}
+%\begin{frame}
+%\frametitle{Step 2: Inverting the Hierarchies via \textbf{Countdown}}
+%\setbeamertemplate{enumerate items}[default]
+%\setbeamercolor{local structure}{fg=black}
+%
+%\begin{enumerate}[\bfseries 1.]
+%	\itemsep 3ex
+%	\item<done@1->
+%	\emph{What is inverse?} \textbf{Upper inverse and increasing functions}.
+%	
+%	\item<done@1->
+%	\emph{Can Repeater preserve Invertibility?} \textbf{Repeatable functions}.
+%	
+%	\item<done@1->
+%	\emph{Computing inverse with inverse:} \textbf{Contractions and Countdown}.
+%	
+%	\item<come@2->
+%	\textbf{Invert each level in hyperoperations/Ackermann hierarchies}.
+%\end{enumerate}
+%\end{frame}
+
+
+\subsection{Inverting the Hyperoperations/Ackermann Hierarchies}
+\begin{frame}[fragile]
+\frametitle{The Inverse Hyperoperation Hierarchy}
+The inverse hyperoperations, written $a\angle{n}b$, are defined as:
+\begin{equation*}
+a\angle{n}b \; \triangleq \; \begin{cases}
+b - 1 & \text{ if } n = 0 \\
+\cdt{a\angle{n-1}}{a_n}(b) & \text{ if } n \ge 1
+\end{cases}
+\quad \text{ where } \ a_n = \begin{cases}
+a & \hspace{-7pt}\text{ if } n = 1 \\
+0 & \hspace{-7pt}\text{ if } n = 2 \\
+1 & \hspace{-7pt}\text{ if } n \ge 3
+\end{cases}
+\end{equation*}
+\vspace{-1em}
+% linked by A
+\pause 
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L28-L33}{Fixpoint inv\_hyperop}` (a n b : nat) : nat :=
+  match n with 0 => b - 1 | S n' =>
+    countdown_to (hyperop_init a n') (inv_hyperop a n') b
+  end.
+\end{lstlisting}
+
+\smallskip
+
+\pause 
+Interesting individual levels:
+$\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L102-L113}{a\angle{2}b}
+= \left\lceil b/a \right\rceil$,
+$\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L115-L124}{a\angle{3}b}
+= \left\lceil \log_a b \right\rceil$, and
+$\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/applications.v#L126-L128}{a\angle{4}b}
+= \log^*_a b$ (not currently in Coq standard library).
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{The Inverse Ackermann Hierarchy}
+
+\textbf{Naive approach.} $\Ack_{i+1} = \rf{\big(\Ack_i\big)}{{\color<4->{red} \Ack_i(1)}}\ $.
+\pause
+Thus $\alpha_{i+1} \triangleq \cdt{\big(\alpha_i\big)}{{\color<4->{red} \Ack_i(1)}}\ $?\\ 
+
+\smallskip
+
+\pause
+\textcolor{red}{\textbf{Flaw!}} $\alpha_{i+1}$ depends on {\color{red}$\Ack_i$}.
+
+\bigskip
+
+\pause 
+\textbf{Observation.} $\Ack_{i+1}(n) = \Ack_i^{(n)}(\Ack_i(1)) = \Ack_i^{(n+1)}(1)$. \pause Thus
+\vspace{-0.7em}
+\begin{equation*}
+\begin{aligned}
+\alpha_{i+1}(n) & = \min\left\{m : n\le \Ack_i^{m+1}(1)\right\} \pause 
+= \min\left\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\right\} \pause \\
+& = \min\left\{m : \big( \alpha_i \big)^{(m)}\big(\alpha_i(n)\big)\le 1\right\} \pause
+= \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)
+\end{aligned}
+\end{equation*}
+\pause 
+\textbf{Redefine:}
+$
+\alpha_i \triangleq
+\begin{cases}
+\lambda n.(n - 1) & \text{when } i = 0
+\\ \big(\cdt{\alpha_{i-1}}{1}\big)\circ \alpha_{i-1} & \text{when } i\ge 1
+\end{cases}
+$
+
+\smallskip
+
+\pause 
+% Linked by A
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack.v#L37-L41}{Fixpoint alpha}` (m x : nat) : nat :=
+  match m with 0 => x - 1 | S m' =>
+    countdown_to 1 (alpha m') (alpha m' x)
+end.
+\end{lstlisting}
+\end{frame}

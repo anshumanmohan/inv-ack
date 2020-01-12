@@ -17,7 +17,7 @@
 
 \documentclass[handout,10pt]{beamer}
 
-\mode<presentation> {
+\mode<presentation>{
 
 % The Beamer class comes with a number of default slide themes
 % which change the colors and layouts of slides. Below this is a list
@@ -282,13 +282,13 @@
 %----------------------------------------------------------------------------------------
 
 \title[Inverting the Ackermann Hierarchy]{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy} % The short title appears at the bottom of every slide, the full title is only on the title page
-\author{Linh Tran, Anshuman Mohan, \underline{Aquinas Hobor}} % Your name
-\institute[NUS]{$\includegraphics[scale=0.45]{NUS_logo_full-horizontal.jpg}$}
+\author{\underline{Linh Tran}, Anshuman Mohan, Aquinas Hobor} % Your name
+\institute[Yale,NUS]{$\includegraphics[scale=0.45]{NUS_logo_full-horizontal.jpg}\quad \quad \includegraphics[scale=0.018]{yale-logo.png}$}
 %{$\includegraphics[scale=0.33]{NUS_logo_full-horizontal.jpg}} % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 % {
 % National University of Singapore % Your institution for the title page
 % }
-\date{University College London\\ \today} % Date, can be changed to a custom date
+\date{The 9th ACM SIGPLAN International Conference on Certified Programs and Proofs\\ \today} % Date, can be changed to a custom date
 
 \begin{document}
 
@@ -305,7 +305,7 @@
 
 \section*{Introduction}
 \label{sec: overview}
-\input{overview.tex}
+\input{cpp_overview.tex}
 
 %TODO: think of a better way to make the roadmap i.e. diagram or something
 
@@ -316,7 +316,7 @@
 \setbeamertemplate{enumerate items}[default]
 \setbeamercolor{local structure}{fg=black}
 
-\imppar{\textbf{Goal.} Inverting $\Ack$ - without computing $\Ack$.}
+\imppar{\textbf{Goal. Inverting $\Ack$ - without computing $\Ack$.}}
 
 \bigskip
 
@@ -340,7 +340,7 @@
 
 \section{Step 1: Hyperoperations and Ackermann via Repeater}
 \label{sec: countdown-repeater}
-\input{hierarchy.tex}
+\input{cpp_hierarchy.tex}
 
 
 \section*{Roadmap}
@@ -373,7 +373,7 @@
 
 \section{Step 2: Inverting the Hierarchies via Countdown}
 \label{sec: countdown}
-\input{countdown.tex}
+\input{cpp_countdown.tex}
 
 %\section{Inverting Hyperoperations and Ackermann}
 %\label{sec: inv-hyperop}
@@ -518,7 +518,7 @@ We present a brief demonstration of our time bounds in Coq.
 	\hspace{1em}\small\arabic{framenumber}/\arabic{totalframenumber}
 	\hfill\usebeamertemplate***{navigation symbols}}
 
-\input{apx_time_bound.tex}
+\input{cpp_apx_time_bound.tex}
 
 %\begin{frame}[allowframebreaks]
 %\frametitle{References}

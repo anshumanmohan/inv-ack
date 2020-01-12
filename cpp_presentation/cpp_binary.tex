@@ -1,0 +1,193 @@
+
+\subsection{Overview}
+
+%\begin{frame}
+%\frametitle{Review: Binary Encoding System}
+%
+%\begin{tabular}{l|c|c}
+%	Attribute & Unary & Binary Encoding \\ \hline
+%	Type in Coq & \texttt{nat} & \texttt{N} \topspace{1pt} \\[6pt]
+%	Number $n$ & $\Theta(n)$ bits & $\Theta\big(\log_2n\big)$ bits \\[7pt]
+%	Compare $x, y$ & $\Theta\big(\min\{x, y\}\big)$ time & $\Theta\big(\min\{ \log_2x, \log_2y\}\big)$ time \\[9pt]
+%	Successor & \multirow{2}{*}{$\Theta(1)$ time} & Worse case: $\Theta\big(\log_2x\big)$ time \\[1pt]
+%	function  &             & Amortized: $\Theta(1)$ time \\
+%	                    
+%\end{tabular}
+%
+%\bigskip
+%
+%Binary encoding provides faster computations for many operations.
+%
+%\smallskip
+%
+%\pause 
+%What about inverse Ackermann? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
+%
+%\end{frame}
+
+
+\subsection{Countdown in Binary}
+
+
+%\begin{frame}[fragile]
+%\frametitle{Translating Countdown}
+%
+%\textbf{The worker.}
+%\begin{lstlisting}
+%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L104-L109}{Fixpoint bin\_cdn\_wkr}` (f : N -> N) (a n : N) (b : nat) : N :=
+%  match b with O => 0 | S b' =>
+%    if (n <=? a) then 0 else 1 + bin_cdn_wkr f a (f n) b'
+%  end.
+%\end{lstlisting}
+%
+%\smallskip
+%
+%\pause 
+%\textbf{Observation.} Recursive argument is budget $b$, \\which should still be in \texttt{nat}.
+%
+%\bigskip
+%
+%\textbf{Issue.} $b$ cannot be $n$ due to slow binary $\rightarrow$ unary conversion.
+%
+%\bigskip
+%
+%\pause 
+%\textbf{Solution.} Use $b \approx \log_2n$ and contractions that contract ``fast enough''. 
+%\emph{i.e.} Functions that halve their inputs.
+%\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Countdown in Binary}
+
+Our inverse Ackermann implementation runs in $O(n)$ time for unary $n$. \\
+What about binary input? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
+
+\bigskip
+\pause 
+\textbf{Translating Countdown.} Recursive argument for worker is budget $b$, \\which should still be in \texttt{nat}.
+
+\bigskip
+
+\textbf{Issue.} $b$ cannot be $O(n)$ due to slow binary $\rightarrow$ unary conversion.
+
+\bigskip
+
+\pause 
+\textbf{Solution.} Use $b \approx \log_2n$ and contractions that contract ``fast enough''. 
+\emph{i.e.} Functions that halve their inputs.
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Binary Contractions and Countdown}
+
+\textbf{Binary contractions.} $f$ is a \textcolor{red}{\emph{binary contraction}} strict above $a$ if $\forall n, f(n)\le n$ and $f(n)\le \lfloor \frac{n+ a}{2} \rfloor$ when $n > a$.
+
+\smallskip
+
+\textbf{Observation.} $f$ shrinks $n$ past $a$ within $\lfloor\log_2(n - a) \rfloor + 1$ steps.
+
+\bigskip
+
+\pause 
+New Countdown computation:
+% Linked by A
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L104-L109}{Fixpoint bin\_cdn\_wkr}` (f : N -> N) (a n : N) (b : nat) : N :=
+  match b with O => 0 | S b' =>
+    if (n <=? a) then 0 else 1 + bin_cdn_wkr f a (f n) b'
+  end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L111-L112}{Definition bin\_countdown\_to}` (f : N -> N) (a n : N) : N :=
+bin_cdn_wkr f a n (nat_size (n - a)).
+\end{lstlisting}
+
+where \texttt{nat\_size x} computes $\lfloor \log_2x \rfloor + 1$ as a \texttt{nat}.
+ 
+\end{frame}
+
+
+\subsection{Inverse Ackermann in Binary}
+
+\begin{frame}[fragile]
+\frametitle{Translating the $\alpha$ Hierarchy}
+
+Must start with a strict binary contraction.
+
+\smallskip
+
+More hard-coding to skip those that are not fast enough.
+
+\bigskip
+
+\pause 
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L55-L60}{Fixpoint bin\_alpha}` (m : nat) (x : N) : N :=
+match m with
+  | 0%nat => x - 1          
+  | 1%nat => x - 2
+  | 2%nat => N.div2 (x - 2) 
+  | 3%nat => N.log2 (x + 2) - 2
+  | S m'  => bin_countdown_to (bin_alpha m') 1 (bin_alpha m' x)
+end.
+\end{lstlisting}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Translating the Inverse Ackermann Function}
+
+Worker function:
+
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L326-L333}{Fixpoint bin\_inv\_ack\_wkr}` (f : N -> N) (n k : N) (b : nat) : N :=
+match b with 0%nat  => k | S b' => if n <=? k then k else
+  let g := (bin_countdown_to f 1) in
+    bin_inv_ack_wkr (compose g f) (g n) (N.succ k) b'
+  end.
+\end{lstlisting}
+
+\pause 
+Same idea: use logarithmic size budget. More hard-coding.
+
+\pause 
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_inv_ack.v#L335-L342}{Definition bin\_inv\_ack}` (n : N) : N :=
+if      (n <=? 1) then 0
+else if (n <=? 3) then 1
+else if (n <=? 7) then 2
+else let f := (fun x => N.log2 (x + 2) - 2)
+       in bin_inv_ack_wkr f (f n) 3 (nat_size n).
+\end{lstlisting}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Time Complexity of Binary $\alpha$: A Sketch}
+
+Similar to $\alpha$ on unary inputs, $\runtime_{\alpha}(n) \approx \runtime_{\alpha_k}(n)$ for $k\triangleq \alpha(n)$.
+
+\smallskip
+
+\pause
+Manual computation: $\runtime_{\alpha_3}(n)\le 2\log_2n + \log_2\log_2n + 3$.
+
+\smallskip
+
+\pause
+Suppose $\runtime_{\alpha_i}(n) \le 2\log_2n + \bigO\left(\log_2^{(2)}n\right)$. \pause Then
+\begin{equation*}
+\begin{aligned}
+& \runtime_{\alpha_{i+1}}(n) \ \lessapprox \ 2\log_2n + \bigO\left(\log_2^{(2)}n\right) + 2\log_2^{(2)}n + \bigO\big(\log_2^{(3)}n\big) + \ldots \\
+& \ = 2\log_2n + \bigO\left(\log_2^{(2)}n + \log_2^{(3)}n + \log_2^{(4)}n + \ldots\right)
+= 2\log_2n + \bigO\left(\log_2^{(2)}n\right)
+\end{aligned}
+\end{equation*}
+\pause
+By induction, \imppar{$\runtime_{\alpha}(n) \approx \runtime_{\alpha_k}(n) \lessapprox 2\log_2n + \bigO\left(\log_2^{(2)}n\right) \lessapprox \Theta(\log_2 n)$}.
+
+\end{frame}

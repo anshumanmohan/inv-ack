@@ -1,0 +1,200 @@
+\begin{frame}
+\frametitle{The Ackermann Function}
+	
+	The Ackermann-P\'eter function is defined as:
+	\begin{equation*}
+	A(n, m) \triangleq \begin{cases}
+	m + 1 & \text{ when } n = 0 \\
+	A(n-1, 1) & \text{ when } n > 0, m = 0 \\
+	A\big(n-1, A(n, m-1)\big) & \text{ otherwise}
+	\end{cases}
+	\end{equation*}
+	
+	\pause 
+	The \emph{diagonal} Ackermann function is $\Ack(n)~\triangleq~A(n, n)$.
+	
+	\bigskip
+	
+	\pause 
+	First few values of $\Ack(n)$:
+	
+  \begin{minipage}{0.5\linewidth}
+		\begin{equation*}
+	\begin{array}{r|ccccc}
+	 n & 0 & 1 & 2 & 3 & 4 \\ \hline
+	 \Ack(n) & 1 & 3 & 7 & 61 & 2^{2^{2^{65536}}} - 3 \topspace{3pt}
+	\end{array}
+	\end{equation*}
+  \end{minipage}
+  \quad \pause 
+  \begin{minipage}{0.4\linewidth}
+  	\textcolor{red}{Explosive growth!}
+  \end{minipage}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{The Inverse Ackermann Function}
+
+The \emph{inverse Ackermann function}
+%, $\alpha$, maps $n$ to the smallest~$k$ for
+%which~$n \le \Ack(k)$, \emph{i.e}
+\impinline{$\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}$}.
+
+\smallskip
+
+\pause 
+$\alpha(n)$ grows slowly but is hard to \emph{compute} for large $n$
+\\ because it is entangled with the explosively-growing $\Ack(k)$.
+
+\bigskip
+
+\pause 
+\textbf{Naive Approach:} Compute $\Ack(0), \Ack(1), \ldots$ until $n\le \Ack(k)$. Return $k$.
+
+\bigskip
+
+\pause 
+\textbf{Time complexity:} $\Omega(\Ack(\alpha(n)))$.
+\\ Computing $\alpha(100) \mapsto^{*} 4$ requires at least
+%$\Ack(4) = 2^{2^{2^{65536}}}$ steps!
+$\Ack(4) = 2^{2^{2^{65536}}} - 3$ steps!
+
+\bigskip
+
+\pause 
+\textbf{Engineering hack:} Hardcode with lookup tables.
+\\ $n > 61 \implies \text{ans} = 4$. \textcolor{red}{Wrong for large enough inputs.}
+
+\bigskip
+
+\pause 
+\imppar{\text{\textbf{Our Goal.} Compute $\alpha$ for \emph{all inputs} without computing $\Ack$.}}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Our Solution}
+
+\vspace{-1em}
+\lstset{style=myTinyStyle}
+% Linked by A
+\begin{mdframed}[backgroundcolor=lightgray, roundcorner=10pt,leftmargin=0, rightmargin=0, innerleftmargin=0, innertopmargin=-5,innerbottommargin=-5, outerlinewidth=0, linecolor=lightgray]
+\begin{lstlisting}
+Require Import Omega Program.Basics.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L6-L11}{Fixpoint cdn\_wkr}` (a : nat) (f : nat -> nat) (n b : nat) :=
+ match b with 0 => 0 | S b' =>
+  if (n <=? a) then 0 else S (cdn_wkr f a (f n) k')
+ end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L14}{Definition countdown\_to}` a f n := cdn_wkr a f n n.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L32-L38} {Fixpoint inv\_ack\_wkr}` (f : nat -> nat) (n k b : nat) :=
+ match b with 0 => 0 | S b' =>
+  if (n <=? k) then k else let g := (countdown_to f 1) in
+                      inv_ack_wkr (compose g f) (g n) (S k) b
+ end.
+
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inv_ack_standalone.v#L42-L46}{Definition inv\_ack\_linear}` (n : nat) : nat :=
+ match n with 0 | 1 => 0 | _ => 
+  let f := (fun x => x - 2) in inv_ack_wkr f (f n) 1 (n - 1)
+ end.
+\end{lstlisting}
+\end{mdframed} 
+\end{frame}
+
+
+%begin{frame}
+%\frametitle{Ackermann \emph{vs} Hyperoperation}
+%
+%The Ackermann function is easy to define, but hard to
+%understand.
+%
+%\bigskip
+%
+%\pause 	
+%Let's index by the first argument. \\ \smallskip
+%Define $\Ack_n \triangleq \lambda b.A(n,b)$. \\ \smallskip
+%Then, for $n>0$, $\Ack_n$ is the result of applying the previous $\Ack_{n-1}$ $b$ times.
+%
+%%with a
+%%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{\emph{kludge}}. %Linked by Linh
+%
+%\bigskip
+%
+%\pause 
+%The hierarchical structure resembles that of \textcolor{red}{\emph{hyperoperations}}.
+%
+%\smallskip
+%Studying hyperoperations helps us understand the Ackermann hierarchy.
+%
+%%To better understand the Ackermann function as a hierarchy and this kludge, we explore the closely-related hyperoperations.
+%\end{frame}
+
+
+\begin{frame}
+\frametitle{Introduction: Ackermann \emph{vs} Hyperoperation}
+
+Treating $b$ as the main argument reveals similarities between $A(n, b)$ and the \textcolor{red}{\emph{hyperoperations}} $a[n]b$, while allows the notion of \emph{inverse functions}.
+
+\begin{table}[t]
+	\begin{centermath}
+		\begin{array}{c@{\hskip 0.5em}|@{\hskip 1em}c@{\hskip 1em}c@{\hskip 1em}|@{\hskip 1em}c@{\hskip 1em}c}
+%			  & \multicolumn{2}{|@{\hskip 0.5em}c@{\hskip 0.5em}|}{\text{Main hierarchies}} & \multicolumn{2}{|@{\hskip 0.5em}c@{\hskip 0.5em}|}{\text{Inverses hierarchies}} \\
+			n & a [n] b & A(n, b) & a \angle{n} b & \alpha_n(b)\\
+			\hline
+			0 & 1 + b & 1 + b & b - 1 & b - 1 \\
+			1 & a + b & 2 + b & b - a & b - 2 \\
+			2 & a \cdot b & 2b + 3 & \left\lceil \frac{b}{a} \right\rceil & \left\lceil \frac{b-3}{2} \right\rceil \\
+			3 & a^b & 2^{b + 3} - 3 & \left\lceil \log_a ~ b \right\rceil & \left\lceil \log_2 ~ (b + 3)\right\rceil - 3 \\
+			[1pt]
+			4 & \underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \log^*_a ~ b & \log^*_2 ~ (b + 3) - 3
+		\end{array}
+	\end{centermath}
+	\label{table: hyperop-ack-inv}
+\end{table}
+
+\pause
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{Connection?}
+\pause
+$A(n, b) = {\color{red}2}[n](b{\color{red}+3}) {\color{red}- 3}$
+\quad and \quad $\alpha_n(b) = {\color{red}2}\angle{n}(b{\color{red}+3}) {\color{red}- 3}$.
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Introduction: Inverse Hierarchies to Inverse Ackermann}
+
+We explore the upper inverse relation:
+\begin{equation*}
+\begin{cases}
+\forall b. \forall c.\quad b \le \Ack_n(c) & \!\! \iff \ \ \alpha_n(b)\le c \\
+\forall b. \forall c. \quad b \le a[n]c & \!\! \iff \ \ a\angle{n}b \le c
+\end{cases}
+\end{equation*}
+
+\textbf{Redefine $\bm{\alpha}$:}
+$\alpha(n) = \min\{k: n\le \Ack_k(k) \} = \min\{k: \alpha_k(n)\le k \}$.
+
+\bigskip
+
+\pause
+\textbf{Computing $\bm{\alpha} $ through $\bm{\alpha_i}$!} No need to go through $\Ack$.
+
+\bigskip
+
+\pause
+\imppar{\textbf{Goal.} Build the inverse towers independent from the original towers.}
+
+\end{frame}
+
+
+
+
+
+
+%\begin{frame}
+%\frametitle{}
+%\end{frame}
