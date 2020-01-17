@@ -42,11 +42,11 @@ The \emph{inverse Ackermann function}
 %which~$n \le \Ack(k)$, \emph{i.e}
 \impinline{$\alpha(n) \triangleq \min\left\{k\in \mathbb{N} : n \le \Ack(k)\right\}$}.
 
-\smallskip
-
-\pause 
-$\alpha(n)$ grows slowly but is hard to \emph{compute} for large $n$
-\\ because it is entangled with the explosively-growing $\Ack(k)$.
+%\smallskip
+%
+%\pause 
+%$\alpha(n)$ grows slowly but is hard to \emph{compute} for large $n$
+%\\ because it is entangled with the explosively-growing $\Ack(k)$.
 
 \bigskip
 
@@ -55,7 +55,6 @@ $\alpha(n)$ grows slowly but is hard to \emph{compute} for large $n$
 
 \bigskip
 
-\pause 
 \textbf{Time complexity:} $\Omega(\Ack(\alpha(n)))$.
 \\ Computing $\alpha(100) \mapsto^{*} 4$ requires at least
 %$\Ack(4) = 2^{2^{2^{65536}}}$ steps!
@@ -136,7 +135,7 @@ Require Import Omega Program.Basics.
 \begin{frame}
 \frametitle{Introduction: Ackermann \emph{vs} Hyperoperation}
 
-Treating $b$ as the main argument reveals similarities between $A(n, b)$ and the \textcolor{red}{\emph{hyperoperations}} $a[n]b$, while allows the notion of \emph{inverse functions}.
+Treating $b$ as the main argument reveals similarities between $A(n, b)$ and the \textcolor{red}{\emph{hyperoperations}} $a[n]b$, while allows the notion of \textcolor{red}{\emph{inverse functions}}.
 
 \begin{table}[t]
 	\begin{centermath}
@@ -156,8 +155,8 @@ Treating $b$ as the main argument reveals similarities between $A(n, b)$ and the
 \end{table}
 
 \pause
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{Connection?}
-\pause
+\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L161-L177}{Connection:}
+%\pause
 $A(n, b) = {\color{red}2}[n](b{\color{red}+3}) {\color{red}- 3}$
 \quad and \quad $\alpha_n(b) = {\color{red}2}\angle{n}(b{\color{red}+3}) {\color{red}- 3}$.
 

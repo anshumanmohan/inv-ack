@@ -96,20 +96,39 @@ k & b > k, \ {\color{red} \alpha_{k}(n) \le k} & \pause \to  & \multicolumn{4}{l
 
 Any budget $b \ge \alpha(n)$ suffices, so we can choose $b = n$.
 
-\bigskip
+\smallskip
 
 \pause
-\textbf{First version:} $\bigO(n^2)$.
+\textbf{First version:}.
 \pause
 \begin{equation*}
 \alpha(n) = \alpha^{\mathcal{W}}\big(\alpha_0, \alpha_0(n), 0, n\big)
 = \alpha^{\mathcal{W}}\big(\lambda n(n - 1), n - 1, 0, n\big)
 \end{equation*}
 
-\smallskip
-
 \pause
-\textbf{Simple improvement:} $\bigO(n)$.
+\textbf{Time Complexity.}
+
+\vspace{5pt}
+
+\begin{tabular}{l|l|l}
+Computation & Time & Reason \\ \hline
+$\topspace{2pt} \alpha_0(n) = n - 1$ & $\Theta(1)$ & Coq SL \\
+$\topspace{2pt} \alpha_1(n) = n - 2$ & $\Theta(n)$ & Apply $\alpha_0$ for $n - 1$ times \\
+$\topspace{2pt} \alpha_2(n) = \left \lceil \frac{n-3}{2} \right \rceil$ & $\Theta(n^2)$ & Apply $\alpha_2$ for $n/2$ times
+\end{tabular}
+
+\vspace{7pt}
+
+\textcolor{red}{\textbf{Total time is at least $\mathbf{\Omega(n^2)}$!}}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{The Inverse Ackermann Function}
+
+\textbf{Simple improvement.}
 \pause
 \begin{equation*}
 \begin{aligned}
@@ -117,12 +136,20 @@ Any budget $b \ge \alpha(n)$ suffices, so we can choose $b = n$.
 \alpha^{\mathcal{W}}\big(\alpha_{{\color{red} 1}}, \alpha_{{\color{red} 1}}(n), {{\color{red} 1}}, n - {{\color{red} 1}}\big) & \hspace{3em}\text{ when } n > \Ack(0) \\
 0 & \hspace{3em}\text{ when } n \le \Ack(0)
 \end{cases} \\[5pt]
-\pause & = \begin{cases}
+\pause \alpha(n) & = \begin{cases}
 \alpha^{\mathcal{W}}\big(\lambda n(n - 2), n - 2, 1, n - 1\big) & \text{ when } n > 1 \\
 0 & \text{ when } n \le 1
 \end{cases}
 \end{aligned}
 \end{equation*}
+
+\pause
+Now, computing $\alpha_1(n) = n - 2$ takes time $\Theta(1)$,\\
+so computing $\alpha_2(n)$ takes time $\Theta(n)$.
+
+\bigskip
+\pause
+\textcolor{red}{\textbf{In fact, the total time is still $\mathbf{\Theta(n)}$.}}
 
 \end{frame}
 

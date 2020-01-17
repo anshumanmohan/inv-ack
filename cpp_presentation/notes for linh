@@ -1,0 +1,41 @@
+
+
+1 -- Add Yale-NUS logo
+
+2 -- ...and A(5) bigger still 
+
+3 -- don't say 62...
+
+3 -- "the trick is to proceed without computing A"
+
+4 -- keep the binary thing for later
+
+5 -- n as some kind of index --> Curried
+
+5 -- "Connection is bvious" -> wrong!
+
+7 -- "If time permits, binary" --> massage that away
+
+9 -- A(n) compose A(n)
+
+10 -- this is iter, we just renamed it
+
+11 -- "A few extra lines of code" is not the point
+
+14 -- functions
+
+14 -- "makes sense and is total"
+
+16 -- exist
+
+16 -- flip the >
+
+17 -- no need to explian budget
+
+slide 18 -- 17 min
+
+19 -- "another victory" is too strong
+
+25 -- "we will hardcode the first value" is kinda shady. you can make it clearer.
+
+

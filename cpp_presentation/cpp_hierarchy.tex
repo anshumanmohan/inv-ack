@@ -7,17 +7,19 @@
 Let's look at the recursive rules for the Ackermann function and the hyperoperations.
 \begin{equation*}
 \begin{array}{lrcl}
-\textit{Hyperoperations: } \quad & \uncover<1->{\textcolor{red}{a[n+1]}(b+1) & ~ \triangleq ~ & \textcolor{green}{a[n]}\big(\textcolor{red}{a[n+1]}b\big)}
+\textit{Hyperoperations: } \quad & \textcolor{red}{a[n+1]}(b+1) & ~ \triangleq ~ & \textcolor{green}{a[n]}\big(\textcolor{red}{a[n+1]}b\big)
 \\[15pt]
-\textit{Ackermann function: } \quad & \uncover<2->{\textcolor{red}{A(n+1,} b+1) & ~ \triangleq ~ & \textcolor{green}{A\big(n,} \textcolor{red}{A(n+1,} b)\big)}
+\textit{Ackermann function: } \quad & \textcolor{red}{A(n+1,} b+1) & ~ \triangleq ~ & \textcolor{green}{A\big(n,} \textcolor{red}{A(n+1,} b)\big)
 \end{array}
 \end{equation*}
 
-Indexing $\Ack_n \triangleq \lambda b. A(n, b)$: $\textcolor{red}{\Ack_{n+1}}(b+1) ~ = ~  \textcolor{green}{\Ack_n}\big(\textcolor{red}{\Ack_{n+1}}(b)\big)$.
+\pause
+Indexing \impinline{$\Ack_n \triangleq \lambda b. A(n, b)$}: \imppar{$\textcolor{red}{\Ack_{n+1}}(b+1) ~ = ~  \textcolor{green}{\Ack_n}\big(\textcolor{red}{\Ack_{n+1}}(b)\big)$}.
 
-\smallskip
+\bigskip
 
-The next level can be built from the previous level!
+\pause
+\emph{The next level can be built from the previous level!}
 
 \end{frame}
 
@@ -28,21 +30,21 @@ The next level can be built from the previous level!
 	\begin{centermath}
 		\begin{array}{l@{\hskip 1em}l@{\hskip 1em}|@{\hskip 1em}l}
 %			  & \multicolumn{2}{|@{\hskip 0.5em}c@{\hskip 0.5em}|}{\text{Main hierarchies}} & \multicolumn{2}{|@{\hskip 0.5em}c@{\hskip 0.5em}|}{\text{Inverses hierarchies}} \\
-		&	a[n+1]b & \Ack_{n+1}(b)
+		&	\textcolor{red}{a[n+1]}b & \textcolor{red}{\Ack_{n+1}}(b)
 		\\[5pt]
-	= & a[n]\big(a[n+1](b-1)\big) & \Ack_n\big(\Ack_{n+1}(b-1)\big)
+	\pause = & \textcolor{green}{a[n]}\big(\textcolor{red}{a[n+1]}(b-1)\big) & \textcolor{green}{\Ack_n}\big(\textcolor{red}{\Ack_{n+1}}(b-1)\big)
 	\\[5pt]
-	= & \big(a[n]\circ a[n]\big)\big(a[n+1](b-2)\big) & \Ack_n\big(\Ack_n\big(\Ack_{n+1}(b-2)\big)\big)
+	\pause = & \big(\textcolor{green}{a[n]}\circ \textcolor{green}{a[n]}\big)\big(\textcolor{red}{a[n+1]}(b-2)\big) & \big(\textcolor{green}{\Ack_n} \circ \textcolor{green}{\Ack_n}\big)\big(\textcolor{red}{\Ack_{n+1}}(b-2)\big)
 	\\[5pt]
-	= & \ldots & \ldots
+	\pause = & \ldots & \ldots
 	\\[5pt]
-	= & \underbrace{\big( a[n] \circ \cdots \circ a[n] \big)}_{b \text{ times}} \big(a[n+1]0\big) &
-	\underbrace{\big( \Ack_n \circ \cdots \circ \Ack_n \big)}_{b \text{ times}} \big(\Ack_{n+1}(0)\big)
+	\pause = & \underbrace{\big( \textcolor{green}{a[n]} \circ \cdots \circ \textcolor{green}{a[n]} \big)}_{b \text{ times}} \big(\textcolor{red}{a[n+1]}0\big) &
+	\underbrace{\big( \textcolor{green}{\Ack_n} \circ \cdots \circ \textcolor{green}{\Ack_n} \big)}_{b \text{ times}} \big(\textcolor{red}{\Ack_{n+1}}(0)\big)
 	\\[25pt]
-	= & \underbrace{\big(a[n]\big)^{(b)}}_{\substack{\text{repeated} \\ \text{applications}}}
-	\underbrace{\big(a[n+1]0\big)}_{\text{initial value}}
-	& \underbrace{\big(\Ack_n\big)^{(b)}}_{\substack{\text{repeated} \\ \text{applications}}}
-	\underbrace{\big(\Ack_{n+1}(0)\big)}_{\text{initial value}}
+	\pause = & \underbrace{\big(\textcolor{green}{a[n]}\big)^{(b)}}_{\substack{\text{repeated} \\ \text{applications}}}
+	\underbrace{\big(\textcolor{red}{a[n+1]}0\big)}_{\text{initial value}}
+	& \underbrace{\big(\textcolor{green}{\Ack_n}\big)^{(b)}}_{\substack{\text{repeated} \\ \text{applications}}}
+	\underbrace{\big(\textcolor{red}{\Ack_{n+1}}(0)\big)}_{\text{initial value}}
 		\end{array}
 	\end{centermath}
 
@@ -149,12 +151,14 @@ The next level can be built from the previous level!
 %\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v\#L32-L36}{\emph{repeater from}}
 %$a$ of $f$, denoted by $\rf{f}{a}$ , is a function $\mathbb{N}\to \mathbb{N}$ such that $\rf{f}{a}(n) = f^{(n)}(a)$.
 
-\pause
+%\pause
 \bigskip
 % Linked by A
 \begin{lstlisting}
 `\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/repeater.v#L32-L36}{Fixpoint repeater\_from}` (f : nat -> nat) (a n : nat) : nat :=
-match n with 0 => a | S n' => f (repeater_from f a n') end.
+  match n with
+  | 0 => a
+  | S n' => f (repeater_from f a n') end.
 \end{lstlisting}
 
 \smallskip

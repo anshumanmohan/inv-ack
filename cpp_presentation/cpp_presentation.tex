@@ -15,7 +15,7 @@
 %	PACKAGES AND THEMES
 %----------------------------------------------------------------------------------------
 
-\documentclass[handout,10pt]{beamer}
+\documentclass[10pt]{beamer}
 
 \mode<presentation>{
 
@@ -95,6 +95,7 @@
 \usepackage{mdframed} %nice frames
 \usepackage{bm}
 \usepackage{multirow}
+\usepackage{tikz-cd}
 
 \hypersetup{ % play with these to change the look of hyperlinks
 	colorlinks=true,
@@ -283,7 +284,10 @@
 
 \title[Inverting the Ackermann Hierarchy]{A Functional Proof Pearl: \protect\\ Inverting the Ackermann Hierarchy} % The short title appears at the bottom of every slide, the full title is only on the title page
 \author{\underline{Linh Tran}, Anshuman Mohan, Aquinas Hobor} % Your name
-\institute[Yale,NUS]{$\includegraphics[scale=0.45]{NUS_logo_full-horizontal.jpg}\quad \quad \includegraphics[scale=0.018]{yale-logo.png}$}
+\institute[Yale,NUS]{$
+\includegraphics[scale=0.05]{yale-nus-logo.jpg} \quad \quad
+\includegraphics[scale=0.4]{NUS_logo_full-horizontal.jpg}\quad \quad
+ \includegraphics[scale=0.015]{yale-logo.png}$}
 %{$\includegraphics[scale=0.33]{NUS_logo_full-horizontal.jpg}} % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 % {
 % National University of Singapore % Your institution for the title page
@@ -331,9 +335,6 @@
 	
 	\item<4->
 	Use the hierarchy to implement the inverse Ackermann function \\ for inputs encoded in unary. $\bigO (n)$.
-	
-	\item<5-> [\textbf{Bonus.}]
-	Improve efficiency for inputs encoded in binary. $\bigO (\log_2n)$.	
 \end{enumerate}
 \end{frame}
 
@@ -364,9 +365,6 @@
 	
 	\item
 	Use the hierarchy to implement the inverse Ackermann function \\ for inputs encoded in unary. $\bigO (n)$.
-	
-	\item [\textbf{Bonus.}]
-	Improve efficiency for inputs encoded in binary. $\bigO (\log_2n)$.	
 \end{enumerate}
 \end{frame}
 
@@ -400,9 +398,6 @@
 	
 	\item<come@2->
 	Use the hierarchy to implement the inverse Ackermann function \\ for inputs encoded in unary. $\bigO (n)$.
-	
-	\item [\textbf{Bonus.}]
-	Improve efficiency for inputs encoded in binary. $\bigO (\log_2n)$.	
 \end{enumerate}
 \end{frame}
 
@@ -433,16 +428,8 @@
 	
 	\item<done@1->
 	Use the hierarchy to implement the inverse Ackermann function \\ for inputs encoded in unary. $\bigO (n)$.
-	
-	\item<come@2-> [\textbf{Bonus.}]
-	Improve efficiency for inputs encoded in binary. $\bigO (\log_2n)$.	
 \end{enumerate}
 \end{frame}
-
-
-\section{Bonus: The Inverse Ackermann function in logarithmic time for binary encoding system}
-\label{sec: binary}
-\input{cpp_binary.tex}
 
 
 \section*{Roadmap}
@@ -466,9 +453,6 @@
 	
 	\item<done@1->
 	Use the hierarchy to implement the inverse Ackermann function \\ for inputs encoded in unary. $\bigO (n)$.
-	
-	\item<done@1-> [\textbf{Bonus.}]
-	Improve efficiency for inputs encoded in binary. $\bigO (\log_2n)$.	
 \end{enumerate}
 \end{frame}
 
@@ -517,6 +501,12 @@ We present a brief demonstration of our time bounds in Coq.
 \setbeamertemplate{footline}{%
 	\hspace{1em}\small\arabic{framenumber}/\arabic{totalframenumber}
 	\hfill\usebeamertemplate***{navigation symbols}}
+	
+
+
+\section{The Inverse Ackermann function in logarithmic time for binary encoding system}
+\label{sec: binary}
+\input{cpp_binary.tex}
 
 \input{cpp_apx_time_bound.tex}
 

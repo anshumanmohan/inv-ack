@@ -1,35 +1,144 @@
 \subsection{Inverting Repeater with Countdown}
 
-\begin{frame}
-\frametitle{Repeatable Functions}
-
-Functions in the Ackermann and hyperoperation (when $a\ge 2$) hierarchies are all \textcolor{red}{\emph{repeatable function}}.
-
-\bigskip
+%\begin{frame}
+%\frametitle{Repeatable Functions}
 %
-%\pause
-%\textbf{Expansions.} A function $F:\mathbb{N}\to\mathbb{N}$ is an
-%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L80-L82}{\emph{expansion}} if $\forall n.~ F(n)\ge n$. Further, for $a\in \mathbb{N}$, an expansion $F$ is
-%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L84-L86}{\emph{strict from}} $a$ if ~$\forall n \ge a.~ F(n) > n$.
+%Functions in the Ackermann and hyperoperation (when $a\ge 2$) hierarchies are all \textcolor{red}{\emph{repeatable function}}.
 %
 %\bigskip
+%%
+%%\pause
+%%\textbf{Expansions.} A function $F:\mathbb{N}\to\mathbb{N}$ is an
+%%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L80-L82}{\emph{expansion}} if $\forall n.~ F(n)\ge n$. Further, for $a\in \mathbb{N}$, an expansion $F$ is
+%%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L84-L86}{\emph{strict from}} $a$ if ~$\forall n \ge a.~ F(n) > n$.
+%%
+%%\bigskip
+%
+%\pause
+%\textbf{Repeatable functions:} A $F$ is \emph{repeatable} from $a$ if\\
+%$F$ is strictly increasing and $F$ is an
+%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L80-L82}{\emph{expansion}}
+%that is
+%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L84-L86}{\emph{strict from}}
+%$a$, i.e. ~$\forall n \ge a.~ F(n) > n$.
+%
+%\bigskip
+%\pause
+%We extend our scope of study from functions in the hyperoperations and Ackermann hierarchies to repeatable functions.
+%
+%\bigskip
+%\pause
+%\textbf{Advantage.} If $F$ is repeatable from $a$, $F^{-1}$ makes sense and is total,
+%\\ and $\rf{F}{a}$ is repeatable from $1$.
+%
+%\end{frame}
+%
+%
+%
+%\begin{frame}
+%\frametitle{Inverting Repeater: The Idea of Countdown}
+%
+%The \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L28-L45}{
+%	\emph{upper inverse}} of $F$, written $F^{-1}$,
+%% {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$}
+%is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
+%
+%\smallskip
+%
+%\pause 
+%\textbf{\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L65-L77}{Logical equivalence} (more useful)}: If $F:\mathbb{N}\to \mathbb{N}$ is increasing, \\
+%then $f = F^{-1}$ iff \impinline{$\forall n, m.~ f(n)\le m \iff n \le F(m)$}.
+%
+%\bigskip
+%
+%\textbf{Idea.} Build $\left(\rf{F}{a}\ \right)^{-1}$ from $f \triangleq F^{-1}$.
+%	\begin{equation*}
+%	\displayindent0pt
+%	\displaywidth\textwidth
+%	\begin{array}{ccll}
+%	& \left(\rf{F}{a}\ \right)^{-1}(n)\le m \pause & \iff \ n \le \rf{F}{a}(m) \pause & \iff n \ \le F^{(m)}(a) \\
+%  \pause \iff & f(n)\le F^{(m-1)}(a) \pause & \iff \ \cdots \pause &
+%	\iff \ f^{(m)}(n) \le a 
+%	\end{array}
+%	\end{equation*}
+%
+%\pause
+%\imppar{$\left(\rf{F}{a}\ \right)^{-1}(n)$ is \emph{the least} $m$ for which $f^{(m)}(n)\le a$.}
+%
+%\end{frame}
 
-\pause
-\textbf{Repeatable functions:} A $F$ is \emph{repeatable} from $a$ if\\
-$F$ is strictly increasing and $F$ is an
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L80-L82}{\emph{expansion}}
-that is
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/increasing_expanding.v\#L84-L86}{\emph{strict from}}
-$a$, i.e. ~$\forall n \ge a.~ F(n) > n$.
+
+
+\begin{frame}[fragile]
+
+\textbf{Goal.} Construct $\alpha_{n+1}$ from $\alpha_n$ and $a\angle{n+1}$ from $a\angle{n}$!
+$$
+\tikzset{
+LA/.style = {
+draw=red, % just to demonstrate, where LA is used
+line width=1.5pt, -{Straight Barb[length=3pt]}},
+LA/.default=1pt,
+LB/.style = {
+draw=blue, % just to demonstrate, where LA is used
+line width=1.5pt, -{Straight Barb[length=3pt]}},
+LB/.default=1pt
+}
+\newcommand{\ard}{\ar[d, LA, "\ \text{\textbf{\textcolor{red}{Repeater}}}"]}
+\newcommand{\rd}{\ar[d, LA]}
+\newcommand{\abd}{\ar[d, LB, "\ \text{\textbf{\textcolor{blue}{???}}}"]}
+\newcommand{\bd}{\ar[d, LB]}
+\begin{tikzcd}[row sep = 13.5pt]
+a[n]b & \Ack_n(b) & a\angle{n}b & \alpha_n(b) \\[-15pt] \hline
+1 + b \ard & 1 + b \ard & b - 1 \abd & b - 1 \abd
+\\
+a + b \ard & 2 + b \ard & b - a \abd & b - 2 \abd
+\\
+a \cdot b \ard & 2b + 3 \ard & \left\lceil \frac{b}{a} \right\rceil \abd & \left\lceil \frac{b-3}{2} \right\rceil \abd
+\\
+a^b & 2^{b + 3} - 3 & \left\lceil \log_a b \right\rceil & \left\lceil \log_2 (b + 3)\right\rceil - 3
+%\\
+%\underbrace{a^{.^{.^{.^a}}}}_b & \underbrace{2^{.^{.^{.^2}}}}_{b+3} - 3 & \log^*_a ~ b & \log^*_2 ~ (b + 3) - 3
+\end{tikzcd}
+$$
+
+\imppar{\textbf{Goal.} Construct the inverse of $\rf{F}{a}\ $ entirely from $F$'s inverse.}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Formalizing Inverse}
+
+If $F: \mathbb{N} \to \mathbb{N}$ is strictly increasing (holds for all $\Ack_n$ and $a[n]$ when $a\ge 2$),
+the \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L28-L45}{
+	\emph{upper inverse}} of $F$, written $F^{-1}$,
+% {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$}
+is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
+
+\smallskip
+
+\textbf{Note.} Since $F$ is strictly increasing, $F^{-1}$ is a total function.
 
 \bigskip
-\pause
-We extend our scope of study from functions in the hyperoperations and Ackermann hierarchies to repeatable functions.
+
+\pause 
+\textbf{\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L65-L77}{Logical equivalence} (more useful)}:
+\impinline{$\forall n, m.~ F^{-1}(n)\le m \iff n \le F(m)$}.
 
 \bigskip
+
 \pause
-\textbf{Advantage.} If $F$ is repeatable from $a$, $F^{-1}$ makes sense and is total,
-\\ and $\rf{F}{a}$ is repeatable from $1$.
+\textbf{Repeatable functions.} $F$ is \textcolor{red}{\emph{repeatable from}} $a$ if $F$ is strictly increasing and \textcolor{red}{\emph{expanding from}} $a$, i.e. $~\forall n.~F(n) \ge n~$ and $~\forall n \ge a.~F(n) > n$.
+
+\vspace{5pt}
+
+\pause
+\textbf{Advantage.} $\displaystyle \begin{cases}
+F \text{ is repeatable from } a \implies \rf{F}{a}\ \text{ is repeatable from } 0. \\[3pt]
+\forall n, \ \Ack_n \text{ is repeatable from } 0. \\[3pt]
+\forall n, \forall a \ge 2, \ a[n] \text{ is repeatable from } a[n+1](0).
+\end{cases}$
+
 
 \end{frame}
 
@@ -38,69 +147,73 @@ We extend our scope of study from functions in the hyperoperations and Ackermann
 \begin{frame}
 \frametitle{Inverting Repeater: The Idea of Countdown}
 
-The \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L28-L45}{
-	\emph{upper inverse}} of $F$, written $F^{-1}$,
-% {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$}
-is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
+Assume $F$ is repeatable from $a$.
+Then \impinline{$\forall n, m.~ F^{-1}(n)\le m \iff n \le F(m)$}.
 
 \smallskip
 
-\pause 
-\textbf{\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L65-L77}{Logical equivalence} (more useful)}: If $F:\mathbb{N}\to \mathbb{N}$ is increasing, \\
-then $f = F^{-1}$ iff \impinline{$\forall n, m.~ f(n)\le m \iff n \le F(m)$}.
-
-\bigskip
-
-\textbf{Idea.} Build $\left(\rf{F}{a}\ \right)^{-1}$ from $f \triangleq F^{-1}$.
+Let us build $\left(\rf{F}{a}\ \right)^{-1}$ from $F^{-1}$.
+\pause
 	\begin{equation*}
 	\displayindent0pt
 	\displaywidth\textwidth
 	\begin{array}{ccll}
-	& \left(\rf{F}{a}\ \right)^{-1}(n)\le m \pause & \iff \ n \le \rf{F}{a}(m) \pause & \iff n \ \le F^{(m)}(a) \\
-  \pause \iff & f(n)\le F^{(m-1)}(a) \pause & \iff \ \cdots \pause &
-	\iff \ f^{(m)}(n) \le a 
+	& \left(\rf{F}{a}\ \right)^{-1}(n)\le m \pause & \iff \ n \le \rf{F}{a}\ (m) \pause & \iff n \ \le F^{(m)}(a) \\[5pt]
+  \pause \iff & F^{-1}(n)\le F^{(m-1)}(a) \pause & \iff \ \cdots \pause &
+	\iff \ \left(F^{-1}\right)^{(m)}(n) \le a 
 	\end{array}
 	\end{equation*}
 
 \pause
-\imppar{$\left(\rf{F}{a}\ \right)^{-1}(n)$ is \emph{the least} $m$ for which $f^{(m)}(n)\le a$.}
-
+\imppar{$\left(\rf{F}{a}\ \right)^{-1}(n)$ is \emph{the least} $m$ for which $\left(F^{-1}\right)^{(m)}(n)\le a$.}
 
 \end{frame}
+
 
 
 
 \begin{frame}
 \frametitle{Formalizing countdown}
 
-\textbf{Does such $m$ exists?}
-
-Yes because $f$ is a \textbf{contraction} when $F$ is repeatable!
-
-\bigskip
-
-\pause 
-\textbf{Contraction.} A function $f : \mathbb{N} \to \mathbb{N}$ is a
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L40-L42}{\emph{contraction}} if $\forall n.~ f(n) \le n$.
-
-Given an $a \ge 1$, a contraction $f$ is
-\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L44-L46}{\emph{strict above}} $a$ if $\forall n > a.~n > f(n)$.
+%\textbf{Does such $m$ exists?}
+%
+%Yes because $f$ is a \textbf{contraction} when $F$ is repeatable!
+%
+%\bigskip
+%
+%\pause 
+%\textbf{Contraction.} A function $f : \mathbb{N} \to \mathbb{N}$ is a
+%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L40-L42}{\emph{contraction}} if $\forall n.~ f(n) \le n$.
+%
+%Given an $a \ge 1$, a contraction $f$ is
+%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L44-L46}{\emph{strict above}} $a$ if $\forall n > a.~n > f(n)$.
 
 %\bigskip
 %
 %\textbf{Notation.} Set of contractions strict above $a$ is denoted $\contract_a$.
-
-\bigskip
-
-\pause 
-\textbf{Countdown.} Let $f\in \contract_a$. The \textit{countdown to} $a$ of $f$, written~$\cdt{f}{a}(n)$, is the smallest number of times $f$ needs to be compositionally applied to
+%
+%\bigskip
+%
+%\pause 
+\textbf{Countdown.} The \textit{\textcolor{red}{countdown} to} $a$ of $f$, written~$\cdt{f}{a}(n)$, if exists, is the smallest number of times $f$ needs to be compositionally applied to
 $n$ for the answer to equal or go below $a$. \emph{i.e.},
 \begin{equation*}
 \cdt{f}{a}(n) \triangleq \min\{m: f^{(m)}(n)\le a \}.
 \end{equation*}
 
+\textbf{Contractions.} $f$ is a \emph{\textcolor{red}{contraction} strict above} a if \\
+$\forall n.~f(n)\le n~$ and $~\forall n > a.~f(n) < n$.
+
+\smallskip
+
 \pause
-\imppar{\textbf{Theorem.} If $F$ is repeatable from $a$, then $\left(\rf{F}{a}\ \right)^{-1} = \cdt{\left(F^{-1}\right)}{a}$.}
+If $f$ is a contraction strict from $a$, $\cdt{f}{a}$ is a total function.
+
+\bigskip
+
+\pause
+\textbf{Theorem.} If $F$ is repeatable from $a$,\\
+$F^{-1}$ is a contraction strict above $a$ and $\cdt{\left(F^{-1}\right)}{a}\ \ = \ \left(\rf{F}{a}\ \right)^{-1}$.
 
 \end{frame}
 
@@ -114,12 +227,12 @@ Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
 \bigskip
 
 \pause 
-\textbf{Primary issue.} Termination in Coq.
+\textbf{Primary Issue.} Termination in Coq.
 %Coq needs a known terminating point, i.e. an explicit decreasing argument. How to know when to terminate beforehand?
 
 \bigskip
 
-\textbf{Secondary issue.} It's hard to restrict $f$ to contractions only.
+\textbf{Secondary issue.} $\cdt{f}{a}$ may not exist for general $f$.
 %It's hard to define a Coq definition of Countdown for contractions only. Defining a computation for \emph{all functions} that actually computes Countdown on contractions is easier.
 
 \bigskip
@@ -139,11 +252,6 @@ Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
 
 %A worker function takes $f, a, n$ and a budget $b$ and compute the chain $\{n, f(n), \ldots, f^{(b)}(n)\}$. It stops before reaching $f^{(b)}(n)$ upon encountering $k$ such that $f^{(k)}(n)\le a$.
 %%TODO: Use bullet points
-
-\bigskip
-
-\pause 
-\textbf{Primary issue.} How to determine a sufficient budget?
 \end{frame}
 
 

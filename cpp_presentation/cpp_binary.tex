@@ -1,75 +1,53 @@
 
 \subsection{Overview}
 
-%\begin{frame}
-%\frametitle{Review: Binary Encoding System}
-%
-%\begin{tabular}{l|c|c}
-%	Attribute & Unary & Binary Encoding \\ \hline
-%	Type in Coq & \texttt{nat} & \texttt{N} \topspace{1pt} \\[6pt]
-%	Number $n$ & $\Theta(n)$ bits & $\Theta\big(\log_2n\big)$ bits \\[7pt]
-%	Compare $x, y$ & $\Theta\big(\min\{x, y\}\big)$ time & $\Theta\big(\min\{ \log_2x, \log_2y\}\big)$ time \\[9pt]
-%	Successor & \multirow{2}{*}{$\Theta(1)$ time} & Worse case: $\Theta\big(\log_2x\big)$ time \\[1pt]
-%	function  &             & Amortized: $\Theta(1)$ time \\
-%	                    
-%\end{tabular}
-%
-%\bigskip
-%
-%Binary encoding provides faster computations for many operations.
-%
-%\smallskip
-%
-%\pause 
-%What about inverse Ackermann? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
-%
-%\end{frame}
+\begin{frame}
+\frametitle{Review: Binary Encoding System}
+
+\begin{tabular}{l|c|c}
+	Attribute & Unary & Binary Encoding \\ \hline
+	Type in Coq & \texttt{nat} & \texttt{N} \topspace{1pt} \\[6pt]
+	Number $n$ & $\Theta(n)$ bits & $\Theta\big(\log_2n\big)$ bits \\[7pt]
+	Compare $x, y$ & $\Theta\big(\min\{x, y\}\big)$ time & $\Theta\big(\min\{ \log_2x, \log_2y\}\big)$ time \\[9pt]
+	Successor & \multirow{2}{*}{$\Theta(1)$ time} & Worse case: $\Theta\big(\log_2x\big)$ time \\[1pt]
+	function  &             & Amortized: $\Theta(1)$ time \\
+	                    
+\end{tabular}
+
+\bigskip
+
+Binary encoding provides faster computations for many operations.
+
+\smallskip
+
+\pause 
+What about inverse Ackermann? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
+
+\end{frame}
 
 
 \subsection{Countdown in Binary}
 
 
-%\begin{frame}[fragile]
-%\frametitle{Translating Countdown}
-%
-%\textbf{The worker.}
-%\begin{lstlisting}
-%`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L104-L109}{Fixpoint bin\_cdn\_wkr}` (f : N -> N) (a n : N) (b : nat) : N :=
-%  match b with O => 0 | S b' =>
-%    if (n <=? a) then 0 else 1 + bin_cdn_wkr f a (f n) b'
-%  end.
-%\end{lstlisting}
-%
-%\smallskip
-%
-%\pause 
-%\textbf{Observation.} Recursive argument is budget $b$, \\which should still be in \texttt{nat}.
-%
-%\bigskip
-%
-%\textbf{Issue.} $b$ cannot be $n$ due to slow binary $\rightarrow$ unary conversion.
-%
-%\bigskip
-%
-%\pause 
-%\textbf{Solution.} Use $b \approx \log_2n$ and contractions that contract ``fast enough''. 
-%\emph{i.e.} Functions that halve their inputs.
-%\end{frame}
-
-
 \begin{frame}[fragile]
-\frametitle{Countdown in Binary}
+\frametitle{Translating Countdown}
 
-Our inverse Ackermann implementation runs in $O(n)$ time for unary $n$. \\
-What about binary input? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
+\textbf{The worker.}
+\begin{lstlisting}
+`\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/bin_countdown.v#L104-L109}{Fixpoint bin\_cdn\_wkr}` (f : N -> N) (a n : N) (b : nat) : N :=
+  match b with O => 0 | S b' =>
+    if (n <=? a) then 0 else 1 + bin_cdn_wkr f a (f n) b'
+  end.
+\end{lstlisting}
 
-\bigskip
+\smallskip
+
 \pause 
-\textbf{Translating Countdown.} Recursive argument for worker is budget $b$, \\which should still be in \texttt{nat}.
+\textbf{Observation.} Recursive argument is budget $b$, \\which should still be in \texttt{nat}.
 
 \bigskip
 
-\textbf{Issue.} $b$ cannot be $O(n)$ due to slow binary $\rightarrow$ unary conversion.
+\textbf{Issue.} $b$ cannot be $n$ due to slow binary $\rightarrow$ unary conversion.
 
 \bigskip
 
@@ -77,6 +55,28 @@ What about binary input? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
 \textbf{Solution.} Use $b \approx \log_2n$ and contractions that contract ``fast enough''. 
 \emph{i.e.} Functions that halve their inputs.
 \end{frame}
+
+
+%\begin{frame}[fragile]
+%\frametitle{Countdown in Binary}
+%
+%Our inverse Ackermann implementation runs in $O(n)$ time for unary $n$. \\
+%What about binary input? \imppar{\textbf{Goal:} $\bigO \big(\log_2n\big)$}.
+%
+%\bigskip
+%\pause 
+%\textbf{Translating Countdown.} Recursive argument for worker is budget $b$, \\which should still be in \texttt{nat}.
+%
+%\bigskip
+%
+%\textbf{Issue.} $b$ cannot be $O(n)$ due to slow binary $\rightarrow$ unary conversion.
+%
+%\bigskip
+%
+%\pause 
+%\textbf{Solution.} Use $b \approx \log_2n$ and contractions that contract ``fast enough''. 
+%\emph{i.e.} Functions that halve their inputs.
+%\end{frame}
 
 
 
