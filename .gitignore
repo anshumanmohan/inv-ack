@@ -13,7 +13,6 @@
 *.xml
 *.gz
 countdown_repeater_old.v
-inv-ack.pdf
 presentation/*.pdf
 cpp_presentation/*.pdf
 *.nav
