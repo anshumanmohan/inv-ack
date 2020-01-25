@@ -327,7 +327,7 @@
 \begin{enumerate}[\bfseries Step 1.]
   \itemsep 2ex
   \pause
-	\item<come@6>
+	\item<come@5>
 	Build the hyperoperations/Ackermann hierarchies via \textbf{Repeater}.
 	
 	\item<3->
@@ -461,34 +461,66 @@
 %\input{discussion.tex}
 
 
+%\section*{Conclusion}
+%\begin{frame}
+%\frametitle{Conclusion}
+%%\frametitle{Abstract}
+%%TODO: Past tense
+%We inverted the hyperoperation 
+%and Ackermann hierarchies \\ and implemented 
+%our inverse hierarchies in Gallina.
+%We used our inverses to compute the upper inverse of the 
+%diagonal Ackermann function. 
+%
+%\bigskip
+%
+%Our computations run in linear time
+%-- $\Theta(b)$, where $b$=bitlength -- \\ for inputs represented in 
+%both unary and binary.
+%
+%\bigskip
+%
+%We showed that these functions are consistent with the usual \\ definition of the inverse Ackermann function~$\alpha(n)$.
+%\keywords{Ackermann  \and hyperoperations \and Coq}
+%\end{frame}
+
+
 \section*{Conclusion}
 \begin{frame}
 \frametitle{Conclusion}
-%\frametitle{Abstract}
-%TODO: Past tense
-We inverted the hyperoperation 
-and Ackermann hierarchies \\ and implemented 
-our inverse hierarchies in Gallina.
-We used our inverses to compute the upper inverse of the 
-diagonal Ackermann function. 
+
+\textbf{Main contributions (shown here):}
+
+\smallskip
+
+$\bullet$ Providing the upper inverses for all functions in the hyperoperation and Ackermann hierarchies and implementing them in Gallina.
+
+\smallskip
+
+$\bullet$ Providing the upper inverse Ackermann function and its linear time computation for unary inputs in Gallina.
 
 \bigskip
 
-Our computations run in linear time
--- $\Theta(b)$, where $b$=bitlength -- \\ for inputs represented in 
-both unary and binary.
+\pause
+\textbf{Other contribution (paper):}
 
-\bigskip
+\smallskip
 
-We showed that these functions are consistent with the usual \\ definition of the inverse Ackermann function~$\alpha(n)$.
-\keywords{Ackermann  \and hyperoperations \and Coq}
+$\bullet$ Computation of the upper inverse Ackermann function for binary inputs in Gallina, which also runs in linear time -- $\Theta(b)$, where $b$=bitlength.
+
+\smallskip
+
+$\bullet$ Computation of the two-parameter inverse Ackermann function.
+
 \end{frame}
 
-\section*{Demo}
-\begin{frame}
-\frametitle{Demo}
-We present a brief demonstration of our time bounds in Coq.
-\end{frame}
+
+
+%\section*{Demo}
+%\begin{frame}
+%\frametitle{Demo}
+%We present a brief demonstration of our time bounds in Coq.
+%\end{frame}
 
 \newcounter{totalframenumber}
 \setcounter{totalframenumber}{\inserttotalframenumber}

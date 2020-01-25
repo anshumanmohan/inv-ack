@@ -71,7 +71,7 @@
 
 \begin{frame}[fragile]
 
-\textbf{Goal.} Construct $\alpha_{n+1}$ from $\alpha_n$ and $a\angle{n+1}$ from $a\angle{n}$!
+\textbf{Goal.} Construct $\alpha_{n+1}$ from $\alpha_n$ and $a\angle{n+1}$ from $a\angle{n}$.
 $$
 \tikzset{
 LA/.style = {
@@ -81,11 +81,20 @@ LA/.default=1pt,
 LB/.style = {
 draw=blue, % just to demonstrate, where LA is used
 line width=1.5pt, -{Straight Barb[length=3pt]}},
-LB/.default=1pt
+LB/.default=1pt,
+invisible/.style={opacity=0},
+visible on/.style={alt={#1{}{invisible}}},
+alt/.code args={<#1>#2#3}{%
+  \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}%
+  }
 }
-\newcommand{\ard}{\ar[d, LA, "\ \text{\textbf{\textcolor{red}{Repeater}}}"]}
+\newcommand{\ard}{
+  \ar[visible on=<2->, d, LB,
+    "\ \text{\textbf{\textcolor{blue}{Repeater}}}"]}
 \newcommand{\rd}{\ar[d, LA]}
-\newcommand{\abd}{\ar[d, LB, "\ \text{\textbf{\textcolor{blue}{???}}}"]}
+\newcommand{\abd}{
+  \ar[visible on=<3->, d, LA,
+    "\ \text{\textbf{\textcolor{red}{???}}}"]}
 \newcommand{\bd}{\ar[d, LB]}
 \begin{tikzcd}[row sep = 13.5pt]
 a[n]b & \Ack_n(b) & a\angle{n}b & \alpha_n(b) \\[-15pt] \hline
@@ -101,44 +110,77 @@ a^b & 2^{b + 3} - 3 & \left\lceil \log_a b \right\rceil & \left\lceil \log_2 (b 
 \end{tikzcd}
 $$
 
-\imppar{\textbf{Goal.} Construct the inverse of $\rf{F}{a}\ $ entirely from $F$'s inverse.}
+\uncover<4->{\imppar{\textbf{Next Goal.} Construct the inverse of $\rf{F}{a}\ $ entirely from $F$'s inverse.}}
 
 \end{frame}
+
+
+%\begin{frame}
+%\frametitle{Formalizing Inverse}
+%
+%If $F: \mathbb{N} \to \mathbb{N}$ is strictly increasing (holds for all $\Ack_n$ and $a[n]$ when $a\ge 2$),
+%the \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L28-L45}{
+%	\emph{upper inverse}} of $F$, written $F^{-1}$,
+%% {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$}
+%is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
+%
+%\smallskip
+%
+%\textbf{Note.} Since $F$ is strictly increasing, $F^{-1}$ is a total function.
+%
+%\bigskip
+%
+%\pause 
+%\textbf{\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L65-L77}{Logical equivalence} (more useful)}:
+%\impinline{$\forall n, m.~ F^{-1}(n)\le m \iff n \le F(m)$}.
+%
+%\bigskip
+%
+%\pause
+%\textbf{Repeatable functions.} $F$ is \textcolor{red}{\emph{repeatable from}} $a$ if $F$ is strictly increasing and \textcolor{red}{\emph{expanding from}} $a$, i.e. $~\forall n.~F(n) \ge n~$ and $~\forall n \ge a.~F(n) > n$.
+%
+%\vspace{5pt}
+%
+%\pause
+%\textbf{Advantage.} $\displaystyle \begin{cases}
+%F \text{ is repeatable from } a \implies \rf{F}{a}\ \text{ is repeatable from } 0. \\[3pt]
+%\forall n, \ \Ack_n \text{ is repeatable from } 0. \\[3pt]
+%\forall n, \forall a \ge 2, \ a[n] \text{ is repeatable from } a[n+1](0).
+%\end{cases}$
+%
+%\end{frame}
 
 
 \begin{frame}
 \frametitle{Formalizing Inverse}
 
-If $F: \mathbb{N} \to \mathbb{N}$ is strictly increasing (holds for all $\Ack_n$ and $a[n]$ when $a\ge 2$),
-the \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L28-L45}{
+\textbf{Assumption.} We assume $a\ge 2$ whenever $a[n]b$ is mentioned.
+
+\bigskip
+
+\pause
+
+The \href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L28-L45}{
 	\emph{upper inverse}} of $F$, written $F^{-1}$,
 % {\color{red} $F^{-1}$, $F^{-1}_{\mathit{\shortuparrow}}$, $F^{-1}_{\upharpoonleft}$}
 is \impinline{$\lambda n. \min\{m : F(m)\ge n\}$}.
 
 \smallskip
 
-\textbf{Note.} Since $F$ is strictly increasing, $F^{-1}$ is a total function.
+\textbf{Remarks.}
+
+$\bullet~$ If $F$ is strictly increasing, $F^{-1}$ is a total function.
+
+$\bullet~$ $\Ack_n$ and $a[n]$ are strictly increasing for each $n$.
+
+
+
 
 \bigskip
 
 \pause 
 \textbf{\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/inverse.v\#L65-L77}{Logical equivalence} (more useful)}:
 \impinline{$\forall n, m.~ F^{-1}(n)\le m \iff n \le F(m)$}.
-
-\bigskip
-
-\pause
-\textbf{Repeatable functions.} $F$ is \textcolor{red}{\emph{repeatable from}} $a$ if $F$ is strictly increasing and \textcolor{red}{\emph{expanding from}} $a$, i.e. $~\forall n.~F(n) \ge n~$ and $~\forall n \ge a.~F(n) > n$.
-
-\vspace{5pt}
-
-\pause
-\textbf{Advantage.} $\displaystyle \begin{cases}
-F \text{ is repeatable from } a \implies \rf{F}{a}\ \text{ is repeatable from } 0. \\[3pt]
-\forall n, \ \Ack_n \text{ is repeatable from } 0. \\[3pt]
-\forall n, \forall a \ge 2, \ a[n] \text{ is repeatable from } a[n+1](0).
-\end{cases}$
-
 
 \end{frame}
 
@@ -147,7 +189,7 @@ F \text{ is repeatable from } a \implies \rf{F}{a}\ \text{ is repeatable from } 
 \begin{frame}
 \frametitle{Inverting Repeater: The Idea of Countdown}
 
-Assume $F$ is repeatable from $a$.
+Assume F satisfies the 3 conditions of the theorem. \\ \smallskip
 Then \impinline{$\forall n, m.~ F^{-1}(n)\le m \iff n \le F(m)$}.
 
 \smallskip
@@ -170,53 +212,60 @@ Let us build $\left(\rf{F}{a}\ \right)^{-1}$ from $F^{-1}$.
 \end{frame}
 
 
+%\begin{frame}
+%\frametitle{Formalizing countdown}
+%
+%\textbf{Countdown.} The \textit{\textcolor{red}{countdown} to} $a$ of $f$, written~$\cdt{f}{a}(n)$, if exists, is the smallest number of times $f$ needs to be compositionally applied to
+%$n$ for the answer to equal or go below $a$. \emph{i.e.},
+%\begin{equation*}
+%\cdt{f}{a}(n) \triangleq \min\{m: f^{(m)}(n)\le a \}.
+%\end{equation*}
+%
+%\textbf{Contractions.} $f$ is a \emph{\textcolor{red}{contraction} strict above} a if \\
+%$\forall n.~f(n)\le n~$ and $~\forall n > a.~f(n) < n$.
+%
+%\smallskip
+%
+%\pause
+%If $f$ is a contraction strict from $a$, $\cdt{f}{a}$ is a total function.
+%
+%\bigskip
+%
+%\pause
+%\textbf{Theorem.} If $F$ is repeatable from $a$,\\
+%$F^{-1}$ is a contraction strict above $a$ and $\cdt{\left(F^{-1}\right)}{a}\ \ = \ \left(\rf{F}{a}\ \right)^{-1}$.
+%
+%\end{frame}
 
 
 \begin{frame}
 \frametitle{Formalizing countdown}
 
-%\textbf{Does such $m$ exists?}
-%
-%Yes because $f$ is a \textbf{contraction} when $F$ is repeatable!
-%
-%\bigskip
-%
-%\pause 
-%\textbf{Contraction.} A function $f : \mathbb{N} \to \mathbb{N}$ is a
-%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L40-L42}{\emph{contraction}} if $\forall n.~ f(n) \le n$.
-%
-%Given an $a \ge 1$, a contraction $f$ is
-%\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb2ae6c97/countdown.v\#L44-L46}{\emph{strict above}} $a$ if $\forall n > a.~n > f(n)$.
-
-%\bigskip
-%
-%\textbf{Notation.} Set of contractions strict above $a$ is denoted $\contract_a$.
-%
-%\bigskip
-%
-%\pause 
 \textbf{Countdown.} The \textit{\textcolor{red}{countdown} to} $a$ of $f$, written~$\cdt{f}{a}(n)$, if exists, is the smallest number of times $f$ needs to be compositionally applied to
 $n$ for the answer to equal or go below $a$. \emph{i.e.},
 \begin{equation*}
 \cdt{f}{a}(n) \triangleq \min\{m: f^{(m)}(n)\le a \}.
 \end{equation*}
 
-\textbf{Contractions.} $f$ is a \emph{\textcolor{red}{contraction} strict above} a if \\
-$\forall n.~f(n)\le n~$ and $~\forall n > a.~f(n) < n$.
-
-\smallskip
-
 \pause
-If $f$ is a contraction strict from $a$, $\cdt{f}{a}$ is a total function.
+\textbf{Theorem.}
+$~\displaystyle
+\begin{cases}
+F \text{ strictly increasing} \\ \forall n.~F(n)\ge n \\
+\forall n > a.~F(n) > n
+\end{cases}
+\quad \pause \implies \quad
+\begin{cases}
+\cdt{\left(F^{-1}\right)}{a} \text{ is total} \\[3pt]
+\cdt{\left(F^{-1}\right)}{a}\ \ = \ \left(\rf{F}{a}\ \right)^{-1}
+\end{cases}
+$
 
 \bigskip
-
 \pause
-\textbf{Theorem.} If $F$ is repeatable from $a$,\\
-$F^{-1}$ is a contraction strict above $a$ and $\cdt{\left(F^{-1}\right)}{a}\ \ = \ \left(\rf{F}{a}\ \right)^{-1}$.
+\textbf{Corollary.} $a[n+1]$ and $\alpha_{n+1}$ are respectively the\\ countdowns of $a[n]$ and $\alpha_n$ to some appropriate value.
 
 \end{frame}
-
 
 
 \begin{frame}[fragile]
@@ -238,20 +287,11 @@ Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
 \bigskip
 
 \pause 
-\textbf{The worker function.} $\begin{cases}
+\textbf{The worker.} $\begin{cases}
 \text{Budget } b: & \hspace{-1em}\text{Maximum } b \text{ steps. } \\
 \text{Step } i: & \hspace{-1em}\text{Compute } f^{(i)}(n). \\
 \text{Stops when: } & \hspace{-1em}\text{budget reaches } 0 \text{ or } f^{(i)}(n) \le a.
 \end{cases}$
-%\bigskip
-%\begin{itemize}
-%	\item Budget $b$: Maximum $b$ steps.
-%	\item Step $i$: Computes $\alpha_i(n)$.
-%	\item Stops when budget reaches $0$ or $\alpha_i(n) \le i$.
-%\end{itemize}
-
-%A worker function takes $f, a, n$ and a budget $b$ and compute the chain $\{n, f(n), \ldots, f^{(b)}(n)\}$. It stops before reaching $f^{(b)}(n)$ upon encountering $k$ such that $f^{(k)}(n)\le a$.
-%%TODO: Use bullet points
 \end{frame}
 
 
@@ -259,9 +299,6 @@ Compute $f^{k}(n)$ for $k=0, 1,\ldots$ until $f^{(k)}(n)\le a$. Return $k$.
 \frametitle{A Coq Computation of Countdown}
 
 \textbf{The worker.}
-%For any $a\in \mathbb{N}$ and $f: \mathbb{N}\to \mathbb{N}$, the
-%\emph{countdown worker}
-%to $a$ of $f$ is a function $\cdw{f}{a}\ : \mathbb{N}^2\to \mathbb{N}$ such that:
 The \emph{countdown worker}
 to $a$ of $f$ is a function $\cdw{f}{a}$~~:
 \begin{equation*}
@@ -354,9 +391,8 @@ $\href{https://github.com/inv-ack/inv-ack/blob/7270e64a2600b771f2b1b1b151f7d13fb
 \begin{frame}[fragile]
 \frametitle{The Inverse Ackermann Hierarchy}
 
-\textbf{Naive approach.} $\Ack_{i+1} = \rf{\big(\Ack_i\big)}{{\color<4->{red} \Ack_i(1)}}\ $.
-\pause
-Thus $\alpha_{i+1} \triangleq \cdt{\big(\alpha_i\big)}{{\color<4->{red} \Ack_i(1)}}\ $?\\ 
+\textbf{Naive approach.} $\Ack_{i+1} = \rf{\big(\Ack_i\big)}{{\color<2->{red} \Ack_i(1)}}\ $.
+Thus $\alpha_{i+1} \triangleq \cdt{\big(\alpha_i\big)}{{\color<2->{red} \Ack_i(1)}}\ $?\\ 
 
 \smallskip
 
@@ -366,11 +402,11 @@ Thus $\alpha_{i+1} \triangleq \cdt{\big(\alpha_i\big)}{{\color<4->{red} \Ack_i(1
 \bigskip
 
 \pause 
-\textbf{Observation.} $\Ack_{i+1}(n) = \Ack_i^{(n)}(\Ack_i(1)) = \Ack_i^{(n+1)}(1)$. \pause Thus
+\textbf{Observation.} $\Ack_{i+1}(n) = \Ack_i^{(n)}(\Ack_i(1)) = \Ack_i^{(n+1)}(1)$. Thus
 \vspace{-0.7em}
 \begin{equation*}
 \begin{aligned}
-\alpha_{i+1}(n) & = \min\left\{m : n\le \Ack_i^{m+1}(1)\right\} \pause 
+\alpha_{i+1}(n) & = \min\left\{m : n\le \Ack_i^{(m+1)}(1)\right\} \pause 
 = \min\left\{m : \big( \alpha_i \big)^{(m+1)}(n)\le 1\right\} \pause \\
 & = \min\left\{m : \big( \alpha_i \big)^{(m)}\big(\alpha_i(n)\big)\le 1\right\} \pause
 = \cdt{\big(\alpha_i\big)}{1}\big(\alpha_i(n)\big)

@@ -164,23 +164,23 @@ $A(n, b) = {\color{red}2}[n](b{\color{red}+3}) {\color{red}- 3}$
 
 
 \begin{frame}
-\frametitle{Introduction: Inverse Hierarchies to Inverse Ackermann}
+\frametitle{Introduction: Sneak Peek}
 
-We explore the upper inverse relation:
-\begin{equation*}
-\begin{cases}
-\forall b. \forall c.\quad b \le \Ack_n(c) & \!\! \iff \ \ \alpha_n(b)\le c \\
-\forall b. \forall c. \quad b \le a[n]c & \!\! \iff \ \ a\angle{n}b \le c
-\end{cases}
-\end{equation*}
+%We explore the upper inverse relation:
+%\begin{equation*}
+%\begin{cases}
+%\forall b. \forall c.\quad b \le \Ack_n(c) & \!\! \iff \ \ \alpha_n(b)\le c \\
+%\forall b. \forall c. \quad b \le a[n]c & \!\! \iff \ \ a\angle{n}b \le c
+%\end{cases}
+%\end{equation*}
 
 \textbf{Redefine $\bm{\alpha}$:}
-$\alpha(n) = \min\{k: n\le \Ack_k(k) \} = \min\{k: \alpha_k(n)\le k \}$.
+$\alpha(n) = \min\{k: n\le A(k, k) \} = \min\{k: \alpha_k(n)\le k \}$.
 
 \bigskip
 
 \pause
-\textbf{Computing $\bm{\alpha} $ through $\bm{\alpha_i}$!} No need to go through $\Ack$.
+\textbf{Computing $\bm{\alpha} $ through $\bm{\alpha_i}$:} No need to go through $\Ack$.
 
 \bigskip
 

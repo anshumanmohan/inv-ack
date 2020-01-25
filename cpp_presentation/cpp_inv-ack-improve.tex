@@ -115,7 +115,7 @@ Any budget $b \ge \alpha(n)$ suffices, so we can choose $b = n$.
 Computation & Time & Reason \\ \hline
 $\topspace{2pt} \alpha_0(n) = n - 1$ & $\Theta(1)$ & Coq SL \\
 $\topspace{2pt} \alpha_1(n) = n - 2$ & $\Theta(n)$ & Apply $\alpha_0$ for $n - 1$ times \\
-$\topspace{2pt} \alpha_2(n) = \left \lceil \frac{n-3}{2} \right \rceil$ & $\Theta(n^2)$ & Apply $\alpha_2$ for $n/2$ times
+$\topspace{2pt} \alpha_2(n) = \left \lceil \frac{n-3}{2} \right \rceil$ & $\Theta(n^2)$ & Apply $\alpha_1$ for $n/2$ times
 \end{tabular}
 
 \vspace{7pt}
